@@ -26,38 +26,41 @@ Transform your professional story into a stunning resume in minutes. Built with 
 ### Development Phases
 
 1. **Phase 1**: Core Backend Functionality *(Current)*
+   > Establishing foundational backend services with security, database, and core business logic
    - Spring Boot REST API setup
-   - PostgreSQL database integration
-   - Keycloak authentication setup
-   - Local development environment with Docker Compose
+   - ~~PostgreSQL database integration~~
+   - ~~Keycloak authentication setup~~
+   - ~~Local development environment with Docker Compose~~
    - Basic resume CRUD operations
    - Simple PDF generation
 
 2. **Phase 2**: Frontend Development
-   - Angular components setup
-   - Resume form implementation
-   - Basic state management
-   - PDF preview
-   - Minimal but functional UI
+   > Simple but functional GUI implementation focusing on the core features
+   - ~~Keycloak authentication integration~~
+   - Backend service integration
+   - Resume overview page implementation
+   - Resume editor page implementation
 
 3. **Phase 3**: Cloud Infrastructure
+   > Containerization and deployment of the application stack to cloud infrastructure
    - Docker containerization
    - Environment configuration
    - Cloud deployment (database, backend, frontend, Keycloak)
    - CI/CD pipeline with GitHub Actions
 
 4. **Phase 4**: Code Quality & Testing
+   > Ensuring application reliability through comprehensive testing
    - Unit tests (JUnit, Mockito)
    - Integration tests
    - API documentation (SpringDoc)
-   - Clean architecture patterns
    - Performance optimization
 
 5. **Phase 5**: Feature Expansion
-   - Enhanced UI/UX
-   - More resume sections
-   - Additional export options
-   - Enhanced user profiles
+   > Enhancing user experience and adding advanced resume management capabilities
+   - Enhanced UI/UX design
+   - Multiple resume templates
+   - Template customization options
+   - AI-powered content suggestions
 
 ## 🚀 Getting Started
 
@@ -75,16 +78,10 @@ cd resume-builder
 2. Start all services using Docker Compose
 ```bash
 docker compose build
-docker compose up -d
+docker compose up
 ```
 
-3. Configure Keycloak
-- Access Keycloak admin console at http://localhost:9090
-- Login with default credentials (admin/admin)
-- Create new realm called "resume-builder"
-
-
-4. Access the application
+3. Access the application
 - Frontend: http://localhost:4200
 - Backend API: http://localhost:8080
 - Keycloak: http://localhost:9090
