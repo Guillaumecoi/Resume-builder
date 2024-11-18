@@ -5,35 +5,72 @@ services:
     environment:
       POSTGRES_USER: username
       POSTGRES_PASSWORD: password
-      PGDATA: /var/lib/postgresql/data
       POSTGRES_DB: resume_builder
     volumes:
-      - postgres:/data/postgres
+      - postgres:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - "5432:5432"
     networks:
-      - default
-    restart: unless-stopped 
+      - resume-network
+    restart: unless-stopped
   
   keycloak:
     container_name: keycloak-bsn
     image: quay.io/keycloak/keycloak:26.0.5
-    ports:
-      - 9090:8080
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-    networks:
-      - default
-    command:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin 
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    volumes:
+      - ./realm-config:/opt/keycloak/data/import
+    command: 
       - "start-dev"
-      
+      - "--import-realm"
+    ports:
+      - "9090:8080"
+    networks:
+      - resume-network
+
+  backend:
+    build: ./backend
+    container_name: resume-backend
+    volumes:
+      - ./uploads:/app/uploads 
+      - ./backend:/app  
+      - ~/.m2:/root/.m2  
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DEVTOOLS_RESTART_ENABLED: true
+    ports:
+      - "8080:8080"
+      - "5005:5005" 
+    networks:
+      - resume-network
+    depends_on:
+      - postgres
+      - keycloak
+
+  frontend:
+    build: ./frontend
+    container_name: resume-frontend
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - resume-network
+    depends_on:
+      - backend
+      - keycloak
+
 networks:
-  default:
+  resume-network:
     driver: bridge
 
 volumes:
   postgres:
-      driver: local
+    driver: local
   keycloak:
     driver: local
