@@ -1,0 +1,58 @@
+{
+  "realm": "resume-builder",
+  "enabled": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "registrationAllowed": true,
+  "verifyEmail": true,
+  "users": [
+    {
+      "username": "test@example.com",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Test",
+      "lastName": "User",
+      "email": "test@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "default-roles-resume-builder"
+      ],
+      "clientRoles": {
+        "rb": [
+          "user"
+        ]
+      },
+      "attributes": {}
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "rb",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": [
+        "http://localhost:4200/*",
+        "http://resume-frontend:4200/*",
+        "http://localhost:8080/*",
+        "http://resume-backend:8080/*"
+      ],
+      "webOrigins": [
+        "http://localhost:4200",
+        "http://resume-frontend:4200",
+        "http://localhost:8080",
+        "http://resume-backend:8080",
+        "+"
+      ]
+    }
+  ]
+}
