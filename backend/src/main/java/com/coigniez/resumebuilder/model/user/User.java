@@ -4,17 +4,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.coigniez.resumebuilder.model.common.BaseEntity;
+import com.coigniez.resumebuilder.model.common.TimeTrackable;
 import com.coigniez.resumebuilder.model.role.Role;
 
 import java.security.Principal;
@@ -26,17 +25,13 @@ import java.util.stream.Collectors;
 
 import static jakarta.persistence.FetchType.EAGER;
 
-
-@Getter
-@Setter
-@SuperBuilder
-@NoArgsConstructor
-@AllArgsConstructor
-public class User implements UserDetails, Principal {
+@Data
+@Builder
+public class User implements UserDetails, Principal, BaseEntity, TimeTrackable {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
     private String firstname;
     private String lastname;
     private LocalDate dateOfBirth;
@@ -57,16 +52,8 @@ public class User implements UserDetails, Principal {
     private LocalDateTime lastModifiedDate;
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles
-                .stream()
-                .map(r -> new SimpleGrantedAuthority(r.getName()))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
+    public String getName() {
+        return email;
     }
 
     @Override
@@ -75,32 +62,11 @@ public class User implements UserDetails, Principal {
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return !accountLocked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public String fullName() {
-        return getFirstname() + " " + getLastname();
-    }
-
-    @Override
-    public String getName() {
-        return email;
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles
+                .stream()
+                .map(r -> new SimpleGrantedAuthority(r.getName()))
+                .collect(Collectors.toList());
     }
 
     public String getFullName() {
