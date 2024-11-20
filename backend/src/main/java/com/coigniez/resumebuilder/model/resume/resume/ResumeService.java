@@ -33,6 +33,7 @@ public class ResumeService implements CrudService<ResumeResponse, ResumeRequest>
             throw new AccessDeniedException("You are not allowed to access this resource");
         }
         Resume resume = resumeMapper.toEntity(request);
+        resume.setId(id);
         resumeRepository.save(resume);
     }
 
