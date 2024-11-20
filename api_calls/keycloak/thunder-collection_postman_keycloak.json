@@ -1,0 +1,67 @@
+{
+    "info": {
+        "_postman_id": "4b07d024-292e-4180-aba2-a0aea2141254",
+        "name": "keycloak",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "description": ""
+    },
+    "item": [
+        {
+            "name": "keycloak token request",
+            "request": {
+                "method": "POST",
+                "url": {
+                    "raw": "http://localhost:9090/realms/resume-builder/protocol/openid-connect/token",
+                    "path": [
+                        "realms",
+                        "resume-builder",
+                        "protocol",
+                        "openid-connect",
+                        "token"
+                    ],
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "9090"
+                },
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/x-www-form-urlencoded"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "User-Agent",
+                        "value": "Thunder Client (https://www.thunderclient.com)",
+                        "disabled": true
+                    }
+                ],
+                "body": {
+                    "mode": "urlencoded",
+                    "urlencoded": [
+                        {
+                            "key": "grant_type",
+                            "value": "password"
+                        },
+                        {
+                            "key": "client_id",
+                            "value": "rb"
+                        },
+                        {
+                            "key": "username",
+                            "value": "test@example.com"
+                        },
+                        {
+                            "key": "password",
+                            "value": "password"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
