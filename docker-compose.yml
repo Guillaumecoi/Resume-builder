@@ -43,12 +43,11 @@ services:
     ports:
       - "8080:8080"
       - "5005:5005" 
-    networks:
-      - resume-network
+    network_mode: "host"
     depends_on:
       - postgres
       - keycloak
-
+      
   frontend:
     build: ./frontend
     container_name: resume-frontend

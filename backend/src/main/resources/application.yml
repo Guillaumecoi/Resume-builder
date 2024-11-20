@@ -4,8 +4,19 @@ spring:
   servlet:
     multipart:
       max-file-size: 50MB
+  mvc:
+    log-request-details: true
 springdoc:
   default-produces-media-type: application/json
 server:
   servlet:
     context-path: /api/v1/
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+        security: DEBUG
+    com:
+      coigniez:
+        resumebuilder: DEBUG
