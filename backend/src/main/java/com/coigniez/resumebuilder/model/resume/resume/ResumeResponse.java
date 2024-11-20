@@ -7,12 +7,11 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ResumeDto {
+public class ResumeResponse {
 
     private Long id;
     private String title;
     private PersonalDetailsDto personalDetails;
-    private String createdBy;
     private String createdDate;
     private String lastModifiedDate;
 

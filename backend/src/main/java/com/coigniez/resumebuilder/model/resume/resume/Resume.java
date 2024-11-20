@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.coigniez.resumebuilder.model.common.BaseEntity;
 import com.coigniez.resumebuilder.model.common.Creatable;
@@ -14,17 +15,24 @@ import com.coigniez.resumebuilder.model.resume.personaldetails.PersonalDetails;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
 @Entity
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "resume", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"title", "createdBy"})
+})
 public class Resume implements BaseEntity, TimeTrackable, Creatable {
 
     @Id

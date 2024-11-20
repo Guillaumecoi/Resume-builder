@@ -1,12 +1,38 @@
 package com.coigniez.resumebuilder.model.resume.resume;
 
-import org.mapstruct.Mapper;
+import org.springframework.stereotype.Service;
+
 import com.coigniez.resumebuilder.model.resume.personaldetails.PersonalDetailsMapper;
 
-@Mapper(componentModel = "spring", uses = PersonalDetailsMapper.class)
-public interface ResumeMapper {
+import lombok.RequiredArgsConstructor;
 
-    ResumeDto toDto(Resume resume);
+@RequiredArgsConstructor
+@Service
+public class ResumeMapper {
 
-    Resume toEntity(ResumeDto resumeDto);
+    private final PersonalDetailsMapper personalDetailsMapper;
+
+    public Resume toEntity(ResumeRequest resumeRequest) {
+        if (resumeRequest == null) {
+            return null;
+        }
+
+        return Resume.builder()
+                .title(resumeRequest.title())
+                .build();
+    }
+
+    public ResumeResponse toDto(Resume resume) {
+        if (resume == null) {
+            return null;
+        }
+
+        return ResumeResponse.builder()
+                .id(resume.getId())
+                .title(resume.getTitle())
+                .personalDetails(personalDetailsMapper.toDto(resume.getPersonalDetails()))
+                .createdDate(resume.getCreatedDate().toString())
+                .lastModifiedDate(resume.getLastModifiedDate().toString())
+                .build();
+    }
 }
