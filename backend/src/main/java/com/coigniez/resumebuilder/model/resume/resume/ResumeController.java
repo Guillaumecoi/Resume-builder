@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Slf4j
 @RestController
@@ -26,6 +28,34 @@ public class ResumeController {
     public ResponseEntity<Long> create(@Valid @RequestBody ResumeRequest request, Authentication user) {
         return ResponseEntity.ok(resumeService.create(request, user));
     }
-    
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ResumeResponse> getResume(@PathVariable Long id, Authentication user) {
+        try {
+            ResumeResponse resume = resumeService.get(id, user);
+            return ResponseEntity.ok(resume);
+        } catch (Exception e) {
+            return ResponseEntity.status(403).build();
+        }
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable Long id, @Valid @RequestBody ResumeRequest request, Authentication user) {
+        try {
+            resumeService.update(id, request, user);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(403).build();
+        }
+    }
+
+    @PostMapping("/{id}/delete")
+    public ResponseEntity<Void> delete(@PathVariable Long id, Authentication user) {
+        try {
+            resumeService.delete(id, user);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(403).build();
+        }
+    }
 }

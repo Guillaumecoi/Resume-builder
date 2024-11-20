@@ -26,11 +26,12 @@ public interface CrudService<Response, Request> {
     /**
      * Update an object
      * 
+     * @param id the id of the object to update
      * @param request the object to update
      * @param user the connected user
      * @throws AccessDeniedException if the connected user is not the creator of the resume
      */
-    void update(Request request, Authentication user);
+    void update(Long id, Request request, Authentication user);
 
     /**
      * Delete an object by its id

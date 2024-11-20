@@ -1,7 +1,5 @@
 package com.coigniez.resumebuilder.model.resume.resume;
 
-import com.coigniez.resumebuilder.model.resume.personaldetails.PersonalDetailsDto;
-
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,7 +9,17 @@ public class ResumeResponse {
 
     private Long id;
     private String title;
-    private PersonalDetailsDto personalDetails;
+    private String firstName;
+    private String lastName;
+    private byte[] picture;
+    private String email;
+    private String phone;
+    private String address;
+    private String website;
+    private String linkedIn;
+    private String github;
+    private String instagram;
+    private String facebook;
     private String createdDate;
     private String lastModifiedDate;
 

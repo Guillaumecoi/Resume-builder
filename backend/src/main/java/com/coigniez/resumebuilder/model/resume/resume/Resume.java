@@ -10,23 +10,22 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.coigniez.resumebuilder.model.common.BaseEntity;
 import com.coigniez.resumebuilder.model.common.Creatable;
 import com.coigniez.resumebuilder.model.common.TimeTrackable;
-import com.coigniez.resumebuilder.model.resume.personaldetails.PersonalDetails;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -40,10 +39,17 @@ public class Resume implements BaseEntity, TimeTrackable, Creatable {
     private Long id;
 
     private String title;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "personal_details_id")
-    private PersonalDetails personalDetails;
+    private String firstName;
+    private String lastName;
+    private String picture;
+    private String email;
+    private String phone;
+    private String address;
+    private String website;
+    private String linkedIn;
+    private String github;
+    private String instagram;
+    private String facebook;
 
     @CreatedBy
     @Column(nullable = false, updatable = false)
