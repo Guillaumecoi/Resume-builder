@@ -2,13 +2,14 @@ package com.coigniez.resumebuilder.model.resume.resume;
 
 import org.springframework.stereotype.Service;
 
+import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.model.resume.personaldetails.PersonalDetailsMapper;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
-public class ResumeMapper {
+public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeResponse> {
 
     private final PersonalDetailsMapper personalDetailsMapper;
 

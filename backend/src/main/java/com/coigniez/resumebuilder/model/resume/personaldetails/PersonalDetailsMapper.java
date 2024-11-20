@@ -2,8 +2,10 @@ package com.coigniez.resumebuilder.model.resume.personaldetails;
 
 import org.springframework.stereotype.Component;
 
+import com.coigniez.resumebuilder.interfaces.Mapper;
+
 @Component
-public class PersonalDetailsMapper {
+public class PersonalDetailsMapper implements Mapper<PersonalDetails, PersonalDetailsDto, PersonalDetailsDto> {
 
     public PersonalDetailsDto toDto(PersonalDetails personalDetails) {
         if (personalDetails == null) {
