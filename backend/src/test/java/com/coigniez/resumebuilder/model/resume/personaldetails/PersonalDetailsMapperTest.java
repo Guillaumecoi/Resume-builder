@@ -3,11 +3,10 @@ package com.coigniez.resumebuilder.model.resume.personaldetails;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
 
 public class PersonalDetailsMapperTest {
 
-    private final PersonalDetailsMapper mapper = Mappers.getMapper(PersonalDetailsMapper.class);
+    private final PersonalDetailsMapper mapper = new PersonalDetailsMapper();
 
     @Test
     void testToDto() {
