@@ -77,6 +77,10 @@ public class ResumeService implements CrudService<ResumeResponse, ResumeRequest>
         resumeRepository.save(resume);
     }
 
+    public void deleteAll(Authentication connectedUser) {
+        resumeRepository.deleteAllByCreatedBy(connectedUser.getName());
+    }
+
     /**
      * Check if the connected user has access to the resume
      * 

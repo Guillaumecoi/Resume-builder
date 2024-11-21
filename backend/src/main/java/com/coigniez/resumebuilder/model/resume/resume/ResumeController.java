@@ -82,4 +82,11 @@ public class ResumeController {
         resumeService.uploadPicture(id, file, connectedUser);
         return ResponseEntity.accepted().build();
     }
+
+    @PostMapping("/deleteAll")
+    public ResponseEntity<Void> postMethodName(Authentication user) {
+        resumeService.deleteAll(user);
+        return ResponseEntity.accepted().build();
+    }
+    
 }
