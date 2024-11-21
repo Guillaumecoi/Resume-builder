@@ -9,21 +9,11 @@ erDiagram
     }
     Resume {
         string title
-        datetime created_at
-        datetime updated_at
-    }
-    PersonalDetails {
         string first_name
         string last_name
         Image image
-        string phone
-        string email
-        string address
-        string website
-        string linkedin
-        string github
-        string instagram
-        string facebook
+        datetime created_at
+        datetime updated_at
     }
     About {
         string title
@@ -47,6 +37,10 @@ erDiagram
 ```mermaid
 erDiagram
     
+    ContactItem {
+        String fontawesome
+        String content    
+    }
 
     EducationItem {
         string institution

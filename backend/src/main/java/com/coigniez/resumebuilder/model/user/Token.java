@@ -5,23 +5,20 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+import com.coigniez.resumebuilder.model.common.BaseEntity;
+
+@Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class Token {
+public class Token implements BaseEntity {
+    
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
 
     @Column(unique = true)
     private String token;
