@@ -44,14 +44,6 @@ First, get the token from Keycloak:
         "firstName": "John",
         "lastName": "Doe",
         "picture": null,
-        "email": null,
-        "phone": null,
-        "address": null,
-        "website": null,
-        "linkedIn": null,
-        "github": null,
-        "instagram": null,
-        "facebook": null,
         "createdDate": "2024-11-20T15:21:42.460682",
         "lastModifiedDate": "2024-11-20T15:24:59.783256"
     }
