@@ -1,5 +1,9 @@
 package com.coigniez.resumebuilder.model.resume;
 
+import java.util.List;
+
+import com.coigniez.resumebuilder.model.section.SectionResponse;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,5 +18,7 @@ public class ResumeResponse {
     private byte[] picture;
     private String createdDate;
     private String lastModifiedDate;
+
+    private List<SectionResponse> sections;
 
 }

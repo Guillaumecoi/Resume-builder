@@ -1,6 +1,7 @@
 package com.coigniez.resumebuilder.model.resume;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -10,12 +11,15 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.coigniez.resumebuilder.model.common.BaseEntity;
 import com.coigniez.resumebuilder.model.common.Creatable;
 import com.coigniez.resumebuilder.model.common.TimeTrackable;
+import com.coigniez.resumebuilder.model.section.Section;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -54,5 +58,8 @@ public class Resume implements BaseEntity, TimeTrackable, Creatable {
     @LastModifiedDate
     @Column
     private LocalDateTime lastModifiedDate;
+
+    @OneToMany(mappedBy = "resume", fetch = FetchType.EAGER)
+    private List<Section> sections;
 
 }
