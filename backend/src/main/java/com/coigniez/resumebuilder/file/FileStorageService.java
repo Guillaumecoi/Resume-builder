@@ -26,16 +26,25 @@ public class FileStorageService {
 
     public String saveFile(
             @Nonnull MultipartFile sourceFile,
-            @Nonnull String userId
-    ) {
+            @Nonnull String userId) {
         final String fileUploadSubPath = "users" + separator + userId;
         return uploadFile(sourceFile, fileUploadSubPath);
     }
 
+    public void deleteFile(
+            @Nonnull String filePath) {
+        Path targetPath = Paths.get(filePath);
+        try {
+            Files.delete(targetPath);
+            log.info("File deleted: " + filePath);
+        } catch (IOException e) {
+            log.error("File was not deleted", e);
+        }
+    }
+
     private String uploadFile(
             @Nonnull MultipartFile sourceFile,
-            @Nonnull String fileUploadSubPath
-    ) {
+            @Nonnull String fileUploadSubPath) {
         final String finalUploadPath = fileUploadPath + separator + fileUploadSubPath;
         File targetFolder = new File(finalUploadPath);
 

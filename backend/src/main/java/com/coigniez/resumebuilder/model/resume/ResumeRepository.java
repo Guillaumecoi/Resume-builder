@@ -1,5 +1,7 @@
 package com.coigniez.resumebuilder.model.resume;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,6 +17,11 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
         SELECT r FROM Resume r WHERE r.createdBy = :user
         """)
     Page<Resume> findAllByCreatedBy(Pageable pageable, String user);
+
+    @Query("""
+        SELECT r FROM Resume r WHERE r.createdBy = :user
+        """)
+    List<Resume> findAllByCreatedBy(String user);
 
     @Modifying
     @Transactional

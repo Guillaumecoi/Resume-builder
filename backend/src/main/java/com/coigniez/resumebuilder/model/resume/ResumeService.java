@@ -47,8 +47,14 @@ public class ResumeService implements CrudService<ResumeResponse, ResumeRequest>
 
     public void delete(Long id, Authentication connectedUser) {
         hasAccess(id, connectedUser);
-        resumeRepository.deleteById(id);
+        try {
+            removePicture(resumeRepository.findById(id).orElseThrow());
+            resumeRepository.deleteById(id);
+        } catch (Exception e) {
+            throw e;
+        }
     }
+        
 
     public PageResponse<ResumeResponse> getAll(int page, int size, String order, Authentication connectedUser) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(order).descending());
@@ -72,13 +78,22 @@ public class ResumeService implements CrudService<ResumeResponse, ResumeRequest>
     public void uploadPicture(Long id, MultipartFile file, Authentication connectedUser) {
         hasAccess(id, connectedUser);
         Resume resume = resumeRepository.findById(id).orElseThrow();
+        removePicture(resume);
         String picture = fileStorageService.saveFile(file, connectedUser.getName());
         resume.setPicture(picture);
         resumeRepository.save(resume);
     }
 
     public void deleteAll(Authentication connectedUser) {
-        resumeRepository.deleteAllByCreatedBy(connectedUser.getName());
+        try {
+            List<Resume> resumes = resumeRepository.findAllByCreatedBy(connectedUser.getName());
+            for (Resume resume : resumes) {
+                removePicture(resume);
+            }
+            resumeRepository.deleteAllByCreatedBy(connectedUser.getName());
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     /**
@@ -93,5 +108,9 @@ public class ResumeService implements CrudService<ResumeResponse, ResumeRequest>
         if (!resume.getCreatedBy().equals(connectedUser.getName())) {
             throw new AccessDeniedException(connectedUser.getName() + " does not have access to the resume with id " + id);
         }
+    }
+
+    private void removePicture(Resume resume) {
+        fileStorageService.deleteFile(resume.getPicture());
     }
 }
