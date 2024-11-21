@@ -42,14 +42,6 @@ public class Resume implements BaseEntity, TimeTrackable, Creatable {
     private String firstName;
     private String lastName;
     private String picture;
-    private String email;
-    private String phone;
-    private String address;
-    private String website;
-    private String linkedIn;
-    private String github;
-    private String instagram;
-    private String facebook;
 
     @CreatedBy
     @Column(nullable = false, updatable = false)
@@ -60,7 +52,7 @@ public class Resume implements BaseEntity, TimeTrackable, Creatable {
     private LocalDateTime createdDate;
 
     @LastModifiedDate
-    @Column(insertable = false)
+    @Column
     private LocalDateTime lastModifiedDate;
 
 }

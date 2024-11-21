@@ -17,14 +17,6 @@ public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeRespons
                 .title(resumeRequest.title())
                 .firstName(resumeRequest.firstName())
                 .lastName(resumeRequest.lastName())
-                .email(resumeRequest.email())
-                .phone(resumeRequest.phone())
-                .address(resumeRequest.address())
-                .website(resumeRequest.website())
-                .linkedIn(resumeRequest.linkedIn())
-                .github(resumeRequest.github())
-                .instagram(resumeRequest.instagram())
-                .facebook(resumeRequest.facebook())
                 .build();
     }
 
@@ -39,14 +31,6 @@ public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeRespons
                 .firstName(resume.getFirstName())
                 .lastName(resume.getLastName())
                 .picture(FileUtils.readFileFromLocation(resume.getPicture()))
-                .email(resume.getEmail())
-                .phone(resume.getPhone())
-                .address(resume.getAddress())
-                .website(resume.getWebsite())
-                .linkedIn(resume.getLinkedIn())
-                .github(resume.getGithub())
-                .instagram(resume.getInstagram())
-                .facebook(resume.getFacebook())
                 .createdDate(resume.getCreatedDate().toString())
                 .lastModifiedDate(resume.getLastModifiedDate().toString())
                 .build();
