@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.model.resume.resume;
+package com.coigniez.resumebuilder.model.resume;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

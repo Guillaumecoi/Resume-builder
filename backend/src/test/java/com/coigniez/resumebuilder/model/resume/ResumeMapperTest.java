@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.model.resume.resume;
+package com.coigniez.resumebuilder.model.resume;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
