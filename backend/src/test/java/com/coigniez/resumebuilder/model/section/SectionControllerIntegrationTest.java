@@ -47,6 +47,7 @@ public class SectionControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(username = "testuser", roles = "USER")
     void testCreateSection() throws Exception {
         // Arrange
         SectionRequest request = new SectionRequest("Education");
@@ -142,6 +143,32 @@ public class SectionControllerIntegrationTest {
         mockMvc.perform(get("/resumes/" + resumeId + "/sections/" + sectionId))
             .andExpect(status().isNotFound());
     }
-            
-    
+
+    @Test
+    @WithMockUser(username = "testuser", roles = "USER")
+    void testUpdateResumeDoesNotChangeSection() throws Exception {
+        // Arrange
+        SectionRequest request = new SectionRequest("Education");
+
+        String createResponse = mockMvc.perform(post("/resumes/" + resumeId + "/sections")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(request)))
+            .andExpect(status().isCreated())
+            .andReturn().getResponse().getContentAsString();
+
+        Long sectionId = Long.parseLong(createResponse);
+
+        // Act
+        ResumeRequest updateRequest = new ResumeRequest("Software Developer", "Jane", "Doe");
+
+        mockMvc.perform(post("/resumes/" + resumeId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(updateRequest)))
+            .andExpect(status().isOk());
+
+        // Assert
+        mockMvc.perform(get("/resumes/" + resumeId + "/sections/" + sectionId))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.title").value("Education"));
+    }
 }
