@@ -2,11 +2,14 @@ package com.coigniez.resumebuilder.model.section;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.net.URI;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -26,7 +29,13 @@ public class SectionController {
 
     @PostMapping
     public ResponseEntity<Long> create(@PathVariable Long resumeId, @Valid @RequestBody SectionRequest request, Authentication user) {
-        return ResponseEntity.ok(sectionService.create(resumeId, request, user));
+        Long id = sectionService.create(resumeId, request, user);
+        URI location = ServletUriComponentsBuilder
+            .fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(id)
+            .toUri();
+        return ResponseEntity.created(location).body(id);
     }
 
     @GetMapping("/{id}")
@@ -38,13 +47,13 @@ public class SectionController {
     @PostMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable Long resumeId, @PathVariable Long id, @Valid @RequestBody SectionRequest request, Authentication user) {
         sectionService.update(id, request, user);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/delete")
     public ResponseEntity<Void> delete(@PathVariable Long resumeId, @PathVariable Long id, Authentication user) {
         sectionService.delete(id, user);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.noContent().build();
     }
     
 }

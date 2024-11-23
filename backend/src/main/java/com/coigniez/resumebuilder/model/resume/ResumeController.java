@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.coigniez.resumebuilder.model.common.PageResponse;
 
@@ -11,6 +12,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.net.URI;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -30,7 +33,13 @@ public class ResumeController {
 
     @PostMapping
     public ResponseEntity<Long> create(@Valid @RequestBody ResumeRequest request, Authentication user) {
-        return ResponseEntity.ok(resumeService.create(null, request, user));
+        Long id = resumeService.create(null, request, user);
+        URI location = ServletUriComponentsBuilder
+            .fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(id)
+            .toUri();
+        return ResponseEntity.created(location).body(id);
     }
 
     @GetMapping("/{id}")
@@ -42,13 +51,13 @@ public class ResumeController {
     @PostMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable Long id, @Valid @RequestBody ResumeRequest request, Authentication user) {
         resumeService.update(id, request, user);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/delete")
     public ResponseEntity<Void> delete(@PathVariable Long id, Authentication user) {
         resumeService.delete(id, user);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
@@ -66,13 +75,13 @@ public class ResumeController {
             @RequestParam("file") MultipartFile file,
             Authentication connectedUser) {
         resumeService.uploadPicture(id, file, connectedUser);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/deleteAll")
     public ResponseEntity<Void> postMethodName(Authentication user) {
         resumeService.deleteAll(user);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.noContent().build();
     }
     
 }
