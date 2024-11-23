@@ -1,5 +1,8 @@
 package com.coigniez.resumebuilder.model.resume;
 
+import java.util.Collections;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.file.FileUtils;
@@ -39,9 +42,11 @@ public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeRespons
             .picture(FileUtils.readFileFromLocation(entity.getPicture()))
             .createdDate(entity.getCreatedDate().toString())
             .lastModifiedDate(entity.getLastModifiedDate().toString())
-            .sections(entity.getSections().stream()
-                .map(sectionMapper::toDto)
-                .toList())
+            .sections(Optional.ofNullable(entity.getSections())
+                            .orElse(Collections.emptyList())
+                            .stream()
+                            .map(sectionMapper::toDto)
+                            .toList())
             .build();
     }
 }
