@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @Slf4j
 @RestController
-@RequestMapping("resume")
+@RequestMapping("resumes")
 @RequiredArgsConstructor
 @Tag(name = "Resume")
 public class ResumeController {
@@ -30,39 +30,25 @@ public class ResumeController {
 
     @PostMapping
     public ResponseEntity<Long> create(@Valid @RequestBody ResumeRequest request, Authentication user) {
-        return ResponseEntity.ok(resumeService.create(request, user));
+        return ResponseEntity.ok(resumeService.create(null, request, user));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ResumeResponse> getResume(@PathVariable Long id, Authentication user) {
-        log.debug("Getting resume with id: " + id);
-        try {
-            ResumeResponse resume = resumeService.get(id, user);
-            return ResponseEntity.ok(resume);
-        } catch (Exception e) {
-            log.debug(e.getMessage());
-            return ResponseEntity.status(403).build();
-        }
+        ResumeResponse resume = resumeService.get(id, user);
+        return ResponseEntity.ok(resume);
     }
 
     @PostMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable Long id, @Valid @RequestBody ResumeRequest request, Authentication user) {
-        try {
-            resumeService.update(id, request, user);
-            return ResponseEntity.accepted().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(403).build();
-        }
+        resumeService.update(id, request, user);
+        return ResponseEntity.accepted().build();
     }
 
     @PostMapping("/{id}/delete")
     public ResponseEntity<Void> delete(@PathVariable Long id, Authentication user) {
-        try {
-            resumeService.delete(id, user);
-            return ResponseEntity.accepted().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(403).build();
-        }
+        resumeService.delete(id, user);
+        return ResponseEntity.accepted().build();
     }
 
     @GetMapping

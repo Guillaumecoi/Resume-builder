@@ -1,12 +1,9 @@
 package com.coigniez.resumebuilder.model.section;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import com.coigniez.resumebuilder.model.common.BaseEntity;
 import com.coigniez.resumebuilder.model.resume.Resume;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -23,8 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-@Table(name = "resume")
+@Table(name = "section")
 public class Section implements BaseEntity {
 
     @Id
@@ -34,7 +30,7 @@ public class Section implements BaseEntity {
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resume_id")
+    @JoinColumn(name = "resume_id", referencedColumnName = "id")
     private Resume resume;
     
 }

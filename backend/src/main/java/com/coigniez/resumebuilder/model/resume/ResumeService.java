@@ -27,7 +27,7 @@ public class ResumeService implements CrudService<ResumeResponse, ResumeRequest>
     private final ResumeMapper resumeMapper;
     private final FileStorageService fileStorageService;
 
-    public Long create(ResumeRequest request, Authentication user) {
+    public Long create(Long parentId, ResumeRequest request, Authentication user) {
         Resume resume = resumeMapper.toEntity(request);
         return resumeRepository.save(resume).getId();
     }
@@ -40,8 +40,11 @@ public class ResumeService implements CrudService<ResumeResponse, ResumeRequest>
 
     public void update(Long id, ResumeRequest request, Authentication connectedUser) {
         hasAccess(id, connectedUser);
+        Resume existingResume = resumeRepository.findById(id).orElseThrow();
         Resume resume = resumeMapper.toEntity(request);
         resume.setId(id);
+        resume.setPicture(existingResume.getPicture());
+        resume.setSections(existingResume.getSections());
         resumeRepository.save(resume);
     }
 
@@ -103,7 +106,7 @@ public class ResumeService implements CrudService<ResumeResponse, ResumeRequest>
      * @param connectedUser the connected user
      * @throws AccessDeniedException if the connected user does not have access to the resume
      */
-    private void hasAccess(Long id, Authentication connectedUser) throws AccessDeniedException {
+    public void hasAccess(Long id, Authentication connectedUser) throws AccessDeniedException {
         Resume resume = resumeRepository.findById(id).orElseThrow();
         if (!resume.getCreatedBy().equals(connectedUser.getName())) {
             throw new AccessDeniedException(connectedUser.getName() + " does not have access to the resume with id " + id);
@@ -111,6 +114,8 @@ public class ResumeService implements CrudService<ResumeResponse, ResumeRequest>
     }
 
     private void removePicture(Resume resume) {
-        fileStorageService.deleteFile(resume.getPicture());
+        if (resume.getPicture() != null) {
+            fileStorageService.deleteFile(resume.getPicture());
+        }
     }
 }

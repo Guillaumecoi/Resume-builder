@@ -13,6 +13,7 @@ import com.coigniez.resumebuilder.model.common.Creatable;
 import com.coigniez.resumebuilder.model.common.TimeTrackable;
 import com.coigniez.resumebuilder.model.section.Section;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -59,7 +60,7 @@ public class Resume implements BaseEntity, TimeTrackable, Creatable {
     @Column
     private LocalDateTime lastModifiedDate;
 
-    @OneToMany(mappedBy = "resume", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "resume", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Section> sections;
 
 }

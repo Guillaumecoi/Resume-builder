@@ -6,6 +6,5 @@ import jakarta.validation.constraints.NotNull;
 public record SectionRequest (
     @NotNull
     @NotEmpty
-    String title, 
-    Long resumeId
+    String title
 ) {}

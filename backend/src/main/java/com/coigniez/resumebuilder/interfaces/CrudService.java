@@ -7,11 +7,12 @@ public interface CrudService<Response, Request> {
     /**
      * Create a new object
      * 
+     * @param parentId the id of the parent object
      * @param request the object to create
      * @param user the connected user
      * @return the id of the created object
      */
-    Long create(Request request, Authentication user);
+    Long create(Long parentId, Request request, Authentication user);
 
     /**
      * Get an object by its id
