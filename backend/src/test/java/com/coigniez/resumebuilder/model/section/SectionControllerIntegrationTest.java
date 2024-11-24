@@ -4,6 +4,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -91,6 +94,32 @@ public class SectionControllerIntegrationTest {
             .with(user("testuser").roles("USER")))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.title").value("Education"));
+    }
+
+    @Test
+    @WithMockUser(username = "testuser", roles = "USER")
+    void testCreateAndGetResumeWithSections() throws Exception {
+        // Arrange
+        SectionRequest section1 = new SectionRequest("Education");
+        SectionRequest section2 = new SectionRequest("Experience");
+
+        // Act
+        ResumeRequest createRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
+                List.of(section1, section2));
+
+        String createResponse = mockMvc.perform(post("/resumes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(createRequest)))
+            .andExpect(status().isCreated())
+            .andReturn().getResponse().getContentAsString();
+
+        Long newResumeId = Long.parseLong(createResponse);
+
+        // Assert
+        mockMvc.perform(get("/resumes/" + newResumeId))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.sections[*].title")
+                        .value(org.hamcrest.Matchers.containsInAnyOrder("Education", "Experience")));
     }
 
     @Test
