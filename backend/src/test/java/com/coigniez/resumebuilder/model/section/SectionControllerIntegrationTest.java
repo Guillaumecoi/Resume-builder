@@ -35,7 +35,7 @@ public class SectionControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = "USER")
     void setUp() throws Exception {
         // Arrange
-        ResumeRequest createRequest = new ResumeRequest("Software Engineer", "John", "Doe");
+        ResumeRequest createRequest = new ResumeRequest("Software Engineer", "John", "Doe", null);
     
         // Act - Create
         String createResponse = mockMvc.perform(post("/resumes")
@@ -159,7 +159,7 @@ public class SectionControllerIntegrationTest {
         Long sectionId = Long.parseLong(createResponse);
 
         // Act
-        ResumeRequest updateRequest = new ResumeRequest("Software Developer", "Jane", "Doe");
+        ResumeRequest updateRequest = new ResumeRequest("Software Developer", "Jane", "Doe", null);
 
         mockMvc.perform(post("/resumes/" + resumeId)
             .contentType(MediaType.APPLICATION_JSON)

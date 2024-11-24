@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ResumeService implements CrudService<ResumeResponse, ResumeRequest> {
+public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRequest> {
 
     private final ResumeRepository resumeRepository;
     private final ResumeMapper resumeMapper;
@@ -36,7 +36,7 @@ public class ResumeService implements CrudService<ResumeResponse, ResumeRequest>
         return resumeRepository.save(resume).getId();
     }
 
-    public ResumeResponse get(Long id, Authentication connectedUser) {
+    public ResumeDetailResponse get(Long id, Authentication connectedUser) {
         hasAccess(id, connectedUser);
         Resume resume = resumeRepository.findById(id).orElseThrow();
         log.debug("retrieved from repository: " + resume.toString());
@@ -69,7 +69,7 @@ public class ResumeService implements CrudService<ResumeResponse, ResumeRequest>
         Page<Resume> resumes = resumeRepository.findAllByCreatedBy(pageable, connectedUser.getName());
         // Convert the page of resumes to a list of resume responses
         List<ResumeResponse> resumeResponses = resumes.stream()
-            .map(resumeMapper::toDto)
+            .map(resumeMapper::toSimpleDto)
             .toList();
         // Return a page response with the list of resume responses
         return new PageResponse<>(

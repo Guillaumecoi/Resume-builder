@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
-public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeResponse> {
+public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeDetailResponse> {
 
     private final SectionMapper sectionMapper;
 
@@ -26,10 +26,34 @@ public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeRespons
                 .title(request.title())
                 .firstName(request.firstName())
                 .lastName(request.lastName())
+                .sections(Optional.ofNullable(request.sections())
+                            .orElse(Collections.emptyList())
+                            .stream()
+                            .map(sectionMapper::toEntity)
+                            .toList())
                 .build();
     }
 
-    public ResumeResponse toDto(Resume entity) {
+    public ResumeDetailResponse toDto(Resume entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        return ResumeDetailResponse.builder()
+            .id(entity.getId())
+            .title(entity.getTitle())
+            .firstName(entity.getFirstName())
+            .lastName(entity.getLastName())
+            .picture(FileUtils.readFileFromLocation(entity.getPicture()))
+            .createdDate(entity.getCreatedDate().toString())
+            .lastModifiedDate(entity.getLastModifiedDate().toString())
+            .sections(Optional.ofNullable(entity.getSections())
+                .orElse(Collections.emptyList())
+                .stream().map(sectionMapper::toDto).toList())
+            .build();
+    }
+
+    public ResumeResponse toSimpleDto(Resume entity) {
         if (entity == null) {
             return null;
         }
@@ -39,14 +63,8 @@ public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeRespons
             .title(entity.getTitle())
             .firstName(entity.getFirstName())
             .lastName(entity.getLastName())
-            .picture(FileUtils.readFileFromLocation(entity.getPicture()))
             .createdDate(entity.getCreatedDate().toString())
             .lastModifiedDate(entity.getLastModifiedDate().toString())
-            .sections(Optional.ofNullable(entity.getSections())
-                            .orElse(Collections.emptyList())
-                            .stream()
-                            .map(sectionMapper::toDto)
-                            .toList())
             .build();
     }
 }

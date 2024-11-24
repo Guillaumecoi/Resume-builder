@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.coigniez.resumebuilder.model.section.Section;
+import com.coigniez.resumebuilder.model.section.SectionRequest;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -19,6 +21,28 @@ public class ResumeMapperTest {
 
     @Autowired
     private ResumeMapper mapper;
+
+    @Test
+    void testToEntity() {
+        // Arrange
+        ResumeRequest dto = new ResumeRequest(
+            "Software Engineer",
+            "John",
+            "Doe",
+            List.of(new SectionRequest("Education"), new SectionRequest("Experience"))
+        );
+
+        // Act
+        Resume entity = mapper.toEntity(dto);
+
+        // Assert
+        assertEquals("Software Engineer", entity.getTitle());
+        assertEquals("John", entity.getFirstName());
+        assertEquals("Doe", entity.getLastName());
+        assertEquals(2, entity.getSections().size());
+        assertEquals("Education", entity.getSections().get(0).getTitle());
+        assertEquals("Experience", entity.getSections().get(1).getTitle());
+    }
 
     @Test
     void testToDto() {
@@ -44,7 +68,7 @@ public class ResumeMapperTest {
             .build();
     
         // Act
-        ResumeResponse dto = mapper.toDto(entity);
+        ResumeDetailResponse dto = mapper.toDto(entity);
     
         // Assert
         assertEquals(1L, dto.getId());
@@ -72,7 +96,7 @@ public class ResumeMapperTest {
             .build();
 
         // Act
-        ResumeResponse dto = mapper.toDto(entity);
+        ResumeDetailResponse dto = mapper.toDto(entity);
 
         // Assert
         assertEquals(1L, dto.getId());
@@ -85,20 +109,26 @@ public class ResumeMapperTest {
     }
 
     @Test
-    void testToEntity() {
+    void testToSimpleDto() {
         // Arrange
-        ResumeRequest dto = new ResumeRequest(
-            "Software Engineer",
-            "John",
-            "Doe"     
-        );
+        Resume entity = Resume.builder()
+            .id(1L)
+            .title("Software Engineer")
+            .firstName("John")
+            .lastName("Doe")
+            .createdDate(LocalDateTime.parse("2023-01-01T00:00"))
+            .lastModifiedDate(LocalDateTime.parse("2023-01-02T00:00"))
+            .build();
 
         // Act
-        Resume entity = mapper.toEntity(dto);
+        ResumeResponse dto = mapper.toSimpleDto(entity);
 
         // Assert
-        assertEquals("Software Engineer", entity.getTitle());
-        assertEquals("John", entity.getFirstName());
-        assertEquals("Doe", entity.getLastName());
+        assertEquals(1L, dto.getId());
+        assertEquals("Software Engineer", dto.getTitle());
+        assertEquals("John", dto.getFirstName());
+        assertEquals("Doe", dto.getLastName());
+        assertEquals("2023-01-01T00:00", dto.getCreatedDate());
+        assertEquals("2023-01-02T00:00", dto.getLastModifiedDate());
     }
 }

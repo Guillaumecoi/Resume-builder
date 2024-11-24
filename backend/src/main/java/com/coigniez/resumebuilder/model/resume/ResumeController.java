@@ -43,8 +43,8 @@ public class ResumeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResumeResponse> getResume(@PathVariable Long id, Authentication user) {
-        ResumeResponse resume = resumeService.get(id, user);
+    public ResponseEntity<ResumeDetailResponse> getResume(@PathVariable Long id, Authentication user) {
+        ResumeDetailResponse resume = resumeService.get(id, user);
         return ResponseEntity.ok(resume);
     }
 
