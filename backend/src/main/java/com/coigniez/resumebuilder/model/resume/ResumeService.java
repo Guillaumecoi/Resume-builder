@@ -113,10 +113,10 @@ public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRe
      * @param connectedUser the connected user
      * @throws AccessDeniedException if the connected user does not have access to the resume
      */
-    public void hasAccess(Long id, Authentication connectedUser) throws AccessDeniedException {
-        Resume resume = resumeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Resume with id " + id + " not found"));
-        if (!connectedUser.getName().equals(resume.getCreatedBy())) {
-            log.debug("Access denied for user " + connectedUser.getName() + " to resume with id " + id + " created by " + resume.getCreatedBy());
+    private void hasAccess(Long id, Authentication connectedUser) throws AccessDeniedException {
+        String owner = resumeRepository.findCreatedBy(id).orElseThrow(() -> new EntityNotFoundException("Resume with id " + id + " not found"));
+        if (!connectedUser.getName().equals(owner)) {
+            log.debug("Access denied for user " + connectedUser.getName() + " to resume with id " + id + " created by " + owner);
             throw new AccessDeniedException(connectedUser.getName() + " does not have access to the resume with id " + id);
         }
     }

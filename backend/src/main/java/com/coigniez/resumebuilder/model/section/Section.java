@@ -1,13 +1,17 @@
 package com.coigniez.resumebuilder.model.section;
 
+import java.util.List;
+
 import com.coigniez.resumebuilder.model.common.BaseEntity;
 import com.coigniez.resumebuilder.model.resume.Resume;
+import com.coigniez.resumebuilder.model.sectionitem.SectionItem;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.FetchType;
 import lombok.AllArgsConstructor;
@@ -32,5 +36,7 @@ public class Section implements BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", referencedColumnName = "id")
     private Resume resume;
-    
+
+    @OneToMany(mappedBy = "section")
+    private List<SectionItem> items;
 }

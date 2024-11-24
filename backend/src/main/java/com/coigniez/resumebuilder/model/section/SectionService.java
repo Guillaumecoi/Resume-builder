@@ -1,5 +1,7 @@
 package com.coigniez.resumebuilder.model.section;
 
+import java.util.List;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -8,7 +10,8 @@ import org.springframework.stereotype.Service;
 import com.coigniez.resumebuilder.interfaces.CrudService;
 import com.coigniez.resumebuilder.model.resume.Resume;
 import com.coigniez.resumebuilder.model.resume.ResumeRepository;
-import com.coigniez.resumebuilder.model.resume.ResumeService;
+import com.coigniez.resumebuilder.model.sectionitem.SectionItemRequest;
+import com.coigniez.resumebuilder.model.sectionitem.SectionItemService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -21,15 +24,23 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
 
     private final SectionRepository sectionRepository;
     private final SectionMapper sectionMapper;
-    private final ResumeService resumeService;
     private final ResumeRepository resumeRepository;
+    private final SectionItemService sectionItemService;
 
     public Long create(Long parentId, SectionRequest request, Authentication user) {
-        resumeService.hasAccess(parentId, user);
+        hasAccessResume(parentId, user);
+
         Section section = sectionMapper.toEntity(request);
         Resume resume = resumeRepository.findById(parentId).orElseThrow();
         section.setResume(resume);
-        return sectionRepository.save(section).getId();
+        Long sectionId = sectionRepository.save(section).getId();
+
+        Section createdSection = sectionRepository.findById(sectionId)
+                .orElseThrow(() -> new EntityNotFoundException(""));
+
+        createSectionItems(createdSection, request.sectionItems());
+
+        return sectionId;
     }
 
     public SectionResponse get(Long id, Authentication user) {
@@ -44,8 +55,11 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
         Section existingSection = sectionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(""));
         Section UpdatedSection = sectionMapper.toEntity(request);
-        BeanUtils.copyProperties(UpdatedSection, existingSection, "id", "resume");
+        BeanUtils.copyProperties(UpdatedSection, existingSection, "id", "resume", "sectionItems");
         sectionRepository.save(existingSection);
+
+        sectionItemService.deleteAllBySectionId(id);
+        createSectionItems(existingSection, request.sectionItems());
     }
 
     public void delete(Long id, Authentication user) {
@@ -53,12 +67,27 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
         sectionRepository.deleteById(id);
     }
 
-    public void hasAccess(Long id, Authentication user) {
+    private void createSectionItems(Section section, List<SectionItemRequest> sectionItems) {
+        if(sectionItems == null) {
+            return;
+        }
+        sectionItems.stream()
+                .map(item -> sectionItemService.create(section, item));
+    }
+
+    private void hasAccess(Long id, Authentication user) {
         String owner = sectionRepository.findCreatedBy(id)
                 .orElseThrow(() -> new EntityNotFoundException(""));
         if (!owner.equals(user.getName())) {
             throw new AccessDeniedException("");
         }
+    }
 
+    private void hasAccessResume(Long id, Authentication user) {
+        String owner = resumeRepository.findCreatedBy(id)
+                .orElseThrow(() -> new EntityNotFoundException(""));
+        if (!owner.equals(user.getName())) {
+            throw new AccessDeniedException("");
+        }
     }
 }
