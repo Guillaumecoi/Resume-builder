@@ -29,7 +29,7 @@ public class SectionController {
 
     @PostMapping
     public ResponseEntity<Long> create(@PathVariable Long resumeId, @Valid @RequestBody SectionRequest request, Authentication user) {
-        Long id = sectionService.create(resumeId, request, user);
+        Long id = sectionService.create(resumeId, request);
         URI location = ServletUriComponentsBuilder
             .fromCurrentRequest()
             .path("/{id}")
@@ -40,19 +40,19 @@ public class SectionController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SectionResponse> getSection(@PathVariable Long resumeId, @PathVariable Long id, Authentication user) {
-        SectionResponse section = sectionService.get(id, user);
+        SectionResponse section = sectionService.get(id);
         return ResponseEntity.ok(section);
     }
 
     @PostMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable Long resumeId, @PathVariable Long id, @Valid @RequestBody SectionRequest request, Authentication user) {
-        sectionService.update(id, request, user);
+        sectionService.update(id, request);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/delete")
     public ResponseEntity<Void> delete(@PathVariable Long resumeId, @PathVariable Long id, Authentication user) {
-        sectionService.delete(id, user);
+        sectionService.delete(id);
         return ResponseEntity.noContent().build();
     }
     

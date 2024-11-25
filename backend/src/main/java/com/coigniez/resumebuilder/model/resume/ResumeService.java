@@ -8,13 +8,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.coigniez.resumebuilder.file.FileStorageService;
 import com.coigniez.resumebuilder.interfaces.CrudService;
 import com.coigniez.resumebuilder.model.common.PageResponse;
+import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -30,21 +30,22 @@ public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRe
     private final ResumeRepository resumeRepository;
     private final ResumeMapper resumeMapper;
     private final FileStorageService fileStorageService;
+    private final SecurityUtils securityUtils;
 
-    public Long create(Long parentId, ResumeRequest request, Authentication user) {
+    public Long create(Long parentId, ResumeRequest request) {
         Resume resume = resumeMapper.toEntity(request);
         return resumeRepository.save(resume).getId();
     }
 
-    public ResumeDetailResponse get(Long id, Authentication connectedUser) {
-        hasAccess(id, connectedUser);
+    public ResumeDetailResponse get(Long id) {
+        hasAccess(id);
         Resume resume = resumeRepository.findById(id).orElseThrow();
         log.debug("retrieved from repository: " + resume.toString());
         return resumeMapper.toDto(resume);
     }
 
-    public void update(Long id, ResumeRequest request, Authentication connectedUser) {
-        hasAccess(id, connectedUser);
+    public void update(Long id, ResumeRequest request) {
+        hasAccess(id);
         Resume existingResume = resumeRepository.findById(id).orElseThrow();
         Resume updatedResume = resumeMapper.toEntity(request);
         // Copy the properties from the updated resume to the existing resume
@@ -53,8 +54,8 @@ public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRe
         resumeRepository.save(existingResume);
     }
 
-    public void delete(Long id, Authentication connectedUser) {
-        hasAccess(id, connectedUser);
+    public void delete(Long id) {
+        hasAccess(id);
         try {
             removePicture(resumeRepository.findById(id).orElseThrow());
             resumeRepository.deleteById(id);
@@ -64,9 +65,9 @@ public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRe
     }
         
 
-    public PageResponse<ResumeResponse> getAll(int page, int size, String order, Authentication connectedUser) {
+    public PageResponse<ResumeResponse> getAll(int page, int size, String order) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(order).descending());
-        Page<Resume> resumes = resumeRepository.findAllByCreatedBy(pageable, connectedUser.getName());
+        Page<Resume> resumes = resumeRepository.findAllByCreatedBy(pageable, securityUtils.getUserName());
         // Convert the page of resumes to a list of resume responses
         List<ResumeResponse> resumeResponses = resumes.stream()
             .map(resumeMapper::toSimpleDto)
@@ -83,24 +84,24 @@ public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRe
         );
     }
  
-    public void uploadPicture(Long id, MultipartFile file, Authentication connectedUser) {
-        hasAccess(id, connectedUser);
+    public void uploadPicture(Long id, MultipartFile file) {
+        hasAccess(id);
         Resume resume = resumeRepository.findById(id).orElseThrow();
         removePicture(resume);
         log.debug(null == file ? "null file" : "file name: " + file.getOriginalFilename());
-        String picture = fileStorageService.saveFile(file, connectedUser.getName());
+        String picture = fileStorageService.saveFile(file, securityUtils.getUserName());
         resume.setPicture(picture);
         resumeRepository.save(resume);
         log.debug(picture + " saved to resume with id " + id);
     }
 
-    public void deleteAll(Authentication connectedUser) {
+    public void deleteAll() {
         try {
-            List<Resume> resumes = resumeRepository.findAllByCreatedBy(connectedUser.getName());
+            List<Resume> resumes = resumeRepository.findAllByCreatedBy(securityUtils.getUserName());
             for (Resume resume : resumes) {
                 removePicture(resume);
             }
-            resumeRepository.deleteAllByCreatedBy(connectedUser.getName());
+            resumeRepository.deleteAllByCreatedBy(securityUtils.getUserName());
         } catch (Exception e) {
             throw e;
         }
@@ -113,11 +114,12 @@ public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRe
      * @param connectedUser the connected user
      * @throws AccessDeniedException if the connected user does not have access to the resume
      */
-    private void hasAccess(Long id, Authentication connectedUser) throws AccessDeniedException {
+    private void hasAccess(Long id) throws AccessDeniedException {
         String owner = resumeRepository.findCreatedBy(id).orElseThrow(() -> new EntityNotFoundException("Resume with id " + id + " not found"));
-        if (!connectedUser.getName().equals(owner)) {
-            log.debug("Access denied for user " + connectedUser.getName() + " to resume with id " + id + " created by " + owner);
-            throw new AccessDeniedException(connectedUser.getName() + " does not have access to the resume with id " + id);
+        String connectedUser = securityUtils.getUserName();
+        if (!connectedUser.equals(owner)) {
+            log.debug("Access denied for user " + connectedUser + " to resume with id " + id + " created by " + owner);
+            throw new AccessDeniedException(connectedUser + " does not have access to the resume with id " + id);
         }
     }
 
