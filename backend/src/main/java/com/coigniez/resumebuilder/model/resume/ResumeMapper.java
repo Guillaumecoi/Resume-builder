@@ -1,7 +1,9 @@
 package com.coigniez.resumebuilder.model.resume;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -27,10 +29,10 @@ public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeDetailR
                 .firstName(request.firstName())
                 .lastName(request.lastName())
                 .sections(Optional.ofNullable(request.sections())
-                            .orElse(Collections.emptyList())
-                            .stream()
-                            .map(sectionMapper::toEntity)
-                            .toList())
+                        .orElse(Collections.emptyList())
+                        .stream()
+                        .map(sectionMapper::toEntity)
+                        .collect(Collectors.toCollection(HashSet::new)))
                 .build();
     }
 
@@ -38,7 +40,7 @@ public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeDetailR
         if (entity == null) {
             return null;
         }
-
+    
         return ResumeDetailResponse.builder()
             .id(entity.getId())
             .title(entity.getTitle())
@@ -48,7 +50,7 @@ public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeDetailR
             .createdDate(entity.getCreatedDate().toString())
             .lastModifiedDate(entity.getLastModifiedDate().toString())
             .sections(Optional.ofNullable(entity.getSections())
-                .orElse(Collections.emptyList())
+                .orElse(Collections.emptySet())
                 .stream().map(sectionMapper::toDto).toList())
             .build();
     }

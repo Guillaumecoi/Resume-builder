@@ -48,6 +48,10 @@ public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRe
         hasAccess(id);
         Resume existingResume = resumeRepository.findById(id).orElseThrow();
         Resume updatedResume = resumeMapper.toEntity(request);
+
+        // Ignore sections during update
+        updatedResume.setSections(null);
+        
         // Copy the properties from the updated resume to the existing resume
         BeanUtils.copyProperties(updatedResume, existingResume, "id", "createdBy", "createdDate", "lastModifiedDate", "sections", "picture");
     

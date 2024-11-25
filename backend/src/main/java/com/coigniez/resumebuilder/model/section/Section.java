@@ -6,6 +6,7 @@ import com.coigniez.resumebuilder.model.common.BaseEntity;
 import com.coigniez.resumebuilder.model.resume.Resume;
 import com.coigniez.resumebuilder.model.sectionitem.SectionItem;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -37,6 +38,6 @@ public class Section implements BaseEntity {
     @JoinColumn(name = "resume_id", referencedColumnName = "id")
     private Resume resume;
 
-    @OneToMany(mappedBy = "section")
+    @OneToMany(mappedBy = "section", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SectionItem> items;
 }

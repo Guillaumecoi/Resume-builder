@@ -5,7 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.coigniez.resumebuilder.model.section.Section;
 import com.coigniez.resumebuilder.model.section.SectionRequest;
+import com.coigniez.resumebuilder.model.section.SectionResponse;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -40,8 +44,12 @@ public class ResumeMapperTest {
         assertEquals("John", entity.getFirstName());
         assertEquals("Doe", entity.getLastName());
         assertEquals(2, entity.getSections().size());
-        assertEquals("Education", entity.getSections().get(0).getTitle());
-        assertEquals("Experience", entity.getSections().get(1).getTitle());
+
+        Set<String> sectionTitles = entity.getSections().stream()
+                .map(Section::getTitle)
+                .collect(Collectors.toSet());
+
+        assertEquals(Set.of("Education", "Experience"), sectionTitles);
     }
 
     @Test
@@ -64,7 +72,7 @@ public class ResumeMapperTest {
             .lastName("Doe")
             .createdDate(LocalDateTime.parse("2023-01-01T00:00"))
             .lastModifiedDate(LocalDateTime.parse("2023-01-02T00:00"))
-            .sections(Arrays.asList(section1, section2))
+            .sections(new HashSet<>(Arrays.asList(section1, section2)))
             .build();
     
         // Act
@@ -78,8 +86,12 @@ public class ResumeMapperTest {
         assertEquals("2023-01-01T00:00", dto.getCreatedDate());
         assertEquals("2023-01-02T00:00", dto.getLastModifiedDate());
         assertEquals(2, dto.getSections().size());
-        assertEquals("Education", dto.getSections().get(0).getTitle());
-        assertEquals("Experience", dto.getSections().get(1).getTitle());
+
+        Set<String> sectionTitles = dto.getSections().stream()
+                .map(SectionResponse::getTitle)
+                .collect(Collectors.toSet());
+
+        assertEquals(Set.of("Education", "Experience"), sectionTitles);
     }
 
     @Test

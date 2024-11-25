@@ -1,8 +1,9 @@
 package com.coigniez.resumebuilder.model.resume;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -34,6 +35,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@DynamicUpdate
 @Table(name = "resume", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"title", "createdBy"})
 })
@@ -60,7 +62,6 @@ public class Resume implements BaseEntity, TimeTrackable, Creatable {
     @Column
     private LocalDateTime lastModifiedDate;
 
-    @OneToMany(mappedBy = "resume", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Section> sections;
-
+    @OneToMany(mappedBy = "resume", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    private Set<Section> sections;
 }
