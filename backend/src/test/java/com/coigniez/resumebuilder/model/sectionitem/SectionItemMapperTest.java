@@ -11,7 +11,9 @@ import com.coigniez.resumebuilder.model.sectionitem.itemtypes.*;
 
 import jakarta.validation.ConstraintViolationException;
 
+import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
@@ -142,5 +144,141 @@ class SectionItemMapperTest {
                 SectionItemType.SKILL.name(), 1, lowProficiency)));
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
                 SectionItemType.SKILL.name(), 1, highProficiency)));
+    }
+
+    @Test
+    void testToEntity_Textbox() {
+        // Arrange
+        Map<String, Object> correctComplete = new HashMap<>();
+        correctComplete.put("content", "This is some example text");
+    
+        Map<String, Object> nullContent = new HashMap<>();
+    
+        Map<String, Object> emptyContent = new HashMap<>();
+        emptyContent.put("content", "");
+    
+        // Act
+        SectionItem entityCorrectComplete = mapper.toEntity(new SectionItemRequest(
+                SectionItemType.TEXTBOX.name(), 1, correctComplete));
+    
+        // Assert
+        assertNotNull(entityCorrectComplete);
+        assertEquals(SectionItemType.TEXTBOX, entityCorrectComplete.getType());
+        assertEquals("This is some example text", ((Textbox) entityCorrectComplete.getData()).getContent());
+    
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
+                SectionItemType.TEXTBOX.name(), 1, nullContent)));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
+                SectionItemType.TEXTBOX.name(), 1, emptyContent)));
+    }
+
+    @Test
+    void testToEntity_Education() {
+        // Arrange
+        Map<String, Object> correctComplete = new HashMap<>();
+        correctComplete.put("degree", "Bachelor of Science");
+        correctComplete.put("institution", "University of Example");
+        correctComplete.put("startDate", LocalDate.of(2018, 1, 1));
+        correctComplete.put("endDate", LocalDate.of(2022, 1, 1));
+        correctComplete.put("description", "This is a description");
+
+        Map<String, Object> nullDegree = new HashMap<>(correctComplete);
+        nullDegree.remove("degree");
+
+        Map<String, Object> nullInstitution = new HashMap<>(correctComplete);
+        nullInstitution.remove("institution");
+
+        Map<String, Object> nullStartDate = new HashMap<>(correctComplete);
+        nullStartDate.remove("startDate");
+
+        Map<String, Object> nullEndDate = new HashMap<>(correctComplete);
+        nullEndDate.remove("endDate");
+
+        Map<String, Object> nullDescription = new HashMap<>(correctComplete);
+        nullDescription.remove("description");
+
+        Map<String, Object> emptyDegree = new HashMap<>(correctComplete);
+        emptyDegree.put("degree", "");
+
+        Map<String, Object> emptyInstitution = new HashMap<>(correctComplete);
+        emptyInstitution.put("institution", "");
+
+        Map<String, Object> lateStartDate = new HashMap<>(correctComplete);
+        lateStartDate.put("startDate", LocalDate.of(2024, 1, 1));
+
+        // Act
+        SectionItem entityCorrectComplete = mapper.toEntity(new SectionItemRequest(
+                SectionItemType.EDUCATION.name(), 1, correctComplete));
+
+        SectionItem entityNullDescription = mapper.toEntity(new SectionItemRequest(
+                SectionItemType.EDUCATION.name(), 1, nullDescription));
+
+        SectionItem entityNullEndDate = mapper.toEntity(new SectionItemRequest(
+                SectionItemType.EDUCATION.name(), 1, nullEndDate));
+
+        // Assert
+        assertNotNull(entityCorrectComplete);
+        assertEquals(SectionItemType.EDUCATION, entityCorrectComplete.getType());
+        assertEquals("Bachelor of Science", ((Education) entityCorrectComplete.getData()).getDegree());
+        assertEquals("University of Example", ((Education) entityCorrectComplete.getData()).getInstitution());
+        assertEquals(LocalDate.of(2018, 1, 1), ((Education) entityCorrectComplete.getData()).getStartDate());
+        assertEquals(LocalDate.of(2022, 1, 1), ((Education) entityCorrectComplete.getData()).getEndDate());
+        assertEquals("This is a description", ((Education) entityCorrectComplete.getData()).getDescription());
+        assertNotNull(entityNullDescription);
+        assertNotNull(entityNullEndDate);
+
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
+                SectionItemType.EDUCATION.name(), 1, nullDegree)));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
+                SectionItemType.EDUCATION.name(), 1, nullInstitution)));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
+                SectionItemType.EDUCATION.name(), 1, nullStartDate)));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
+                SectionItemType.EDUCATION.name(), 1, emptyDegree)));
+    }
+
+    @Test
+    void testToEntity_Workexperience() {
+        // Arrange
+        Map<String, Object> correctComplete = new HashMap<>();
+        correctComplete.put("jobTitle", "Software Engineer");
+        correctComplete.put("companyName", "Tech Corp");
+        correctComplete.put("startDate", LocalDate.of(2020, 1, 1));
+        correctComplete.put("endDate", LocalDate.of(2023, 1, 1));
+        correctComplete.put("description", "This is a description");
+        correctComplete.put("responsibilities", List.of("Responsibility 1", "Responsibility 2"));
+
+        Map<String, Object> nullJobTitle = new HashMap<>(correctComplete);
+        nullJobTitle.remove("jobTitle");
+
+        Map<String, Object> nullStartDate = new HashMap<>(correctComplete);
+        nullStartDate.remove("startDate");
+
+        Map<String, Object> lateStartDate = new HashMap<>(correctComplete);
+        lateStartDate.put("startDate", LocalDate.of(2024, 1, 1));
+
+        // Act
+        SectionItem entityCorrectComplete = mapper.toEntity(new SectionItemRequest(
+                SectionItemType.WORK_EXPERIENCE.name(), 1, correctComplete));
+
+        // Assert
+        assertNotNull(entityCorrectComplete);
+        assertEquals(SectionItemType.WORK_EXPERIENCE, entityCorrectComplete.getType());
+        assertEquals("Software Engineer", ((WorkExperience) entityCorrectComplete.getData()).getJobTitle());
+        assertEquals("Tech Corp", ((WorkExperience) entityCorrectComplete.getData()).getCompanyName());
+        assertEquals(LocalDate.of(2020, 1, 1), ((WorkExperience) entityCorrectComplete.getData()).getStartDate());
+        assertEquals(LocalDate.of(2023, 1, 1), ((WorkExperience) entityCorrectComplete.getData()).getEndDate());
+        assertEquals("This is a description", ((WorkExperience) entityCorrectComplete.getData()).getDescription());
+        assertEquals(List.of("Responsibility 1", "Responsibility 2"), ((WorkExperience) entityCorrectComplete.getData()).getResponsibilities());
+
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
+                SectionItemType.WORK_EXPERIENCE.name(), 1, nullJobTitle)));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
+                SectionItemType.WORK_EXPERIENCE.name(), 1, nullStartDate)));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
+                SectionItemType.WORK_EXPERIENCE.name(), 1, lateStartDate)));
     }
 }
