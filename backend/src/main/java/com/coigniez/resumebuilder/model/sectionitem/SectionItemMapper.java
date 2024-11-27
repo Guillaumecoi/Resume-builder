@@ -1,10 +1,12 @@
 package com.coigniez.resumebuilder.model.sectionitem;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import com.coigniez.resumebuilder.interfaces.Mapper;
+import com.coigniez.resumebuilder.model.sectionitem.itemtypes.SectionItemData;
 import com.coigniez.resumebuilder.model.sectionitem.itemtypes.SectionItemType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -30,8 +32,11 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest
 
         SectionItemType type = SectionItemType.valueOf(request.type());
 
-        // Convert data into the appropriate type
-        Object dataObject = objectMapper.convertValue(request.data(), type.getDataType());
+        // Add @class type information to the data
+        Map<String, Object> dataWithType = new HashMap<>(request.data());
+        dataWithType.put("@class", type.getDataType().getName());
+
+        Object dataObject = objectMapper.convertValue(dataWithType, type.getDataType());
     
         // Validate the deserialized data object
         validateDataObject(dataObject);
@@ -39,7 +44,7 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest
         SectionItem sectionItem = SectionItem.builder()
                 .type(type) 
                 .itemOrder(request.itemOrder())
-                .data(dataObject)
+                .data((SectionItemData) dataObject)
                 .build();
     
         return sectionItem;

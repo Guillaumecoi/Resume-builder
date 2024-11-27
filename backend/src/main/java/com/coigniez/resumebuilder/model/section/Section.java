@@ -38,6 +38,6 @@ public class Section implements BaseEntity {
     @JoinColumn(name = "resume_id", referencedColumnName = "id")
     private Resume resume;
 
-    @OneToMany(mappedBy = "section", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "section", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SectionItem> items;
 }

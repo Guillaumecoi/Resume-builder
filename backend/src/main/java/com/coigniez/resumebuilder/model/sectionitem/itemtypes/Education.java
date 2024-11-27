@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Education {
+public class Education implements SectionItemData {
 
     @NotBlank
     private String degree;

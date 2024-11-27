@@ -48,6 +48,7 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
         hasAccess(id);
         Section section = sectionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(""));
+        section.setItems(sectionItemService.getAll(id));
         return sectionMapper.toDto(section);
     }
 
@@ -72,8 +73,9 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
         if(sectionItems == null) {
             return;
         }
-        sectionItems.stream()
-                .map(item -> sectionItemService.create(section, item));
+        for (SectionItemRequest sectionItemRequest : sectionItems) {
+            sectionItemService.create(section, sectionItemRequest);
+        }
     }
 
     private void hasAccess(Long id) {

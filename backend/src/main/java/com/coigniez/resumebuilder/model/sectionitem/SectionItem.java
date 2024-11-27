@@ -1,7 +1,11 @@
 package com.coigniez.resumebuilder.model.sectionitem;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import com.coigniez.resumebuilder.model.common.BaseEntity;
 import com.coigniez.resumebuilder.model.section.Section;
+import com.coigniez.resumebuilder.model.sectionitem.itemtypes.SectionItemData;
 import com.coigniez.resumebuilder.model.sectionitem.itemtypes.SectionItemType;
 
 import jakarta.persistence.Column;
@@ -41,6 +45,7 @@ public class SectionItem implements BaseEntity {
 
     private Integer itemOrder;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private Object data;
+    private SectionItemData data;
 }

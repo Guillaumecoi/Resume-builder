@@ -26,16 +26,14 @@ class SectionItemMapperTest {
     @Test
     void testToDto() {
         // Arrange
-        Map<String, Object> data = new HashMap<>();
-        data.put("jobTitle", "Software Engineer");
-        data.put("companyName", "Tech Corp");
-        data.put("startDate", "2020-01-01");
-        data.put("endDate", "2023-01-01");
+        SectionItemData data = Textbox.builder()
+                .content("This is some example text")
+                .build();
 
 
         SectionItem entity = SectionItem.builder()
                 .id(1L)
-                .type(SectionItemType.WORK_EXPERIENCE)
+                .type(SectionItemType.TEXTBOX)
                 .itemOrder(1)
                 .data(data)
                 .build();
@@ -48,8 +46,10 @@ class SectionItemMapperTest {
         assertEquals(entity.getId(), dto.getId());
         assertEquals(entity.getType().name(), dto.getType());
         assertEquals(entity.getItemOrder(), dto.getItemOrder());
-        assertEquals(entity.getData(), dto.getData());
+        assertNotNull(dto.getData());
+        assertEquals("This is some example text", ((Map<String, Object>) dto.getData()).get("content"));
     }
+
     @Test
     void testToDto_nullEntity() {
         // Act
@@ -280,5 +280,30 @@ class SectionItemMapperTest {
                 SectionItemType.WORK_EXPERIENCE.name(), 1, nullStartDate)));
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
                 SectionItemType.WORK_EXPERIENCE.name(), 1, lateStartDate)));
+    }
+
+    @Test
+    void testToEntityAndBack() {
+        // Arrange
+        Map<String, Object> data = new HashMap<>();
+        data.put("content", "This is some example text");
+
+        SectionItemRequest request = new SectionItemRequest(
+                SectionItemType.TEXTBOX.name(),
+                2,
+                data
+        );
+
+        // Act
+        SectionItem entity = mapper.toEntity(request);
+        SectionItemResponse dto = mapper.toDto(entity);
+
+        // Assert
+        assertNotNull(dto);
+        assertEquals(entity.getId(), dto.getId());
+        assertEquals(entity.getType().name(), dto.getType());
+        assertEquals(entity.getItemOrder(), dto.getItemOrder());
+        assertNotNull(dto.getData());
+        assertEquals("This is some example text", ((Map<String, Object>) dto.getData()).get("content"));
     }
 }

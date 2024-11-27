@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class WorkExperience {
+public class WorkExperience implements SectionItemData {
     @NotBlank
     private String jobTitle;
     private String companyName;

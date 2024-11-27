@@ -1,5 +1,7 @@
 package com.coigniez.resumebuilder.model.sectionitem;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.model.section.Section;
@@ -31,6 +33,10 @@ public class SectionItemService {
         sectionItem.setSection(section);
     
         return sectionitemRepository.save(sectionItem).getId();
+    }
+
+    public List<SectionItem> getAll(Long id) {
+        return sectionitemRepository.findAllBySectionId(id);
     }
     
 

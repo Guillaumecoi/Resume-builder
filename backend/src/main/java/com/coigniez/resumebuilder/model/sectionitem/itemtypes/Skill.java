@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Skill {
+public class Skill implements SectionItemData {
     @NotBlank
     private String name;
     @Min(1)
