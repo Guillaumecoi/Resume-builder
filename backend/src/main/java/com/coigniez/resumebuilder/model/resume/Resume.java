@@ -1,6 +1,7 @@
 package com.coigniez.resumebuilder.model.resume;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.hibernate.annotations.DynamicUpdate;
@@ -21,24 +22,24 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
-@Table(name = "resume", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"title", "createdBy"})
-})
+@NamedEntityGraph(name = "resume.sections", attributeNodes = @NamedAttributeNode("sections"))
 public class Resume implements BaseEntity, TimeTrackable, Creatable {
 
     @Id
@@ -63,5 +64,11 @@ public class Resume implements BaseEntity, TimeTrackable, Creatable {
     private LocalDateTime lastModifiedDate;
 
     @OneToMany(mappedBy = "resume", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
-    private Set<Section> sections;
+    @Builder.Default
+    private Set<Section> sections = new HashSet<>();
+
+    public void addSection(Section section) {
+        sections.add(section);
+        section.setResume(this);
+    }
 }

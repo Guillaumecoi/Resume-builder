@@ -3,6 +3,7 @@ package com.coigniez.resumebuilder.model.sectionitem.itemtypes;
 import java.time.LocalDate;
 
 import com.coigniez.resumebuilder.validation.DateValidationUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
@@ -25,6 +26,7 @@ public class Education implements SectionItemData {
     private LocalDate endDate;
     private String description;
 
+    @JsonIgnore
     @AssertTrue
     public boolean isValidDates() {
         return DateValidationUtils.isValidDateRange(startDate, endDate);

@@ -1,5 +1,6 @@
 package com.coigniez.resumebuilder.model.section;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.coigniez.resumebuilder.model.common.BaseEntity;
@@ -17,10 +18,12 @@ import jakarta.persistence.Table;
 import jakarta.persistence.FetchType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -34,10 +37,17 @@ public class Section implements BaseEntity {
 
     private String title;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", referencedColumnName = "id")
     private Resume resume;
 
-    @OneToMany(mappedBy = "section", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SectionItem> items;
+    @OneToMany(mappedBy = "section", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<SectionItem> items = new ArrayList<>();
+
+    public void addSectionItem(SectionItem item) {
+        items.add(item);
+        item.setSection(this);
+    }
 }

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface ResumeRepository extends JpaRepository<Resume, Long> {
+
+    @EntityGraph(value = "Resume.withSections")
+    Optional<Resume> findById(long id);
 
     @Query("SELECT r.createdBy FROM Resume r WHERE r.id = :id")
     Optional<String> findCreatedBy(@Param("id") Long id);

@@ -1,9 +1,9 @@
 package com.coigniez.resumebuilder.model.sectionitem.itemtypes;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import com.coigniez.resumebuilder.validation.DateValidationUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
@@ -23,8 +23,9 @@ public class WorkExperience implements SectionItemData {
     private LocalDate startDate;
     private LocalDate endDate;
     private String description;
-    private List<String> responsibilities;
+    private String responsibilities;  // Items are seperated by the newline character '\n'
 
+    @JsonIgnore
     @AssertTrue
     public boolean isValidDates() {
         return DateValidationUtils.isValidDateRange(startDate, endDate);

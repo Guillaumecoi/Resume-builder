@@ -1,5 +1,6 @@
 package com.coigniez.resumebuilder.model.section;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,5 +13,8 @@ public interface SectionRepository extends JpaRepository<Section, Long> {
     
     @Query("SELECT r.createdBy FROM Section s JOIN s.resume r WHERE s.id = :id")
     Optional<String> findCreatedBy(@Param("id") Long id);
+
+    @Query("SELECT s FROM Section s JOIN s.resume r WHERE r.id = :id")
+    List<Section> findAllByResumeId(@Param("id") Long id);
 
 }

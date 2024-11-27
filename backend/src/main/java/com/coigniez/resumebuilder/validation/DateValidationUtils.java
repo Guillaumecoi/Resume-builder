@@ -11,15 +11,9 @@ public class DateValidationUtils {
      * @return true if dates are valid, false otherwise
      */
     public static boolean isValidDateRange(LocalDate startDate, LocalDate endDate) {
-        // The dates are always valid if the end date is not set
-        if (endDate == null) {
+        if (startDate == null || endDate == null) {
             return true;
         }
-        // Start date cannot be null if end date is set 
-        if (startDate == null) {
-            return false;
-        }
-        // Start date must be before end date
         return startDate.isBefore(endDate);
     }
 }

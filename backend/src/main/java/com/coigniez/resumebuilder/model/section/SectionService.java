@@ -33,7 +33,7 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
 
         Section section = sectionMapper.toEntity(request);
         Resume resume = resumeRepository.findById(parentId).orElseThrow();
-        section.setResume(resume);
+        resume.addSection(section);
         Long sectionId = sectionRepository.save(section).getId();
 
         Section createdSection = sectionRepository.findById(sectionId)
@@ -48,25 +48,43 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
         hasAccess(id);
         Section section = sectionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(""));
-        section.setItems(sectionItemService.getAll(id));
         return sectionMapper.toDto(section);
     }
 
     public void update(Long id, SectionRequest request) {
         hasAccess(id);
         Section existingSection = sectionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(""));
-        Section UpdatedSection = sectionMapper.toEntity(request);
-        BeanUtils.copyProperties(UpdatedSection, existingSection, "id", "resume", "sectionItems");
+                .orElseThrow(() -> new EntityNotFoundException("Section not found"));
+                
+        // Update basic properties
+        Section updatedSection = sectionMapper.toEntity(request);
+        BeanUtils.copyProperties(updatedSection, existingSection, "id", "resume", "items");
+        
+        // Clear and update items in one transaction
+        existingSection.getItems().clear();
+        if (request.sectionItems() != null) {
+            createSectionItems(existingSection, request.sectionItems());
+        }
+        
         sectionRepository.save(existingSection);
-
-        sectionItemService.deleteAllBySectionId(id);
-        createSectionItems(existingSection, request.sectionItems());
     }
 
     public void delete(Long id) {
         hasAccess(id);
+        Section section = sectionRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(""));
+
+        Resume resume = section.getResume();
+        resume.getSections().remove(section);
+
         sectionRepository.deleteById(id);
+    }
+
+    public List<SectionResponse> getAll(Long resumeId) {
+        List<Section> sections = sectionRepository.findAllByResumeId(resumeId);
+        return sections.stream()
+                .map(sectionMapper::toDto)
+                .toList();
     }
 
     private void createSectionItems(Section section, List<SectionItemRequest> sectionItems) {

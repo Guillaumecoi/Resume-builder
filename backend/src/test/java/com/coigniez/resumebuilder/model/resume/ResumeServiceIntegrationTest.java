@@ -2,6 +2,7 @@ package com.coigniez.resumebuilder.model.resume;
 import com.coigniez.resumebuilder.model.common.PageResponse;
 import com.coigniez.resumebuilder.model.section.SectionRequest;
 import com.coigniez.resumebuilder.model.section.SectionResponse;
+import com.coigniez.resumebuilder.model.section.SectionService;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -39,6 +40,9 @@ public class ResumeServiceIntegrationTest {
 
     @Autowired
     private ResumeService resumeService;
+
+    @Autowired
+    private SectionService sectionService;
 
     private Authentication testuser;
     private Authentication otheruser;
@@ -81,7 +85,35 @@ public class ResumeServiceIntegrationTest {
         assertNotNull(resume.getCreatedDate());
         assertNotNull(resume.getLastModifiedDate());
         assertThat(resume.getSections()).hasSize(2);
-        assertThat(resume.getSections().stream().map(SectionResponse::getTitle)).containsExactly("Education", "Experience");
+        assertThat(resume.getSections().stream().map(SectionResponse::getTitle))
+            .containsExactlyInAnyOrder("Education", "Experience");
+    }
+
+    @Test
+    void testAddSectionAndGet() {
+        // Arrange
+        ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
+                        List.of(new SectionRequest(null, "Education", null), new SectionRequest(null, "Experience", null)));
+
+        Long resumeId = resumeService.create(null, resumeRequest);
+
+        SectionRequest sectionRequest = new SectionRequest(null, "Summary", null);
+
+        // Act
+        sectionService.create(resumeId, sectionRequest);
+        ResumeDetailResponse resume = resumeService.get(resumeId);
+
+        // Assert
+        assertThat(resume).isNotNull();
+        assertThat(resume.getId()).isNotNull();
+        assertEquals("Software Engineer", resume.getTitle());
+        assertEquals("John", resume.getFirstName());
+        assertEquals("Doe", resume.getLastName());
+        assertNotNull(resume.getCreatedDate());
+        assertNotNull(resume.getLastModifiedDate());
+        assertThat(resume.getSections()).hasSize(3);
+        assertThat(resume.getSections().stream().map(SectionResponse::getTitle))
+        .containsExactlyInAnyOrder("Education", "Experience", "Summary");
     }
 
     @Test

@@ -30,7 +30,7 @@ public class SectionItemService {
         }
     
         sectionItem.setItemOrder(newOrder);
-        sectionItem.setSection(section);
+        section.addSectionItem(sectionItem);
     
         return sectionitemRepository.save(sectionItem).getId();
     }

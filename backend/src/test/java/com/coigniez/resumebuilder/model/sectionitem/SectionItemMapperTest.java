@@ -13,7 +13,6 @@ import jakarta.validation.ConstraintViolationException;
 
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
@@ -214,6 +213,9 @@ class SectionItemMapperTest {
         SectionItem entityNullDescription = mapper.toEntity(new SectionItemRequest(
                 SectionItemType.EDUCATION.name(), 1, nullDescription));
 
+        SectionItem entityNullStartDate = mapper.toEntity(new SectionItemRequest(
+                SectionItemType.EDUCATION.name(), 1, nullStartDate));
+
         SectionItem entityNullEndDate = mapper.toEntity(new SectionItemRequest(
                 SectionItemType.EDUCATION.name(), 1, nullEndDate));
 
@@ -226,6 +228,7 @@ class SectionItemMapperTest {
         assertEquals(LocalDate.of(2022, 1, 1), ((Education) entityCorrectComplete.getData()).getEndDate());
         assertEquals("This is a description", ((Education) entityCorrectComplete.getData()).getDescription());
         assertNotNull(entityNullDescription);
+        assertNotNull(entityNullStartDate);
         assertNotNull(entityNullEndDate);
 
         // Act & Assert
@@ -233,8 +236,6 @@ class SectionItemMapperTest {
                 SectionItemType.EDUCATION.name(), 1, nullDegree)));
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
                 SectionItemType.EDUCATION.name(), 1, nullInstitution)));
-        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
-                SectionItemType.EDUCATION.name(), 1, nullStartDate)));
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
                 SectionItemType.EDUCATION.name(), 1, emptyDegree)));
     }
@@ -248,13 +249,11 @@ class SectionItemMapperTest {
         correctComplete.put("startDate", LocalDate.of(2020, 1, 1));
         correctComplete.put("endDate", LocalDate.of(2023, 1, 1));
         correctComplete.put("description", "This is a description");
-        correctComplete.put("responsibilities", List.of("Responsibility 1", "Responsibility 2"));
+        correctComplete.put("responsibilities", "Responsibility 1 \nResponsibility 2");
 
         Map<String, Object> nullJobTitle = new HashMap<>(correctComplete);
         nullJobTitle.remove("jobTitle");
 
-        Map<String, Object> nullStartDate = new HashMap<>(correctComplete);
-        nullStartDate.remove("startDate");
 
         Map<String, Object> lateStartDate = new HashMap<>(correctComplete);
         lateStartDate.put("startDate", LocalDate.of(2024, 1, 1));
@@ -271,13 +270,11 @@ class SectionItemMapperTest {
         assertEquals(LocalDate.of(2020, 1, 1), ((WorkExperience) entityCorrectComplete.getData()).getStartDate());
         assertEquals(LocalDate.of(2023, 1, 1), ((WorkExperience) entityCorrectComplete.getData()).getEndDate());
         assertEquals("This is a description", ((WorkExperience) entityCorrectComplete.getData()).getDescription());
-        assertEquals(List.of("Responsibility 1", "Responsibility 2"), ((WorkExperience) entityCorrectComplete.getData()).getResponsibilities());
+        assertEquals("Responsibility 1 \nResponsibility 2", ((WorkExperience) entityCorrectComplete.getData()).getResponsibilities());
 
         // Act & Assert
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
                 SectionItemType.WORK_EXPERIENCE.name(), 1, nullJobTitle)));
-        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
-                SectionItemType.WORK_EXPERIENCE.name(), 1, nullStartDate)));
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
                 SectionItemType.WORK_EXPERIENCE.name(), 1, lateStartDate)));
     }
