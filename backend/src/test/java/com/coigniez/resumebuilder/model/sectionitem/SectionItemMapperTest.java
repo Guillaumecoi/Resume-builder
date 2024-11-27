@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.coigniez.resumebuilder.model.sectionitem.itemtypes.SectionItemType;
+import com.coigniez.resumebuilder.model.sectionitem.itemtypes.*;
+
+import jakarta.validation.ConstraintViolationException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +23,7 @@ class SectionItemMapperTest {
 
     @Test
     void testToDto() {
-        // Arrange: Create a SectionItem entity
+        // Arrange
         Map<String, Object> data = new HashMap<>();
         data.put("jobTitle", "Software Engineer");
         data.put("companyName", "Tech Corp");
@@ -36,10 +38,10 @@ class SectionItemMapperTest {
                 .data(data)
                 .build();
 
-        // Act: Map the entity to a DTO
+        // Ac
         SectionItemResponse dto = mapper.toDto(entity);
 
-        // Assert: Verify the mapping
+        // Assert
         assertNotNull(dto);
         assertEquals(entity.getId(), dto.getId());
         assertEquals(entity.getType().name(), dto.getType());
@@ -48,16 +50,16 @@ class SectionItemMapperTest {
     }
     @Test
     void testToDto_nullEntity() {
-        // Act: Map a null entity to a DTO
+        // Act
         SectionItemResponse dto = mapper.toDto(null);
 
-        // Assert: Verify the mapping
+        // Assert
         assertNull(dto);
     }
 
     @Test
     void testToEntity() {
-        // Arrange: Create a SectionItemRequest
+        // Arrange
         Map<String, Object> data = new HashMap<>();
         data.put("content", "This is some example text");
 
@@ -67,14 +69,16 @@ class SectionItemMapperTest {
                 data
         );
 
-        // Act: Map the request to an entity
+        // Act
         SectionItem entity = mapper.toEntity(request);
 
-        // Assert: Verify the mapping
+        // Assert
         assertNotNull(entity);
         assertEquals(SectionItemType.TEXTBOX, entity.getType());
         assertEquals(request.itemOrder(), entity.getItemOrder());
-        assertEquals(request.data(), entity.getData());
+        assertTrue(entity.getData() instanceof Textbox);
+        assertEquals("This is some example text", ((Textbox) entity.getData()).getContent());
+
     }
 
     @Test
@@ -84,5 +88,59 @@ class SectionItemMapperTest {
 
         // Assert: Verify the mapping
         assertNull(entity);
+    }
+
+    @Test
+    void testToEntity_Skill() {
+        // Arrange
+        Map<String, Object> correctComplete = new HashMap<>();
+        correctComplete.put("name", "Java");
+        correctComplete.put("proficiency", 8);
+    
+        Map<String, Object> nullProficiency = new HashMap<>();
+        nullProficiency.put("name", "Java");
+    
+        Map<String, Object> nullName = new HashMap<>();
+        nullName.put("proficiency", 8);
+    
+        Map<String, Object> emptyName = new HashMap<>();
+        emptyName.put("name", "");
+        emptyName.put("proficiency", 8);
+    
+        Map<String, Object> lowProficiency = new HashMap<>();
+        lowProficiency.put("name", "Java");
+        lowProficiency.put("proficiency", 0);
+    
+        Map<String, Object> highProficiency = new HashMap<>();
+        highProficiency.put("name", "Java");
+        highProficiency.put("proficiency", 11);
+    
+        // Act
+        SectionItem entityCorrectComplete = mapper.toEntity(new SectionItemRequest(
+                SectionItemType.SKILL.name(), 1, correctComplete));
+    
+        SectionItem entityNullProficiency = mapper.toEntity(new SectionItemRequest(
+                SectionItemType.SKILL.name(), 1, nullProficiency));
+    
+        // Assert
+        assertNotNull(entityCorrectComplete);
+        assertEquals(SectionItemType.SKILL, entityCorrectComplete.getType());
+        assertEquals("Java", ((Skill) entityCorrectComplete.getData()).getName());
+        assertEquals(8, ((Skill) entityCorrectComplete.getData()).getProficiency());     
+        assertNotNull(entityNullProficiency);
+        assertEquals(SectionItemType.SKILL, entityNullProficiency.getType());
+        assertEquals("Java", ((Skill) entityNullProficiency.getData()).getName());
+        assertNull(((Skill) entityNullProficiency.getData()).getProficiency());
+        
+    
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
+                SectionItemType.SKILL.name(), 1, nullName)));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
+                SectionItemType.SKILL.name(), 1, emptyName)));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
+                SectionItemType.SKILL.name(), 1, lowProficiency)));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
+                SectionItemType.SKILL.name(), 1, highProficiency)));
     }
 }
