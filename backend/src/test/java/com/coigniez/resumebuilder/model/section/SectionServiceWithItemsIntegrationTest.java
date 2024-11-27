@@ -17,8 +17,11 @@ import com.coigniez.resumebuilder.model.resume.ResumeService;
 import com.coigniez.resumebuilder.model.sectionitem.SectionItemRequest;
 import com.coigniez.resumebuilder.model.sectionitem.itemtypes.SectionItemType;
 
+import jakarta.validation.ConstraintViolationException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,6 +91,67 @@ public class SectionServiceWithItemsIntegrationTest {
         assertEquals("This is some example text", response.getSectionItems().get(0).getData().get("content"));
         assertEquals("Java", response.getSectionItems().get(1).getData().get("name"));
         assertEquals(5, response.getSectionItems().get(1).getData().get("proficiency"));
+    }
+
+    @Test
+    void testUpdate() {
+        // Arrange
+        List<SectionItemRequest> sectionItems = new ArrayList<>();
+
+        // Add a textbox item to the section
+        Map<String, Object> Textbox = new HashMap<>();
+        Textbox.put("content", "This is some example text");
+        sectionItems.add(new SectionItemRequest(SectionItemType.TEXTBOX.name(), 1, Textbox));
+
+        // Add a skill item to the section
+        Map<String, Object> Skill = new HashMap<>();
+        Skill.put("name", "Java");
+        Skill.put("proficiency", 5);
+        sectionItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), 2, Skill));
+
+        SectionRequest request = new SectionRequest(null, "Test Section", sectionItems);
+
+        Long sectionId = sectionService.create(resumeId, request);
+
+        // Update the section
+        List<SectionItemRequest> updatedSectionItems = new ArrayList<>();
+
+        // Add a new skill item to the section
+        Map<String, Object> Skill2 = new HashMap<>();
+        Skill2.put("name", "Python");
+        Skill2.put("proficiency", 4);
+        updatedSectionItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), 1, Skill2));
+
+        SectionRequest updatedRequest = new SectionRequest(null, "Updated Section", updatedSectionItems);
+
+        // Act
+        sectionService.update(sectionId, updatedRequest);
+        SectionResponse response = sectionService.get(sectionId);
+
+        // Assert
+        assertNotNull(sectionId);
+        assertEquals("Updated Section", response.getTitle());
+        assertEquals(1, response.getSectionItems().size());
+        assertEquals(1, response.getSectionItems().get(0).getItemOrder());
+        assertEquals(SectionItemType.SKILL.name(), response.getSectionItems().get(0).getType());
+        assertEquals("Python", response.getSectionItems().get(0).getData().get("name"));
+        assertEquals(4, response.getSectionItems().get(0).getData().get("proficiency"));
+    }
+
+    @Test
+    void testValidation() {
+        // Arrange
+        List<SectionItemRequest> sectionItems = new ArrayList<>();
+
+        // Add a skill item to the section
+        Map<String, Object> emptyskill = new HashMap<>();
+        emptyskill.put("name", "");
+        sectionItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), 1, emptyskill));
+
+        SectionRequest request = new SectionRequest(null, "Test Section", sectionItems);
+
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () -> sectionService.create(resumeId, request));
     }
 
 
