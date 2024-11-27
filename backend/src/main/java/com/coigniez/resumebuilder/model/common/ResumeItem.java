@@ -1,6 +1,6 @@
 package com.coigniez.resumebuilder.model.common;
 
-import com.coigniez.resumebuilder.model.resume.resume.Resume;
+import com.coigniez.resumebuilder.model.resume.Resume;
 
 /**
  * Interface for resume section items.

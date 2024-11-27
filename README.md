@@ -27,7 +27,7 @@ Transform your professional story into a stunning resume in minutes. Built with 
 
 1. **Phase 1**: Core Backend Functionality *(Current)*
    > Establishing foundational backend services with security, database, and core business logic
-   - Spring Boot REST API setup
+   - ~~Spring Boot REST API setup~~
    - ~~PostgreSQL database integration~~
    - ~~Keycloak authentication setup~~
    - ~~Local development environment with Docker Compose~~
