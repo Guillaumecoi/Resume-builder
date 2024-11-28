@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.interfaces.Mapper;
-import com.coigniez.resumebuilder.model.sectionitem.SectionItemMapper;
-import com.coigniez.resumebuilder.model.sectionitem.SectionItemResponse;
+import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemMapper;
+import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemResponse;
 
 import lombok.AllArgsConstructor;
 

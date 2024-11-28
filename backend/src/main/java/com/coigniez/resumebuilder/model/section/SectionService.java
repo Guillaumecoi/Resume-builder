@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import com.coigniez.resumebuilder.interfaces.CrudService;
 import com.coigniez.resumebuilder.model.resume.Resume;
 import com.coigniez.resumebuilder.model.resume.ResumeRepository;
-import com.coigniez.resumebuilder.model.sectionitem.SectionItemRequest;
-import com.coigniez.resumebuilder.model.sectionitem.SectionItemService;
+import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemRequest;
+import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemService;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import jakarta.persistence.EntityNotFoundException;

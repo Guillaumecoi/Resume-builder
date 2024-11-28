@@ -14,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.coigniez.resumebuilder.model.resume.ResumeRequest;
 import com.coigniez.resumebuilder.model.resume.ResumeService;
-import com.coigniez.resumebuilder.model.sectionitem.SectionItemRequest;
-import com.coigniez.resumebuilder.model.sectionitem.itemtypes.SectionItemType;
+import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemRequest;
+import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.SectionItemType;
 
 import jakarta.validation.ConstraintViolationException;
 

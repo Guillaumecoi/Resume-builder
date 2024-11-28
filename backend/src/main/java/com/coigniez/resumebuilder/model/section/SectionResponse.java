@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.model.section;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.model.sectionitem.SectionItemResponse;
+import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemResponse;
 
 import lombok.Builder;
 import lombok.Data;

@@ -1,12 +1,12 @@
-package com.coigniez.resumebuilder.model.sectionitem;
+package com.coigniez.resumebuilder.model.section.sectionitem;
 
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import com.coigniez.resumebuilder.model.common.BaseEntity;
 import com.coigniez.resumebuilder.model.section.Section;
-import com.coigniez.resumebuilder.model.sectionitem.itemtypes.SectionItemData;
-import com.coigniez.resumebuilder.model.sectionitem.itemtypes.SectionItemType;
+import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.SectionItemData;
+import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.SectionItemType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.model.sectionitem;
+package com.coigniez.resumebuilder.model.section.sectionitem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,8 +6,8 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import com.coigniez.resumebuilder.interfaces.Mapper;
-import com.coigniez.resumebuilder.model.sectionitem.itemtypes.SectionItemData;
-import com.coigniez.resumebuilder.model.sectionitem.itemtypes.SectionItemType;
+import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.SectionItemData;
+import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.SectionItemType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.validation.ConstraintViolation;

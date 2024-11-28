@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.coigniez.resumebuilder.model.common.BaseEntity;
 import com.coigniez.resumebuilder.model.resume.Resume;
-import com.coigniez.resumebuilder.model.sectionitem.SectionItem;
+import com.coigniez.resumebuilder.model.section.sectionitem.SectionItem;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

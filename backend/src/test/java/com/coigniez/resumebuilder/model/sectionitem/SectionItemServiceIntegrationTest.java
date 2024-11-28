@@ -23,8 +23,12 @@ import com.coigniez.resumebuilder.model.section.Section;
 import com.coigniez.resumebuilder.model.section.SectionRepository;
 import com.coigniez.resumebuilder.model.section.SectionRequest;
 import com.coigniez.resumebuilder.model.section.SectionService;
-import com.coigniez.resumebuilder.model.sectionitem.itemtypes.SectionItemType;
-import com.coigniez.resumebuilder.model.sectionitem.itemtypes.Textbox;
+import com.coigniez.resumebuilder.model.section.sectionitem.SectionItem;
+import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemRepository;
+import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemRequest;
+import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemService;
+import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.SectionItemType;
+import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.Textbox;
 
 import jakarta.transaction.Transactional;
 

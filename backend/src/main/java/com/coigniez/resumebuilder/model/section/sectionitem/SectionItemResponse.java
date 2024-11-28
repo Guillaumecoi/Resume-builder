@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.model.sectionitem;
+package com.coigniez.resumebuilder.model.section.sectionitem;
 
 import java.util.Map;
 

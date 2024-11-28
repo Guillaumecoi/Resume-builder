@@ -9,9 +9,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.model.sectionitem.itemtypes.SectionItemData;
-import com.coigniez.resumebuilder.model.sectionitem.itemtypes.SectionItemType;
-import com.coigniez.resumebuilder.model.sectionitem.itemtypes.Textbox;
+import com.coigniez.resumebuilder.model.section.sectionitem.SectionItem;
+import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemRepository;
+import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.SectionItemData;
+import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.SectionItemType;
+import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.Textbox;
 
 @SpringBootTest
 @ActiveProfiles("test")

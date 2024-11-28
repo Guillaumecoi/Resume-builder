@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.model.section;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.model.sectionitem.SectionItemRequest;
+import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemRequest;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

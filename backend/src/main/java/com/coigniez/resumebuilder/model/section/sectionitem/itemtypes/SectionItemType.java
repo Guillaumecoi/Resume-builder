@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.model.sectionitem.itemtypes;
+package com.coigniez.resumebuilder.model.section.sectionitem.itemtypes;
 
 public enum SectionItemType {
     WORK_EXPERIENCE(WorkExperience.class),
