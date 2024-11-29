@@ -5,16 +5,15 @@ import java.util.List;
 
 import com.coigniez.resumebuilder.model.common.BaseEntity;
 import com.coigniez.resumebuilder.model.layout.Layout;
+import com.coigniez.resumebuilder.model.layout.enums.ColorLocation;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 @Entity
 @Table(name = "column")
 public class Column implements BaseEntity {
@@ -30,8 +29,8 @@ public class Column implements BaseEntity {
     @OrderBy("position ASC")
     private List<ColumnSectionMapping> sectionMappings = new ArrayList<>();
     
-    private String backgroundColor;
-    private String textColor;
+    private ColorLocation backgroundColor;
+    private ColorLocation textColor;
     
     @Min(0)
     private Double paddingLeft = 10.0;

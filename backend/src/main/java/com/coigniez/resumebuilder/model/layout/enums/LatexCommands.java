@@ -1,45 +1,32 @@
 package com.coigniez.resumebuilder.model.layout.enums;
 
-import java.util.Map;
+import jakarta.persistence.*;
+import lombok.*;
 
-public final class LatexCommands {
-    private LatexCommands() {} // Prevent instantiation
+@Embeddable
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter @Setter
+@Builder
+public class LatexCommands {
 
-    private static final String CV_TITLE = String.join("\n",
-        "\\newcommand{\\cvtitle}[1]{",
-        "   \\hspace{6pt}\\textbf{\\Large{\\uppercase{#1}}}\\\\[-4pt]",
-        "   \\textcolor{accentcolor}{\\rule{80pt}{2pt}}",
-        "}"
-    );
+    @Builder.Default
+    private String cvSection = """
+        \\newenvironment{cvsection}[3]{
+            \\cvtitle{#1}
+            #3
+            \\begin{itemize}[left=0pt, itemsep=#2, label={}, topsep=10pt]
+                }{
+            \\end{itemize}
+            \\vspace{20pt}
+        }""";
 
-    private static final String CV_SECTION = String.join("\n",
-        "\\newcommand{\\cvsection}[2]{",
-        "   \\cvtitle{#1}\\\\[4pt]",
-        "   #2\\vspace{20pt}",
-        "}"
-    );
-
-    private static final String EDUCATION_ITEM = String.join("\n",
-        "\\newcommand{\\educationitem}[3]{",
-        "   \\textbf{#1} \\newline",
-        "   \\textit{#2} \\newline",
-        "   #3",
-        "}"
-    );
-
-    private static final String EXPERIENCE_ITEM = String.join("\n",
-        "\\newcommand{\\experienceitem}[4]{",
-        "   \\textbf{#1} \\newline",
-        "   \\textit{#2} \\newline",
-        "   #3 \\newline",
-        "   #4",
-        "}"
-    );
-        
-    public static final Map<String, String> DEFAULT_COMMANDS = Map.of(
-        "cvtitle", CV_TITLE,
-        "cvsection", CV_SECTION,
-        "educationitem", EDUCATION_ITEM,
-        "experienceitem", EXPERIENCE_ITEM
-    );
+    private String cvTitle;
+    private String educationItem;
+    private String experienceItem;
+    private String skillItem;
+    private String skilltext;
+    private String skillbullets;
+    private String skillbar;
+    private String skillbox;
 }
