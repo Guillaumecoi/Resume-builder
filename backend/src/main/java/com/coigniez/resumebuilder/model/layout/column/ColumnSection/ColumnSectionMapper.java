@@ -1,7 +1,10 @@
 package com.coigniez.resumebuilder.model.layout.column.ColumnSection;
 
+import org.springframework.stereotype.Service;
+
 import com.coigniez.resumebuilder.interfaces.Mapper;
 
+@Service
 public class ColumnSectionMapper implements Mapper<ColumnSection, ColumnSectionDTO, ColumnSectionDTO> {
 
     @Override

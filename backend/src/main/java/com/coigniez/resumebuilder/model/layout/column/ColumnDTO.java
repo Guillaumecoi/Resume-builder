@@ -8,6 +8,7 @@ import com.coigniez.resumebuilder.model.layout.enums.ColorLocation;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 
@@ -21,6 +22,7 @@ public class ColumnDTO {
     private Integer columnNumber;
 
     @Builder.Default
+    @NotNull
     private List<ColumnSectionDTO> sectionMappings = new ArrayList<>();
 
     private ColorLocation backgroundColor;

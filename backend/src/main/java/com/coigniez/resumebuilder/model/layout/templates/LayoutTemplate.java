@@ -1,6 +1,11 @@
 package com.coigniez.resumebuilder.model.layout.templates;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.coigniez.resumebuilder.model.layout.Layout;
+import com.coigniez.resumebuilder.model.layout.column.Column;
+import com.coigniez.resumebuilder.model.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.model.layout.enums.ColorScheme;
 import com.coigniez.resumebuilder.model.layout.enums.LatexCommands;
 
@@ -11,6 +16,7 @@ public final class LayoutTemplate {
     public static Layout getDefaultSingleColumn() {
         return Layout.builder()
                 .numberOfColumns(1)
+                .columns(getDefaultColumns(1))
                 .colorScheme(getExecutiveSuiteColors())
                 .latexCommands(getBasicCommands())
                 .build();
@@ -19,12 +25,38 @@ public final class LayoutTemplate {
     public static Layout getDefaultTwoColumn() {
         return Layout.builder()
                 .numberOfColumns(2)
+                .columns(getDefaultColumns(2))
                 .colorScheme(getExecutiveSuiteColors())
                 .latexCommands(getBasicCommands())
                 .build();
     }
 
-    private static ColorScheme getExecutiveSuiteColors() {
+    public static List<Column> getDefaultColumns(int numberOfColumns) {
+        List<Column> columns = new ArrayList<>();
+        columns.add(Column.builder()
+                .columnNumber(1)
+                .backgroundColor(ColorLocation.DARK_BG)
+                .textColor(ColorLocation.LIGHT_TEXT)
+                .paddingBottom(10.0)
+                .paddingLeft(10.0)
+                .paddingRight(10.0)
+                .paddingTop(10.0)
+                .build());
+        if (numberOfColumns == 2) {
+            columns.add(Column.builder()
+                    .columnNumber(2)
+                    .backgroundColor(ColorLocation.LIGHT_BG)
+                    .textColor(ColorLocation.DARK_TEXT)
+                    .paddingBottom(10.0)
+                    .paddingLeft(10.0)
+                    .paddingRight(10.0)
+                    .paddingTop(10.0)
+                    .build());
+        }
+        return columns;
+    }
+
+    public static ColorScheme getExecutiveSuiteColors() {
         return ColorScheme.builder()
                 .name("Executive Suite")
                 .primary("#31323C") 
@@ -37,7 +69,7 @@ public final class LayoutTemplate {
                 .build();
     }
 
-       private static LatexCommands getBasicCommands() {
+    public static LatexCommands getBasicCommands() {
         return LatexCommands.builder()
             .cvTitle("""
                 \\newcommand{\\cvtitle}[1] {

@@ -7,6 +7,7 @@ import com.coigniez.resumebuilder.model.layout.enums.ColorScheme;
 import com.coigniez.resumebuilder.model.layout.enums.LatexCommands;
 import com.coigniez.resumebuilder.model.layout.enums.PageSize;
 import com.coigniez.resumebuilder.model.resume.Resume;
+import com.coigniez.resumebuilder.model.layout.column.Column;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -51,4 +52,9 @@ public class Layout implements BaseEntity {
     @Embedded
     @NotNull
     private LatexCommands latexCommands;
+
+    public void addColumn(Column column) {
+        columns.add(column);
+        column.setLayout(this);
+    }
 }

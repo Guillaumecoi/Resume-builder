@@ -14,6 +14,7 @@ import lombok.*;
 
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "column")
 public class Column implements BaseEntity {
