@@ -1,6 +1,5 @@
 package com.coigniez.resumebuilder.model.layout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.coigniez.resumebuilder.model.common.BaseEntity;
@@ -12,12 +11,11 @@ import com.coigniez.resumebuilder.model.resume.Resume;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 @Builder
 @Entity
 @Table(name = "layout")
@@ -28,21 +26,18 @@ public class Layout implements BaseEntity {
     private Long id;
 
     // Page Settings
-    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private PageSize pageSize = PageSize.A4;
+    private PageSize pageSize;
 
     // Culomns
-    @Builder.Default
     @OneToMany(mappedBy = "layout", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("columnNumber ASC")
-    private List<Column> columns = new ArrayList<>();
+    private List<Column> columns;
     
-    @Builder.Default
-    @Min(1) @Max(2)
-    private Integer numberOfColumns = 1;
+    @NotNull @Min(1) @Max(2)
+    private Integer numberOfColumns;
     
-    @Min(0) @Max(1)
+    @NotNull @Min(0) @Max(1)
     private Double columnSeparator;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -50,8 +45,10 @@ public class Layout implements BaseEntity {
     private Resume resume;
 
     @Embedded
+    @NotNull
     private ColorScheme colorScheme;
 
     @Embedded
+    @NotNull
     private LatexCommands latexCommands;
 }
