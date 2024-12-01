@@ -1,5 +1,7 @@
 package com.coigniez.resumebuilder.examples;
 
+import com.coigniez.resumebuilder.model.layout.LayoutDTO;
+import com.coigniez.resumebuilder.model.layout.LayoutService;
 import com.coigniez.resumebuilder.model.resume.*;
 import com.coigniez.resumebuilder.model.section.*;
 import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemRequest;
@@ -18,15 +20,17 @@ public class ResumeExampleService {
     
     private final ResumeService resumeService;
     private final SectionService sectionService;
+    private final LayoutService layoutService;
 
-    public ResumeDetailResponse createExampleResume(String title) {
+    public List<Object> createExampleResume(String title) {
         ResumeDetailResponse resume = createBaseResume(title);
         
         addEducationSection(resume.getId());
         addExperienceSection(resume.getId());
         addSummarySection(resume.getId());
+        Long layoutId = addLayout(resume.getId());
 
-        return resumeService.get(resume.getId());
+        return List.of(resumeService.get(resume.getId()), layoutService.get(layoutId));
     }
 
     private ResumeDetailResponse createBaseResume(String title) {
@@ -93,5 +97,10 @@ public class ResumeExampleService {
             }}));
             
         sectionService.create(resumeId, new SectionRequest(null, "Summary", summaryItems));
+    }
+
+    private Long addLayout(Long resumeId) {
+        LayoutDTO layoutDTO = LayoutDTO.builder().numberOfColumns(2).build();
+        return layoutService.create(resumeId, layoutDTO);
     }
 }

@@ -12,10 +12,10 @@ public class ColorScheme {
     private String name;
     
     @Pattern(regexp = "^#[0-9A-Fa-f]{6}$")
-    private String primary;      
+    private String primaryColor;      
 
     @Pattern(regexp = "^#[0-9A-Fa-f]{6}$")
-    private String secondary;     
+    private String secondaryColor;     
     
     @Pattern(regexp = "^#[0-9A-Fa-f]{6}$")
     private String accent;       

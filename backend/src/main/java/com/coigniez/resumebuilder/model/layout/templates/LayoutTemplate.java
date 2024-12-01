@@ -59,8 +59,8 @@ public final class LayoutTemplate {
     public static ColorScheme getExecutiveSuiteColors() {
         return ColorScheme.builder()
                 .name("Executive Suite")
-                .primary("#31323C") 
-                .secondary("#dad7d5")      
+                .primaryColor("#31323C") 
+                .secondaryColor("#dad7d5")      
                 .accent("#613B2E")          
                 .darkBg("#31323C")   
                 .lightBg("#E8E8EA")  

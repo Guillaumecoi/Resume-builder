@@ -31,22 +31,6 @@ public class LayoutService implements CrudService<LayoutDTO, LayoutDTO> {
         return layoutRepository.save(layout).getId();
     }
 
-    public Long createDefault(Long parentId, Long numberOfColumns) {
-        // Get the default layout based on the number of columns
-        Layout layout;
-        if (numberOfColumns == 1) {
-            layout = LayoutTemplate.getDefaultSingleColumn();
-        } else if (numberOfColumns == 2) {
-            layout = LayoutTemplate.getDefaultTwoColumn();
-        } else {
-            throw new IllegalArgumentException("Invalid number of columns");
-        }
-
-        Resume resume = resumeRepository.findById(parentId).orElseThrow(() -> new EntityNotFoundException("Resume not found"));
-        layout.setResume(resume);
-        return layoutRepository.save(layout).getId();
-    }
-
     public LayoutDTO get(Long id) {
         Layout layout = layoutRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Layout not found"));
         return layoutMapper.toDto(layout);

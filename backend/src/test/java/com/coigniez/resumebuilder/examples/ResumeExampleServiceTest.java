@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.coigniez.resumebuilder.model.layout.LayoutDTO;
 import com.coigniez.resumebuilder.model.resume.ResumeDetailResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,12 +44,12 @@ public class ResumeExampleServiceTest {
     @Test
     void testCreateExampleResume() throws JsonProcessingException {
         //Act
-        ResumeDetailResponse resume = resumeExampleService.createExampleResume("Software Engineer");
+        List<Object> list = resumeExampleService.createExampleResume("Software Engineer 2");
+        ResumeDetailResponse resume = (ResumeDetailResponse) list.get(0);
+        LayoutDTO layout = (LayoutDTO) list.get(1);
 
         ObjectMapper mapper = new ObjectMapper();
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(resume));
-
-
-
+        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(layout));
     }
 }
