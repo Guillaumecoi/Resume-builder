@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.model.layout.column;
+package com.coigniez.resumebuilder.model.layout.column.ColumnSection;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ColumnSectionMappingDTO {
+public class ColumnSectionDTO {
 
     private Long id;
 

@@ -3,6 +3,7 @@ package com.coigniez.resumebuilder.model.layout.column;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSectionDTO;
 import com.coigniez.resumebuilder.model.layout.enums.ColorLocation;
 
 import jakarta.validation.constraints.Max;
@@ -20,7 +21,7 @@ public class ColumnDTO {
     private Integer columnNumber;
 
     @Builder.Default
-    private List<ColumnSectionMappingDTO> sectionMappings = new ArrayList<>();
+    private List<ColumnSectionDTO> sectionMappings = new ArrayList<>();
 
     private ColorLocation backgroundColor;
     private ColorLocation textColor;

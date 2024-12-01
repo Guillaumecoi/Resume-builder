@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.coigniez.resumebuilder.model.common.BaseEntity;
 import com.coigniez.resumebuilder.model.layout.Layout;
+import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSection;
 import com.coigniez.resumebuilder.model.layout.enums.ColorLocation;
 
 import jakarta.persistence.*;
@@ -26,7 +27,7 @@ public class Column implements BaseEntity {
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("position ASC")
-    private List<ColumnSectionMapping> sectionMappings;
+    private List<ColumnSection> sectionMappings;
     
     private ColorLocation backgroundColor;
     private ColorLocation textColor;
@@ -42,4 +43,9 @@ public class Column implements BaseEntity {
     
     @ManyToOne
     private Layout layout;
+
+    public void addSectionMapping(ColumnSection sectionMapping) {
+        sectionMappings.add(sectionMapping);
+        sectionMapping.setColumn(this);
+    }
 }
