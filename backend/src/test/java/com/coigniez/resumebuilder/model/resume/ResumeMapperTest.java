@@ -33,7 +33,8 @@ public class ResumeMapperTest {
             "Software Engineer",
             "John",
             "Doe",
-            List.of(new SectionRequest(null, "Education", null), new SectionRequest(null, "Experience", null))
+            List.of(SectionRequest.builder().title("Education").build(),
+            SectionRequest.builder().title("Experience").build())
         );
 
         // Act

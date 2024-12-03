@@ -53,7 +53,7 @@ public class SectionControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = "USER")
     void testCreateSection() throws Exception {
         // Arrange
-        SectionRequest request = new SectionRequest(null, "Education", null);
+        SectionRequest request = SectionRequest.builder().title("Education").build();
 
         // Act
         String createResponse = mockMvc.perform(post("/resumes/" + resumeId + "/sections")
@@ -74,7 +74,7 @@ public class SectionControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = "USER")
     void testCreateSectionNoAccess() throws Exception {
         // Arrange
-        SectionRequest request = new SectionRequest(null, "Education", null);
+        SectionRequest request = SectionRequest.builder().title("Education").build();
 
         String createResponse = mockMvc.perform(post("/resumes/" + resumeId + "/sections")
             .with(user("testuser").roles("USER"))
@@ -100,8 +100,8 @@ public class SectionControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = "USER")
     void testCreateAndGetResumeWithSections() throws Exception {
         // Arrange
-        SectionRequest section1 = new SectionRequest(null, "Education", null);
-        SectionRequest section2 = new SectionRequest(null, "Experience", null);
+        SectionRequest section1 = SectionRequest.builder().title("Education").build();
+        SectionRequest section2 = SectionRequest.builder().title("Experience").build();
 
         // Act
         ResumeRequest createRequest = new ResumeRequest("Something Else", "John", "Doe", 
@@ -126,7 +126,7 @@ public class SectionControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = "USER")
     void testUpdateSection() throws Exception {
         // Arrange
-        SectionRequest request = new SectionRequest(null, "Education", null);
+        SectionRequest request = SectionRequest.builder().title("Education").build();
 
         String createResponse = mockMvc.perform(post("/resumes/" + resumeId + "/sections")
             .contentType(MediaType.APPLICATION_JSON)
@@ -137,7 +137,7 @@ public class SectionControllerIntegrationTest {
         Long sectionId = Long.parseLong(createResponse);
 
         // Act
-        SectionRequest updateRequest = new SectionRequest(null, "Experience", null);
+        SectionRequest updateRequest = SectionRequest.builder().title("Experience").build();
 
         mockMvc.perform(post("/resumes/" + resumeId + "/sections/" + sectionId)
             .contentType(MediaType.APPLICATION_JSON)
@@ -154,7 +154,7 @@ public class SectionControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = "USER")
     void testDeleteSection() throws Exception {
         // Arrange
-        SectionRequest request = new SectionRequest(null, "Education", null);
+        SectionRequest request = SectionRequest.builder().title("Education").build();
 
         String createResponse = mockMvc.perform(post("/resumes/" + resumeId + "/sections")
             .contentType(MediaType.APPLICATION_JSON)
@@ -177,7 +177,7 @@ public class SectionControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = "USER")
     void testUpdateResumeDoesNotChangeSection() throws Exception {
         // Arrange
-        SectionRequest request = new SectionRequest(null, "Education", null);
+        SectionRequest request = SectionRequest.builder().title("Education").build();
 
         String createResponse = mockMvc.perform(post("/resumes/" + resumeId + "/sections")
             .contentType(MediaType.APPLICATION_JSON)

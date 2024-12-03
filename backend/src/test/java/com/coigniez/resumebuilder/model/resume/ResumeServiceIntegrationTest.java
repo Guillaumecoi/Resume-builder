@@ -69,7 +69,8 @@ public class ResumeServiceIntegrationTest {
     void testCreateAndGet() {
         // Arrange
         ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                        List.of(new SectionRequest(null, "Education", null), new SectionRequest(null, "Experience", null)));
+                List.of(SectionRequest.builder().title("Education").build(),
+                        SectionRequest.builder().title("Experience").build()));
 
 
         // Act
@@ -93,11 +94,12 @@ public class ResumeServiceIntegrationTest {
     void testAddSectionAndGet() {
         // Arrange
         ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                        List.of(new SectionRequest(null, "Education", null), new SectionRequest(null, "Experience", null)));
+                List.of(SectionRequest.builder().title("Education").build(),
+                        SectionRequest.builder().title("Experience").build()));
 
         Long resumeId = resumeService.create(null, resumeRequest);
 
-        SectionRequest sectionRequest = new SectionRequest(null, "Summary", null);
+        SectionRequest sectionRequest = SectionRequest.builder().title("Summary").build();
 
         // Act
         sectionService.create(resumeId, sectionRequest);
@@ -120,7 +122,8 @@ public class ResumeServiceIntegrationTest {
     void testUploadPicture() throws IOException {
         // Arrange
         ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                        List.of(new SectionRequest(null, "Education", null), new SectionRequest(null, "Experience", null)));
+                List.of(SectionRequest.builder().title("Education").build(),
+                        SectionRequest.builder().title("Experience").build()));
 
         Long resumeId = resumeService.create(null, resumeRequest);
         MockMultipartFile pictureFile = getPictureFile();
@@ -144,7 +147,8 @@ public class ResumeServiceIntegrationTest {
     void updateDoesNotRemovePicture() throws IOException {
         // Arrange
         ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                        List.of(new SectionRequest(null, "Education", null), new SectionRequest(null, "Experience", null)));
+                List.of(SectionRequest.builder().title("Education").build(),
+                        SectionRequest.builder().title("Experience").build()));
 
         Long resumeId = resumeService.create(null, resumeRequest);
         MockMultipartFile pictureFile = getPictureFile();
@@ -166,13 +170,13 @@ public class ResumeServiceIntegrationTest {
     void testUpdate() {
         // Arrange
         ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                        List.of(new SectionRequest(null, "Education", null), new SectionRequest(null, "Experience", null)));
+                List.of(SectionRequest.builder().title("Education").build(),
+                        SectionRequest.builder().title("Experience").build()));
 
         Long resumeId = resumeService.create(null, resumeRequest);
 
         ResumeRequest updatedResumeRequest = new ResumeRequest("Barista", "Jane", "Doe", 
-                        List.of(new SectionRequest(null, "Education", null)));
-
+                List.of(SectionRequest.builder().title("Education").build()));
         // Act
         resumeService.update(resumeId, updatedResumeRequest);
         ResumeDetailResponse updatedResume = resumeService.get(resumeId);
@@ -189,7 +193,8 @@ public class ResumeServiceIntegrationTest {
     void testDelete() {
         // Arrange
         ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                        List.of(new SectionRequest(null, "Education", null), new SectionRequest(null, "Experience", null)));
+                List.of(SectionRequest.builder().title("Education").build(),
+                        SectionRequest.builder().title("Experience").build()));
 
         Long resumeId = resumeService.create(null, resumeRequest);
 
@@ -205,7 +210,8 @@ public class ResumeServiceIntegrationTest {
     void testAuthentications() {
         // Arrange
         ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                        List.of(new SectionRequest(null, "Education", null), new SectionRequest(null, "Experience", null)));
+                List.of(SectionRequest.builder().title("Education").build(),
+                        SectionRequest.builder().title("Experience").build()));
 
         Long resumeId = resumeService.create(null, resumeRequest);
         
@@ -233,10 +239,11 @@ public class ResumeServiceIntegrationTest {
     void testGetAll() {
         // Arrange
         ResumeRequest resumeRequest1 = new ResumeRequest("Software Engineer", "John", "Doe", 
-                        List.of(new SectionRequest(null, "Education", null), new SectionRequest(null, "Experience", null)));
+                List.of(SectionRequest.builder().title("Education").build(),
+                        SectionRequest.builder().title("Experience").build()));
         ResumeRequest resumeRequest2 = new ResumeRequest("Barista", "Jane", "Doe", 
-                        List.of(new SectionRequest(null, "Education", null), new SectionRequest(null, "Experience", null)));
-
+                List.of(SectionRequest.builder().title("Education").build(),
+                        SectionRequest.builder().title("Experience").build()));
         // Act
         Long resumeId1 = resumeService.create(null, resumeRequest1);
         Long resumeId2 = resumeService.create(null, resumeRequest2);
@@ -266,9 +273,11 @@ public class ResumeServiceIntegrationTest {
     void testDeleteAll() {
         // Arrange
         ResumeRequest resumeRequest1 = new ResumeRequest("Software Engineer", "John", "Doe", 
-                        List.of(new SectionRequest(null, "Education", null), new SectionRequest(null, "Experience", null)));
+                List.of(SectionRequest.builder().title("Education").build(),
+                        SectionRequest.builder().title("Experience").build()));
         ResumeRequest resumeRequest2 = new ResumeRequest("Barista", "Jane", "Doe", 
-                        List.of(new SectionRequest(null, "Education", null), new SectionRequest(null, "Experience", null)));
+                List.of(SectionRequest.builder().title("Education").build(),
+                        SectionRequest.builder().title("Experience").build()));
 
         // Act
         Long resumeId1 = resumeService.create(null, resumeRequest1);

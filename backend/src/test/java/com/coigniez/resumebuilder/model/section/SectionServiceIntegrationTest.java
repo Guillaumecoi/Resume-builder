@@ -57,7 +57,9 @@ public class SectionServiceIntegrationTest {
         SecurityContextHolder.getContext().setAuthentication(testuser);
 
         ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                        List.of(new SectionRequest(null, "Education", null), new SectionRequest(null, "Experience", null)));
+                        List.of(SectionRequest.builder().title("Education").build(),
+                                SectionRequest.builder().title("Experience").build(),
+                                SectionRequest.builder().title("Skills").build()));
 
         resumeId = resumeService.create(null, resumeRequest);
     }
@@ -65,7 +67,7 @@ public class SectionServiceIntegrationTest {
     @Test
     void testCreateAndGet() {
         // Arrange
-        SectionRequest request = new SectionRequest(null, "Test Section", null);
+        SectionRequest request = SectionRequest.builder().title("Test Section").build();
 
         // Act
         Long sectionId = sectionService.create(resumeId, request);
@@ -80,12 +82,12 @@ public class SectionServiceIntegrationTest {
     @Test
     void testUpdate() {
         // Arrange
-        SectionRequest request = new SectionRequest(null, "Test Section", null);
+        SectionRequest request = SectionRequest.builder().title("Test Section").build();
 
         Long sectionId = sectionService.create(resumeId, request);
 
         // Act
-        SectionRequest updatedRequest = new SectionRequest(sectionId, "Updated Section", null);
+        SectionRequest updatedRequest = SectionRequest.builder().title("Updated Section").build();
         sectionService.update(sectionId, updatedRequest);
         SectionResponse response = sectionService.get(sectionId);
 
@@ -97,7 +99,7 @@ public class SectionServiceIntegrationTest {
     @Test
     void testDelete() {
         // Arrange
-        SectionRequest request = new SectionRequest(null, "Test Section", null);
+        SectionRequest request = SectionRequest.builder().title("Test Section").build();
 
         Long sectionId = sectionService.create(resumeId, request);
 
@@ -112,7 +114,7 @@ public class SectionServiceIntegrationTest {
     @Test
     void testAuthentications() {
         // Arrange
-        SectionRequest request = new SectionRequest(null, "Test Section", null);
+        SectionRequest request = SectionRequest.builder().title("Test Section").build();
 
         Long sectionId = sectionService.create(resumeId, request);
         
@@ -132,7 +134,7 @@ public class SectionServiceIntegrationTest {
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () -> { sectionService.get(sectionId); });
-        assertThrows(EntityNotFoundException.class, () -> { sectionService.update(sectionId, new SectionRequest(sectionId, null, null)) ; });
+        assertThrows(EntityNotFoundException.class, () -> { sectionService.update(sectionId, SectionRequest.builder().id(sectionId).build()); });
         assertThrows(EntityNotFoundException.class, () -> { sectionService.delete(sectionId); });
     }
 

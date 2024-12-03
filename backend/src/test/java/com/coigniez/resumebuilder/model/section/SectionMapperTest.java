@@ -33,7 +33,9 @@ public class SectionMapperTest {
     @Test
     void testToEntity() {
         // Arrange
-        SectionRequest dto = new SectionRequest(null, "Education", null);
+        SectionRequest dto = SectionRequest.builder()
+            .title("Education")
+            .build();
 
         // Act
         Section entity = mapper.toEntity(dto);

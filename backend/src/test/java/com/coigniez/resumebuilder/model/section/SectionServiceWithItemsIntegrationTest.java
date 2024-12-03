@@ -55,7 +55,9 @@ public class SectionServiceWithItemsIntegrationTest {
         SecurityContextHolder.getContext().setAuthentication(testuser);
 
         ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                        List.of(new SectionRequest(null, "Education", null), new SectionRequest(null, "Experience", null)));
+                        List.of(SectionRequest.builder().title("Education").build(),
+                                SectionRequest.builder().title("Experience").build()
+                        ));
 
         resumeId = resumeService.create(null, resumeRequest);
     }
@@ -76,7 +78,7 @@ public class SectionServiceWithItemsIntegrationTest {
         Skill.put("proficiency", 5);
         sectionItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), 2, Skill));
 
-        SectionRequest request = new SectionRequest(null, "Test Section", sectionItems);
+        SectionRequest request = SectionRequest.builder().title("Test Section").sectionItems(sectionItems).build();
 
         // Act
         Long sectionId = sectionService.create(resumeId, request);
@@ -109,7 +111,7 @@ public class SectionServiceWithItemsIntegrationTest {
         Skill.put("proficiency", 5);
         sectionItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), 2, Skill));
 
-        SectionRequest request = new SectionRequest(null, "Test Section", sectionItems);
+        SectionRequest request = SectionRequest.builder().title("Test Section").sectionItems(sectionItems).build();
 
         Long sectionId = sectionService.create(resumeId, request);
 
@@ -122,7 +124,7 @@ public class SectionServiceWithItemsIntegrationTest {
         Skill2.put("proficiency", 4);
         updatedSectionItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), 1, Skill2));
 
-        SectionRequest updatedRequest = new SectionRequest(null, "Updated Section", updatedSectionItems);
+        SectionRequest updatedRequest = SectionRequest.builder().title("Updated Section").sectionItems(updatedSectionItems).build();
 
         // Act
         sectionService.update(sectionId, updatedRequest);
@@ -148,7 +150,7 @@ public class SectionServiceWithItemsIntegrationTest {
         emptyskill.put("name", "");
         sectionItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), 1, emptyskill));
 
-        SectionRequest request = new SectionRequest(null, "Test Section", sectionItems);
+        SectionRequest request = SectionRequest.builder().title("Test Section").sectionItems(sectionItems).build();
 
         // Act & Assert
         assertThrows(ConstraintViolationException.class, () -> sectionService.create(resumeId, request));

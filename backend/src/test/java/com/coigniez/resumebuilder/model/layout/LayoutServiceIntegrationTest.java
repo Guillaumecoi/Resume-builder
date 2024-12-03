@@ -48,7 +48,9 @@ public class LayoutServiceIntegrationTest {
         SecurityContextHolder.getContext().setAuthentication(testuser);
 
         ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                        List.of(new SectionRequest(null, "Education", null), new SectionRequest(null, "Experience", null)));
+                        List.of(SectionRequest.builder().title("Education").build(),
+                                SectionRequest.builder().title("Experience").build()
+                        ));
 
         resumeId = resumeService.create(null, resumeRequest);
     }

@@ -13,7 +13,7 @@ public class LatexCommands {
     @Builder.Default
     private String cvSection = """
         \\newenvironment{cvsection}[3]{
-            \\cvtitle{#1}
+            \\ifthenelse{\\equal{#1}{}}{}{\\cvtitle{#1}}
             #3
             \\begin{itemize}[left=0pt, itemsep=#2, label={}, topsep=10pt]
                 }{

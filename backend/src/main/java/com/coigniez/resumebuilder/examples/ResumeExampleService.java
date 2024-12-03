@@ -74,7 +74,10 @@ public class ResumeExampleService {
                 put("period", "2016");
             }}));
         
-        Long educationId = sectionService.create(resumeId, new SectionRequest(null, "Education", educationItems));
+        Long educationId = sectionService.create(resumeId, SectionRequest.builder()
+                .title("Education")
+                .sectionItems(educationItems)
+                .build());
         columnSectionService.create(columnId, ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(educationId)
@@ -94,7 +97,10 @@ public class ResumeExampleService {
                 put("responsibilities","Developing new features for the website\nMaintaining the existing codebase");
             }}));
             
-        Long experienceId = sectionService.create(resumeId, new SectionRequest(null, "Experience", experienceItems));
+        Long experienceId = sectionService.create(resumeId, SectionRequest.builder()
+            .title("Experience")
+            .sectionItems(experienceItems)
+            .build());
         columnSectionService.create(columnId, ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(experienceId)
@@ -113,7 +119,10 @@ public class ResumeExampleService {
                     Eager to apply theoretical knowledge in practical software development challenges.""");
             }}));
             
-        Long summaryId = sectionService.create(resumeId, new SectionRequest(null, "Summary", summaryItems));
+        Long summaryId = sectionService.create(resumeId, SectionRequest.builder()
+                .title("Summary")
+                .sectionItems(summaryItems)
+                .build());
         columnSectionService.create(columnId, ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(summaryId)
@@ -161,7 +170,10 @@ public class ResumeExampleService {
                 put("type", Skill.SkillType.BULLETS.name());
             }}));
             
-        Long skillsId = sectionService.create(resumeId, new SectionRequest(null, "Skills", skillsItems));
+        Long skillsId = sectionService.create(resumeId, SectionRequest.builder()
+                .title("Skills")
+                .sectionItems(skillsItems)
+                .build());
         columnSectionService.create(columnId, ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(skillsId)

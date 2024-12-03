@@ -64,12 +64,11 @@ public class SectionItemServiceIntegrationTest {
         // Set the Authentication object in the SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(testuser);
 
-        ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                        List.of(new SectionRequest(null, "Education", null), new SectionRequest(null, "Experience", null)));
+        ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", null);
 
         Long resumeId = resumeService.create(null, resumeRequest);
 
-        Long sectionId = sectionService.create(resumeId, new SectionRequest(null, "Education", null));
+        Long sectionId = sectionService.create(resumeId, SectionRequest.builder().title("Education").build());
         section = sectionRepository.findById(sectionId).orElseThrow();
     }
 
