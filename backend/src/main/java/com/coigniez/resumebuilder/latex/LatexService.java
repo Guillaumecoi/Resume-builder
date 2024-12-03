@@ -11,7 +11,6 @@ import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSectio
 import com.coigniez.resumebuilder.model.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.model.layout.enums.ColorScheme;
 import com.coigniez.resumebuilder.model.layout.enums.PageSize;
-import com.coigniez.resumebuilder.model.resume.ResumeDetailResponse;
 import com.coigniez.resumebuilder.model.section.SectionResponse;
 import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemMapper;
 import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemResponse;
@@ -31,7 +30,7 @@ public class LatexService {
 
     private final SectionItemMapper sectionItemMapper;
     
-    public String generateLatexDocument(LayoutResponse layout, ResumeDetailResponse resumeDetail) {
+    public String generateLatexDocument(LayoutResponse layout) {
         StringBuilder latexcode = new StringBuilder();
         latexcode.append(getImports(layout.getPageSize(), layout.getColumnSeparator()) + "\n");
         latexcode.append(getColors(layout.getColorScheme()) + "\n");
@@ -39,7 +38,7 @@ public class LatexService {
         latexcode.append(getColumnColorboxMethods(layout.getColumns()) + "\n");
         
         latexcode.append("\\begin{document}\n");
-        latexcode.append(getContent(layout, resumeDetail));
+        latexcode.append(getContent(layout));
         latexcode.append("\\end{document}\n");
 
         return latexcode.toString();
@@ -147,32 +146,32 @@ public class LatexService {
             """, colback, left, right, top, bottom, ColorLocation.ACCENT.toString(), textcolor);
     }
 
-    private String getContent(LayoutResponse layout, ResumeDetailResponse resume) {
+    private String getContent(LayoutResponse layout) {
         StringBuilder content = new StringBuilder();
         content.append("\\begin{paracol}{%s}\n\n".formatted(layout.getNumberOfColumns()));
 
         for (ColumnResponse columnDto : layout.getColumns()) {
-            content.append(getColumn(columnDto, resume));
+            content.append(getColumn(columnDto));
         }
 
         content.append("\\end{paracol}\n");
         return content.toString();
     }
 
-    private String getColumn(ColumnResponse columnDto, ResumeDetailResponse resume) {
+    private String getColumn(ColumnResponse columnDto) {
         StringBuilder column = new StringBuilder();
         column.append("\\switchcolumn[%d]\n".formatted(columnDto.getColumnNumber() - 1));
         column.append("\\begin{tcolorbox%d}\n".formatted(columnDto.getColumnNumber()));
         for (ColumnSectionResponse columnSection : columnDto.getSectionMappings()) {
-            column.append(addTabToEachLine(generateSection(columnSection, resume), 1) + "\n");
+            column.append(addTabToEachLine(generateSection(columnSection), 1) + "\n");
         }
         column.append("\\end{tcolorbox%d}\n\n".formatted(columnDto.getColumnNumber()));
 
         return column.toString();
     }
 
-    private String generateSection(ColumnSectionResponse columnSection, ResumeDetailResponse resume) {
-        SectionResponse section = getSectionDto(columnSection.getSection().getId(), resume);
+    private String generateSection(ColumnSectionResponse columnSection) {
+        SectionResponse section = columnSection.getSection();
         StringBuilder sectionString = new StringBuilder();
 
         // Start the section
@@ -261,12 +260,5 @@ public class LatexService {
 
     private String generateTextbox(Textbox textbox) {
         return "\\textbox{%s}".formatted(textbox.getContent());
-    }
-
-    private SectionResponse getSectionDto(long sectionId, ResumeDetailResponse resume) {
-        return resume.getSections().stream()
-                .filter(section -> section.getId().equals(sectionId))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Section not found"));
     }
 }

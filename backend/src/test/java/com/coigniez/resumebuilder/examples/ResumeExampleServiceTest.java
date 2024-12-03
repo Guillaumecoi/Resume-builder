@@ -23,7 +23,6 @@ import org.springframework.test.context.ActiveProfiles;
 import com.coigniez.resumebuilder.latex.LatexService;
 import com.coigniez.resumebuilder.latex.PdfGenerator;
 import com.coigniez.resumebuilder.model.layout.LayoutResponse;
-import com.coigniez.resumebuilder.model.resume.ResumeDetailResponse;
 
 import jakarta.transaction.Transactional;
 
@@ -57,13 +56,12 @@ public class ResumeExampleServiceTest {
     void testCreateExampleResume() throws IOException, InterruptedException {
         //Act
         List<Object> list = resumeExampleService.createExampleResume("Software Engineer 2");
-        ResumeDetailResponse resume = (ResumeDetailResponse) list.get(0);
         LayoutResponse layout = (LayoutResponse) list.get(1);
 
-        String latexContent = latexService.generateLatexDocument(layout, resume);
+        String latexContent = latexService.generateLatexDocument(layout);
 
         // Uncomment this line to inspect the generated LaTeX content
-        // writeToFile(latexContent, latexContent);
+        writeToFile(latexContent, "testfile.tex");
 
         File generatedPdf = pdfGenerator.generatePdf(latexContent, "test_document");
     
