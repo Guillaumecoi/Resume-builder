@@ -26,3 +26,4 @@ application:
   file:
     uploads:
       photos-output-path: ./uploads
+      pdf-output-path: ./uploads/pdf

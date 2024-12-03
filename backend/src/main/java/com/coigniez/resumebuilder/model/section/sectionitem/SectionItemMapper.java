@@ -32,19 +32,10 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest
 
         SectionItemType type = SectionItemType.valueOf(request.type());
 
-        // Add @class type information to the data
-        Map<String, Object> dataWithType = new HashMap<>(request.data());
-        dataWithType.put("@class", type.getDataType().getName());
-
-        Object dataObject = objectMapper.convertValue(dataWithType, type.getDataType());
-    
-        // Validate the deserialized data object
-        validateDataObject(dataObject);
-
         SectionItem sectionItem = SectionItem.builder()
                 .type(type) 
                 .itemOrder(request.itemOrder())
-                .data((SectionItemData) dataObject)
+                .data(toDataObject(type, request.data()))
                 .build();
     
         return sectionItem;
@@ -67,6 +58,24 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest
             .itemOrder(entity.getItemOrder())
             .data(data)
             .build();
+    }
+
+    public SectionItemData toDataObject(SectionItemType type, Map<String, Object> data) {
+        if (type == null || data == null) {
+            return null;
+        }
+
+        // Add @class type information to the data
+        Map<String, Object> dataWithType = new HashMap<>(data);
+        dataWithType.put("@class", type.getDataType().getName());
+
+        Object dataObject = objectMapper.convertValue(dataWithType, type.getDataType());
+        dataWithType.put("@class", type.getDataType().getName());
+    
+        // Validate the deserialized data object
+        validateDataObject(dataObject);
+
+        return (SectionItemData) dataObject;
     }
 
     private void validateDataObject(Object dataObject) {

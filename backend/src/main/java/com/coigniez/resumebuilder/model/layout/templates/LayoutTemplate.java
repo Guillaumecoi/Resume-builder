@@ -74,8 +74,8 @@ public final class LayoutTemplate {
             .cvTitle("""
                 \\newcommand{\\cvtitle}[1] {
                     \\hspace{6pt}\\textbf{\\Large{\\uppercase{#1}}}\\\\[-4pt]
-                    \\textcolor{accentcolor}{\\rule{80pt}{2pt}}
-                }"""
+                    \\textcolor{%s}{\\rule{80pt}{2pt}}
+                }""".formatted(ColorLocation.ACCENT.toString())
             )
             .educationItem("""
                 \\newcommand{\\educationitem}[3]{
@@ -88,63 +88,69 @@ public final class LayoutTemplate {
             .experienceItem("""
                 \\newcommand{\\experienceitem}[5]{
                     \\item
-                    \\textbf{\\large#2} \\[4pt]
+                    \\textbf{\\large#2} \\\\[4pt]
                     \\textbf{#1} \\hfill \\textit{#3} \\\\[-6pt]
-                    \\textcolor{accentcolor}{\\rule{\\linewidth}{0.4pt}} \\\\[2pt]
+                    \\textcolor{%s}{\\rule{\\linewidth}{0.4pt}} \\\\[2pt]
                     \\small#4
-                    \\ifthenelse{\\isempty{#5}}{}{%
+                    \\ifthenelse{\\isempty{#5}}{}{
                         \\footnotesize{
                             \\begin{itemize}[left=5pt, itemsep=2pt, topsep=6pt]
                                 #5
                             \\end{itemize}
                         }
                     }
+                }""".formatted(ColorLocation.ACCENT.toString())
+            )
+            .textbox("""
+                \\newcommand{\\textbox}[1]{
+                    \\item \\small
+                    #1
                 }"""
             )
             .skillItem("""
-                \\newcommand{\\skillitem}[1]{%
+                \\newcommand{\\skillitem}[1]{
                     \\item
                     \\textbf{#1}
                 }"""
             )
             .skilltext("""
-                \\newcommand{\\skilltext}[2]{%
+                \\newcommand{\\skilltext}[2]{
                     \\item
                     \\textbf{#1} \\hfill #2
                 }"""
             )
             .skillbullets("""
-                \\newcommand{\\skillbullets}[2]{%
+                \\newcommand{\\skillbullets}[2]{
                     \\item
                     \\textbf{#1} \\hfill
-                    \\foreach \\x in {1,2,3,4,5}{%
-                        \\pgfmathparse{#2/2>=\\x}%
+                    \\foreach \\x in {1,2,3,4,5}{
+                        \\pgfmathparse{#2/2>=\\x}
                         \\ifnum\\pgfmathresult=1
-                            \\textcolor{accentcolor}{$\\bullet$}%
+                            \\textcolor{%s}{$\\bullet$}
                         \\else
-                            \\textcolor{lighttextcolor}{$\\circ$}%
+                            \\textcolor{%s}{$\\circ$}
                         \\fi
-                    }%
-                }"""
+                    }
+                }""".formatted(ColorLocation.ACCENT.toString(), ColorLocation.LIGHT_TEXT.toString())
             )
             .skillbar("""
-                \\newcommand{\\skillbar}[2]{%
+                \\newcommand{\\skillbar}[2]{
                     \\item
                     \\textbf{#1} \\hfill
                     \\begin{tikzpicture}[baseline]
-                        \\fill[lighttextcolor,rounded corners=2pt] (0,0) rectangle (2,.15);
-                        \\fill[accentcolor,rounded corners=2pt] (0,0) rectangle ({2*#2/10},.15);
+                        \\fill[%s,rounded corners=2pt] (0,0) rectangle (2,.15);
+                        \\fill[%s,rounded corners=2pt] (0,0) rectangle ({2*#2/10},.15);
                     \\end{tikzpicture}
-                }"""
+                }""".formatted(ColorLocation.LIGHT_TEXT.toString(), ColorLocation.ACCENT.toString())
             )
             .skillbox("""
-                \\newcommand{\\skillbox}[1]{%
+                \\newcommand{\\skillbox}[1]{
                     \\tcbox[
                         enhanced,
                         nobeforeafter,
                         size=minimal,
                         height=1.4em,
-                        colback=accentcolor,
+                        colback=%s,
                         colframe=black,
                         boxrule=0pt,
                         arc=6pt,
@@ -153,8 +159,8 @@ public final class LayoutTemplate {
                         right=6pt,
                         valign=center,
                         fontupper=\\footnotesize\\bfseries,
-                    ]{\\textcolor{lighttextcolor}{#1}}
-                }"""
+                    ]{\\textcolor{%s}{#1}}
+                }""".formatted(ColorLocation.ACCENT.toString(), ColorLocation.LIGHT_TEXT.toString())
             )
             .build();
     }

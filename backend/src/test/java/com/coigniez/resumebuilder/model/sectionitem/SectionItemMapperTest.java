@@ -182,8 +182,7 @@ class SectionItemMapperTest {
         Map<String, Object> correctComplete = new HashMap<>();
         correctComplete.put("degree", "Bachelor of Science");
         correctComplete.put("institution", "University of Example");
-        correctComplete.put("startDate", LocalDate.of(2018, 1, 1));
-        correctComplete.put("endDate", LocalDate.of(2022, 1, 1));
+        correctComplete.put("period", "2020-2023");
         correctComplete.put("description", "This is a description");
 
         Map<String, Object> nullDegree = new HashMap<>(correctComplete);
@@ -191,12 +190,6 @@ class SectionItemMapperTest {
 
         Map<String, Object> nullInstitution = new HashMap<>(correctComplete);
         nullInstitution.remove("institution");
-
-        Map<String, Object> nullStartDate = new HashMap<>(correctComplete);
-        nullStartDate.remove("startDate");
-
-        Map<String, Object> nullEndDate = new HashMap<>(correctComplete);
-        nullEndDate.remove("endDate");
 
         Map<String, Object> nullDescription = new HashMap<>(correctComplete);
         nullDescription.remove("description");
@@ -217,23 +210,14 @@ class SectionItemMapperTest {
         SectionItem entityNullDescription = mapper.toEntity(new SectionItemRequest(
                 SectionItemType.EDUCATION.name(), 1, nullDescription));
 
-        SectionItem entityNullStartDate = mapper.toEntity(new SectionItemRequest(
-                SectionItemType.EDUCATION.name(), 1, nullStartDate));
-
-        SectionItem entityNullEndDate = mapper.toEntity(new SectionItemRequest(
-                SectionItemType.EDUCATION.name(), 1, nullEndDate));
-
         // Assert
         assertNotNull(entityCorrectComplete);
         assertEquals(SectionItemType.EDUCATION, entityCorrectComplete.getType());
         assertEquals("Bachelor of Science", ((Education) entityCorrectComplete.getData()).getDegree());
         assertEquals("University of Example", ((Education) entityCorrectComplete.getData()).getInstitution());
-        assertEquals(LocalDate.of(2018, 1, 1), ((Education) entityCorrectComplete.getData()).getStartDate());
-        assertEquals(LocalDate.of(2022, 1, 1), ((Education) entityCorrectComplete.getData()).getEndDate());
+        assertEquals("2020-2023", ((Education) entityCorrectComplete.getData()).getPeriod());
         assertEquals("This is a description", ((Education) entityCorrectComplete.getData()).getDescription());
         assertNotNull(entityNullDescription);
-        assertNotNull(entityNullStartDate);
-        assertNotNull(entityNullEndDate);
 
         // Act & Assert
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
@@ -250,10 +234,9 @@ class SectionItemMapperTest {
         Map<String, Object> correctComplete = new HashMap<>();
         correctComplete.put("jobTitle", "Software Engineer");
         correctComplete.put("companyName", "Tech Corp");
-        correctComplete.put("startDate", LocalDate.of(2020, 1, 1));
-        correctComplete.put("endDate", LocalDate.of(2023, 1, 1));
+        correctComplete.put("period", "2020-2023");
         correctComplete.put("description", "This is a description");
-        correctComplete.put("responsibilities", "Responsibility 1 \nResponsibility 2");
+        correctComplete.put("responsibilities", "Responsibility 1\nResponsibility 2");
 
         Map<String, Object> nullJobTitle = new HashMap<>(correctComplete);
         nullJobTitle.remove("jobTitle");
@@ -271,16 +254,16 @@ class SectionItemMapperTest {
         assertEquals(SectionItemType.WORK_EXPERIENCE, entityCorrectComplete.getType());
         assertEquals("Software Engineer", ((WorkExperience) entityCorrectComplete.getData()).getJobTitle());
         assertEquals("Tech Corp", ((WorkExperience) entityCorrectComplete.getData()).getCompanyName());
-        assertEquals(LocalDate.of(2020, 1, 1), ((WorkExperience) entityCorrectComplete.getData()).getStartDate());
-        assertEquals(LocalDate.of(2023, 1, 1), ((WorkExperience) entityCorrectComplete.getData()).getEndDate());
+        assertEquals("2020-2023", ((WorkExperience) entityCorrectComplete.getData()).getPeriod());
         assertEquals("This is a description", ((WorkExperience) entityCorrectComplete.getData()).getDescription());
-        assertEquals("Responsibility 1 \nResponsibility 2", ((WorkExperience) entityCorrectComplete.getData()).getResponsibilities());
+        assertEquals("Responsibility 1\nResponsibility 2", ((WorkExperience) entityCorrectComplete.getData()).getResponsibilities());
+        assertEquals(2, ((WorkExperience) entityCorrectComplete.getData()).getResponsibilitiesAsList().size());
+        assertEquals("Responsibility 1", ((WorkExperience) entityCorrectComplete.getData()).getResponsibilitiesAsList().get(0));
+        assertEquals("Responsibility 2", ((WorkExperience) entityCorrectComplete.getData()).getResponsibilitiesAsList().get(1));
 
         // Act & Assert
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
                 SectionItemType.WORK_EXPERIENCE.name(), 1, nullJobTitle)));
-        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
-                SectionItemType.WORK_EXPERIENCE.name(), 1, lateStartDate)));
     }
 
     @Test

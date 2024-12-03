@@ -7,9 +7,11 @@ import com.coigniez.resumebuilder.model.layout.Layout;
 import com.coigniez.resumebuilder.model.layout.LayoutRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
+@Transactional
 @Service
 public class ColumnService implements CrudService<ColumnDTO, ColumnDTO> {
 

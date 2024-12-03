@@ -21,11 +21,11 @@ public class ColumnSection implements BaseEntity {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     private Column column;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     private Section section;
     @NotNull

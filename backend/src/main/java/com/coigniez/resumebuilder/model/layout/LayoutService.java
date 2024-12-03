@@ -9,9 +9,11 @@ import com.coigniez.resumebuilder.model.resume.Resume;
 import com.coigniez.resumebuilder.model.resume.ResumeRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
+@Transactional
 @Service
 public class LayoutService implements CrudService<LayoutDTO, LayoutDTO> {
 
@@ -22,7 +24,7 @@ public class LayoutService implements CrudService<LayoutDTO, LayoutDTO> {
     public Long create(Long parentId, LayoutDTO request) {
         Layout layout = layoutMapper.toEntity(request);
         Resume resume = resumeRepository.findById(parentId).orElseThrow(() -> new EntityNotFoundException("Resume not found"));
-        layout.setResume(resume);
+        resume.addLayout(layout);
 
         if(layout.getColumns().isEmpty()) {
             layout.setColumns(LayoutTemplate.getDefaultColumns(layout.getNumberOfColumns()));

@@ -1,5 +1,6 @@
 package com.coigniez.resumebuilder.model.layout.column;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.coigniez.resumebuilder.model.common.BaseEntity;
@@ -16,7 +17,7 @@ import lombok.*;
 @NoArgsConstructor @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "column")
+@Table(name = "layout_column")
 public class Column implements BaseEntity {
     
     @Id
@@ -28,7 +29,8 @@ public class Column implements BaseEntity {
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("position ASC")
-    private List<ColumnSection> sectionMappings;
+    @Builder.Default
+    private List<ColumnSection> sectionMappings = new ArrayList<>();
     
     private ColorLocation backgroundColor;
     private ColorLocation textColor;

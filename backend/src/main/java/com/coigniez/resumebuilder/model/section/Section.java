@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.coigniez.resumebuilder.model.common.BaseEntity;
+import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSection;
 import com.coigniez.resumebuilder.model.resume.Resume;
 import com.coigniez.resumebuilder.model.section.sectionitem.SectionItem;
 
@@ -15,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.persistence.FetchType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,6 +37,7 @@ public class Section implements BaseEntity {
     @GeneratedValue
     private Long id;
 
+    @NotBlank
     private String title;
 
 
@@ -46,8 +49,17 @@ public class Section implements BaseEntity {
     @Builder.Default
     private List<SectionItem> items = new ArrayList<>();
 
+    @OneToMany(mappedBy = "section", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ColumnSection> columnSections = new ArrayList<>();
+
     public void addSectionItem(SectionItem item) {
         items.add(item);
         item.setSection(this);
+    }
+
+    public void addColumnSection(ColumnSection columnSection) {
+        columnSections.add(columnSection);
+        columnSection.setSection(this);
     }
 }

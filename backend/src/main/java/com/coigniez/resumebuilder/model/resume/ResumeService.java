@@ -50,7 +50,7 @@ public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRe
         Resume updatedResume = resumeMapper.toEntity(request);
         
         // Copy the properties from the updated resume to the existing resume
-        BeanUtils.copyProperties(updatedResume, existingResume, "id", "createdBy", "createdDate", "lastModifiedDate", "sections", "picture");
+        BeanUtils.copyProperties(updatedResume, existingResume, "id", "createdBy", "createdDate", "lastModifiedDate", "sections", "layouts", "picture");
     
         resumeRepository.save(existingResume);
     }

@@ -8,9 +8,11 @@ import com.coigniez.resumebuilder.model.section.Section;
 import com.coigniez.resumebuilder.model.section.SectionRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
+@Transactional
 @Service
 public class ColumnSectionService {
 
@@ -29,7 +31,7 @@ public class ColumnSectionService {
 
         // Set the section
         Section section = sectionRepository.findById(request.getSectionId()).orElseThrow(() -> new EntityNotFoundException("Section not found"));
-        columnSection.setSection(section);
+        section.addColumnSection(columnSection);
 
         return columnSectionRepository.save(columnSection).getId();
     }

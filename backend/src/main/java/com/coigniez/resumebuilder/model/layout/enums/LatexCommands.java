@@ -21,12 +21,37 @@ public class LatexCommands {
             \\vspace{20pt}
         }""";
 
+    @Column(columnDefinition = "text")
     private String cvTitle;
+    @Column(columnDefinition = "text")
     private String educationItem;
+    @Column(columnDefinition = "text")
     private String experienceItem;
+    @Column(columnDefinition = "text")
+    private String textbox;
+    @Column(columnDefinition = "text")
     private String skillItem;
+    @Column(columnDefinition = "text")
     private String skilltext;
+    @Column(columnDefinition = "text")
     private String skillbullets;
+    @Column(columnDefinition = "text")
     private String skillbar;
+    @Column(columnDefinition = "text")
     private String skillbox;
+
+    public String getAllMethods() {
+        return String.join("\n",
+            cvSection,
+            cvTitle,
+            educationItem,
+            experienceItem,
+            textbox,
+            skillItem,
+            skilltext,
+            skillbullets,
+            skillbar,
+            skillbox
+        );
+    }
 }

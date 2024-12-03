@@ -58,7 +58,7 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
                 
         // Update basic properties
         Section updatedSection = sectionMapper.toEntity(request);
-        BeanUtils.copyProperties(updatedSection, existingSection, "id", "resume", "items");
+        BeanUtils.copyProperties(updatedSection, existingSection, "id", "resume", "items", "columnSections");
         
         // Clear and update items in one transaction
         existingSection.getItems().clear();
