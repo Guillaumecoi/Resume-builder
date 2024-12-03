@@ -5,9 +5,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.coigniez.resumebuilder.model.layout.LayoutDTO;
-import com.coigniez.resumebuilder.model.layout.column.ColumnDTO;
-import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSectionDTO;
+import com.coigniez.resumebuilder.model.layout.LayoutResponse;
+import com.coigniez.resumebuilder.model.layout.column.ColumnResponse;
+import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSectionResponse;
 import com.coigniez.resumebuilder.model.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.model.layout.enums.ColorScheme;
 import com.coigniez.resumebuilder.model.layout.enums.PageSize;
@@ -31,7 +31,7 @@ public class LatexService {
 
     private final SectionItemMapper sectionItemMapper;
     
-    public String generateLatexDocument(LayoutDTO layout, ResumeDetailResponse resumeDetail) {
+    public String generateLatexDocument(LayoutResponse layout, ResumeDetailResponse resumeDetail) {
         StringBuilder latexcode = new StringBuilder();
         latexcode.append(getImports(layout.getPageSize(), layout.getColumnSeparator()) + "\n");
         latexcode.append(getColors(layout.getColorScheme()) + "\n");
@@ -102,9 +102,9 @@ public class LatexService {
         return "\\definecolor{" + colorName + "}{HTML}{" + color.substring(1) + "} \n";
     }
 
-    private String getColumnColorboxMethods(List<ColumnDTO> columns) {
+    private String getColumnColorboxMethods(List<ColumnResponse> columns) {
         StringBuilder columnMethods = new StringBuilder();
-        for (ColumnDTO column : columns) {
+        for (ColumnResponse column : columns) {
             String columnContent = String.format("\\newenvironment{tcolorbox%d}[0] { \n", column.getColumnNumber());
 
             columnContent += addTabToEachLine(
@@ -139,7 +139,7 @@ public class LatexService {
                 bottom=%.1fpt,
                 arc=0mm,
                 boxrule=0pt,
-                rightrule=2.0pt,
+                rightrule=0pt,
                 colframe=%s
             ]
             \\color{%s}
@@ -147,11 +147,11 @@ public class LatexService {
             """, colback, left, right, top, bottom, ColorLocation.ACCENT.toString(), textcolor);
     }
 
-    private String getContent(LayoutDTO layout, ResumeDetailResponse resume) {
+    private String getContent(LayoutResponse layout, ResumeDetailResponse resume) {
         StringBuilder content = new StringBuilder();
         content.append("\\begin{paracol}{%s}\n\n".formatted(layout.getNumberOfColumns()));
 
-        for (ColumnDTO columnDto : layout.getColumns()) {
+        for (ColumnResponse columnDto : layout.getColumns()) {
             content.append(getColumn(columnDto, resume));
         }
 
@@ -159,11 +159,11 @@ public class LatexService {
         return content.toString();
     }
 
-    private String getColumn(ColumnDTO columnDto, ResumeDetailResponse resume) {
+    private String getColumn(ColumnResponse columnDto, ResumeDetailResponse resume) {
         StringBuilder column = new StringBuilder();
         column.append("\\switchcolumn[%d]\n".formatted(columnDto.getColumnNumber() - 1));
         column.append("\\begin{tcolorbox%d}\n".formatted(columnDto.getColumnNumber()));
-        for (ColumnSectionDTO columnSection : columnDto.getSectionMappings()) {
+        for (ColumnSectionResponse columnSection : columnDto.getSectionMappings()) {
             column.append(addTabToEachLine(generateSection(columnSection, resume), 1) + "\n");
         }
         column.append("\\end{tcolorbox%d}\n\n".formatted(columnDto.getColumnNumber()));
@@ -171,25 +171,18 @@ public class LatexService {
         return column.toString();
     }
 
-    private String generateSection(ColumnSectionDTO columnSection, ResumeDetailResponse resume) {
-        SectionResponse section = getSectionDto(columnSection.getSectionId(), resume);
+    private String generateSection(ColumnSectionResponse columnSection, ResumeDetailResponse resume) {
+        SectionResponse section = getSectionDto(columnSection.getSection().getId(), resume);
         StringBuilder sectionString = new StringBuilder();
-        // See if the section needs raggedright
-        String settings = "";
-        List<SectionItemResponse> skills = section.getSectionItems().stream()
-                .filter(item -> item.getType().equals(SectionItemType.SKILL))
-                .collect(Collectors.toList());
 
-        if (skills.stream().anyMatch(skill -> skill.getData().get("type").equals(SkillType.BOX))) {
-            settings = "\\\\raggedright";
-        }
         // Start the section
         sectionString.append("\\begin{cvsection}{%s}{%.1fpt}{%s}\n"
-                .formatted(section.getTitle(), columnSection.getItemsep(), settings));
+                .formatted(section.getTitle(), columnSection.getItemsep(), ""));
 
+        Boolean LastItemWasSkillBox = false;
         // Add the items
         for (SectionItemResponse item : section.getSectionItems()) {
-            sectionString.append(addTabToEachLine(generateItem(item), 1) + "\n");
+            sectionString.append(addTabToEachLine(generateItem(item, LastItemWasSkillBox), 1) + "\n");
         }
 
         // End the section
@@ -198,11 +191,11 @@ public class LatexService {
         return sectionString.toString();
     }
 
-    private String generateItem(SectionItemResponse item) {
+    private String generateItem(SectionItemResponse item, boolean LastItemWasSkillBox) {
         SectionItemData object = sectionItemMapper.toDataObject(SectionItemType.valueOf(item.getType()), item.getData());
 
         if (object instanceof Skill) {
-            return generateSkill((Skill) object);
+            return generateSkill((Skill) object, LastItemWasSkillBox);
         } else if (object instanceof Education) {
             return generateEducation((Education) object);
         } else if (object instanceof Textbox) {
@@ -214,8 +207,23 @@ public class LatexService {
         }
     }
 
-    private String generateSkill(Skill skill) {
-        return "";
+    private String generateSkill(Skill skill, boolean LastItemWasSkillBox) {
+        if (skill.getType().equals(SkillType.BOX)) {
+            // The set of skillboxed are an item instead of each skill being an item
+            String skillbox = LastItemWasSkillBox ? "\\item \\setstretch \\rightrigged\n" : "";
+            skillbox += "\\skillbox{%s}".formatted(skill.getName());
+            return skillbox;
+        } else if (skill.getType().equals(SkillType.SIMPLE)) {
+            return "\\skillitem{%s}".formatted(skill.getName());
+        } else if (skill.getType().equals(SkillType.TEXT)) {
+            return "\\skilltext{%s}{%s}".formatted(skill.getName(), skill.getDescription());
+        } else if (skill.getType().equals(SkillType.BULLETS)) {
+            return "\\skillbullets{%s}{%d}".formatted(skill.getName(), skill.getProficiency());
+        } else if (skill.getType().equals(SkillType.BAR)) {
+            return "\\skillbar{%s}{%d}".formatted(skill.getName(), skill.getProficiency());
+        } else {
+            return "";
+        }
     }
 
     private String generateEducation(Education education) {

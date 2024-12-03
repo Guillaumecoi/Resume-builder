@@ -1,14 +1,19 @@
 package com.coigniez.resumebuilder.model.layout.column.ColumnSection;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.interfaces.Mapper;
+import com.coigniez.resumebuilder.model.section.SectionMapper;
 
 @Service
-public class ColumnSectionMapper implements Mapper<ColumnSection, ColumnSectionDTO, ColumnSectionDTO> {
+public class ColumnSectionMapper implements Mapper<ColumnSection, ColumnSectionRequest, ColumnSectionResponse> {
+
+    @Autowired
+    private SectionMapper sectionMapper;
 
     @Override
-    public ColumnSection toEntity(ColumnSectionDTO request) {
+    public ColumnSection toEntity(ColumnSectionRequest request) {
         return ColumnSection.builder()
             .id(request.getId())
             .position(request.getPosition())
@@ -17,11 +22,10 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, ColumnSectionD
     }
 
     @Override
-    public ColumnSectionDTO toDto(ColumnSection entity) {
-        return ColumnSectionDTO.builder()
+    public ColumnSectionResponse toDto(ColumnSection entity) {
+        return ColumnSectionResponse.builder()
             .id(entity.getId())
-            .columnId(entity.getColumn().getId())
-            .sectionId(entity.getSection().getId())
+            .section(sectionMapper.toDto(entity.getSection()))
             .position(entity.getPosition())
             .itemsep(entity.getItemsep())
             .build();

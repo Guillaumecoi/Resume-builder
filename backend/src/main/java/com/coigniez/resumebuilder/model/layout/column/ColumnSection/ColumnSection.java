@@ -25,7 +25,7 @@ public class ColumnSection implements BaseEntity {
     @NotNull
     private Column column;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @NotNull
     private Section section;
     @NotNull

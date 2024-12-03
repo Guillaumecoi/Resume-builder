@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ColumnSectionDTO {
+public class ColumnSectionRequest {
 
     private Long id;
 

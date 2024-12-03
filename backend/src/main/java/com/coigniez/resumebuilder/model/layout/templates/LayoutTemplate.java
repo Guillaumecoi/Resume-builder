@@ -107,7 +107,7 @@ public final class LayoutTemplate {
                     #1
                 }"""
             )
-            .skillItem("""
+            .skillitem("""
                 \\newcommand{\\skillitem}[1]{
                     \\item
                     \\textbf{#1}

@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.model.layout.column;
 
 import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSection;
-import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSectionDTO;
+import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSectionResponse;
 import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSectionMapper;
 
 import lombok.AllArgsConstructor;
@@ -14,12 +14,12 @@ import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
 @Service
-public class ColumnMapper implements Mapper<Column, ColumnDTO, ColumnDTO> {
+public class ColumnMapper implements Mapper<Column, ColumnRequest, ColumnResponse> {
 
     private final ColumnSectionMapper columnSectionMapper;
     
     @Override
-    public Column toEntity(ColumnDTO dto) {
+    public Column toEntity(ColumnRequest dto) {
         if (dto == null) {
             return null;
         }
@@ -43,17 +43,17 @@ public class ColumnMapper implements Mapper<Column, ColumnDTO, ColumnDTO> {
     }
 
     @Override
-    public ColumnDTO toDto(Column entity) {
+    public ColumnResponse toDto(Column entity) {
         if (entity == null) {
             return null;
         }
 
-        List<ColumnSectionDTO> sectionMappings = new ArrayList<>();
+        List<ColumnSectionResponse> sectionMappings = new ArrayList<>();
         if (entity.getSectionMappings() != null) {
             entity.getSectionMappings().forEach(section -> sectionMappings.add(columnSectionMapper.toDto(section)));
         }
 
-        return ColumnDTO.builder()
+        return ColumnResponse.builder()
                 .id(entity.getId())
                 .columnNumber(entity.getColumnNumber())
                 .sectionMappings(sectionMappings)
@@ -63,7 +63,6 @@ public class ColumnMapper implements Mapper<Column, ColumnDTO, ColumnDTO> {
                 .paddingRight(entity.getPaddingRight())
                 .paddingTop(entity.getPaddingTop())
                 .paddingBottom(entity.getPaddingBottom())
-                .layoutId(entity.getLayout().getId())
                 .build();
     }
 }

@@ -22,7 +22,7 @@ public class ColumnSectionService {
     private final ColumnSectionMapper columnSectionMapper;
 
     
-    public Long create(Long parentId, ColumnSectionDTO request) {
+    public Long create(Long parentId, ColumnSectionRequest request) {
         ColumnSection columnSection = columnSectionMapper.toEntity(request);
 
         // Set the column
@@ -36,12 +36,12 @@ public class ColumnSectionService {
         return columnSectionRepository.save(columnSection).getId();
     }
 
-    public ColumnSection get(Long id) {
+    public ColumnSectionResponse get(Long id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'get'");
     }
 
-    public void update(Long id, ColumnSectionDTO request) {
+    public void update(Long id, ColumnSectionRequest request) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }

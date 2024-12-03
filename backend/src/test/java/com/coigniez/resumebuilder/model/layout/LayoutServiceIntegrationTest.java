@@ -56,11 +56,11 @@ public class LayoutServiceIntegrationTest {
     @Test
     void testCreateAndGetOneColumn() {
         // Arrange
-        LayoutDTO layoutDTO = LayoutDTO.builder().build();
+        LayoutRequest layoutDTO = LayoutRequest.builder().build();
 
         // Act
         Long layoutId = layoutService.create(resumeId, layoutDTO);
-        LayoutDTO createdLayout = layoutService.get(layoutId);
+        LayoutResponse createdLayout = layoutService.get(layoutId);
 
         // Assert
         assertNotNull(layoutId);
@@ -78,17 +78,16 @@ public class LayoutServiceIntegrationTest {
         assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingRight());
         assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingTop());
         assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingBottom());
-        assertEquals(layoutId, createdLayout.getColumns().get(0).getLayoutId());
     }
 
     @Test
     void testCreateAndGetTwoColumns() {
         // Arrange
-        LayoutDTO layoutDTO = LayoutDTO.builder().numberOfColumns(2).build();
+        LayoutRequest layoutDTO = LayoutRequest.builder().numberOfColumns(2).build();
 
         // Act
         Long layoutId = layoutService.create(resumeId, layoutDTO);
-        LayoutDTO createdLayout = layoutService.get(layoutId);
+        LayoutResponse createdLayout = layoutService.get(layoutId);
 
         // Assert
         assertNotNull(layoutId);
@@ -106,7 +105,6 @@ public class LayoutServiceIntegrationTest {
         assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingRight());
         assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingTop());
         assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingBottom());
-        assertEquals(layoutId, createdLayout.getColumns().get(0).getLayoutId());
 
         assertEquals(2, createdLayout.getColumns().get(1).getColumnNumber());
         assertEquals(ColorLocation.LIGHT_BG, createdLayout.getColumns().get(1).getBackgroundColor());
@@ -115,7 +113,6 @@ public class LayoutServiceIntegrationTest {
         assertEquals(10.0, createdLayout.getColumns().get(1).getPaddingRight());
         assertEquals(10.0, createdLayout.getColumns().get(1).getPaddingTop());
         assertEquals(10.0, createdLayout.getColumns().get(1).getPaddingBottom());
-        assertEquals(layoutId, createdLayout.getColumns().get(1).getLayoutId());
     }
 
 }

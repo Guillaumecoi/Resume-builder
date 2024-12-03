@@ -3,7 +3,7 @@ package com.coigniez.resumebuilder.model.layout.column;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSectionDTO;
+import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSectionRequest;
 import com.coigniez.resumebuilder.model.layout.enums.ColorLocation;
 
 import jakarta.validation.constraints.Max;
@@ -14,7 +14,7 @@ import lombok.*;
 
 @Data
 @Builder
-public class ColumnDTO {
+public class ColumnRequest {
 
     private Long id;
 
@@ -23,7 +23,7 @@ public class ColumnDTO {
 
     @Builder.Default
     @NotNull
-    private List<ColumnSectionDTO> sectionMappings = new ArrayList<>();
+    private List<ColumnSectionRequest> sectionMappings = new ArrayList<>();
 
     private ColorLocation backgroundColor;
     private ColorLocation textColor;
@@ -36,10 +36,10 @@ public class ColumnDTO {
     private Double paddingRight = 10.0;
     @Min(0)
     @Builder.Default
-    private Double paddingTop = 10.0;
+    private Double paddingTop = 20.0;
     @Min(0)
     @Builder.Default
-    private Double paddingBottom = 10.0;
+    private Double paddingBottom = 20.0;
 
     private Long layoutId;
 }

@@ -22,7 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.coigniez.resumebuilder.latex.LatexService;
 import com.coigniez.resumebuilder.latex.PdfGenerator;
-import com.coigniez.resumebuilder.model.layout.LayoutDTO;
+import com.coigniez.resumebuilder.model.layout.LayoutResponse;
 import com.coigniez.resumebuilder.model.resume.ResumeDetailResponse;
 
 import jakarta.transaction.Transactional;
@@ -58,7 +58,7 @@ public class ResumeExampleServiceTest {
         //Act
         List<Object> list = resumeExampleService.createExampleResume("Software Engineer 2");
         ResumeDetailResponse resume = (ResumeDetailResponse) list.get(0);
-        LayoutDTO layout = (LayoutDTO) list.get(1);
+        LayoutResponse layout = (LayoutResponse) list.get(1);
 
         String latexContent = latexService.generateLatexDocument(layout, resume);
 

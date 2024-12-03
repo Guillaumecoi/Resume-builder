@@ -13,14 +13,14 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Transactional
 @Service
-public class ColumnService implements CrudService<ColumnDTO, ColumnDTO> {
+public class ColumnService implements CrudService<ColumnResponse, ColumnRequest> {
 
     private final ColumnRepository columnRepository;
     private final LayoutRepository layoutRepository;
     private final ColumnMapper columnMapper;
     
 
-    public Long create(Long parentId, ColumnDTO request) {
+    public Long create(Long parentId, ColumnRequest request) {
         Column column = columnMapper.toEntity(request);
         Layout layout = layoutRepository.findById(parentId).orElseThrow(() -> new EntityNotFoundException("Layout not found"));
         layout.addColumn(column);
@@ -28,12 +28,12 @@ public class ColumnService implements CrudService<ColumnDTO, ColumnDTO> {
         return columnRepository.save(column).getId();
     }
 
-    public ColumnDTO get(Long id) {
+    public ColumnResponse get(Long id) {
         Column column = columnRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Column not found"));
         return columnMapper.toDto(column);
     }
 
-    public void update(Long id, ColumnDTO request) {
+    public void update(Long id, ColumnRequest request) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'update'");
         

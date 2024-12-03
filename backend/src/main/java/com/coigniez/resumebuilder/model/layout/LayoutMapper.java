@@ -7,19 +7,19 @@ import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.model.layout.column.Column;
-import com.coigniez.resumebuilder.model.layout.column.ColumnDTO;
+import com.coigniez.resumebuilder.model.layout.column.ColumnResponse;
 import com.coigniez.resumebuilder.model.layout.column.ColumnMapper;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
-public class LayoutMapper implements Mapper<Layout, LayoutDTO, LayoutDTO> {
+public class LayoutMapper implements Mapper<Layout, LayoutRequest, LayoutResponse> {
 
     private final ColumnMapper columnMapper;
 
     @Override
-    public Layout toEntity(LayoutDTO dto) {
+    public Layout toEntity(LayoutRequest dto) {
         if (dto == null) {
             return null;
         }
@@ -41,17 +41,17 @@ public class LayoutMapper implements Mapper<Layout, LayoutDTO, LayoutDTO> {
     }
 
     @Override
-    public LayoutDTO toDto(Layout entity) {
+    public LayoutResponse toDto(Layout entity) {
         if (entity == null) {
             return null;
         }
 
-        List<ColumnDTO> columnDTOs = new ArrayList<>();
+        List<ColumnResponse> columnDTOs = new ArrayList<>();
         if (entity.getColumns() != null) {
             entity.getColumns().forEach(column -> columnDTOs.add(columnMapper.toDto(column)));
         }
 
-        return LayoutDTO.builder()
+        return LayoutResponse.builder()
                 .id(entity.getId())
                 .pageSize(entity.getPageSize())
                 .columns(columnDTOs)

@@ -30,7 +30,7 @@ public class LatexCommands {
     @Column(columnDefinition = "text")
     private String textbox;
     @Column(columnDefinition = "text")
-    private String skillItem;
+    private String skillitem;
     @Column(columnDefinition = "text")
     private String skilltext;
     @Column(columnDefinition = "text")
@@ -47,7 +47,7 @@ public class LatexCommands {
             educationItem,
             experienceItem,
             textbox,
-            skillItem,
+            skillitem,
             skilltext,
             skillbullets,
             skillbar,

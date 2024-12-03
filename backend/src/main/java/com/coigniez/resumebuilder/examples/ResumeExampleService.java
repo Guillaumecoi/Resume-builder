@@ -1,8 +1,9 @@
 package com.coigniez.resumebuilder.examples;
 
-import com.coigniez.resumebuilder.model.layout.LayoutDTO;
+import com.coigniez.resumebuilder.model.layout.LayoutRequest;
+import com.coigniez.resumebuilder.model.layout.LayoutResponse;
 import com.coigniez.resumebuilder.model.layout.LayoutService;
-import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSectionDTO;
+import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSectionRequest;
 import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSectionService;
 import com.coigniez.resumebuilder.model.resume.*;
 import com.coigniez.resumebuilder.model.section.*;
@@ -29,7 +30,7 @@ public class ResumeExampleService {
     public List<Object> createExampleResume(String title) {
         ResumeDetailResponse resume = createBaseResume(title);
         Long layoutId = addLayout(resume.getId());
-        LayoutDTO layout = layoutService.get(layoutId);
+        LayoutResponse layout = layoutService.get(layoutId);
         
         addEducationSection(resume.getId(), layout.getColumns().get(0).getId(), 1);
         addSummarySection(resume.getId(), layout.getColumns().get(1).getId(), 1);
@@ -72,7 +73,7 @@ public class ResumeExampleService {
             }}));
         
         Long educationId = sectionService.create(resumeId, new SectionRequest(null, "Education", educationItems));
-        columnSectionService.create(columnId, ColumnSectionDTO.builder()
+        columnSectionService.create(columnId, ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(educationId)
                 .position(position)
@@ -92,7 +93,7 @@ public class ResumeExampleService {
             }}));
             
         Long experienceId = sectionService.create(resumeId, new SectionRequest(null, "Experience", experienceItems));
-        columnSectionService.create(columnId, ColumnSectionDTO.builder()
+        columnSectionService.create(columnId, ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(experienceId)
                 .position(position)
@@ -111,7 +112,7 @@ public class ResumeExampleService {
             }}));
             
         Long summaryId = sectionService.create(resumeId, new SectionRequest(null, "Summary", summaryItems));
-        columnSectionService.create(columnId, ColumnSectionDTO.builder()
+        columnSectionService.create(columnId, ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(summaryId)
                 .position(position)
@@ -119,7 +120,7 @@ public class ResumeExampleService {
     }
 
     private Long addLayout(Long resumeId) {
-        LayoutDTO layoutDTO = LayoutDTO.builder().numberOfColumns(2).build();
+        LayoutRequest layoutDTO = LayoutRequest.builder().numberOfColumns(2).build();
         return layoutService.create(resumeId, layoutDTO);
     }
 }

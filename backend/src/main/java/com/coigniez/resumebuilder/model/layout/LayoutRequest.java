@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.model.layout;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.model.layout.column.ColumnDTO;
+import com.coigniez.resumebuilder.model.layout.column.ColumnRequest;
 import com.coigniez.resumebuilder.model.layout.enums.*;
 import com.coigniez.resumebuilder.model.layout.templates.LayoutTemplate;
 
@@ -14,13 +14,13 @@ import lombok.Data;
 
 @Data
 @Builder
-public class LayoutDTO {
+public class LayoutRequest {
     private Long id;
 
     @Builder.Default
     private PageSize pageSize = PageSize.A4;
 
-    private List<ColumnDTO> columns;
+    private List<ColumnRequest> columns;
 
     @Builder.Default
     @NotNull @Min(1) @Max(2)
