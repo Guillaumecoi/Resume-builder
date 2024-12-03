@@ -9,6 +9,7 @@ import com.coigniez.resumebuilder.model.resume.*;
 import com.coigniez.resumebuilder.model.section.*;
 import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemRequest;
 import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.SectionItemType;
+import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.Skill;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class ResumeExampleService {
         LayoutResponse layout = layoutService.get(layoutId);
         
         addEducationSection(resume.getId(), layout.getColumns().get(0).getId(), 1);
+        addSkillsSection(resume.getId(), layout.getColumns().get(0).getId(), 2);
         addSummarySection(resume.getId(), layout.getColumns().get(1).getId(), 1);
         addExperienceSection(resume.getId(),layout.getColumns().get(1).getId(), 2);
 
@@ -115,6 +117,54 @@ public class ResumeExampleService {
         columnSectionService.create(columnId, ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(summaryId)
+                .position(position)
+                .build());
+    }
+
+    private void addSkillsSection(Long resumeId, Long columnId, int position) {
+        List<SectionItemRequest> skillsItems = new ArrayList<>();
+        skillsItems.add(new SectionItemRequest(SectionItemType.SKILL_BOXES.name(), null,
+            new HashMap<>() {{
+                put("skills", """
+                    Java
+                    Spring Boot
+                    HTML
+                    CSS
+                    JavaScript
+                    SQL
+                    Python
+                    C
+                    C++
+                    """);
+            }}));
+        skillsItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), null,
+            new HashMap<>() {{
+                put("name", "Dutch");
+                put("type", Skill.SkillType.SIMPLE.name());
+            }}));
+        skillsItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), null,
+            new HashMap<>() {{
+                put("name", "French");
+                put("description", "Intermediate");
+                put("type", Skill.SkillType.TEXT.name());
+            }}));
+        skillsItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), null,
+            new HashMap<>() {{
+                put("name", "English");
+                put("proficiency", 9);
+                put("type", Skill.SkillType.BAR.name());
+            }}));
+        skillsItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), null,
+            new HashMap<>() {{
+                put("name", "Japanese");
+                put("proficiency", 6);
+                put("type", Skill.SkillType.BULLETS.name());
+            }}));
+            
+        Long skillsId = sectionService.create(resumeId, new SectionRequest(null, "Skills", skillsItems));
+        columnSectionService.create(columnId, ColumnSectionRequest.builder()
+                .columnId(columnId)
+                .sectionId(skillsId)
                 .position(position)
                 .build());
     }

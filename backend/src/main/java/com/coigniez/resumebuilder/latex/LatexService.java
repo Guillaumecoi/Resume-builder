@@ -3,6 +3,7 @@ package com.coigniez.resumebuilder.latex;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.model.layout.LayoutResponse;
@@ -18,17 +19,16 @@ import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.Education;
 import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.SectionItemData;
 import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.SectionItemType;
 import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.Skill;
+import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.Skillboxes;
 import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.Textbox;
 import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.WorkExperience;
 import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.Skill.SkillType;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 @Service
 public class LatexService {
 
-    private final SectionItemMapper sectionItemMapper;
+    @Autowired
+    private SectionItemMapper sectionItemMapper;
     
     public String generateLatexDocument(LayoutResponse layout) {
         StringBuilder latexcode = new StringBuilder();
@@ -178,10 +178,9 @@ public class LatexService {
         sectionString.append("\\begin{cvsection}{%s}{%.1fpt}{%s}\n"
                 .formatted(section.getTitle(), columnSection.getItemsep(), ""));
 
-        Boolean LastItemWasSkillBox = false;
         // Add the items
         for (SectionItemResponse item : section.getSectionItems()) {
-            sectionString.append(addTabToEachLine(generateItem(item, LastItemWasSkillBox), 1) + "\n");
+            sectionString.append(addTabToEachLine(generateItem(item), 1) + "\n");
         }
 
         // End the section
@@ -190,29 +189,26 @@ public class LatexService {
         return sectionString.toString();
     }
 
-    private String generateItem(SectionItemResponse item, boolean LastItemWasSkillBox) {
+    private String generateItem(SectionItemResponse item) {
         SectionItemData object = sectionItemMapper.toDataObject(SectionItemType.valueOf(item.getType()), item.getData());
 
         if (object instanceof Skill) {
-            return generateSkill((Skill) object, LastItemWasSkillBox);
+            return generateSkill((Skill) object);
         } else if (object instanceof Education) {
             return generateEducation((Education) object);
         } else if (object instanceof Textbox) {
             return generateTextbox((Textbox) object);
         } else if (object instanceof WorkExperience) {
             return generateWorkexperience((WorkExperience) object);
+        } else if (object instanceof Skillboxes) {
+            return generateSkillboxes((Skillboxes) object);
         } else {
             return "";
         }
     }
 
-    private String generateSkill(Skill skill, boolean LastItemWasSkillBox) {
-        if (skill.getType().equals(SkillType.BOX)) {
-            // The set of skillboxed are an item instead of each skill being an item
-            String skillbox = LastItemWasSkillBox ? "\\item \\setstretch \\rightrigged\n" : "";
-            skillbox += "\\skillbox{%s}".formatted(skill.getName());
-            return skillbox;
-        } else if (skill.getType().equals(SkillType.SIMPLE)) {
+    private String generateSkill(Skill skill) {
+        if (skill.getType().equals(SkillType.SIMPLE)) {
             return "\\skillitem{%s}".formatted(skill.getName());
         } else if (skill.getType().equals(SkillType.TEXT)) {
             return "\\skilltext{%s}{%s}".formatted(skill.getName(), skill.getDescription());
@@ -223,6 +219,23 @@ public class LatexService {
         } else {
             return "";
         }
+    }
+
+    private String generateSkillboxes(Skillboxes skillboxes) {
+        StringBuilder skillboxesString = new StringBuilder();
+        skillboxesString.append("\\begin{skillboxes}\n");
+
+        for (String skill : skillboxes.getSkillsAsList()) {
+            skillboxesString.append(
+                    addTabToEachLine(
+                        "\\skillbox{%s}".formatted(skill),
+                         1)
+                    + "\n");
+        }
+
+        skillboxesString.append("\\end{skillboxes}\n");
+
+        return skillboxesString.toString();
     }
 
     private String generateEducation(Education education) {

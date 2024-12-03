@@ -160,7 +160,17 @@ public final class LayoutTemplate {
                         valign=center,
                         fontupper=\\footnotesize\\bfseries,
                     ]{\\textcolor{%s}{#1}}
+                    \\vspace{2pt}
                 }""".formatted(ColorLocation.ACCENT.toString(), ColorLocation.LIGHT_TEXT.toString())
+            )
+            .skillboxes("""
+                \\newenvironment{skillboxes}[0]{
+                    \\item
+                    \\begin{minipage}[t]{\\textwidth}
+                    \\raggedright
+                        }{
+                    \\end{minipage}
+                }"""
             )
             .build();
     }

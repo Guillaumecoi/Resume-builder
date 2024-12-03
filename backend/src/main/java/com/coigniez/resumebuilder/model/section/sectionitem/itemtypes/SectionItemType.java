@@ -4,7 +4,8 @@ public enum SectionItemType {
     WORK_EXPERIENCE(WorkExperience.class),
     TEXTBOX(Textbox.class),
     SKILL(Skill.class),
-    EDUCATION(Education.class);
+    EDUCATION(Education.class),
+    SKILL_BOXES(Skillboxes.class);
 
     private final Class<?> dataType;
 

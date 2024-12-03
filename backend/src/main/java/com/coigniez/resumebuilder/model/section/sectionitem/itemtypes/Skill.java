@@ -1,6 +1,5 @@
 package com.coigniez.resumebuilder.model.section.sectionitem.itemtypes;
 
-
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -32,7 +31,6 @@ public class Skill implements SectionItemData {
         SIMPLE,
         TEXT,       
         BULLETS,    
-        BAR,        
-        BOX         
+        BAR      
     }
 }
