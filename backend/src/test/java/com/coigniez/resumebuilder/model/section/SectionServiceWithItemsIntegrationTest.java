@@ -54,10 +54,8 @@ public class SectionServiceWithItemsIntegrationTest {
         // Set the Authentication object in the SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(testuser);
 
-        ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                        List.of(SectionRequest.builder().title("Education").build(),
-                                SectionRequest.builder().title("Experience").build()
-                        ));
+        ResumeRequest resumeRequest = ResumeRequest.builder().title("Software Developer")
+                .sections(List.of(SectionRequest.builder().title("Education").build())).build();
 
         resumeId = resumeService.create(null, resumeRequest);
     }

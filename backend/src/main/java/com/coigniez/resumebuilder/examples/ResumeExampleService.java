@@ -42,12 +42,7 @@ public class ResumeExampleService {
     }
 
     private ResumeDetailResponse createBaseResume(String title) {
-        ResumeRequest resumeRequest = new ResumeRequest(
-            title,
-            "John",
-            "Doe",
-            null
-        );
+        ResumeRequest resumeRequest = ResumeRequest.builder().title(title).build();
         
         Long resumeId = resumeService.create(null, resumeRequest);
         return resumeService.get(resumeId);

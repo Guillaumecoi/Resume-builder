@@ -50,8 +50,6 @@ public class Resume implements BaseEntity, TimeTrackable, Creatable {
     private Long id;
 
     private String title;
-    private String firstName;
-    private String lastName;
     private String picture;
 
     @CreatedBy

@@ -25,10 +25,8 @@ public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeDetailR
         }
 
         return Resume.builder()
-                .title(request.title())
-                .firstName(request.firstName())
-                .lastName(request.lastName())
-                .sections(Optional.ofNullable(request.sections())
+                .title(request.getTitle())
+                .sections(Optional.ofNullable(request.getSections())
                         .orElse(Collections.emptyList())
                         .stream()
                         .map(sectionMapper::toEntity)
@@ -44,8 +42,6 @@ public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeDetailR
         return ResumeDetailResponse.builder()
             .id(entity.getId())
             .title(entity.getTitle())
-            .firstName(entity.getFirstName())
-            .lastName(entity.getLastName())
             .picture(FileUtils.readFileFromLocation(entity.getPicture()))
             .createdDate(entity.getCreatedDate().toString())
             .lastModifiedDate(entity.getLastModifiedDate().toString())
@@ -63,8 +59,6 @@ public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeDetailR
         return ResumeResponse.builder()
             .id(entity.getId())
             .title(entity.getTitle())
-            .firstName(entity.getFirstName())
-            .lastName(entity.getLastName())
             .createdDate(entity.getCreatedDate().toString())
             .lastModifiedDate(entity.getLastModifiedDate().toString())
             .build();

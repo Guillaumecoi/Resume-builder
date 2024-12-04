@@ -29,21 +29,17 @@ public class ResumeMapperTest {
     @Test
     void testToEntity() {
         // Arrange
-        ResumeRequest dto = new ResumeRequest(
-            "Software Engineer",
-            "John",
-            "Doe",
-            List.of(SectionRequest.builder().title("Education").build(),
-            SectionRequest.builder().title("Experience").build())
-        );
+        ResumeRequest dto = ResumeRequest.builder().title("Software Engineer")
+                .sections(List.of(
+                    SectionRequest.builder().title("Education").build(),
+                    SectionRequest.builder().title("Experience").build()))
+                .build();
 
         // Act
         Resume entity = mapper.toEntity(dto);
 
         // Assert
         assertEquals("Software Engineer", entity.getTitle());
-        assertEquals("John", entity.getFirstName());
-        assertEquals("Doe", entity.getLastName());
         assertEquals(2, entity.getSections().size());
 
         Set<String> sectionTitles = entity.getSections().stream()
@@ -69,8 +65,6 @@ public class ResumeMapperTest {
         Resume entity = Resume.builder()
             .id(1L)
             .title("Software Engineer")
-            .firstName("John")
-            .lastName("Doe")
             .createdDate(LocalDateTime.parse("2023-01-01T00:00"))
             .lastModifiedDate(LocalDateTime.parse("2023-01-02T00:00"))
             .sections(new HashSet<>(Arrays.asList(section1, section2)))
@@ -82,8 +76,6 @@ public class ResumeMapperTest {
         // Assert
         assertEquals(1L, dto.getId());
         assertEquals("Software Engineer", dto.getTitle());
-        assertEquals("John", dto.getFirstName());
-        assertEquals("Doe", dto.getLastName());
         assertEquals("2023-01-01T00:00", dto.getCreatedDate());
         assertEquals("2023-01-02T00:00", dto.getLastModifiedDate());
         assertEquals(2, dto.getSections().size());
@@ -101,8 +93,6 @@ public class ResumeMapperTest {
         Resume entity = Resume.builder()
             .id(1L)
             .title("Software Engineer")
-            .firstName("John")
-            .lastName("Doe")
             .createdDate(LocalDateTime.parse("2023-01-01T00:00"))
             .lastModifiedDate(LocalDateTime.parse("2023-01-02T00:00"))
             .sections(null)
@@ -114,8 +104,6 @@ public class ResumeMapperTest {
         // Assert
         assertEquals(1L, dto.getId());
         assertEquals("Software Engineer", dto.getTitle());
-        assertEquals("John", dto.getFirstName());
-        assertEquals("Doe", dto.getLastName());
         assertEquals("2023-01-01T00:00", dto.getCreatedDate());
         assertEquals("2023-01-02T00:00", dto.getLastModifiedDate());
         assertEquals(Collections.emptyList(), dto.getSections());
@@ -127,8 +115,6 @@ public class ResumeMapperTest {
         Resume entity = Resume.builder()
             .id(1L)
             .title("Software Engineer")
-            .firstName("John")
-            .lastName("Doe")
             .createdDate(LocalDateTime.parse("2023-01-01T00:00"))
             .lastModifiedDate(LocalDateTime.parse("2023-01-02T00:00"))
             .build();
@@ -139,8 +125,6 @@ public class ResumeMapperTest {
         // Assert
         assertEquals(1L, dto.getId());
         assertEquals("Software Engineer", dto.getTitle());
-        assertEquals("John", dto.getFirstName());
-        assertEquals("Doe", dto.getLastName());
         assertEquals("2023-01-01T00:00", dto.getCreatedDate());
         assertEquals("2023-01-02T00:00", dto.getLastModifiedDate());
     }

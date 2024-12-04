@@ -68,9 +68,12 @@ public class ResumeServiceIntegrationTest {
     @Test
     void testCreateAndGet() {
         // Arrange
-        ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                List.of(SectionRequest.builder().title("Education").build(),
-                        SectionRequest.builder().title("Experience").build()));
+        ResumeRequest resumeRequest = ResumeRequest.builder()
+                .title("Software Engineer")
+                .sections(List.of(
+                    SectionRequest.builder().title("Education").build(),
+                    SectionRequest.builder().title("Experience").build()))
+                .build();
 
 
         // Act
@@ -81,8 +84,6 @@ public class ResumeServiceIntegrationTest {
         assertThat(resume).isNotNull();
         assertThat(resume.getId()).isNotNull();
         assertEquals("Software Engineer", resume.getTitle());
-        assertEquals("John", resume.getFirstName());
-        assertEquals("Doe", resume.getLastName());
         assertNotNull(resume.getCreatedDate());
         assertNotNull(resume.getLastModifiedDate());
         assertThat(resume.getSections()).hasSize(2);
@@ -93,9 +94,12 @@ public class ResumeServiceIntegrationTest {
     @Test
     void testAddSectionAndGet() {
         // Arrange
-        ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                List.of(SectionRequest.builder().title("Education").build(),
-                        SectionRequest.builder().title("Experience").build()));
+        ResumeRequest resumeRequest = ResumeRequest.builder()
+                .title("Software Engineer")
+                .sections(List.of(
+                    SectionRequest.builder().title("Education").build(),
+                    SectionRequest.builder().title("Experience").build()))
+                .build();
 
         Long resumeId = resumeService.create(null, resumeRequest);
 
@@ -109,8 +113,6 @@ public class ResumeServiceIntegrationTest {
         assertThat(resume).isNotNull();
         assertThat(resume.getId()).isNotNull();
         assertEquals("Software Engineer", resume.getTitle());
-        assertEquals("John", resume.getFirstName());
-        assertEquals("Doe", resume.getLastName());
         assertNotNull(resume.getCreatedDate());
         assertNotNull(resume.getLastModifiedDate());
         assertThat(resume.getSections()).hasSize(3);
@@ -121,9 +123,12 @@ public class ResumeServiceIntegrationTest {
     @Test
     void testUploadPicture() throws IOException {
         // Arrange
-        ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                List.of(SectionRequest.builder().title("Education").build(),
-                        SectionRequest.builder().title("Experience").build()));
+        ResumeRequest resumeRequest = ResumeRequest.builder()
+                .title("Software Engineer")
+                .sections(List.of(
+                    SectionRequest.builder().title("Education").build(),
+                    SectionRequest.builder().title("Experience").build()))
+                .build();
 
         Long resumeId = resumeService.create(null, resumeRequest);
         MockMultipartFile pictureFile = getPictureFile();
@@ -138,24 +143,25 @@ public class ResumeServiceIntegrationTest {
         assertArrayEquals(pictureFile.getBytes(), resume.getPicture());
         // Check if nothing else is changed
         assertEquals("Software Engineer", resume.getTitle());
-        assertEquals("John", resume.getFirstName());
-        assertEquals("Doe", resume.getLastName());
         assertThat(resume.getSections()).hasSize(2);
     }
 
     @Test
     void updateDoesNotRemovePicture() throws IOException {
         // Arrange
-        ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                List.of(SectionRequest.builder().title("Education").build(),
-                        SectionRequest.builder().title("Experience").build()));
+        ResumeRequest resumeRequest = ResumeRequest.builder()
+                .title("Software Engineer")
+                .sections(List.of(
+                    SectionRequest.builder().title("Education").build(),
+                    SectionRequest.builder().title("Experience").build()))
+                .build();
 
         Long resumeId = resumeService.create(null, resumeRequest);
         MockMultipartFile pictureFile = getPictureFile();
 
         // Act
         resumeService.uploadPicture(resumeId, pictureFile);
-        resumeService.update(resumeId, new ResumeRequest("updated", null, null, null));
+        resumeService.update(resumeId, ResumeRequest.builder().title("updated").build());
         ResumeDetailResponse resume = resumeService.get(resumeId);
 
         // Assert
@@ -169,14 +175,20 @@ public class ResumeServiceIntegrationTest {
     @Test
     void testUpdate() {
         // Arrange
-        ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                List.of(SectionRequest.builder().title("Education").build(),
-                        SectionRequest.builder().title("Experience").build()));
+        ResumeRequest resumeRequest = ResumeRequest.builder()
+                .title("Software Engineer")
+                .sections(List.of(
+                    SectionRequest.builder().title("Education").build(),
+                    SectionRequest.builder().title("Experience").build()))
+                .build();
 
         Long resumeId = resumeService.create(null, resumeRequest);
 
-        ResumeRequest updatedResumeRequest = new ResumeRequest("Barista", "Jane", "Doe", 
-                List.of(SectionRequest.builder().title("Education").build()));
+        ResumeRequest updatedResumeRequest = ResumeRequest.builder()
+                .title("Barista")
+                .sections(List.of(
+                    SectionRequest.builder().title("CoffeeLover").build()))
+                .build();
         // Act
         resumeService.update(resumeId, updatedResumeRequest);
         ResumeDetailResponse updatedResume = resumeService.get(resumeId);
@@ -184,17 +196,18 @@ public class ResumeServiceIntegrationTest {
         // Assert
         assertNotNull(updatedResume);
         assertEquals("Barista", updatedResume.getTitle());
-        assertEquals("Jane", updatedResume.getFirstName());
-        assertEquals("Doe", updatedResume.getLastName());
         assertThat(updatedResume.getSections()).hasSize(2); // update should not change the sections
     }
 
     @Test
     void testDelete() {
         // Arrange
-        ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                List.of(SectionRequest.builder().title("Education").build(),
-                        SectionRequest.builder().title("Experience").build()));
+        ResumeRequest resumeRequest = ResumeRequest.builder()
+                .title("Software Engineer")
+                .sections(List.of(
+                    SectionRequest.builder().title("Education").build(),
+                    SectionRequest.builder().title("Experience").build()))
+                .build();
 
         Long resumeId = resumeService.create(null, resumeRequest);
 
@@ -209,9 +222,12 @@ public class ResumeServiceIntegrationTest {
     @Test
     void testAuthentications() {
         // Arrange
-        ResumeRequest resumeRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                List.of(SectionRequest.builder().title("Education").build(),
-                        SectionRequest.builder().title("Experience").build()));
+        ResumeRequest resumeRequest = ResumeRequest.builder()
+                .title("Software Engineer")
+                .sections(List.of(
+                    SectionRequest.builder().title("Education").build(),
+                    SectionRequest.builder().title("Experience").build()))
+                .build();
 
         Long resumeId = resumeService.create(null, resumeRequest);
         
@@ -231,19 +247,25 @@ public class ResumeServiceIntegrationTest {
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () -> { resumeService.get(resumeId); });
-        assertThrows(EntityNotFoundException.class, () -> { resumeService.update(resumeId, new ResumeRequest("title", null, null, null)); });
+        assertThrows(EntityNotFoundException.class, () -> { resumeService.update(resumeId, ResumeRequest.builder().title("updated").build()); });
         assertThrows(EntityNotFoundException.class, () -> { resumeService.delete(resumeId); });
     }
 
     @Test
     void testGetAll() {
         // Arrange
-        ResumeRequest resumeRequest1 = new ResumeRequest("Software Engineer", "John", "Doe", 
-                List.of(SectionRequest.builder().title("Education").build(),
-                        SectionRequest.builder().title("Experience").build()));
-        ResumeRequest resumeRequest2 = new ResumeRequest("Barista", "Jane", "Doe", 
-                List.of(SectionRequest.builder().title("Education").build(),
-                        SectionRequest.builder().title("Experience").build()));
+        ResumeRequest resumeRequest1 = ResumeRequest.builder()
+                .title("Software Engineer")
+                .sections(List.of(
+                    SectionRequest.builder().title("Education").build(),
+                    SectionRequest.builder().title("Experience").build()))
+                .build();
+        ResumeRequest resumeRequest2 = ResumeRequest.builder()
+                .title("Barista")
+                .sections(List.of(
+                    SectionRequest.builder().title("Education").build(),
+                    SectionRequest.builder().title("Experience").build()))
+                .build();
         // Act
         Long resumeId1 = resumeService.create(null, resumeRequest1);
         Long resumeId2 = resumeService.create(null, resumeRequest2);
@@ -257,11 +279,7 @@ public class ResumeServiceIntegrationTest {
         assertEquals(resumeId1, resumes.getContent().get(1).getId());
         // Check if resumes are correct
         assertEquals("Software Engineer", resumes.getContent().get(1).getTitle());
-        assertEquals("John", resumes.getContent().get(1).getFirstName());
-        assertEquals("Doe", resumes.getContent().get(1).getLastName());
         assertEquals("Barista", resumes.getContent().get(0).getTitle());
-        assertEquals("Jane", resumes.getContent().get(0).getFirstName());
-        assertEquals("Doe", resumes.getContent().get(0).getLastName());
         // Check the pageresponse
         assertEquals(0, resumes.getNumber());
         assertEquals(10, resumes.getSize());
@@ -272,12 +290,18 @@ public class ResumeServiceIntegrationTest {
     @Test
     void testDeleteAll() {
         // Arrange
-        ResumeRequest resumeRequest1 = new ResumeRequest("Software Engineer", "John", "Doe", 
-                List.of(SectionRequest.builder().title("Education").build(),
-                        SectionRequest.builder().title("Experience").build()));
-        ResumeRequest resumeRequest2 = new ResumeRequest("Barista", "Jane", "Doe", 
-                List.of(SectionRequest.builder().title("Education").build(),
-                        SectionRequest.builder().title("Experience").build()));
+        ResumeRequest resumeRequest1 = ResumeRequest.builder()
+                .title("Software Engineer")
+                .sections(List.of(
+                    SectionRequest.builder().title("Education").build(),
+                    SectionRequest.builder().title("Experience").build()))
+                .build();
+        ResumeRequest resumeRequest2 = ResumeRequest.builder()
+                .title("Barista")
+                .sections(List.of(
+                    SectionRequest.builder().title("Education").build(),
+                    SectionRequest.builder().title("Experience").build()))
+                .build();
 
         // Act
         Long resumeId1 = resumeService.create(null, resumeRequest1);

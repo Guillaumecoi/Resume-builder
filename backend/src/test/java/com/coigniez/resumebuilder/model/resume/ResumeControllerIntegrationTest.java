@@ -41,9 +41,11 @@ public class ResumeControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = { "USER" })
     void testCreateAndGetResume() throws Exception {
         // Arrange
-        ResumeRequest createRequest = new ResumeRequest("Software Engineer", "John", "Doe", 
-                        List.of(SectionRequest.builder().title("Education").build(),
-                        SectionRequest.builder().title("Experience").build()));
+        ResumeRequest createRequest = ResumeRequest.builder().title("Software Engineer")
+                        .sections(List.of(
+                                SectionRequest.builder().title("Education").build(),
+                                SectionRequest.builder().title("Experience").build()))
+                        .build();
 
         // Act - Create
         String createResponse = mockMvc.perform(post("/resumes")
@@ -58,8 +60,6 @@ public class ResumeControllerIntegrationTest {
         mockMvc.perform(get("/resumes/" + resumeId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Software Engineer"))
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Doe"))
                 .andExpect(jsonPath("$.sections[*].title")
                         .value(org.hamcrest.Matchers.containsInAnyOrder("Education", "Experience")));
     }
@@ -67,7 +67,7 @@ public class ResumeControllerIntegrationTest {
     @Test
     void testResumeAccessControl() throws Exception {
         // Create resume as testuser
-        ResumeRequest createRequest = new ResumeRequest("Software Engineer", "John", "Doe", null);
+        ResumeRequest createRequest = ResumeRequest.builder().title("Software Engineer").build();
 
         String createResponse = mockMvc.perform(post("/resumes")
                 .with(user("testuser").roles("USER"))
@@ -94,7 +94,7 @@ public class ResumeControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = { "USER" })
     void testUpdate() throws Exception {
         // Arrange
-        ResumeRequest createRequest = new ResumeRequest("Software Engineer", "John", "Doe", null);
+        ResumeRequest createRequest = ResumeRequest.builder().title("Software Engineer").build();
         String createResponse = mockMvc.perform(post("/resumes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(createRequest)))
@@ -103,7 +103,7 @@ public class ResumeControllerIntegrationTest {
 
         Long resumeId = Long.parseLong(createResponse);
 
-        ResumeRequest updateRequest = new ResumeRequest("Data Scientist", "Alice", "Smith", null);
+        ResumeRequest updateRequest = ResumeRequest.builder().title("Barista").build();
 
         // Act
         mockMvc.perform(post("/resumes/" + resumeId)
@@ -114,16 +114,14 @@ public class ResumeControllerIntegrationTest {
         // Assert
         mockMvc.perform(get("/resumes/" + resumeId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Data Scientist"))
-                .andExpect(jsonPath("$.firstName").value("Alice"))
-                .andExpect(jsonPath("$.lastName").value("Smith"));
+                .andExpect(jsonPath("$.title").value("Barista"));
     }
 
     @Test
     @WithMockUser(username = "testuser", roles = { "USER" })
     void testUploadPicture() throws Exception {
         // Arrange
-        ResumeRequest createRequest = new ResumeRequest("Software Engineer", "John", "Doe", null);
+        ResumeRequest createRequest = ResumeRequest.builder().title("Software Engineer").build();
         String createResponse = mockMvc.perform(post("/resumes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(createRequest)))
@@ -160,7 +158,7 @@ public class ResumeControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = { "USER" })
     void testUpdatePicture() throws Exception {
         // Arrange
-        ResumeRequest createRequest = new ResumeRequest("Software Engineer", "John", "Doe", null);
+        ResumeRequest createRequest = ResumeRequest.builder().title("Software Engineer").build();
         String createResponse = mockMvc.perform(post("/resumes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(createRequest)))
@@ -209,7 +207,7 @@ public class ResumeControllerIntegrationTest {
                 .andExpect(jsonPath("$.picture").value(Base64.getEncoder().encodeToString(file2.getBytes())));
 
         // Act - update user
-        ResumeRequest updateRequest = new ResumeRequest("Data Scientist", "Alice", "Smith", null);
+        ResumeRequest updateRequest = ResumeRequest.builder().title("Software Engineer").build();
         mockMvc.perform(post("/resumes/" + resumeId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(updateRequest)))
@@ -225,7 +223,7 @@ public class ResumeControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = { "USER" })
     void testDelete() throws Exception {
         // Arrange
-        ResumeRequest createRequest = new ResumeRequest("Software Engineer", "John", "Doe", null);
+        ResumeRequest createRequest = ResumeRequest.builder().title("Software Engineer").build();
         String createResponse = mockMvc.perform(post("/resumes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(createRequest)))
@@ -247,13 +245,13 @@ public class ResumeControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = { "USER" })
     void testGetAllAndDeleteAll() throws Exception {
         // Arrange
-        ResumeRequest createRequest1 = new ResumeRequest("Software Engineer", "John", "Doe", null);
+        ResumeRequest createRequest1 = ResumeRequest.builder().title("Software Engineer").build();
         mockMvc.perform(post("/resumes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(createRequest1)))
                 .andExpect(status().isCreated());
 
-        ResumeRequest createRequest2 = new ResumeRequest("Data Scientist", "Alice", "Smith", null);
+        ResumeRequest createRequest2 = ResumeRequest.builder().title("Barista").build();
         mockMvc.perform(post("/resumes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(createRequest2)))
@@ -264,7 +262,7 @@ public class ResumeControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content[*].title")
-                        .value(org.hamcrest.Matchers.containsInAnyOrder("Software Engineer", "Data Scientist")))
+                        .value(org.hamcrest.Matchers.containsInAnyOrder("Software Engineer", "Barista")))
                 .andExpect(jsonPath("$.totalElements").value(2));
 
         // Act - Delete all
