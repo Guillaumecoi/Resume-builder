@@ -1,13 +1,13 @@
 package com.coigniez.resumebuilder.domain.sectionitem;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.section.SectionRepository;
-import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.file.FileStorageService;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
@@ -26,7 +26,10 @@ public class SectionItemService {
     private final FileStorageService fileStorageService;
     private final SecurityUtils securityUtils;
 
-    public Long create(Section section, SectionItemRequest request) {   
+    public Long create(Long sectionId, SectionItemRequest request) {   
+        Section section = sectionRepository.findById(sectionId)
+            .orElseThrow(() -> new EntityNotFoundException("Section not found"));
+
         SectionItem sectionItem = sectionitemMapper.toEntity(request);
     
         // Find the maximum itemOrder in the section
@@ -45,24 +48,12 @@ public class SectionItemService {
     }
 
     public Long createPicture(Long sectionId, MultipartFile file, SectionItemRequest request) {
-        Section section = sectionRepository.findById(sectionId)
-            .orElseThrow(() -> new EntityNotFoundException("Section not found"));
-            
-        // Create section item first
-        Long itemId = create(section, request);
-        
-        // Then update with file
-        SectionItem item = sectionitemRepository.findById(itemId)
-            .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
-            
         String path = fileStorageService.saveFile(file, securityUtils.getUserName());
+        Map<String, Object> data = request.getData();
+        data.put("path", path);
+        request.setData(data);
         
-        Picture picture = (Picture) item.getData();
-        picture.setPath(path);
-        
-        sectionitemRepository.save(item);
-        
-        return itemId;
+        return create(sectionId, request);
     }
 
     public List<SectionItem> getAll(Long id) {

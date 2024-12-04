@@ -39,7 +39,7 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
         Section createdSection = sectionRepository.findById(sectionId)
                 .orElseThrow(() -> new EntityNotFoundException(""));
 
-        createSectionItems(createdSection, request.getSectionItems());
+        createSectionItems(createdSection.getId(), request.getSectionItems());
 
         return sectionId;
     }
@@ -63,7 +63,7 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
         // Clear and update items in one transaction
         existingSection.getItems().clear();
         if (request.getSectionItems() != null) {
-            createSectionItems(existingSection, request.getSectionItems());
+            createSectionItems(existingSection.getId(), request.getSectionItems());
         }
         
         sectionRepository.save(existingSection);
@@ -87,12 +87,12 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
                 .toList();
     }
 
-    private void createSectionItems(Section section, List<SectionItemRequest> sectionItems) {
+    private void createSectionItems(Long sectionId, List<SectionItemRequest> sectionItems) {
         if(sectionItems == null) {
             return;
         }
         for (SectionItemRequest sectionItemRequest : sectionItems) {
-            sectionItemService.create(section, sectionItemRequest);
+            sectionItemService.create(sectionId, sectionItemRequest);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.coigniez.resumebuilder.domain.sectionitem;
 
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Education;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skillboxes;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
@@ -11,7 +12,8 @@ public enum SectionItemType {
     TEXTBOX(Textbox.class),
     SKILL(Skill.class),
     EDUCATION(Education.class),
-    SKILL_BOXES(Skillboxes.class);
+    SKILL_BOXES(Skillboxes.class),
+    PICTURE(Picture.class);
 
     private final Class<?> dataType;
 
