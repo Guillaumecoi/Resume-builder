@@ -20,7 +20,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.model.resume.ResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
+import com.coigniez.resumebuilder.domain.section.SectionRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest

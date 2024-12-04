@@ -15,8 +15,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.model.resume.ResumeRequest;
-import com.coigniez.resumebuilder.model.resume.ResumeService;
+import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.ResumeService;
+import com.coigniez.resumebuilder.domain.section.SectionRequest;
+import com.coigniez.resumebuilder.domain.section.SectionResponse;
+import com.coigniez.resumebuilder.domain.section.SectionService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

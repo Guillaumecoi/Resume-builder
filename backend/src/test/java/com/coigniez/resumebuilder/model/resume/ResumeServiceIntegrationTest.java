@@ -1,9 +1,4 @@
 package com.coigniez.resumebuilder.model.resume;
-import com.coigniez.resumebuilder.model.common.PageResponse;
-import com.coigniez.resumebuilder.model.section.SectionRequest;
-import com.coigniez.resumebuilder.model.section.SectionResponse;
-import com.coigniez.resumebuilder.model.section.SectionService;
-
 import jakarta.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +15,15 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.coigniez.resumebuilder.domain.common.PageResponse;
+import com.coigniez.resumebuilder.domain.resume.ResumeDetailResponse;
+import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.ResumeResponse;
+import com.coigniez.resumebuilder.domain.resume.ResumeService;
+import com.coigniez.resumebuilder.domain.section.SectionRequest;
+import com.coigniez.resumebuilder.domain.section.SectionResponse;
+import com.coigniez.resumebuilder.domain.section.SectionService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;

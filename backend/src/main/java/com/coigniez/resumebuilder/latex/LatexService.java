@@ -6,23 +6,23 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.coigniez.resumebuilder.model.layout.LayoutResponse;
-import com.coigniez.resumebuilder.model.layout.column.ColumnResponse;
-import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSectionResponse;
-import com.coigniez.resumebuilder.model.layout.enums.ColorLocation;
-import com.coigniez.resumebuilder.model.layout.enums.ColorScheme;
-import com.coigniez.resumebuilder.model.layout.enums.PageSize;
-import com.coigniez.resumebuilder.model.section.SectionResponse;
-import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemMapper;
-import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemResponse;
-import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.Education;
-import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.SectionItemData;
-import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.SectionItemType;
-import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.Skill;
-import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.Skillboxes;
-import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.Textbox;
-import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.WorkExperience;
-import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.Skill.SkillType;
+import com.coigniez.resumebuilder.domain.column.ColumnResponse;
+import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionResponse;
+import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
+import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
+import com.coigniez.resumebuilder.domain.layout.enums.ColorScheme;
+import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
+import com.coigniez.resumebuilder.domain.section.SectionResponse;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemData;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemResponse;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Education;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skillboxes;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.WorkExperience;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill.SkillType;
 
 @Service
 public class LatexService {

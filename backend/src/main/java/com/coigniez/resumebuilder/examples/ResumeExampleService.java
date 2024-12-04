@@ -1,19 +1,20 @@
 package com.coigniez.resumebuilder.examples;
 
-import com.coigniez.resumebuilder.model.layout.LayoutRequest;
-import com.coigniez.resumebuilder.model.layout.LayoutResponse;
-import com.coigniez.resumebuilder.model.layout.LayoutService;
-import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSectionRequest;
-import com.coigniez.resumebuilder.model.layout.column.ColumnSection.ColumnSectionService;
-import com.coigniez.resumebuilder.model.resume.*;
-import com.coigniez.resumebuilder.model.section.*;
-import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemRequest;
-import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.SectionItemType;
-import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.Skill;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionService;
+import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
+import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
+import com.coigniez.resumebuilder.domain.layout.LayoutService;
+import com.coigniez.resumebuilder.domain.resume.*;
+import com.coigniez.resumebuilder.domain.section.*;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

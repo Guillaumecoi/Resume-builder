@@ -7,11 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.coigniez.resumebuilder.model.section.sectionitem.SectionItem;
-import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemMapper;
-import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemRequest;
-import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemResponse;
-import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.*;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemData;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemResponse;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.*;
 
 import jakarta.validation.ConstraintViolationException;
 

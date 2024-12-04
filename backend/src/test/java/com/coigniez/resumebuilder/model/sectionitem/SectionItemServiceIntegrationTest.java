@@ -17,18 +17,18 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.coigniez.resumebuilder.model.resume.ResumeRequest;
-import com.coigniez.resumebuilder.model.resume.ResumeService;
-import com.coigniez.resumebuilder.model.section.Section;
-import com.coigniez.resumebuilder.model.section.SectionRepository;
-import com.coigniez.resumebuilder.model.section.SectionRequest;
-import com.coigniez.resumebuilder.model.section.SectionService;
-import com.coigniez.resumebuilder.model.section.sectionitem.SectionItem;
-import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemRepository;
-import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemRequest;
-import com.coigniez.resumebuilder.model.section.sectionitem.SectionItemService;
-import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.SectionItemType;
-import com.coigniez.resumebuilder.model.section.sectionitem.itemtypes.Textbox;
+import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.ResumeService;
+import com.coigniez.resumebuilder.domain.section.Section;
+import com.coigniez.resumebuilder.domain.section.SectionRepository;
+import com.coigniez.resumebuilder.domain.section.SectionRequest;
+import com.coigniez.resumebuilder.domain.section.SectionService;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRepository;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemService;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
 
 import jakarta.transaction.Transactional;
 

@@ -15,9 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.coigniez.resumebuilder.model.section.Section;
-import com.coigniez.resumebuilder.model.section.SectionRequest;
-import com.coigniez.resumebuilder.model.section.SectionResponse;
+import com.coigniez.resumebuilder.domain.resume.Resume;
+import com.coigniez.resumebuilder.domain.resume.ResumeDetailResponse;
+import com.coigniez.resumebuilder.domain.resume.ResumeMapper;
+import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.ResumeResponse;
+import com.coigniez.resumebuilder.domain.section.Section;
+import com.coigniez.resumebuilder.domain.section.SectionRequest;
+import com.coigniez.resumebuilder.domain.section.SectionResponse;
 
 @SpringBootTest
 @ActiveProfiles("test")

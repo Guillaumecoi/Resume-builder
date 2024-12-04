@@ -20,9 +20,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
 import com.coigniez.resumebuilder.latex.LatexService;
 import com.coigniez.resumebuilder.latex.PdfGenerator;
-import com.coigniez.resumebuilder.model.layout.LayoutResponse;
 
 import jakarta.transaction.Transactional;
 

@@ -16,10 +16,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.model.layout.enums.ColorLocation;
-import com.coigniez.resumebuilder.model.resume.ResumeRequest;
-import com.coigniez.resumebuilder.model.resume.ResumeService;
-import com.coigniez.resumebuilder.model.section.SectionRequest;
+import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
+import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
+import com.coigniez.resumebuilder.domain.layout.LayoutService;
+import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
+import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.ResumeService;
+import com.coigniez.resumebuilder.domain.section.SectionRequest;
 
 @SpringBootTest
 @ActiveProfiles("test")

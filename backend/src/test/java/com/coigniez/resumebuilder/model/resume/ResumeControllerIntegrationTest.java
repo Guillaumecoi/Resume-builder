@@ -25,7 +25,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.model.section.SectionRequest;
+import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
+import com.coigniez.resumebuilder.domain.section.SectionRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
