@@ -67,14 +67,13 @@ class SectionItemMapperTest {
     @Test
     void testToEntity() {
         // Arrange
-        Map<String, Object> data = new HashMap<>();
-        data.put("content", "This is some example text");
-
-        SectionItemRequest request = new SectionItemRequest(
-                SectionItemType.TEXTBOX.name(),
-                2,
-                data
-        );
+        SectionItemRequest request = SectionItemRequest.builder()
+            .type(SectionItemType.TEXTBOX.name())
+            .itemOrder(2)
+            .data(new HashMap<>() {{
+                put("content", "This is some example text");
+            }})
+            .build();
 
         // Act
         SectionItem entity = mapper.toEntity(request);
@@ -82,7 +81,7 @@ class SectionItemMapperTest {
         // Assert
         assertNotNull(entity);
         assertEquals(SectionItemType.TEXTBOX, entity.getType());
-        assertEquals(request.itemOrder(), entity.getItemOrder());
+        assertEquals(request.getItemOrder(), entity.getItemOrder());
         assertTrue(entity.getData() instanceof Textbox);
         assertEquals("This is some example text", ((Textbox) entity.getData()).getContent());
 
@@ -100,34 +99,62 @@ class SectionItemMapperTest {
     @Test
     void testToEntity_Skill() {
         // Arrange
-        Map<String, Object> correctComplete = new HashMap<>();
-        correctComplete.put("name", "Java");
-        correctComplete.put("proficiency", 8);
-    
-        Map<String, Object> nullProficiency = new HashMap<>();
-        nullProficiency.put("name", "Java");
-    
-        Map<String, Object> nullName = new HashMap<>();
-        nullName.put("proficiency", 8);
-    
-        Map<String, Object> emptyName = new HashMap<>();
-        emptyName.put("name", "");
-        emptyName.put("proficiency", 8);
-    
-        Map<String, Object> lowProficiency = new HashMap<>();
-        lowProficiency.put("name", "Java");
-        lowProficiency.put("proficiency", 0);
-    
-        Map<String, Object> highProficiency = new HashMap<>();
-        highProficiency.put("name", "Java");
-        highProficiency.put("proficiency", 11);
+        SectionItemRequest correctComplete = SectionItemRequest.builder()
+            .type(SectionItemType.SKILL.name())
+            .itemOrder(1)
+            .data(new HashMap<>() {{
+                put("name", "Java");
+                put("proficiency", 8);
+            }})
+            .build();
+
+        SectionItemRequest nullProficiency = SectionItemRequest.builder()
+            .type(SectionItemType.SKILL.name())
+            .itemOrder(1)
+            .data(new HashMap<>() {{
+                put("name", "Java");
+            }})
+            .build();
+
+        SectionItemRequest nullName = SectionItemRequest.builder()
+            .type(SectionItemType.SKILL.name())
+            .itemOrder(1)
+            .data(new HashMap<>() {{
+                put("proficiency", 8);
+            }})
+            .build();
+
+        SectionItemRequest emptyName = SectionItemRequest.builder()
+            .type(SectionItemType.SKILL.name())
+            .itemOrder(1)
+            .data(new HashMap<>() {{
+                put("name", "");
+                put("proficiency", 8);
+            }})
+            .build();
+
+        SectionItemRequest lowProficiency = SectionItemRequest.builder()
+            .type(SectionItemType.SKILL.name())
+            .itemOrder(1)
+            .data(new HashMap<>() {{
+                put("name", "Java");
+                put("proficiency", 0);
+            }})
+            .build();
+
+        SectionItemRequest highProficiency = SectionItemRequest.builder()
+            .type(SectionItemType.SKILL.name())
+            .itemOrder(1)
+            .data(new HashMap<>() {{
+                put("name", "Java");
+                put("proficiency", 11);
+            }})
+            .build();
     
         // Act
-        SectionItem entityCorrectComplete = mapper.toEntity(new SectionItemRequest(
-                SectionItemType.SKILL.name(), 1, correctComplete));
+        SectionItem entityCorrectComplete = mapper.toEntity(correctComplete);
     
-        SectionItem entityNullProficiency = mapper.toEntity(new SectionItemRequest(
-                SectionItemType.SKILL.name(), 1, nullProficiency));
+        SectionItem entityNullProficiency = mapper.toEntity(nullProficiency);
     
         // Assert
         assertNotNull(entityCorrectComplete);
@@ -139,16 +166,11 @@ class SectionItemMapperTest {
         assertEquals("Java", ((Skill) entityNullProficiency.getData()).getName());
         assertNull(((Skill) entityNullProficiency.getData()).getProficiency());
         
-    
         // Act & Assert
-        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
-                SectionItemType.SKILL.name(), 1, nullName)));
-        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
-                SectionItemType.SKILL.name(), 1, emptyName)));
-        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
-                SectionItemType.SKILL.name(), 1, lowProficiency)));
-        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
-                SectionItemType.SKILL.name(), 1, highProficiency)));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(nullName));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(emptyName));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(lowProficiency));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(highProficiency));
     }
 
     @Test
@@ -163,8 +185,12 @@ class SectionItemMapperTest {
         emptyContent.put("content", "");
     
         // Act
-        SectionItem entityCorrectComplete = mapper.toEntity(new SectionItemRequest(
-                SectionItemType.TEXTBOX.name(), 1, correctComplete));
+        SectionItem entityCorrectComplete = mapper.toEntity(
+                SectionItemRequest.builder()
+                        .type(SectionItemType.TEXTBOX.name())
+                        .itemOrder(1)
+                        .data(correctComplete)
+                        .build());
     
         // Assert
         assertNotNull(entityCorrectComplete);
@@ -172,10 +198,19 @@ class SectionItemMapperTest {
         assertEquals("This is some example text", ((Textbox) entityCorrectComplete.getData()).getContent());
     
         // Act & Assert
-        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
-                SectionItemType.TEXTBOX.name(), 1, nullContent)));
-        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
-                SectionItemType.TEXTBOX.name(), 1, emptyContent)));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
+                SectionItemRequest.builder()
+                        .type(SectionItemType.TEXTBOX.name())
+                        .itemOrder(1)
+                        .data(nullContent)
+                        .build()));
+        
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
+                SectionItemRequest.builder()
+                        .type(SectionItemType.TEXTBOX.name())
+                        .itemOrder(1)
+                        .data(emptyContent)
+                        .build()));
     }
 
     @Test
@@ -186,32 +221,40 @@ class SectionItemMapperTest {
         correctComplete.put("institution", "University of Example");
         correctComplete.put("period", "2020-2023");
         correctComplete.put("description", "This is a description");
-
+    
         Map<String, Object> nullDegree = new HashMap<>(correctComplete);
         nullDegree.remove("degree");
-
+    
         Map<String, Object> nullInstitution = new HashMap<>(correctComplete);
         nullInstitution.remove("institution");
-
+    
         Map<String, Object> nullDescription = new HashMap<>(correctComplete);
         nullDescription.remove("description");
-
+    
         Map<String, Object> emptyDegree = new HashMap<>(correctComplete);
         emptyDegree.put("degree", "");
-
+    
         Map<String, Object> emptyInstitution = new HashMap<>(correctComplete);
         emptyInstitution.put("institution", "");
-
+    
         Map<String, Object> lateStartDate = new HashMap<>(correctComplete);
         lateStartDate.put("startDate", LocalDate.of(2024, 1, 1));
-
+    
         // Act
-        SectionItem entityCorrectComplete = mapper.toEntity(new SectionItemRequest(
-                SectionItemType.EDUCATION.name(), 1, correctComplete));
-
-        SectionItem entityNullDescription = mapper.toEntity(new SectionItemRequest(
-                SectionItemType.EDUCATION.name(), 1, nullDescription));
-
+        SectionItem entityCorrectComplete = mapper.toEntity(
+                SectionItemRequest.builder()
+                        .type(SectionItemType.EDUCATION.name())
+                        .itemOrder(1)
+                        .data(correctComplete)
+                        .build());
+    
+        SectionItem entityNullDescription = mapper.toEntity(
+                SectionItemRequest.builder()
+                        .type(SectionItemType.EDUCATION.name())
+                        .itemOrder(1)
+                        .data(nullDescription)
+                        .build());
+    
         // Assert
         assertNotNull(entityCorrectComplete);
         assertEquals(SectionItemType.EDUCATION, entityCorrectComplete.getType());
@@ -220,14 +263,28 @@ class SectionItemMapperTest {
         assertEquals("2020-2023", ((Education) entityCorrectComplete.getData()).getPeriod());
         assertEquals("This is a description", ((Education) entityCorrectComplete.getData()).getDescription());
         assertNotNull(entityNullDescription);
-
+    
         // Act & Assert
-        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
-                SectionItemType.EDUCATION.name(), 1, nullDegree)));
-        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
-                SectionItemType.EDUCATION.name(), 1, nullInstitution)));
-        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
-                SectionItemType.EDUCATION.name(), 1, emptyDegree)));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
+                SectionItemRequest.builder()
+                        .type(SectionItemType.EDUCATION.name())
+                        .itemOrder(1)
+                        .data(nullDegree)
+                        .build()));
+        
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
+                SectionItemRequest.builder()
+                        .type(SectionItemType.EDUCATION.name())
+                        .itemOrder(1)
+                        .data(nullInstitution)
+                        .build()));
+        
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
+                SectionItemRequest.builder()
+                        .type(SectionItemType.EDUCATION.name())
+                        .itemOrder(1)
+                        .data(emptyDegree)
+                        .build()));
     }
 
     @Test
@@ -243,13 +300,16 @@ class SectionItemMapperTest {
         Map<String, Object> nullJobTitle = new HashMap<>(correctComplete);
         nullJobTitle.remove("jobTitle");
 
-
         Map<String, Object> lateStartDate = new HashMap<>(correctComplete);
         lateStartDate.put("startDate", LocalDate.of(2024, 1, 1));
 
         // Act
-        SectionItem entityCorrectComplete = mapper.toEntity(new SectionItemRequest(
-                SectionItemType.WORK_EXPERIENCE.name(), 1, correctComplete));
+        SectionItem entityCorrectComplete = mapper.toEntity(
+                SectionItemRequest.builder()
+                        .type(SectionItemType.WORK_EXPERIENCE.name())
+                        .itemOrder(1)
+                        .data(correctComplete)
+                        .build());
 
         // Assert
         assertNotNull(entityCorrectComplete);
@@ -264,8 +324,12 @@ class SectionItemMapperTest {
         assertEquals("Responsibility 2", ((WorkExperience) entityCorrectComplete.getData()).getResponsibilitiesAsList().get(1));
 
         // Act & Assert
-        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(new SectionItemRequest(
-                SectionItemType.WORK_EXPERIENCE.name(), 1, nullJobTitle)));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
+                SectionItemRequest.builder()
+                        .type(SectionItemType.WORK_EXPERIENCE.name())
+                        .itemOrder(1)
+                        .data(nullJobTitle)
+                        .build()));
     }
 
     @Test
@@ -274,11 +338,11 @@ class SectionItemMapperTest {
         Map<String, Object> data = new HashMap<>();
         data.put("content", "This is some example text");
 
-        SectionItemRequest request = new SectionItemRequest(
-                SectionItemType.TEXTBOX.name(),
-                2,
-                data
-        );
+        SectionItemRequest request = SectionItemRequest.builder()
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(2)
+                .data(data)
+                .build();
 
         // Act
         SectionItem entity = mapper.toEntity(request);

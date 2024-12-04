@@ -4,12 +4,18 @@ import java.util.Map;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.Data;
 
-public record SectionItemRequest(
+@Data
+@Builder
+public class SectionItemRequest{
+
     @NotNull
     @NotEmpty
-    String type,
-    Integer itemOrder,
+    String type;
+    Integer itemOrder;
     @NotNull
-    Map<String, Object> data
-) {}
+    Map<String, Object> data;
+
+}

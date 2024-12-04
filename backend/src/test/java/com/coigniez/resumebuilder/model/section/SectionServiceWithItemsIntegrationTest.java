@@ -29,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @SpringBootTest
@@ -69,15 +68,22 @@ public class SectionServiceWithItemsIntegrationTest {
         List<SectionItemRequest> sectionItems = new ArrayList<>();
 
         // Add a textbox item to the section
-        Map<String, Object> Textbox = new HashMap<>();
-        Textbox.put("content", "This is some example text");
-        sectionItems.add(new SectionItemRequest(SectionItemType.TEXTBOX.name(), 1, Textbox));
+        sectionItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(1)
+                .data(new HashMap<>() {{
+                    put("content", "This is some example text");
+                }})
+                .build());
 
-        // Add a skill item to the section
-        Map<String, Object> Skill = new HashMap<>();
-        Skill.put("name", "Java");
-        Skill.put("proficiency", 5);
-        sectionItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), 2, Skill));
+        sectionItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.SKILL.name())
+                .itemOrder(2)
+                .data(new HashMap<>() {{
+                    put("name", "Java");
+                    put("proficiency", 5);
+                }})
+                .build());
 
         SectionRequest request = SectionRequest.builder().title("Test Section").sectionItems(sectionItems).build();
 
@@ -101,16 +107,22 @@ public class SectionServiceWithItemsIntegrationTest {
         // Arrange
         List<SectionItemRequest> sectionItems = new ArrayList<>();
 
-        // Add a textbox item to the section
-        Map<String, Object> Textbox = new HashMap<>();
-        Textbox.put("content", "This is some example text");
-        sectionItems.add(new SectionItemRequest(SectionItemType.TEXTBOX.name(), 1, Textbox));
+        sectionItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(1)
+                .data(new HashMap<>() {{
+                    put("content", "This is some example text");
+                }})
+                .build());
 
-        // Add a skill item to the section
-        Map<String, Object> Skill = new HashMap<>();
-        Skill.put("name", "Java");
-        Skill.put("proficiency", 5);
-        sectionItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), 2, Skill));
+        sectionItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.SKILL.name())
+                .itemOrder(2)
+                .data(new HashMap<>() {{
+                    put("name", "Java");
+                    put("proficiency", 5);
+                }})
+                .build());
 
         SectionRequest request = SectionRequest.builder().title("Test Section").sectionItems(sectionItems).build();
 
@@ -120,10 +132,14 @@ public class SectionServiceWithItemsIntegrationTest {
         List<SectionItemRequest> updatedSectionItems = new ArrayList<>();
 
         // Add a new skill item to the section
-        Map<String, Object> Skill2 = new HashMap<>();
-        Skill2.put("name", "Python");
-        Skill2.put("proficiency", 4);
-        updatedSectionItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), 1, Skill2));
+        updatedSectionItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.SKILL.name())
+                .itemOrder(1)
+                .data(new HashMap<>() {{
+                    put("name", "Python");
+                    put("proficiency", 4);
+                }})
+                .build());
 
         SectionRequest updatedRequest = SectionRequest.builder().title("Updated Section").sectionItems(updatedSectionItems).build();
 
@@ -146,10 +162,13 @@ public class SectionServiceWithItemsIntegrationTest {
         // Arrange
         List<SectionItemRequest> sectionItems = new ArrayList<>();
 
-        // Add a skill item to the section
-        Map<String, Object> emptyskill = new HashMap<>();
-        emptyskill.put("name", "");
-        sectionItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), 1, emptyskill));
+        sectionItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.SKILL.name())
+                .itemOrder(1)
+                .data(new HashMap<>() {{
+                    put("name", "");
+                }})
+                .build());
 
         SectionRequest request = SectionRequest.builder().title("Test Section").sectionItems(sectionItems).build();
 

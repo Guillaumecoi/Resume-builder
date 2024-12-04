@@ -51,24 +51,35 @@ public class ResumeExampleService {
 
     private void addEducationSection(Long resumeId, Long columnId, int position) {
         List<SectionItemRequest> educationItems = new ArrayList<>();
-        educationItems.add(new SectionItemRequest(SectionItemType.EDUCATION.name(), 2,
-            new HashMap<>() {{
-                put("degree", "Bachelor of Science in Computer Science");
-                put("institution", "Open Universiteit Utrecht");
-                put("period", "2019-2023");
-            }}));
-        educationItems.add(new SectionItemRequest(SectionItemType.EDUCATION.name(), 1,
-            new HashMap<>() {{
-                put("degree", "Master of Science in Computer Science");
-                put("institution", "Open Universiteit Utrecht");
-                put("period", "2023-");
-            }}));
-        educationItems.add(new SectionItemRequest(SectionItemType.EDUCATION.name(), 3,
-            new HashMap<>() {{
-                put("degree", "Science-Mathematics");
-                put("institution", "International School of Brussels");
-                put("period", "2016");
-            }}));
+        educationItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.EDUCATION.name())
+                .itemOrder(2)
+                .data(new HashMap<>() {{
+                    put("degree", "Bachelor of Science in Computer Science");
+                    put("institution", "Open Universiteit Utrecht");
+                    put("period", "2019-2023");
+                }})
+                .build());
+
+        educationItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.EDUCATION.name())
+                .itemOrder(1)
+                .data(new HashMap<>() {{
+                    put("degree", "Master of Science in Computer Science");
+                    put("institution", "Open Universiteit Utrecht");
+                    put("period", "2023-");
+                }})
+                .build());
+        
+        educationItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.EDUCATION.name())
+                .itemOrder(3)
+                .data(new HashMap<>() {{
+                    put("degree", "Science-Mathematics");
+                    put("institution", "International School of Brussels");
+                    put("period", "2016");
+                }})
+                .build());
         
         Long educationId = sectionService.create(resumeId, SectionRequest.builder()
                 .title("Education")
@@ -84,14 +95,17 @@ public class ResumeExampleService {
 
     private void addExperienceSection(Long resumeId, Long columnId, int position) {
         List<SectionItemRequest> experienceItems = new ArrayList<>();
-        experienceItems.add(new SectionItemRequest(SectionItemType.WORK_EXPERIENCE.name(), 1,
-            new HashMap<>() {{
-                put("jobTitle", "Software Engineer");
-                put("companyName", "MIVB/STIB");
-                put("period", "2021-2022");
-                put("description", "Developing software for the public transport company of Brussels");
-                put("responsibilities","Developing new features for the website\nMaintaining the existing codebase");
-            }}));
+        experienceItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.WORK_EXPERIENCE.name())
+                .itemOrder(1)
+                .data(new HashMap<>() {{
+                    put("jobTitle", "Software Engineer");
+                    put("companyName", "MIVB/STIB");
+                    put("period", "2021-2022");
+                    put("description", "Developing software for the public transport company of Brussels");
+                    put("responsibilities","Developing new features for the website\nMaintaining the existing codebase");
+                }})
+                .build());
             
         Long experienceId = sectionService.create(resumeId, SectionRequest.builder()
             .title("Experience")
@@ -106,14 +120,16 @@ public class ResumeExampleService {
 
     private void addSummarySection(Long resumeId, Long columnId, int position) {
         List<SectionItemRequest> summaryItems = new ArrayList<>();
-        summaryItems.add(new SectionItemRequest(SectionItemType.TEXTBOX.name(), null,
-            new HashMap<>() {{
-                put("content", """
-                    Passionate software developer with a strong foundation in computer science, currently pursuing MSc at Open Universiteit Utrecht. 
-                    Specializing in Java development with hands-on experience in Spring Boot and web technologies. 
-                    Strong analytical mindset developed through mathematics-focused secondary education.
-                    Eager to apply theoretical knowledge in practical software development challenges.""");
-            }}));
+        summaryItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.TEXTBOX.name())
+                .data(new HashMap<>() {{
+                    put("content", """
+                        Passionate software developer with a strong foundation in computer science, currently pursuing MSc at Open Universiteit Utrecht. 
+                        Specializing in Java development with hands-on experience in Spring Boot and web technologies. 
+                        Strong analytical mindset developed through mathematics-focused secondary education.
+                        Eager to apply theoretical knowledge in practical software development challenges.""");
+                }})
+                .build());
             
         Long summaryId = sectionService.create(resumeId, SectionRequest.builder()
                 .title("Summary")
@@ -128,43 +144,57 @@ public class ResumeExampleService {
 
     private void addSkillsSection(Long resumeId, Long columnId, int position) {
         List<SectionItemRequest> skillsItems = new ArrayList<>();
-        skillsItems.add(new SectionItemRequest(SectionItemType.SKILL_BOXES.name(), null,
-            new HashMap<>() {{
-                put("skills", """
-                    Java
-                    Spring Boot
-                    HTML
-                    CSS
-                    JavaScript
-                    SQL
-                    Python
-                    C
-                    C++
-                    """);
-            }}));
-        skillsItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), null,
-            new HashMap<>() {{
-                put("name", "Dutch");
-                put("type", Skill.SkillType.SIMPLE.name());
-            }}));
-        skillsItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), null,
-            new HashMap<>() {{
-                put("name", "French");
-                put("description", "Intermediate");
-                put("type", Skill.SkillType.TEXT.name());
-            }}));
-        skillsItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), null,
-            new HashMap<>() {{
-                put("name", "English");
-                put("proficiency", 9);
-                put("type", Skill.SkillType.BAR.name());
-            }}));
-        skillsItems.add(new SectionItemRequest(SectionItemType.SKILL.name(), null,
-            new HashMap<>() {{
-                put("name", "Japanese");
-                put("proficiency", 6);
-                put("type", Skill.SkillType.BULLETS.name());
-            }}));
+        skillsItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.SKILL_BOXES.name())
+                .data(new HashMap<>() {{
+                    put("skills", """
+                        Java
+                        Spring Boot
+                        HTML
+                        CSS
+                        JavaScript
+                        SQL
+                        Python
+                        C
+                        C++
+                        """);
+                }})
+                .build());
+
+        skillsItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.SKILL.name())
+                .data(new HashMap<>() {{
+                    put("name", "Dutch");
+                    put("type", Skill.SkillType.SIMPLE.name());
+                }})
+                .build());
+
+        skillsItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.SKILL.name())
+                .data(new HashMap<>() {{
+                    put("name", "French");
+                    put("description", "Intermediate");
+                    put("type", Skill.SkillType.TEXT.name());
+                }})
+                .build());
+
+        skillsItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.SKILL.name())
+                .data(new HashMap<>() {{
+                    put("name", "English");
+                    put("proficiency", 9);
+                    put("type", Skill.SkillType.BAR.name());
+                }})
+                .build());
+
+        skillsItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.SKILL.name())
+                .data(new HashMap<>() {{
+                    put("name", "Japanese");
+                    put("proficiency", 6);
+                    put("type", Skill.SkillType.BULLETS.name());
+                }})
+                .build());
             
         Long skillsId = sectionService.create(resumeId, SectionRequest.builder()
                 .title("Skills")

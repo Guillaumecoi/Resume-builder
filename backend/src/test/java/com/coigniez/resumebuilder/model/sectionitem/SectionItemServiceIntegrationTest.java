@@ -79,13 +79,17 @@ public class SectionItemServiceIntegrationTest {
         // Arrange
         Map<String, Object> data = new HashMap<>();
         data.put("content", "This is some example text");
-
-        SectionItemRequest request = new SectionItemRequest(SectionItemType.TEXTBOX.name(), 1, data);
-
+    
+        SectionItemRequest request = SectionItemRequest.builder()
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(1)
+                .data(data)
+                .build();
+    
         // Act
         Long sectionItemId = sectionItemService.create(section, request);
         SectionItem sectionItem = sectionItemRepository.findById(sectionItemId).orElseThrow();
-
+    
         // Assert
         assertNotNull(sectionItemId);
         assertNotNull(sectionItem.getId());
@@ -94,22 +98,35 @@ public class SectionItemServiceIntegrationTest {
         assertEquals(SectionItemType.TEXTBOX, sectionItem.getType());
         assertEquals("This is some example text", ((Textbox) sectionItem.getData()).getContent());
     }
-
+    
     @Test
     void testDeleteAllBySectionId() {
         // Arrange
         Map<String, Object> data = new HashMap<>();
         data.put("content", "This is some example text");
-        SectionItemRequest request1 = new SectionItemRequest(SectionItemType.TEXTBOX.name(), 1, data);
+        
+        SectionItemRequest request1 = SectionItemRequest.builder()
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(1)
+                .data(data)
+                .build();
+                
         sectionItemService.create(section, request1);
+        
         Map<String, Object> data2 = new HashMap<>();
         data2.put("content", "This is some example text");
-        SectionItemRequest request2 = new SectionItemRequest(SectionItemType.TEXTBOX.name(), 2, data2);
+        
+        SectionItemRequest request2 = SectionItemRequest.builder()
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(2)
+                .data(data2)
+                .build();
+                
         sectionItemService.create(section, request2);
-
+    
         // Act
         sectionItemService.deleteAllBySectionId(section.getId());
-
+    
         // Assert
         assertEquals(0, sectionItemRepository.count());
     }

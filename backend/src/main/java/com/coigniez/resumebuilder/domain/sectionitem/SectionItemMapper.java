@@ -29,12 +29,12 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest
             return null;
         }
 
-        SectionItemType type = SectionItemType.valueOf(request.type());
+        SectionItemType type = SectionItemType.valueOf(request.getType());
 
         SectionItem sectionItem = SectionItem.builder()
                 .type(type) 
-                .itemOrder(request.itemOrder())
-                .data(toDataObject(type, request.data()))
+                .itemOrder(request.getItemOrder())
+                .data(toDataObject(type, request.getData()))
                 .build();
     
         return sectionItem;
