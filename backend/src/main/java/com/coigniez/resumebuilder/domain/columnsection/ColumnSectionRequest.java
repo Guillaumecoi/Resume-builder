@@ -19,4 +19,6 @@ public class ColumnSectionRequest {
     
     @Builder.Default
     private double itemsep = 8.0;
+    @Builder.Default
+    private double endsep = 20.0;
 }

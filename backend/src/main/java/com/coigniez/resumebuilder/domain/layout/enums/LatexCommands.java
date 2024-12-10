@@ -12,17 +12,20 @@ public class LatexCommands {
 
     @Builder.Default
     private String cvSection = """
-        \\newenvironment{cvsection}[3]{
-            \\ifthenelse{\\equal{#1}{}}{}{\\cvtitle{#1}}
-            #3
+        \\newenvironment{cvsection}[4]{
+            \\def\\cvsectionvspace{#3}%
+            \\ifthenelse{\\equal{#1}{}}{}{\\sectiontitle{#1}}
+            #4
             \\begin{itemize}[left=0pt, itemsep=#2, label={}, topsep=10pt]
                 }{
             \\end{itemize}
-            \\vspace{20pt}
+            \\vspace{\\cvsectionvspace}
         }""";
 
     @Column(columnDefinition = "text")
-    private String cvTitle;
+    private String sectionTitle;
+    @Column(columnDefinition = "text")
+    private String title;
     @Column(columnDefinition = "text")
     private String educationItem;
     @Column(columnDefinition = "text")
@@ -47,7 +50,8 @@ public class LatexCommands {
     public String getAllMethods() {
         return String.join("\n",
             cvSection,
-            cvTitle,
+            sectionTitle,
+            title,
             educationItem,
             experienceItem,
             textbox,

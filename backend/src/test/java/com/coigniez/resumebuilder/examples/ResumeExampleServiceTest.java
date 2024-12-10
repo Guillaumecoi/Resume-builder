@@ -72,7 +72,7 @@ public class ResumeExampleServiceTest {
     
         // Use debug flag to inspect the generated PDF before it is deleted or comment out the line below and delete the file manually later
         // Clean up
-        Files.deleteIfExists(generatedPdf.toPath());
+        // Files.deleteIfExists(generatedPdf.toPath());
     }
 
     @SuppressWarnings("unused")

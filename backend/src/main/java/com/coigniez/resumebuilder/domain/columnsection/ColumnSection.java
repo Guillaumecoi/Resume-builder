@@ -31,4 +31,5 @@ public class ColumnSection implements BaseEntity {
     @NotNull
     private Integer position;
     private double itemsep;
+    private double endsep;
 }

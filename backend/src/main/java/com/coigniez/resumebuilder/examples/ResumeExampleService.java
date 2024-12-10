@@ -46,8 +46,9 @@ public class ResumeExampleService {
         addPictureSection(resume.getId(), layout.getColumns().get(0).getId(), 1);
         addEducationSection(resume.getId(), layout.getColumns().get(0).getId(), 2);
         addSkillsSection(resume.getId(), layout.getColumns().get(0).getId(), 3);
-        addSummarySection(resume.getId(), layout.getColumns().get(1).getId(), 1);
-        addExperienceSection(resume.getId(),layout.getColumns().get(1).getId(), 2);
+        addTitleSection(resume.getId(), layout.getColumns().get(1).getId(), 1);
+        addSummarySection(resume.getId(), layout.getColumns().get(1).getId(), 2);
+        addExperienceSection(resume.getId(),layout.getColumns().get(1).getId(), 3);
 
         return List.of(resumeService.get(resume.getId()), layoutService.get(layoutId));
     }
@@ -105,7 +106,7 @@ public class ResumeExampleService {
                 .data(new HashMap<>() {{
                     put("degree", "Bachelor of Science in Computer Science");
                     put("institution", "Open Universiteit Utrecht");
-                    put("period", "2019-2023");
+                    put("period", "2019 - 2023");
                 }})
                 .build());
 
@@ -115,7 +116,7 @@ public class ResumeExampleService {
                 .data(new HashMap<>() {{
                     put("degree", "Master of Science in Computer Science");
                     put("institution", "Open Universiteit Utrecht");
-                    put("period", "2023-");
+                    put("period", "2023 -");
                 }})
                 .build());
         
@@ -150,7 +151,7 @@ public class ResumeExampleService {
                 .data(new HashMap<>() {{
                     put("jobTitle", "Software Engineer");
                     put("companyName", "MIVB/STIB");
-                    put("period", "2021-2022");
+                    put("period", "2021 - 2022");
                     put("description", "Developing software for the public transport company of Brussels");
                     put("responsibilities","Developing new features for the website\nMaintaining the existing codebase");
                 }})
@@ -164,6 +165,28 @@ public class ResumeExampleService {
                 .columnId(columnId)
                 .sectionId(experienceId)
                 .position(position)
+                .build());
+    }
+
+    private void addTitleSection(Long resumeId, Long columnId, int position) {
+        SectionItemRequest title = SectionItemRequest.builder()
+                .type(SectionItemType.TITLE.name())
+                .data(new HashMap<>() {{
+                    put("title", "John Doe");
+                    put("subtitle", "Software Developer");
+                }})
+                .build();
+            
+        Long titleId = sectionService.create(resumeId, SectionRequest.builder()
+                .title("Title")
+                .showTitle(false)
+                .sectionItems(List.of(title))
+                .build());
+        columnSectionService.create(columnId, ColumnSectionRequest.builder()
+                .columnId(columnId)
+                .sectionId(titleId)
+                .position(position)
+                .endsep(6)
                 .build());
     }
 
@@ -181,7 +204,7 @@ public class ResumeExampleService {
                 .build());
             
         Long summaryId = sectionService.create(resumeId, SectionRequest.builder()
-                .title("Summary")
+                .title("About me")
                 .sectionItems(summaryItems)
                 .build());
         columnSectionService.create(columnId, ColumnSectionRequest.builder()
@@ -253,6 +276,7 @@ public class ResumeExampleService {
                 .columnId(columnId)
                 .sectionId(skillsId)
                 .position(position)
+                .itemsep(4.0)
                 .build());
     }
 

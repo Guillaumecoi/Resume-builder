@@ -18,6 +18,7 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, ColumnSectionR
             .id(request.getId())
             .position(request.getPosition())
             .itemsep(request.getItemsep())
+            .endsep(request.getEndsep())
             .build();
     }
 
@@ -28,6 +29,7 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, ColumnSectionR
             .section(sectionMapper.toDto(entity.getSection()))
             .position(entity.getPosition())
             .itemsep(entity.getItemsep())
+            .endsep(entity.getEndsep())
             .build();
     }
     

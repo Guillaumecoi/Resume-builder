@@ -5,9 +5,11 @@ import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skillboxes;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Title;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.WorkExperience;
 
 public enum SectionItemType {
+    TITLE(Title.class),
     WORK_EXPERIENCE(WorkExperience.class),
     TEXTBOX(Textbox.class),
     SKILL(Skill.class),

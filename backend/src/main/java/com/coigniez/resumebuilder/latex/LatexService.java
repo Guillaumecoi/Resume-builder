@@ -22,6 +22,7 @@ import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skillboxes;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Title;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.WorkExperience;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill.SkillType;
 
@@ -183,8 +184,8 @@ public class LatexService {
         String title = section.isShowTitle() ? section.getTitle() : "";
 
         // Start the section
-        sectionString.append("\\begin{cvsection}{%s}{%.3fpt}{%s}\n"
-                .formatted(title, columnSection.getItemsep(), ""));
+        sectionString.append("\\begin{cvsection}{%s}{%.1fpt}{%.1fpt}{%s}\n"
+                .formatted(title, columnSection.getItemsep(), columnSection.getEndsep(), ""));
 
         // Add the items
         for (SectionItemResponse item : section.getSectionItems()) {
@@ -200,7 +201,9 @@ public class LatexService {
     private String generateItem(SectionItemResponse item) {
         SectionItemData object = sectionItemMapper.toDataObject(SectionItemType.valueOf(item.getType()), item.getData());
 
-        if (object instanceof Skill) {
+        if (object instanceof Title) {
+            return generateTitle((Title) object);
+        } else if (object instanceof Skill) {
             return generateSkill((Skill) object);
         } else if (object instanceof Education) {
             return generateEducation((Education) object);
@@ -215,6 +218,10 @@ public class LatexService {
         } else {
             return "";
         }
+    }
+
+    private String generateTitle(Title title) {
+        return "\\cvtitle{%s}{%s}".formatted(title.getTitle(), title.getSubtitle());
     }
 
     private String generateSkill(Skill skill) {

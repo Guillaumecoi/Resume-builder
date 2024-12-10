@@ -63,10 +63,15 @@ public final class LayoutTemplate {
 
     public static LatexCommands getBasicCommands() {
         return LatexCommands.builder()
-            .cvTitle("""
-                \\newcommand{\\cvtitle}[1] {
+            .sectionTitle("""
+                \\newcommand{\\sectiontitle}[1] {
                     \\hspace{6pt}\\textbf{\\Large{\\uppercase{#1}}}\\\\[-4pt]
                     \\textcolor{%s}{\\rule{80pt}{2pt}}
+                }""".formatted(ColorLocation.ACCENT.toString())
+            )
+            .title("""
+                \\newcommand{\\cvtitle}[2]{
+                    \\item\\hspace{6pt}\\shadowtext{\\textbf{\\Huge \\textcolor{%s}{#1}}}
                 }""".formatted(ColorLocation.ACCENT.toString())
             )
             .educationItem("""

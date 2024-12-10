@@ -13,4 +13,5 @@ public class ColumnSectionResponse {
     private SectionResponse section;
     private Integer position;
     private double itemsep;
+    private double endsep;
 }
