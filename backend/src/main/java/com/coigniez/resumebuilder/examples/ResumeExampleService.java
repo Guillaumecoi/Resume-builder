@@ -2,6 +2,9 @@ package com.coigniez.resumebuilder.examples;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionRequest;
@@ -12,9 +15,14 @@ import com.coigniez.resumebuilder.domain.layout.LayoutService;
 import com.coigniez.resumebuilder.domain.resume.*;
 import com.coigniez.resumebuilder.domain.section.*;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemService;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,16 +34,18 @@ public class ResumeExampleService {
     
     private final ResumeService resumeService;
     private final SectionService sectionService;
+    private final SectionItemService sectionItemService;
     private final LayoutService layoutService;
     private final ColumnSectionService columnSectionService;
 
-    public List<Object> createExampleResume(String title) {
+    public List<Object> createExampleResume(String title) throws IOException {
         ResumeDetailResponse resume = createBaseResume(title);
         Long layoutId = addLayout(resume.getId());
         LayoutResponse layout = layoutService.get(layoutId);
         
-        addEducationSection(resume.getId(), layout.getColumns().get(0).getId(), 1);
-        addSkillsSection(resume.getId(), layout.getColumns().get(0).getId(), 2);
+        addPictureSection(resume.getId(), layout.getColumns().get(0).getId(), 1);
+        addEducationSection(resume.getId(), layout.getColumns().get(0).getId(), 2);
+        addSkillsSection(resume.getId(), layout.getColumns().get(0).getId(), 3);
         addSummarySection(resume.getId(), layout.getColumns().get(1).getId(), 1);
         addExperienceSection(resume.getId(),layout.getColumns().get(1).getId(), 2);
 
@@ -47,6 +57,44 @@ public class ResumeExampleService {
         
         Long resumeId = resumeService.create(null, resumeRequest);
         return resumeService.get(resumeId);
+    }
+
+    private void addPictureSection(Long resumeId, Long columnId, int position) throws IOException {
+        SectionItemRequest picture = SectionItemRequest.builder()
+                .type(SectionItemType.PICTURE.name())
+                .data(new HashMap<>() {{
+                        put("caption", "Photo by Ali Mammadli on Unsplash");
+                        put("center", true);
+                        put("width", 0.9);
+                        put("height", 1.1);
+                        put("shadow", 2.0);
+                        put("zoom", 1.8);
+                        put("yoffset", -8.0);
+                }})
+                .build();
+
+        Path resourcePath = Paths.get("src", "main", "resources", "images", "ali-mammadli-unsplash.jpg");
+        byte[] content = Files.readAllBytes(resourcePath);
+        
+        MockMultipartFile file = new MockMultipartFile(
+                "file",
+                "ali-mammadli-unsplash.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                content
+        );
+            
+        Long sectionId = sectionService.create(resumeId, SectionRequest.builder()
+                .title("Picture")
+                .showTitle(false)
+                .build());
+        
+        sectionItemService.createPicture(sectionId, file, picture);
+        
+        columnSectionService.create(columnId, ColumnSectionRequest.builder()
+                .columnId(columnId)
+                .sectionId(sectionId)
+                .position(position)
+                .build());
     }
 
     private void addEducationSection(Long resumeId, Long columnId, int position) {
@@ -83,6 +131,7 @@ public class ResumeExampleService {
         
         Long educationId = sectionService.create(resumeId, SectionRequest.builder()
                 .title("Education")
+                .showTitle(true)
                 .sectionItems(educationItems)
                 .build());
         columnSectionService.create(columnId, ColumnSectionRequest.builder()

@@ -13,6 +13,7 @@ public class SectionResponse {
 
     private Long id;
     private String title;
+    private boolean showTitle;
     private List<SectionItemResponse> sectionItems;
     
 }

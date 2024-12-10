@@ -333,6 +333,47 @@ class SectionItemMapperTest {
     }
 
     @Test
+    void testToEntity_Picture() {
+        // Arrange
+        Map<String, Object> data = new HashMap<>();
+        data.put("path", "path/to/image.jpg");
+        data.put("caption", "Test Caption");
+        data.put("center", true);
+        data.put("width", 0.8);
+        data.put("height", 1.0);
+        data.put("rounded", 50);
+        data.put("zoom", 1.2);
+        data.put("xoffset", 0.5);
+        data.put("yoffset", -0.5);
+        data.put("shadow", 2.0);
+    
+        SectionItemRequest request = SectionItemRequest.builder()
+                .type(SectionItemType.PICTURE.name())
+                .itemOrder(1)
+                .data(data)
+                .build();
+    
+        // Act
+        SectionItem entity = mapper.toEntity(request);
+    
+        // Assert
+        assertNotNull(entity);
+        assertTrue(entity.getData() instanceof Picture);
+        Picture picture = (Picture) entity.getData();
+        
+        assertEquals("path/to/image.jpg", picture.getPath());
+        assertEquals("Test Caption", picture.getCaption());
+        assertTrue(picture.isCenter());
+        assertEquals(0.8, picture.getWidth());
+        assertEquals(1.0, picture.getHeight());
+        assertEquals(50, picture.getRounded());
+        assertEquals(1.2, picture.getZoom());
+        assertEquals(0.5, picture.getXoffset());
+        assertEquals(-0.5, picture.getYoffset());
+        assertEquals(2.0, picture.getShadow());
+    }
+
+    @Test
     void testToEntityAndBack() {
         // Arrange
         Map<String, Object> data = new HashMap<>();
@@ -356,4 +397,5 @@ class SectionItemMapperTest {
         assertNotNull(dto.getData());
         assertEquals("This is some example text", ((Map<String, Object>) dto.getData()).get("content"));
     }
+
 }

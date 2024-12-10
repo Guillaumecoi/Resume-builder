@@ -3,8 +3,8 @@ package com.coigniez.resumebuilder.domain.layout.templates;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.column.Column;
-import com.coigniez.resumebuilder.domain.layout.Layout;
+import com.coigniez.resumebuilder.domain.column.ColumnRequest;
+import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorScheme;
 import com.coigniez.resumebuilder.domain.layout.enums.LatexCommands;
@@ -13,44 +13,36 @@ public final class LayoutTemplate {
     
     private LayoutTemplate() {} // Prevent instantiation
     
-    public static Layout getDefaultSingleColumn() {
-        return Layout.builder()
-                .numberOfColumns(1)
-                .columns(getDefaultColumns(1))
-                .colorScheme(getExecutiveSuiteColors())
-                .latexCommands(getBasicCommands())
-                .build();
+    public static LayoutRequest getDefaultSingleColumn() {
+        return LayoutRequest.builder()
+            .numberOfColumns(1)
+            .columns(getDefaultColumns(1))
+            .colorScheme(getExecutiveSuiteColors())
+            .latexCommands(getBasicCommands())
+            .build();
+}
+
+    public static LayoutRequest getDefaultTwoColumn() {
+        return LayoutRequest.builder()
+            .numberOfColumns(2)
+            .columns(getDefaultColumns(2))
+            .colorScheme(getExecutiveSuiteColors())
+            .latexCommands(getBasicCommands())
+            .build();
     }
 
-    public static Layout getDefaultTwoColumn() {
-        return Layout.builder()
-                .numberOfColumns(2)
-                .columns(getDefaultColumns(2))
-                .colorScheme(getExecutiveSuiteColors())
-                .latexCommands(getBasicCommands())
-                .build();
-    }
-
-    public static List<Column> getDefaultColumns(int numberOfColumns) {
-        List<Column> columns = new ArrayList<>();
-        columns.add(Column.builder()
+    public static List<ColumnRequest> getDefaultColumns(int numberOfColumns) {
+        List<ColumnRequest> columns = new ArrayList<>();
+        columns.add(ColumnRequest.builder()
                 .columnNumber(1)
                 .backgroundColor(ColorLocation.DARK_BG)
                 .textColor(ColorLocation.LIGHT_TEXT)
-                .paddingBottom(10.0)
-                .paddingLeft(10.0)
-                .paddingRight(10.0)
-                .paddingTop(10.0)
                 .build());
         if (numberOfColumns == 2) {
-            columns.add(Column.builder()
+            columns.add(ColumnRequest.builder()
                     .columnNumber(2)
                     .backgroundColor(ColorLocation.LIGHT_BG)
                     .textColor(ColorLocation.DARK_TEXT)
-                    .paddingBottom(10.0)
-                    .paddingLeft(10.0)
-                    .paddingRight(10.0)
-                    .paddingTop(10.0)
                     .build());
         }
         return columns;
@@ -171,6 +163,29 @@ public final class LayoutTemplate {
                         }{
                     \\end{minipage}
                 }"""
+            )
+            .picture("""
+                    %% [center], widthratio, heightratio, xoffset, yoffset, zoom, shadow, cornerradius, imageurl
+                    \\newcommand{\\pictureitem}[9][]{
+                        \\item
+                        \\ifthenelse{\\equal{#1}{center}}{
+                            \\begin{center}
+                        }{}
+                        \\begin{tikzpicture}
+                            %% Set the Shadow
+                            \\fill[rounded corners=#8, blur shadow={shadow xshift=#7, shadow yshift=-#7, shadow blur steps=10}] 
+			                    (0,0) rectangle (#2\\linewidth,#3\\linewidth);
+                            %% Clip the image
+                            \\clip[rounded corners=#8] (0,0) rectangle (#2\\linewidth,#3\\linewidth);
+                            %% Insert the image
+                            \\node[anchor=center, inner sep=0] (image) at 
+                                ($(0.5*#2\\linewidth + #4,0.5*#3\\linewidth + #5)$) 
+                                {\\includegraphics[width=#6\\linewidth]{#9}};
+                        \\end{tikzpicture}
+                        \\ifthenelse{\\equal{#1}{center}}{
+                            \\end{center}
+                        }{}
+                    }"""
             )
             .build();
     }

@@ -41,6 +41,8 @@ public class LatexCommands {
     private String skillboxes;
     @Column(columnDefinition = "text")
     private String skillbox;
+    @Column(columnDefinition = "text")
+    private String picture;
 
     public String getAllMethods() {
         return String.join("\n",
@@ -54,7 +56,8 @@ public class LatexCommands {
             skillbullets,
             skillbar,
             skillbox,
-            skillboxes
+            skillboxes,
+            picture
         );
     }
 }

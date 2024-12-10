@@ -69,7 +69,6 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest
         dataWithType.put("@class", type.getDataType().getName());
 
         Object dataObject = objectMapper.convertValue(dataWithType, type.getDataType());
-        dataWithType.put("@class", type.getDataType().getName());
     
         // Validate the deserialized data object
         validateDataObject(dataObject);

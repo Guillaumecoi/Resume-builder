@@ -18,6 +18,7 @@ import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemResponse;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Education;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skillboxes;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
@@ -75,7 +76,12 @@ public class LatexService {
             \\usepackage{xfp}
             \\usepackage{setspace}
 
-            \\columnratio{%.1f}
+            %% Libraries for Tikz
+            \\usetikzlibrary{shadows}
+            \\usetikzlibrary{shadows.blur}
+
+            %% settings
+            \\columnratio{%.3f}
             \\setlength{\\columnsep}{0pt}
             \\renewcommand{\\arraystretch}{1.5}
             \\shadowoffset{0.3pt}\\shadowcolor{black!70}
@@ -174,9 +180,11 @@ public class LatexService {
         SectionResponse section = columnSection.getSection();
         StringBuilder sectionString = new StringBuilder();
 
+        String title = section.isShowTitle() ? section.getTitle() : "";
+
         // Start the section
-        sectionString.append("\\begin{cvsection}{%s}{%.1fpt}{%s}\n"
-                .formatted(section.getTitle(), columnSection.getItemsep(), ""));
+        sectionString.append("\\begin{cvsection}{%s}{%.3fpt}{%s}\n"
+                .formatted(title, columnSection.getItemsep(), ""));
 
         // Add the items
         for (SectionItemResponse item : section.getSectionItems()) {
@@ -202,6 +210,8 @@ public class LatexService {
             return generateWorkexperience((WorkExperience) object);
         } else if (object instanceof Skillboxes) {
             return generateSkillboxes((Skillboxes) object);
+        } else if (object instanceof Picture) {
+            return generatePicture((Picture) object);
         } else {
             return "";
         }
@@ -273,5 +283,20 @@ public class LatexService {
 
     private String generateTextbox(Textbox textbox) {
         return "\\textbox{%s}".formatted(textbox.getContent());
+    }
+
+    private String generatePicture(Picture picture) {
+        String profile = "\\pictureitem[%s]{%.2f}{%.2f}{%.2f}{%.2f}{%.2f}{%.2fpt}{%dpt}{%s}";
+
+        return profile.formatted(
+            picture.isCenter() ? "center" : "",
+            picture.getWidth(),
+            picture.getHeight(),
+            picture.getXoffset(),
+            picture.getYoffset(),
+            picture.getZoom(),
+            picture.getShadow(),
+            picture.getRounded(),
+            picture.getPath());         
     }
 }

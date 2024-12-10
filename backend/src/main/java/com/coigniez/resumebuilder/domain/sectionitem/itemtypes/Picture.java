@@ -1,6 +1,11 @@
 package com.coigniez.resumebuilder.domain.sectionitem.itemtypes;
 
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemData;
+
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,10 +22,9 @@ public class Picture implements SectionItemData {
 
     @Builder.Default
     private boolean center = true;
-    @Builder.Default
-    private boolean shadow = false;
 
     @Builder.Default
+    @DecimalMin("0.05") @DecimalMax("1.0")
     private Double width = 0.9;
     @Builder.Default
     private Double height = 1.1;
@@ -32,7 +36,11 @@ public class Picture implements SectionItemData {
     private Double zoom = 1.0;
 
     @Builder.Default
-    private Double xOffset = 0.0;
+    private Double xoffset = 0.0;
     @Builder.Default
-    private Double yOffset = 0.0;
+    private Double yoffset = 0.0;
+
+    @Builder.Default
+    @Min(0) @Max(5)
+    private Double shadow = 0.0;
 }

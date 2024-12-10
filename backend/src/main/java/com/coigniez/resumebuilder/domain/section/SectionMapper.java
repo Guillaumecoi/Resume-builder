@@ -47,6 +47,7 @@ public class SectionMapper implements Mapper<Section, SectionRequest, SectionRes
         return SectionResponse.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
+                .showTitle(entity.isShowTitle())
                 .sectionItems(sectionItems)
                 .build();
     }

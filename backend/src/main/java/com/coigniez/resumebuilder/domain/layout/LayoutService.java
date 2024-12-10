@@ -1,8 +1,14 @@
 package com.coigniez.resumebuilder.domain.layout;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import com.coigniez.resumebuilder.domain.column.Column;
+import com.coigniez.resumebuilder.domain.column.ColumnMapper;
+import com.coigniez.resumebuilder.domain.column.ColumnRequest;
 import com.coigniez.resumebuilder.domain.layout.templates.LayoutTemplate;
 import com.coigniez.resumebuilder.domain.resume.Resume;
 import com.coigniez.resumebuilder.domain.resume.ResumeRepository;
@@ -20,6 +26,7 @@ public class LayoutService implements CrudService<LayoutResponse, LayoutRequest>
     private final LayoutRepository layoutRepository;
     private final ResumeRepository resumeRepository;
     private final LayoutMapper layoutMapper;
+    private final ColumnMapper columnMapper;
     
     public Long create(Long parentId, LayoutRequest request) {
         Layout layout = layoutMapper.toEntity(request);
@@ -27,9 +34,13 @@ public class LayoutService implements CrudService<LayoutResponse, LayoutRequest>
         resume.addLayout(layout);
 
         if(layout.getColumns().isEmpty()) {
-            layout.setColumns(LayoutTemplate.getDefaultColumns(layout.getNumberOfColumns()));
+            List<ColumnRequest> columnRequests = LayoutTemplate.getDefaultColumns(layout.getNumberOfColumns());
+            List<Column> mappedColumns = columnRequests.stream()
+                .map(columnMapper::toEntity)
+                .collect(Collectors.toList());
+            layout.setColumns(mappedColumns);
         }
-        layout.getColumns().forEach(column -> column.setLayout(layout));
+
         return layoutRepository.save(layout).getId();
     }
 
