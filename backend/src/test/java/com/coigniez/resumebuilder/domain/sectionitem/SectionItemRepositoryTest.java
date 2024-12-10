@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.model.sectionitem;
+package com.coigniez.resumebuilder.domain.sectionitem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -9,10 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemData;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRepository;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
 
 @SpringBootTest

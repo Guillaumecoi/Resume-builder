@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.model.section;
+package com.coigniez.resumebuilder.domain.section;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -6,11 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-
-import com.coigniez.resumebuilder.domain.section.Section;
-import com.coigniez.resumebuilder.domain.section.SectionMapper;
-import com.coigniez.resumebuilder.domain.section.SectionRequest;
-import com.coigniez.resumebuilder.domain.section.SectionResponse;
 
 @SpringBootTest
 @ActiveProfiles("test")

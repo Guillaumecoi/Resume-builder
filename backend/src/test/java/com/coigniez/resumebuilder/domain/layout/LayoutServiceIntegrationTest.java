@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.model.layout;
+package com.coigniez.resumebuilder.domain.layout;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -16,9 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
-import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
-import com.coigniez.resumebuilder.domain.layout.LayoutService;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
 import com.coigniez.resumebuilder.domain.resume.ResumeService;
@@ -79,8 +76,8 @@ public class LayoutServiceIntegrationTest {
         assertEquals(ColorLocation.LIGHT_TEXT, createdLayout.getColumns().get(0).getTextColor());
         assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingLeft());
         assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingRight());
-        assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingTop());
-        assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingBottom());
+        assertEquals(20.0, createdLayout.getColumns().get(0).getPaddingTop());
+        assertEquals(20.0, createdLayout.getColumns().get(0).getPaddingBottom());
     }
 
     @Test
@@ -106,16 +103,16 @@ public class LayoutServiceIntegrationTest {
         assertEquals(ColorLocation.LIGHT_TEXT, createdLayout.getColumns().get(0).getTextColor());
         assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingLeft());
         assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingRight());
-        assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingTop());
-        assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingBottom());
+        assertEquals(20.0, createdLayout.getColumns().get(0).getPaddingTop());
+        assertEquals(20.0, createdLayout.getColumns().get(0).getPaddingBottom());
 
         assertEquals(2, createdLayout.getColumns().get(1).getColumnNumber());
         assertEquals(ColorLocation.LIGHT_BG, createdLayout.getColumns().get(1).getBackgroundColor());
         assertEquals(ColorLocation.DARK_TEXT, createdLayout.getColumns().get(1).getTextColor());
         assertEquals(10.0, createdLayout.getColumns().get(1).getPaddingLeft());
         assertEquals(10.0, createdLayout.getColumns().get(1).getPaddingRight());
-        assertEquals(10.0, createdLayout.getColumns().get(1).getPaddingTop());
-        assertEquals(10.0, createdLayout.getColumns().get(1).getPaddingBottom());
+        assertEquals(20.0, createdLayout.getColumns().get(1).getPaddingTop());
+        assertEquals(20.0, createdLayout.getColumns().get(1).getPaddingBottom());
     }
 
 }

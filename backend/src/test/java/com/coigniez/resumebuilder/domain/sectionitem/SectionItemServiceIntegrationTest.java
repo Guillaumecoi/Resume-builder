@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.model.sectionitem;
+package com.coigniez.resumebuilder.domain.sectionitem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -28,11 +28,6 @@ import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
 import com.coigniez.resumebuilder.domain.resume.ResumeService;
 import com.coigniez.resumebuilder.domain.section.SectionRequest;
 import com.coigniez.resumebuilder.domain.section.SectionService;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRepository;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemService;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
 
