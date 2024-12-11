@@ -19,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.coigniez.resumebuilder.domain.common.PageResponse;
 import com.coigniez.resumebuilder.domain.section.SectionRequest;
 import com.coigniez.resumebuilder.domain.section.SectionResponse;
-import com.coigniez.resumebuilder.domain.section.SectionService;
+import com.coigniez.resumebuilder.services.ResumeService;
+import com.coigniez.resumebuilder.services.SectionService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;

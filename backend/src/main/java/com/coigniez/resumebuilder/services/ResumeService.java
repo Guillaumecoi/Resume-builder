@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.domain.resume;
+package com.coigniez.resumebuilder.services;
 
 import java.util.List;
 
@@ -12,6 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.coigniez.resumebuilder.domain.common.PageResponse;
+import com.coigniez.resumebuilder.domain.resume.Resume;
+import com.coigniez.resumebuilder.domain.resume.ResumeDetailResponse;
+import com.coigniez.resumebuilder.domain.resume.ResumeMapper;
+import com.coigniez.resumebuilder.domain.resume.ResumeRepository;
+import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.ResumeResponse;
 import com.coigniez.resumebuilder.file.FileStorageService;
 import com.coigniez.resumebuilder.interfaces.CrudService;
 import com.coigniez.resumebuilder.util.SecurityUtils;

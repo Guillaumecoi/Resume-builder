@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.domain.layout;
+package com.coigniez.resumebuilder.services;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,6 +9,11 @@ import org.springframework.stereotype.Service;
 import com.coigniez.resumebuilder.domain.column.Column;
 import com.coigniez.resumebuilder.domain.column.ColumnMapper;
 import com.coigniez.resumebuilder.domain.column.ColumnRequest;
+import com.coigniez.resumebuilder.domain.layout.Layout;
+import com.coigniez.resumebuilder.domain.layout.LayoutMapper;
+import com.coigniez.resumebuilder.domain.layout.LayoutRepository;
+import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
+import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
 import com.coigniez.resumebuilder.domain.layout.templates.LayoutTemplate;
 import com.coigniez.resumebuilder.domain.resume.Resume;
 import com.coigniez.resumebuilder.domain.resume.ResumeRepository;

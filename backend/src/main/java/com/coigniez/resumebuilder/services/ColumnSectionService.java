@@ -1,9 +1,14 @@
-package com.coigniez.resumebuilder.domain.columnsection;
+package com.coigniez.resumebuilder.services;
 
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.column.Column;
 import com.coigniez.resumebuilder.domain.column.ColumnRepository;
+import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
+import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionMapper;
+import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionRepository;
+import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionResponse;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.section.SectionRepository;
 

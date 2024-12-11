@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.domain.common;
+package com.coigniez.resumebuilder.interfaces;
 
 /**
  * Interface for entities with creator tracking.

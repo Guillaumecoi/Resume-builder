@@ -25,11 +25,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
-import com.coigniez.resumebuilder.domain.resume.ResumeService;
 import com.coigniez.resumebuilder.domain.section.SectionRequest;
-import com.coigniez.resumebuilder.domain.section.SectionService;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
+import com.coigniez.resumebuilder.services.ResumeService;
+import com.coigniez.resumebuilder.services.SectionItemService;
+import com.coigniez.resumebuilder.services.SectionService;
 
 import jakarta.transaction.Transactional;
 

@@ -3,8 +3,9 @@ package com.coigniez.resumebuilder.domain.sectionitem;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import com.coigniez.resumebuilder.domain.common.BaseEntity;
 import com.coigniez.resumebuilder.domain.section.Section;
+import com.coigniez.resumebuilder.interfaces.BaseEntity;
+import com.coigniez.resumebuilder.interfaces.SectionItemData;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

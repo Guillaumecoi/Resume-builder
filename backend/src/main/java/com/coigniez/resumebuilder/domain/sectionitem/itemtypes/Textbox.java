@@ -1,5 +1,5 @@
 package com.coigniez.resumebuilder.domain.sectionitem.itemtypes;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemData;
+import com.coigniez.resumebuilder.interfaces.SectionItemData;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

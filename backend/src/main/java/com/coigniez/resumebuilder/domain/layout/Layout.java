@@ -3,11 +3,11 @@ package com.coigniez.resumebuilder.domain.layout;
 import java.util.List;
 
 import com.coigniez.resumebuilder.domain.column.Column;
-import com.coigniez.resumebuilder.domain.common.BaseEntity;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorScheme;
 import com.coigniez.resumebuilder.domain.layout.enums.LatexCommands;
 import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
 import com.coigniez.resumebuilder.domain.resume.Resume;
+import com.coigniez.resumebuilder.interfaces.BaseEntity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;

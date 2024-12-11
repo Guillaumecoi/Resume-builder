@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.domain.sectionitem;
+package com.coigniez.resumebuilder.interfaces;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 

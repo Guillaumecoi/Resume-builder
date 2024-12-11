@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
-import com.coigniez.resumebuilder.domain.common.BaseEntity;
 import com.coigniez.resumebuilder.domain.resume.Resume;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
+import com.coigniez.resumebuilder.interfaces.BaseEntity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

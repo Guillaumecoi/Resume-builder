@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
-import com.coigniez.resumebuilder.domain.common.BaseEntity;
 import com.coigniez.resumebuilder.domain.layout.Layout;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
+import com.coigniez.resumebuilder.interfaces.BaseEntity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;

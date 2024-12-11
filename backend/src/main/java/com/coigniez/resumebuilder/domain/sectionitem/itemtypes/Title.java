@@ -1,6 +1,6 @@
 package com.coigniez.resumebuilder.domain.sectionitem.itemtypes;
 
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemData;
+import com.coigniez.resumebuilder.interfaces.SectionItemData;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

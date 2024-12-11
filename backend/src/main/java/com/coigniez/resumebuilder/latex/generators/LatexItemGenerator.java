@@ -2,7 +2,6 @@ package com.coigniez.resumebuilder.latex.generators;
 
 import org.springframework.stereotype.Component;
 
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemData;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemResponse;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
@@ -11,6 +10,7 @@ import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Education;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill.SkillType;
+import com.coigniez.resumebuilder.interfaces.SectionItemData;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skillboxes;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Title;

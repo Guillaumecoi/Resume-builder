@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.domain.resume;
+package com.coigniez.resumebuilder.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -7,6 +7,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.coigniez.resumebuilder.domain.common.PageResponse;
+import com.coigniez.resumebuilder.domain.resume.ResumeDetailResponse;
+import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.ResumeResponse;
+import com.coigniez.resumebuilder.services.ResumeService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

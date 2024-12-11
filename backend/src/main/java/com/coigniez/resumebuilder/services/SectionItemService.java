@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.domain.sectionitem;
+package com.coigniez.resumebuilder.services;
 
 import java.util.List;
 import java.util.Map;
@@ -8,6 +8,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.section.SectionRepository;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRepository;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
 import com.coigniez.resumebuilder.file.FileStorageService;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 

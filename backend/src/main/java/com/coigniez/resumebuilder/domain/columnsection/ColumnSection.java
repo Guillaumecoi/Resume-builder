@@ -1,8 +1,8 @@
 package com.coigniez.resumebuilder.domain.columnsection;
 
 import com.coigniez.resumebuilder.domain.column.Column;
-import com.coigniez.resumebuilder.domain.common.BaseEntity;
 import com.coigniez.resumebuilder.domain.section.Section;
+import com.coigniez.resumebuilder.interfaces.BaseEntity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

@@ -16,7 +16,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
-import com.coigniez.resumebuilder.domain.resume.ResumeService;
+import com.coigniez.resumebuilder.services.ResumeService;
+import com.coigniez.resumebuilder.services.SectionService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

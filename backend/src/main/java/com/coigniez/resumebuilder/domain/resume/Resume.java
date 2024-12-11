@@ -12,11 +12,11 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.coigniez.resumebuilder.domain.common.BaseEntity;
-import com.coigniez.resumebuilder.domain.common.Creatable;
-import com.coigniez.resumebuilder.domain.common.TimeTrackable;
 import com.coigniez.resumebuilder.domain.layout.Layout;
 import com.coigniez.resumebuilder.domain.section.Section;
+import com.coigniez.resumebuilder.interfaces.BaseEntity;
+import com.coigniez.resumebuilder.interfaces.Creatable;
+import com.coigniez.resumebuilder.interfaces.TimeTrackable;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

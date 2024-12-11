@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.domain.common;
+package com.coigniez.resumebuilder.interfaces;
 
 import java.time.LocalDateTime;
 

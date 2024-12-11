@@ -1,10 +1,12 @@
-package com.coigniez.resumebuilder.domain.sectionitem;
+package com.coigniez.resumebuilder.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
+import com.coigniez.resumebuilder.services.SectionItemService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

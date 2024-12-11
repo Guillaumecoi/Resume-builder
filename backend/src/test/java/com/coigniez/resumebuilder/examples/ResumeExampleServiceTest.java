@@ -4,10 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -60,9 +57,6 @@ public class ResumeExampleServiceTest {
 
         String latexContent = latexDocumentGenerator.generate(layout);
 
-        // Uncomment this line to inspect the generated LaTeX content
-        writeToFile(latexContent, "testfile.tex");
-
         File generatedPdf = pdfGenerator.generatePdf(latexContent, "test_document");
     
         // Assert
@@ -72,14 +66,6 @@ public class ResumeExampleServiceTest {
     
         // Use debug flag to inspect the generated PDF before it is deleted or comment out the line below and delete the file manually later
         // Clean up
-        // Files.deleteIfExists(generatedPdf.toPath());
-    }
-
-    @SuppressWarnings("unused")
-    private void writeToFile(String content, String filename) throws IOException {
-        Path path = Paths.get(filename);
-
-        // Write the latexContent to the file
-        Files.write(path, content.getBytes(StandardCharsets.UTF_8));
+        Files.deleteIfExists(generatedPdf.toPath());
     }
 }

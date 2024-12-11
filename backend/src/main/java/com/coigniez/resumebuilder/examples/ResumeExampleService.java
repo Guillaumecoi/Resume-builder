@@ -8,16 +8,18 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionRequest;
-import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionService;
 import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
-import com.coigniez.resumebuilder.domain.layout.LayoutService;
 import com.coigniez.resumebuilder.domain.resume.*;
 import com.coigniez.resumebuilder.domain.section.*;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemService;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
+import com.coigniez.resumebuilder.services.ColumnSectionService;
+import com.coigniez.resumebuilder.services.LayoutService;
+import com.coigniez.resumebuilder.services.ResumeService;
+import com.coigniez.resumebuilder.services.SectionItemService;
+import com.coigniez.resumebuilder.services.SectionService;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -18,8 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
-import com.coigniez.resumebuilder.domain.resume.ResumeService;
 import com.coigniez.resumebuilder.domain.section.SectionRequest;
+import com.coigniez.resumebuilder.services.LayoutService;
+import com.coigniez.resumebuilder.services.ResumeService;
 
 @SpringBootTest
 @ActiveProfiles("test")

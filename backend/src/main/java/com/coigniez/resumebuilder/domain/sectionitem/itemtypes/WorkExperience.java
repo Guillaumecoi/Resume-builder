@@ -3,7 +3,7 @@ package com.coigniez.resumebuilder.domain.sectionitem.itemtypes;
 import java.util.Arrays;
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemData;
+import com.coigniez.resumebuilder.interfaces.SectionItemData;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.validation.constraints.NotBlank;

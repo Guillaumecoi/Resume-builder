@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.domain.section;
+package com.coigniez.resumebuilder.services;
 
 import java.util.List;
 
@@ -8,8 +8,12 @@ import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.resume.Resume;
 import com.coigniez.resumebuilder.domain.resume.ResumeRepository;
+import com.coigniez.resumebuilder.domain.section.Section;
+import com.coigniez.resumebuilder.domain.section.SectionMapper;
+import com.coigniez.resumebuilder.domain.section.SectionRepository;
+import com.coigniez.resumebuilder.domain.section.SectionRequest;
+import com.coigniez.resumebuilder.domain.section.SectionResponse;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemService;
 import com.coigniez.resumebuilder.interfaces.CrudService;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 

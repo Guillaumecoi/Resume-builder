@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
+import com.coigniez.resumebuilder.interfaces.SectionItemData;
 
 @SpringBootTest
 @ActiveProfiles("test")

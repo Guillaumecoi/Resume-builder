@@ -7,6 +7,7 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.interfaces.Mapper;
+import com.coigniez.resumebuilder.interfaces.SectionItemData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.validation.ConstraintViolation;
