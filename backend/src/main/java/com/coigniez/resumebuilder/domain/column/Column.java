@@ -34,15 +34,25 @@ public class Column implements BaseEntity {
     
     private ColorLocation backgroundColor;
     private ColorLocation textColor;
+    private ColorLocation borderColor;
     
     @Min(0)
-    private Double paddingLeft;
+    private double paddingLeft;
     @Min(0) 
-    private Double paddingRight;
+    private double paddingRight;
     @Min(0)
-    private Double paddingTop;
+    private double paddingTop;
     @Min(0)
-    private Double paddingBottom;
+    private double paddingBottom;
+
+    @Min(0)
+    private double borderLeft;
+    @Min(0)
+    private double borderRight;
+    @Min(0)
+    private double borderTop;
+    @Min(0)
+    private double borderBottom;
     
     @ManyToOne
     private Layout layout;

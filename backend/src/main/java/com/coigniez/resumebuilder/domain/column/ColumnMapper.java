@@ -35,10 +35,15 @@ public class ColumnMapper implements Mapper<Column, ColumnRequest, ColumnRespons
                 .sectionMappings(sectionMappings)
                 .backgroundColor(dto.getBackgroundColor())
                 .textColor(dto.getTextColor())
+                .borderColor(dto.getBorderColor())
                 .paddingLeft(dto.getPaddingLeft())
                 .paddingRight(dto.getPaddingRight())
                 .paddingTop(dto.getPaddingTop())
                 .paddingBottom(dto.getPaddingBottom())
+                .borderLeft(dto.getBorderLeft())
+                .borderRight(dto.getBorderRight())
+                .borderTop(dto.getBorderTop())
+                .borderBottom(dto.getBorderBottom())
                 .build();
     }
 
@@ -59,10 +64,15 @@ public class ColumnMapper implements Mapper<Column, ColumnRequest, ColumnRespons
                 .sectionMappings(sectionMappings)
                 .backgroundColor(entity.getBackgroundColor())
                 .textColor(entity.getTextColor())
+                .borderColor(entity.getBorderColor())
                 .paddingLeft(entity.getPaddingLeft())
                 .paddingRight(entity.getPaddingRight())
                 .paddingTop(entity.getPaddingTop())
                 .paddingBottom(entity.getPaddingBottom())
+                .borderLeft(entity.getBorderLeft())
+                .borderRight(entity.getBorderRight())
+                .borderTop(entity.getBorderTop())
+                .borderBottom(entity.getBorderBottom())
                 .build();
     }
 }

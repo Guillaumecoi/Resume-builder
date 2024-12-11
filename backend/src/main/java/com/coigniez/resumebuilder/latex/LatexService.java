@@ -117,10 +117,15 @@ public class LatexService {
             columnContent += addTabToEachLine(
                     getTcolorbox(column.getBackgroundColor().toString(), 
                     column.getTextColor().toString(), 
+                    column.getBorderColor().toString(),
                     column.getPaddingTop(), 
                     column.getPaddingBottom(), 
                     column.getPaddingLeft(), 
-                    column.getPaddingRight()),
+                    column.getPaddingRight(),
+                    column.getBorderLeft(),
+                    column.getBorderRight(),
+                    column.getBorderTop(),
+                    column.getBorderBottom()),
                     1);
 
             columnContent += """
@@ -134,7 +139,8 @@ public class LatexService {
         return columnMethods.toString();
     }
 
-    private String getTcolorbox(String colback, String textcolor, Double top, Double bottom, Double left, Double right) {
+    private String getTcolorbox(String colback, String textcolor, String bordercolor, double top, double bottom, double left, double right,
+            double borderLeft, double borderRight, double borderTop, double borderBottom) {
         return String.format("""
             \\begin{tcolorbox}[
                 colback=%s,
@@ -146,12 +152,17 @@ public class LatexService {
                 bottom=%.1fpt,
                 arc=0mm,
                 boxrule=0pt,
-                rightrule=0pt,
+                rightrule=%.1fpt,
+                leftrule=%.1fpt,
+                toprule=%.1fpt,
+                bottomrule=%.1fpt,
                 colframe=%s
             ]
             \\color{%s}
 
-            """, colback, left, right, top, bottom, ColorLocation.ACCENT.toString(), textcolor);
+            """, colback, left, right, top, bottom,
+            borderRight, borderLeft, borderTop, borderBottom,
+            bordercolor, textcolor);
     }
 
     private String getContent(LayoutResponse layout) {

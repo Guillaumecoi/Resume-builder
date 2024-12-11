@@ -37,12 +37,15 @@ public final class LayoutTemplate {
                 .columnNumber(1)
                 .backgroundColor(ColorLocation.DARK_BG)
                 .textColor(ColorLocation.LIGHT_TEXT)
+                .borderColor(ColorLocation.ACCENT)
                 .build());
         if (numberOfColumns == 2) {
+            columns.get(0).setBorderRight(2.4);
             columns.add(ColumnRequest.builder()
                     .columnNumber(2)
                     .backgroundColor(ColorLocation.LIGHT_BG)
                     .textColor(ColorLocation.DARK_TEXT)
+                    .borderColor(ColorLocation.ACCENT)
                     .build());
         }
         return columns;

@@ -18,9 +18,15 @@ public class ColumnResponse {
 
     private ColorLocation backgroundColor;
     private ColorLocation textColor;
+    private ColorLocation borderColor;
 
-    private Double paddingLeft;
-    private Double paddingRight;
-    private Double paddingTop;
-    private Double paddingBottom;
+    private double paddingLeft;
+    private double paddingRight;
+    private double paddingTop;
+    private double paddingBottom;
+
+    private double borderLeft;
+    private double borderRight;
+    private double borderTop;
+    private double borderBottom;
 }

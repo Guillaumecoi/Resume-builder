@@ -27,19 +27,33 @@ public class ColumnRequest {
 
     private ColorLocation backgroundColor;
     private ColorLocation textColor;
+    private ColorLocation borderColor;
 
     @Min(0)
     @Builder.Default
-    private Double paddingLeft = 10.0;
+    private double paddingLeft = 10.0;
     @Min(0)
     @Builder.Default
-    private Double paddingRight = 10.0;
+    private double paddingRight = 10.0;
     @Min(0)
     @Builder.Default
-    private Double paddingTop = 20.0;
+    private double paddingTop = 20.0;
     @Min(0)
     @Builder.Default
-    private Double paddingBottom = 20.0;
+    private double paddingBottom = 20.0;
+
+    @Min(0)
+    @Builder.Default
+    private double borderLeft = 0.0;
+    @Min(0)
+    @Builder.Default
+    private double borderRight = 0.0;
+    @Min(0)
+    @Builder.Default
+    private double borderTop = 0.0;
+    @Min(0)
+    @Builder.Default
+    private double borderBottom = 0.0;
 
     private Long layoutId;
 }
