@@ -71,8 +71,29 @@ public final class LayoutTemplate {
             )
             .title("""
                 \\newcommand{\\cvtitle}[2]{
-                    \\item\\hspace{6pt}\\shadowtext{\\textbf{\\Huge \\textcolor{%s}{#1}}}
+                    \\item
+                    \\begin{minipage}[t]{\\textwidth}
+                        \\hspace{6pt}\\textbf{\\Huge \\textcolor{%s}{#1}}
+                        \\ifthenelse{\\isempty{#2}}
+                        {}
+                        {
+                            \\par\\vspace{6pt}
+                            \\hspace{6pt}\\textbf{\\Large #2}
+                        }
+                    \\end{minipage}
                 }""".formatted(ColorLocation.ACCENT.toString())
+            )
+            .contactItem("""
+                \\newcommand{\\contactitem}[3]{
+                    \\item
+                    \\ifthenelse{\\isempty{#1}}
+                    {\\href{#3}{}}
+                    {
+                    \\begin{tabular}{@{}p{10pt} l@{}}
+                        #1 & \\href{#3}{#2}
+                    \\end{tabular}
+                    }
+                }"""
             )
             .educationItem("""
                 \\newcommand{\\educationitem}[3]{

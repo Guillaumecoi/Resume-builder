@@ -44,8 +44,9 @@ public class ResumeExampleService {
         LayoutResponse layout = layoutService.get(layoutId);
         
         addPictureSection(resume.getId(), layout.getColumns().get(0).getId(), 1);
-        addEducationSection(resume.getId(), layout.getColumns().get(0).getId(), 2);
-        addSkillsSection(resume.getId(), layout.getColumns().get(0).getId(), 3);
+        addContactSection(resume.getId(), layout.getColumns().get(0).getId(), 2);
+        addEducationSection(resume.getId(), layout.getColumns().get(0).getId(), 3);
+        addSkillsSection(resume.getId(), layout.getColumns().get(0).getId(), 4);
         addTitleSection(resume.getId(), layout.getColumns().get(1).getId(), 1);
         addSummarySection(resume.getId(), layout.getColumns().get(1).getId(), 2);
         addExperienceSection(resume.getId(),layout.getColumns().get(1).getId(), 3);
@@ -97,6 +98,75 @@ public class ResumeExampleService {
                 .position(position)
                 .build());
     }
+
+    private void addContactSection(Long resumeId, Long columnId, int position) {
+        List<SectionItemRequest> contactItems = new ArrayList<>();
+        contactItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.CONTACT.name())
+                .data(new HashMap<>() {{
+                    put("icon", "\\faMapMarker");
+                    put("label", "Brussels, Belgium");
+                }})
+                .build());
+    
+        contactItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.CONTACT.name())
+                .data(new HashMap<>() {{
+                    put("icon", "\\faEnvelope");
+                    put("label", "john@email.com");
+                    put("link", "mailto:john@email.com");
+                }})
+                .build());
+
+        contactItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.CONTACT.name())
+                .data(new HashMap<>() {{
+                    put("icon", "\\faPhone");
+                    put("label", "+32 123 456 789");
+                    put("link", "tel:+32123456789");
+                }})
+                .build());
+
+        contactItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.CONTACT.name())
+                .data(new HashMap<>() {{
+                    put("icon", "\\faLinkedin");
+                    put("label", "johndoe");
+                    put("link", "https://linkedin.com/in/johndoe");
+                }})
+                .build());
+
+        contactItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.CONTACT.name())
+                .data(new HashMap<>() {{
+                    put("icon", "\\faGithub");
+                    put("label", "johndoe");
+                    put("link", "https://github.com/johndoe");
+                }})
+                .build());
+
+        contactItems.add(SectionItemRequest.builder()
+                .type(SectionItemType.CONTACT.name())
+                .data(new HashMap<>() {{
+                    put("icon", "\\faCar");
+                    put("label", "Driving License B");
+                }})
+                .build());
+
+        Long contactId = sectionService.create(resumeId, SectionRequest.builder()
+                .title("Contact")
+                .showTitle(true)
+                .sectionItems(contactItems)
+                .build());
+
+        columnSectionService.create(columnId, ColumnSectionRequest.builder()
+                .columnId(columnId)
+                .sectionId(contactId)
+                .position(position)
+                .itemsep(4.0)
+                .build());
+        }
+
 
     private void addEducationSection(Long resumeId, Long columnId, int position) {
         List<SectionItemRequest> educationItems = new ArrayList<>();

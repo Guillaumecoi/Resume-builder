@@ -27,6 +27,8 @@ public class LatexCommands {
     @Column(columnDefinition = "text")
     private String title;
     @Column(columnDefinition = "text")
+    private String contactItem;
+    @Column(columnDefinition = "text")
     private String educationItem;
     @Column(columnDefinition = "text")
     private String experienceItem;
@@ -52,6 +54,7 @@ public class LatexCommands {
             cvSection,
             sectionTitle,
             title,
+            contactItem,
             educationItem,
             experienceItem,
             textbox,

@@ -17,6 +17,7 @@ import com.coigniez.resumebuilder.domain.sectionitem.SectionItemData;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemResponse;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Contact;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Education;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
@@ -215,6 +216,8 @@ public class LatexService {
             return generateSkillboxes((Skillboxes) object);
         } else if (object instanceof Picture) {
             return generatePicture((Picture) object);
+        } else if (object instanceof Contact) {
+            return generateContact((Contact) object);
         } else {
             return "";
         }
@@ -305,5 +308,9 @@ public class LatexService {
             picture.getShadow(),
             picture.getRounded(),
             picture.getPath());         
+    }
+
+    private String generateContact(Contact contact) {
+        return "\\contactitem{%s}{%s}{%s}".formatted(contact.getIcon(), contact.getLabel(), contact.getLink());
     }
 }
