@@ -1,17 +1,10 @@
-package com.coigniez.resumebuilder.latex;
+package com.coigniez.resumebuilder.latex.generators;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.coigniez.resumebuilder.domain.column.ColumnResponse;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionResponse;
 import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
-import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
-import com.coigniez.resumebuilder.domain.layout.enums.ColorScheme;
-import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
 import com.coigniez.resumebuilder.domain.section.SectionResponse;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemData;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
@@ -21,151 +14,24 @@ import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Contact;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Education;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill.SkillType;
+
+import lombok.AllArgsConstructor;
+
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skillboxes;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Title;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.WorkExperience;
-import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill.SkillType;
+import com.coigniez.resumebuilder.util.StringUtils;
 
-@Service
-public class LatexService {
+@AllArgsConstructor
+@Component
+public class LatexContentGenerator implements LatexGenerator<LayoutResponse> {
 
-    @Autowired
-    private SectionItemMapper sectionItemMapper;
+    private final StringUtils stringUtils;
+    private final SectionItemMapper sectionItemMapper;
     
-    public String generateLatexDocument(LayoutResponse layout) {
-        StringBuilder latexcode = new StringBuilder();
-        latexcode.append(getImports(layout.getPageSize(), layout.getColumnSeparator()) + "\n");
-        latexcode.append(getColors(layout.getColorScheme()) + "\n");
-        latexcode.append(layout.getLatexCommands().getAllMethods() + "\n");
-        latexcode.append(getColumnColorboxMethods(layout.getColumns()) + "\n");
-        
-        latexcode.append("\\begin{document}\n");
-        latexcode.append(getContent(layout));
-        latexcode.append("\\end{document}\n");
-
-        return latexcode.toString();
-    }
-
-    private String addTabToEachLine(String input, int tabCount) {
-        return input.lines()
-                    .map(line -> " ".repeat(tabCount * 4) + line)
-                    .collect(Collectors.joining("\n"));
-    }
-
-    private String getImports(PageSize pageSize, Double columnsep) {
-        return String.format("""
-            \\documentclass[%s,10pt]{article}
-            \\usepackage[utf8]{inputenc}
-            \\usepackage{geometry}
-            \\geometry{%s,margin=0cm}
-    
-            \\usepackage{paracol}
-            \\usepackage{xcolor}
-            \\usepackage[most]{tcolorbox}
-            \\usepackage{tikz}
-            \\usepackage{graphicx}
-            \\usepackage{fontawesome5}
-            \\usepackage[hidelinks]{hyperref}
-            \\usepackage{tabularx}
-            \\usepackage{enumitem}
-            \\usepackage{shadowtext}
-            \\usepackage{xifthen}
-            \\usepackage{parskip}
-            \\usepackage{pgf}
-            \\usepackage{pgffor}
-            \\usepackage{fp}
-            \\usepackage{xfp}
-            \\usepackage{setspace}
-
-            %% Libraries for Tikz
-            \\usetikzlibrary{shadows}
-            \\usetikzlibrary{shadows.blur}
-
-            %% settings
-            \\columnratio{%.3f}
-            \\setlength{\\columnsep}{0pt}
-            \\renewcommand{\\arraystretch}{1.5}
-            \\shadowoffset{0.3pt}\\shadowcolor{black!70}
-
-            """, pageSize.getLatexName(), pageSize.getLatexName(), columnsep);
-    }
-
-    private String getColors(ColorScheme colorScheme) {
-        StringBuilder colors = new StringBuilder();
-        colors.append(getColorLine(ColorLocation.PRIMARY.toString(), colorScheme.getPrimaryColor()));
-        colors.append(getColorLine(ColorLocation.SECONDARY.toString(), colorScheme.getSecondaryColor()));
-        colors.append(getColorLine(ColorLocation.ACCENT.toString(), colorScheme.getAccent()));
-        colors.append(getColorLine(ColorLocation.DARK_BG.toString(), colorScheme.getDarkBg()));
-        colors.append(getColorLine(ColorLocation.LIGHT_BG.toString(), colorScheme.getLightBg()));
-        colors.append(getColorLine(ColorLocation.DARK_TEXT.toString(), colorScheme.getDarkText()));
-        colors.append(getColorLine(ColorLocation.LIGHT_TEXT.toString(), colorScheme.getLightText()));
-
-        return colors.toString();
-    }
-
-    private String getColorLine(String colorName, String color) {
-        // Use substring to remove the # from the color
-        return "\\definecolor{" + colorName + "}{HTML}{" + color.substring(1) + "} \n";
-    }
-
-    private String getColumnColorboxMethods(List<ColumnResponse> columns) {
-        StringBuilder columnMethods = new StringBuilder();
-        for (ColumnResponse column : columns) {
-            String columnContent = String.format("\\newenvironment{tcolorbox%d}[0] { \n", column.getColumnNumber());
-
-            columnContent += addTabToEachLine(
-                    getTcolorbox(column.getBackgroundColor().toString(), 
-                    column.getTextColor().toString(), 
-                    column.getBorderColor().toString(),
-                    column.getPaddingTop(), 
-                    column.getPaddingBottom(), 
-                    column.getPaddingLeft(), 
-                    column.getPaddingRight(),
-                    column.getBorderLeft(),
-                    column.getBorderRight(),
-                    column.getBorderTop(),
-                    column.getBorderBottom()),
-                    1);
-
-            columnContent += """
-                            }{
-                        \\end{tcolorbox}
-                    }
-                    """;
-
-            columnMethods.append(columnContent);
-        }
-        return columnMethods.toString();
-    }
-
-    private String getTcolorbox(String colback, String textcolor, String bordercolor, double top, double bottom, double left, double right,
-            double borderLeft, double borderRight, double borderTop, double borderBottom) {
-        return String.format("""
-            \\begin{tcolorbox}[
-                colback=%s,
-                width=\\linewidth,
-                height=\\textheight,
-                left=%.1fpt,
-                right=%.1fpt,
-                top=%.1fpt,
-                bottom=%.1fpt,
-                arc=0mm,
-                boxrule=0pt,
-                rightrule=%.1fpt,
-                leftrule=%.1fpt,
-                toprule=%.1fpt,
-                bottomrule=%.1fpt,
-                colframe=%s
-            ]
-            \\color{%s}
-
-            """, colback, left, right, top, bottom,
-            borderRight, borderLeft, borderTop, borderBottom,
-            bordercolor, textcolor);
-    }
-
-    private String getContent(LayoutResponse layout) {
+    public String generate(LayoutResponse layout) {
         StringBuilder content = new StringBuilder();
         content.append("\\begin{paracol}{%s}\n\n".formatted(layout.getNumberOfColumns()));
 
@@ -182,7 +48,7 @@ public class LatexService {
         column.append("\\switchcolumn[%d]\n".formatted(columnDto.getColumnNumber() - 1));
         column.append("\\begin{tcolorbox%d}\n".formatted(columnDto.getColumnNumber()));
         for (ColumnSectionResponse columnSection : columnDto.getSectionMappings()) {
-            column.append(addTabToEachLine(generateSection(columnSection), 1) + "\n");
+            column.append(stringUtils.addTabToEachLine(generateSection(columnSection), 1) + "\n");
         }
         column.append("\\end{tcolorbox%d}\n\n".formatted(columnDto.getColumnNumber()));
 
@@ -201,7 +67,7 @@ public class LatexService {
 
         // Add the items
         for (SectionItemResponse item : section.getSectionItems()) {
-            sectionString.append(addTabToEachLine(generateItem(item), 1) + "\n");
+            sectionString.append(stringUtils.addTabToEachLine(generateItem(item), 1) + "\n");
         }
 
         // End the section
@@ -258,7 +124,7 @@ public class LatexService {
 
         for (String skill : skillboxes.getSkillsAsList()) {
             skillboxesString.append(
-                    addTabToEachLine(
+                stringUtils.addTabToEachLine(
                         "\\skillbox{%s}".formatted(skill),
                          1)
                     + "\n");
@@ -324,4 +190,5 @@ public class LatexService {
     private String generateContact(Contact contact) {
         return "\\contactitem{%s}{%s}{%s}".formatted(contact.getIcon(), contact.getLabel(), contact.getLink());
     }
+    
 }

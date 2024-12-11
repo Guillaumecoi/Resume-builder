@@ -21,8 +21,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
-import com.coigniez.resumebuilder.latex.LatexService;
 import com.coigniez.resumebuilder.latex.PdfGenerator;
+import com.coigniez.resumebuilder.latex.generators.LatexDocumentGenerator;
 
 import jakarta.transaction.Transactional;
 
@@ -34,7 +34,7 @@ public class ResumeExampleServiceTest {
     @Autowired
     private ResumeExampleService resumeExampleService;
     @Autowired
-    private LatexService latexService;
+    private LatexDocumentGenerator latexDocumentGenerator;
     @Autowired
     private PdfGenerator pdfGenerator;
 
@@ -58,7 +58,7 @@ public class ResumeExampleServiceTest {
         List<Object> list = resumeExampleService.createExampleResume("Software Engineer 2");
         LayoutResponse layout = (LayoutResponse) list.get(1);
 
-        String latexContent = latexService.generateLatexDocument(layout);
+        String latexContent = latexDocumentGenerator.generate(layout);
 
         // Uncomment this line to inspect the generated LaTeX content
         writeToFile(latexContent, "testfile.tex");
