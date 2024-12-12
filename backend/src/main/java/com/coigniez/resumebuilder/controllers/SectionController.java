@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @Slf4j
 @RestController
-@RequestMapping("resumes/{resumeId}/sections")
+@RequestMapping("sections")
 @RequiredArgsConstructor
 @Tag(name = "Resume Sections")
 public class SectionController {
@@ -32,8 +32,8 @@ public class SectionController {
     private final SectionService sectionService;
 
     @PostMapping
-    public ResponseEntity<Long> create(@PathVariable Long resumeId, @Valid @RequestBody SectionRequest request, Authentication user) {
-        Long id = sectionService.create(resumeId, request);
+    public ResponseEntity<Long> create(@Valid @RequestBody SectionRequest request, Authentication user) {
+        Long id = sectionService.create(request);
         URI location = ServletUriComponentsBuilder
             .fromCurrentRequest()
             .path("/{id}")
@@ -43,19 +43,19 @@ public class SectionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SectionResponse> getSection(@PathVariable Long resumeId, @PathVariable Long id, Authentication user) {
+    public ResponseEntity<SectionResponse> getSection(@PathVariable Long id, Authentication user) {
         SectionResponse section = sectionService.get(id);
         return ResponseEntity.ok(section);
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long resumeId, @PathVariable Long id, @Valid @RequestBody SectionRequest request, Authentication user) {
+    public ResponseEntity<Void> update(@PathVariable Long id, @Valid @RequestBody SectionRequest request, Authentication user) {
         sectionService.update(id, request);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/delete")
-    public ResponseEntity<Void> delete(@PathVariable Long resumeId, @PathVariable Long id, Authentication user) {
+    public ResponseEntity<Void> delete(@PathVariable Long id, Authentication user) {
         sectionService.delete(id);
         return ResponseEntity.noContent().build();
     }

@@ -29,7 +29,7 @@ import lombok.*;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
-@NamedEntityGraph(name = "resume.sections", attributeNodes = @NamedAttributeNode("sections"))
+@NamedEntityGraph(name = "Resume.withSections", attributeNodes = @NamedAttributeNode("sections"))
 public class Resume implements BaseEntity, TimeTrackable, Creatable {
 
     @Id
@@ -51,7 +51,7 @@ public class Resume implements BaseEntity, TimeTrackable, Creatable {
     @Column
     private LocalDateTime lastModifiedDate;
 
-    @OneToMany(mappedBy = "resume", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(mappedBy = "resume", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @Builder.Default
     private Set<Section> sections = new HashSet<>();
 

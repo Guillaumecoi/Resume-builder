@@ -37,7 +37,7 @@ public class ResumeController {
 
     @PostMapping
     public ResponseEntity<Long> create(@Valid @RequestBody ResumeRequest request, Authentication user) {
-        Long id = resumeService.create(null, request);
+        Long id = resumeService.create(request);
         URI location = ServletUriComponentsBuilder
             .fromCurrentRequest()
             .path("/{id}")

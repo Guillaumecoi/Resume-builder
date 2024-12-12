@@ -78,7 +78,7 @@ public class ResumeServiceIntegrationTest {
 
 
         // Act
-        Long resumeId = resumeService.create(null, resumeRequest);
+        Long resumeId = resumeService.create(resumeRequest);
         ResumeDetailResponse resume = resumeService.get(resumeId);
 
         // Assert
@@ -102,12 +102,15 @@ public class ResumeServiceIntegrationTest {
                     SectionRequest.builder().title("Experience").build()))
                 .build();
 
-        Long resumeId = resumeService.create(null, resumeRequest);
+        Long resumeId = resumeService.create(resumeRequest);
 
-        SectionRequest sectionRequest = SectionRequest.builder().title("Summary").build();
+        SectionRequest sectionRequest = SectionRequest.builder()
+                .resumeId(resumeId)
+                .title("Summary")
+                .build();
 
         // Act
-        sectionService.create(resumeId, sectionRequest);
+        sectionService.create(sectionRequest);
         ResumeDetailResponse resume = resumeService.get(resumeId);
 
         // Assert
@@ -131,7 +134,7 @@ public class ResumeServiceIntegrationTest {
                     SectionRequest.builder().title("Experience").build()))
                 .build();
 
-        Long resumeId = resumeService.create(null, resumeRequest);
+        Long resumeId = resumeService.create(resumeRequest);
         MockMultipartFile pictureFile = getPictureFile();
 
         // Act
@@ -157,7 +160,7 @@ public class ResumeServiceIntegrationTest {
                     SectionRequest.builder().title("Experience").build()))
                 .build();
 
-        Long resumeId = resumeService.create(null, resumeRequest);
+        Long resumeId = resumeService.create(resumeRequest);
         MockMultipartFile pictureFile = getPictureFile();
 
         // Act
@@ -183,7 +186,7 @@ public class ResumeServiceIntegrationTest {
                     SectionRequest.builder().title("Experience").build()))
                 .build();
 
-        Long resumeId = resumeService.create(null, resumeRequest);
+        Long resumeId = resumeService.create(resumeRequest);
 
         ResumeRequest updatedResumeRequest = ResumeRequest.builder()
                 .title("Barista")
@@ -210,7 +213,7 @@ public class ResumeServiceIntegrationTest {
                     SectionRequest.builder().title("Experience").build()))
                 .build();
 
-        Long resumeId = resumeService.create(null, resumeRequest);
+        Long resumeId = resumeService.create(resumeRequest);
 
         // Act
         resumeService.delete(resumeId);
@@ -230,7 +233,7 @@ public class ResumeServiceIntegrationTest {
                     SectionRequest.builder().title("Experience").build()))
                 .build();
 
-        Long resumeId = resumeService.create(null, resumeRequest);
+        Long resumeId = resumeService.create(resumeRequest);
         
         // Set it to otheruser
         SecurityContextHolder.getContext().setAuthentication(otheruser);
@@ -268,8 +271,8 @@ public class ResumeServiceIntegrationTest {
                     SectionRequest.builder().title("Experience").build()))
                 .build();
         // Act
-        Long resumeId1 = resumeService.create(null, resumeRequest1);
-        Long resumeId2 = resumeService.create(null, resumeRequest2);
+        Long resumeId1 = resumeService.create(resumeRequest1);
+        Long resumeId2 = resumeService.create(resumeRequest2);
         PageResponse<ResumeResponse> resumes = resumeService.getAll(0, 10, "lastModifiedDate");
 
         // Assert
@@ -305,8 +308,8 @@ public class ResumeServiceIntegrationTest {
                 .build();
 
         // Act
-        Long resumeId1 = resumeService.create(null, resumeRequest1);
-        Long resumeId2 = resumeService.create(null, resumeRequest2);
+        Long resumeId1 = resumeService.create(resumeRequest1);
+        Long resumeId2 = resumeService.create(resumeRequest2);
         resumeService.deleteAll();
 
         // Assert

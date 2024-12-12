@@ -60,16 +60,19 @@ public class SectionServiceIntegrationTest {
         ResumeRequest resumeRequest = ResumeRequest.builder().title("Software Developer")
                 .sections(List.of(SectionRequest.builder().title("Education").build())).build();
 
-        resumeId = resumeService.create(null, resumeRequest);
+        resumeId = resumeService.create(resumeRequest);
     }
 
     @Test
     void testCreateAndGet() {
         // Arrange
-        SectionRequest request = SectionRequest.builder().title("Test Section").build();
+        SectionRequest request = SectionRequest.builder()
+                .resumeId(resumeId)
+                .title("Test Section")
+                .build();
 
         // Act
-        Long sectionId = sectionService.create(resumeId, request);
+        Long sectionId = sectionService.create(request);
         SectionResponse response = sectionService.get(sectionId);
 
         // Assert
@@ -81,9 +84,12 @@ public class SectionServiceIntegrationTest {
     @Test
     void testUpdate() {
         // Arrange
-        SectionRequest request = SectionRequest.builder().title("Test Section").build();
+        SectionRequest request = SectionRequest.builder()
+                .resumeId(resumeId)
+                .title("Test Section")
+                .build();
 
-        Long sectionId = sectionService.create(resumeId, request);
+        Long sectionId = sectionService.create(request);
 
         // Act
         SectionRequest updatedRequest = SectionRequest.builder().title("Updated Section").build();
@@ -98,9 +104,12 @@ public class SectionServiceIntegrationTest {
     @Test
     void testDelete() {
         // Arrange
-        SectionRequest request = SectionRequest.builder().title("Test Section").build();
+        SectionRequest request = SectionRequest.builder()
+                .resumeId(resumeId)
+                .title("Test Section")
+                .build();
 
-        Long sectionId = sectionService.create(resumeId, request);
+        Long sectionId = sectionService.create(request);
 
         // Act
         sectionService.delete(sectionId);
@@ -113,9 +122,12 @@ public class SectionServiceIntegrationTest {
     @Test
     void testAuthentications() {
         // Arrange
-        SectionRequest request = SectionRequest.builder().title("Test Section").build();
+        SectionRequest request = SectionRequest.builder()
+                .resumeId(resumeId)
+                .title("Test Section")
+                .build();
 
-        Long sectionId = sectionService.create(resumeId, request);
+        Long sectionId = sectionService.create(request);
         
         // Set it to otheruser
         SecurityContextHolder.getContext().setAuthentication(otheruser);

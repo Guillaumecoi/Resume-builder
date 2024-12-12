@@ -32,18 +32,16 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
     private final SectionItemService sectionItemService;
     private final SecurityUtils securityUtils;
 
-    public Long create(Long parentId, SectionRequest request) {
-        hasAccessResume(parentId);
+    public Long create(SectionRequest request) {
+        hasAccessResume(request.getResumeId());
 
         Section section = sectionMapper.toEntity(request);
-        Resume resume = resumeRepository.findById(parentId).orElseThrow();
+        Resume resume = resumeRepository.findById(request.getResumeId())
+                .orElseThrow(() -> new EntityNotFoundException("Resume not found"));
         resume.addSection(section);
         Long sectionId = sectionRepository.save(section).getId();
 
-        Section createdSection = sectionRepository.findById(sectionId)
-                .orElseThrow(() -> new EntityNotFoundException(""));
-
-        createSectionItems(createdSection.getId(), request.getSectionItems());
+        createSectionItems(sectionId, request.getSectionItems());
 
         return sectionId;
     }
@@ -91,12 +89,13 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
                 .toList();
     }
 
-    private void createSectionItems(Long sectionId, List<SectionItemRequest> sectionItems) {
+    private void createSectionItems(long sectionId, List<SectionItemRequest> sectionItems) {
         if(sectionItems == null) {
             return;
         }
         for (SectionItemRequest sectionItemRequest : sectionItems) {
-            sectionItemService.create(sectionId, sectionItemRequest);
+            sectionItemRequest.setSectionId(sectionId);
+            sectionItemService.create(sectionItemRequest);
         }
     }
 

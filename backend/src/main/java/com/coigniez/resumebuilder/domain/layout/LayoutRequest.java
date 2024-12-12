@@ -17,7 +17,10 @@ import lombok.Data;
 @Data
 @Builder
 public class LayoutRequest {
+    
     private Long id;
+
+    private long resumeId;
 
     @Builder.Default
     private PageSize pageSize = PageSize.A4;

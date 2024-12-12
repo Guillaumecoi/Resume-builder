@@ -51,16 +51,16 @@ public class LayoutServiceIntegrationTest {
         ResumeRequest resumeRequest = ResumeRequest.builder().title("Software Developer")
                 .sections(List.of(SectionRequest.builder().title("Education").build())).build();
 
-        resumeId = resumeService.create(null, resumeRequest);
+        resumeId = resumeService.create(resumeRequest);
     }
 
     @Test
     void testCreateAndGetOneColumn() {
         // Arrange
-        LayoutRequest layoutDTO = LayoutRequest.builder().build();
+        LayoutRequest layoutDTO = LayoutRequest.builder().resumeId(resumeId).build();
 
         // Act
-        Long layoutId = layoutService.create(resumeId, layoutDTO);
+        Long layoutId = layoutService.create(layoutDTO);
         LayoutResponse createdLayout = layoutService.get(layoutId);
 
         // Assert
@@ -84,10 +84,13 @@ public class LayoutServiceIntegrationTest {
     @Test
     void testCreateAndGetTwoColumns() {
         // Arrange
-        LayoutRequest layoutDTO = LayoutRequest.builder().numberOfColumns(2).build();
+        LayoutRequest layoutRequest = LayoutRequest.builder()
+                .resumeId(resumeId)
+                .numberOfColumns(2)
+                .build();
 
         // Act
-        Long layoutId = layoutService.create(resumeId, layoutDTO);
+        Long layoutId = layoutService.create(layoutRequest);
         LayoutResponse createdLayout = layoutService.get(layoutId);
 
         // Assert

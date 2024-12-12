@@ -70,11 +70,17 @@ public class SectionItemServiceIntegrationTest {
 
         ResumeRequest resumeRequest = ResumeRequest.builder().title("Software Developer").build();
 
-        Long resumeId = resumeService.create(null, resumeRequest);
+        Long resumeId = resumeService.create(resumeRequest);
 
-        sectionId = sectionService.create(resumeId, SectionRequest.builder().title("Education").build());
+        sectionId = sectionService.create(SectionRequest.builder()
+                .resumeId(resumeId)
+                .title("Education")
+                .build());
         
-        Long layoutId = layoutService.create(resumeId, LayoutRequest.builder().numberOfColumns(1).build());
+        Long layoutId = layoutService.create(LayoutRequest.builder()
+                .resumeId(resumeId)
+                .numberOfColumns(1)
+                .build());
 
         methodIds = layoutService.getLatexMethodsMap(layoutId);
     }
@@ -87,6 +93,7 @@ public class SectionItemServiceIntegrationTest {
         data.put("content", "This is some example text");
     
         SectionItemRequest request = SectionItemRequest.builder()
+                .sectionId(sectionId)
                 .type(SectionItemType.TEXTBOX.name())
                 .itemOrder(1)
                 .data(data)
@@ -94,7 +101,7 @@ public class SectionItemServiceIntegrationTest {
                 .build();
     
         // Act
-        Long sectionItemId = sectionItemService.create(sectionId, request);
+        Long sectionItemId = sectionItemService.create(request);
         SectionItem sectionItem = sectionItemRepository.findById(sectionItemId).orElseThrow();
     
         // Assert
@@ -112,6 +119,7 @@ public class SectionItemServiceIntegrationTest {
         MockMultipartFile file = getPictureFile();
         
         SectionItemRequest request = SectionItemRequest.builder()
+                .sectionId(sectionId)
                 .type(SectionItemType.PICTURE.name())
                 .itemOrder(1)
                 .data(new HashMap<>())
@@ -120,7 +128,7 @@ public class SectionItemServiceIntegrationTest {
     
     
         // Act
-        Long pictureId = sectionItemService.createPicture(sectionId, file, request);
+        Long pictureId = sectionItemService.createPicture(file, request);
         SectionItem sectionItem = sectionItemRepository.findById(pictureId).orElseThrow();
     
         // Assert
@@ -143,25 +151,27 @@ public class SectionItemServiceIntegrationTest {
         data.put("content", "This is some example text");
         
         SectionItemRequest request1 = SectionItemRequest.builder()
+                .sectionId(sectionId)
                 .type(SectionItemType.TEXTBOX.name())
                 .itemOrder(1)
                 .data(data)
                 .latexMethodId(methodIds.get("textbox"))
                 .build();
                 
-        sectionItemService.create(sectionId, request1);
+        sectionItemService.create(request1);
         
         Map<String, Object> data2 = new HashMap<>();
         data2.put("content", "This is some example text");
         
         SectionItemRequest request2 = SectionItemRequest.builder()
+                .sectionId(sectionId)
                 .type(SectionItemType.TEXTBOX.name())
                 .itemOrder(2)
                 .data(data2)
                 .latexMethodId(methodIds.get("textbox"))
                 .build();
                 
-        sectionItemService.create(sectionId, request2);
+        sectionItemService.create(request2);
     
         // Act
         sectionItemService.deleteAllBySectionId(sectionId);

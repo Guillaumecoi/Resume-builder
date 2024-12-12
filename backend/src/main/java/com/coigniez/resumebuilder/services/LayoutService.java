@@ -39,9 +39,9 @@ public class LayoutService implements CrudService<LayoutResponse, LayoutRequest>
     private final ColumnMapper columnMapper;
     private final LatexDocumentGenerator latexDocumentGenerator;
     
-    public Long create(Long parentId, LayoutRequest request) {
+    public Long create(LayoutRequest request) {
         Layout layout = layoutMapper.toEntity(request);
-        Resume resume = resumeRepository.findById(parentId).orElseThrow(() -> new EntityNotFoundException("Resume not found"));
+        Resume resume = resumeRepository.findById(request.getResumeId()).orElseThrow(() -> new EntityNotFoundException("Resume not found"));
         resume.addLayout(layout);
 
         if(layout.getColumns().isEmpty()) {

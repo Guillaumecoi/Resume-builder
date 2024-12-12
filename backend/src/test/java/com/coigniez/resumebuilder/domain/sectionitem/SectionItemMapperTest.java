@@ -332,7 +332,6 @@ class SectionItemMapperTest {
         Map<String, Object> data = new HashMap<>();
         data.put("path", "path/to/image.jpg");
         data.put("caption", "Test Caption");
-        data.put("center", true);
         data.put("width", 0.8);
         data.put("height", 1.0);
         data.put("rounded", 50);

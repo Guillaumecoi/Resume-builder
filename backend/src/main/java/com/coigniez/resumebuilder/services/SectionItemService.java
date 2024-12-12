@@ -33,8 +33,8 @@ public class SectionItemService {
     private final FileStorageService fileStorageService;
     private final SecurityUtils securityUtils;
 
-    public Long create(Long sectionId, SectionItemRequest request) {   
-        Section section = sectionRepository.findById(sectionId)
+    public Long create(SectionItemRequest request) {   
+        Section section = sectionRepository.findById(request.getSectionId())
             .orElseThrow(() -> new EntityNotFoundException("Section not found"));
 
         SectionItem sectionItem = sectionitemMapper.toEntity(request);
@@ -60,20 +60,19 @@ public class SectionItemService {
         return sectionitemRepository.save(sectionItem).getId();
     }
 
-    public Long createPicture(Long sectionId, MultipartFile file, SectionItemRequest request) {
+    public Long createPicture(MultipartFile file, SectionItemRequest request) {
         String path = fileStorageService.saveFile(file, securityUtils.getUserName());
         Map<String, Object> data = request.getData();
         data.put("path", path);
         request.setData(data);
         
-        return create(sectionId, request);
+        return create(request);
     }
 
     public List<SectionItem> getAll(Long id) {
         return sectionitemRepository.findAllBySectionId(id);
     }
     
-
     public void deleteAllBySectionId(Long sectionId) {
         sectionitemRepository.deleteAllBySectionId(sectionId);
     }

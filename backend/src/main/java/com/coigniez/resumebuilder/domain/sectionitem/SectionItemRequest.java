@@ -14,6 +14,7 @@ import lombok.Data;
 public class SectionItemRequest{
 
     private Long id;
+    private long sectionId;
     @NotNull
     private long latexMethodId;
     @NotBlank

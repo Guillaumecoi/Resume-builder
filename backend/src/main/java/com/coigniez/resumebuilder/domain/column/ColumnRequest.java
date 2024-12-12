@@ -18,6 +18,8 @@ public class ColumnRequest {
 
     private Long id;
 
+    private long layoutId;
+
     @Min(1) @Max(2)
     private Integer columnNumber;
 
@@ -54,6 +56,4 @@ public class ColumnRequest {
     @Min(0)
     @Builder.Default
     private double borderBottom = 0.0;
-
-    private Long layoutId;
 }

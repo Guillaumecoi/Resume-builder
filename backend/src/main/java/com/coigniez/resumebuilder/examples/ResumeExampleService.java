@@ -60,12 +60,19 @@ public class ResumeExampleService {
     private ResumeDetailResponse createBaseResume(String title) {
         ResumeRequest resumeRequest = ResumeRequest.builder().title(title).build();
         
-        Long resumeId = resumeService.create(null, resumeRequest);
+        Long resumeId = resumeService.create(resumeRequest);
         return resumeService.get(resumeId);
     }
 
     private void addPictureSection(Long resumeId, Long columnId, int position, Map<String, Long> methodIds) throws IOException {
-        SectionItemRequest picture = SectionItemRequest.builder()
+        Long sectionId = sectionService.create(SectionRequest.builder()
+                .resumeId(resumeId)
+                .title("Picture")
+                .showTitle(false)
+                .build());
+                
+        SectionItemRequest pictureRequest = SectionItemRequest.builder()
+                .sectionId(sectionId)
                 .type(SectionItemType.PICTURE.name())
                 .data(new HashMap<>() {{
                         put("caption", "Photo by Ali Mammadli on Unsplash");
@@ -87,15 +94,10 @@ public class ResumeExampleService {
                 MediaType.IMAGE_JPEG_VALUE,
                 content
         );
-            
-        Long sectionId = sectionService.create(resumeId, SectionRequest.builder()
-                .title("Picture")
-                .showTitle(false)
-                .build());
+                
+        sectionItemService.createPicture(file, pictureRequest);
         
-        sectionItemService.createPicture(sectionId, file, picture);
-        
-        columnSectionService.create(columnId, ColumnSectionRequest.builder()
+        columnSectionService.create(ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .position(position)
@@ -162,13 +164,14 @@ public class ResumeExampleService {
                 .latexMethodId(methodIds.get("contactitem"))
                 .build());
 
-        Long contactId = sectionService.create(resumeId, SectionRequest.builder()
+        Long contactId = sectionService.create(SectionRequest.builder()
+                .resumeId(resumeId)
                 .title("Contact")
                 .showTitle(true)
                 .sectionItems(contactItems)
                 .build());
 
-        columnSectionService.create(columnId, ColumnSectionRequest.builder()
+        columnSectionService.create(ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(contactId)
                 .position(position)
@@ -212,12 +215,13 @@ public class ResumeExampleService {
                 .latexMethodId(methodIds.get("educationitem"))
                 .build());
         
-        Long educationId = sectionService.create(resumeId, SectionRequest.builder()
+        Long educationId = sectionService.create(SectionRequest.builder()
+                .resumeId(resumeId)
                 .title("Education")
                 .showTitle(true)
                 .sectionItems(educationItems)
                 .build());
-        columnSectionService.create(columnId, ColumnSectionRequest.builder()
+        columnSectionService.create(ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(educationId)
                 .position(position)
@@ -240,11 +244,12 @@ public class ResumeExampleService {
                 .latexMethodId(methodIds.get("experienceitem"))
                 .build());
             
-        Long experienceId = sectionService.create(resumeId, SectionRequest.builder()
+        Long experienceId = sectionService.create(SectionRequest.builder()
+            .resumeId(resumeId)
             .title("Experience")
             .sectionItems(experienceItems)
             .build());
-        columnSectionService.create(columnId, ColumnSectionRequest.builder()
+        columnSectionService.create(ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(experienceId)
                 .position(position)
@@ -261,12 +266,13 @@ public class ResumeExampleService {
                 .latexMethodId(methodIds.get("cvtitle"))
                 .build();
             
-        Long titleId = sectionService.create(resumeId, SectionRequest.builder()
+        Long titleId = sectionService.create(SectionRequest.builder()
+                .resumeId(resumeId)
                 .title("Title")
                 .showTitle(false)
                 .sectionItems(List.of(title))
                 .build());
-        columnSectionService.create(columnId, ColumnSectionRequest.builder()
+        columnSectionService.create(ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(titleId)
                 .position(position)
@@ -288,11 +294,12 @@ public class ResumeExampleService {
                 .latexMethodId(methodIds.get("textbox"))
                 .build());
             
-        Long summaryId = sectionService.create(resumeId, SectionRequest.builder()
+        Long summaryId = sectionService.create(SectionRequest.builder()
+                .resumeId(resumeId)
                 .title("About me")
                 .sectionItems(summaryItems)
                 .build());
-        columnSectionService.create(columnId, ColumnSectionRequest.builder()
+        columnSectionService.create(ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(summaryId)
                 .position(position)
@@ -344,11 +351,12 @@ public class ResumeExampleService {
                 .latexMethodId(methodIds.get("skillbar"))
                 .build());
             
-        Long skillsId = sectionService.create(resumeId, SectionRequest.builder()
+        Long skillsId = sectionService.create(SectionRequest.builder()
+                .resumeId(resumeId)
                 .title("Skills")
                 .sectionItems(skillsItems)
                 .build());
-        columnSectionService.create(columnId, ColumnSectionRequest.builder()
+        columnSectionService.create(ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(skillsId)
                 .position(position)
@@ -357,7 +365,10 @@ public class ResumeExampleService {
     }
 
     private Long addLayout(Long resumeId) {
-        LayoutRequest layoutDTO = LayoutRequest.builder().numberOfColumns(2).build();
-        return layoutService.create(resumeId, layoutDTO);
+        LayoutRequest layoutRequest = LayoutRequest.builder()
+                .resumeId(resumeId)
+                .numberOfColumns(2)
+                .build();
+        return layoutService.create(layoutRequest);
     }
 }

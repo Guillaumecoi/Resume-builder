@@ -16,6 +16,7 @@ import lombok.Data;
 public class SectionRequest {
 
     Long id;
+    long resumeId;
     @NotNull
     @NotEmpty
     String title;

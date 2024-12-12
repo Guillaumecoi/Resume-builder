@@ -24,6 +24,7 @@ public class SectionMapper implements Mapper<Section, SectionRequest, SectionRes
         }
 
         return Section.builder()
+                .id(request.getId())
                 .title(request.getTitle())
                 .showTitle(request.getShowTitle())
                 .build();

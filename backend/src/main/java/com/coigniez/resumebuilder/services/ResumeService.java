@@ -38,7 +38,7 @@ public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRe
     private final FileStorageService fileStorageService;
     private final SecurityUtils securityUtils;
 
-    public Long create(Long parentId, ResumeRequest request) {
+    public Long create(ResumeRequest request) {
         Resume resume = resumeMapper.toEntity(request);
         return resumeRepository.save(resume).getId();
     }

@@ -63,9 +63,11 @@ public class SectionServiceWithItemsIntegrationTest {
         ResumeRequest resumeRequest = ResumeRequest.builder().title("Software Developer")
                 .sections(List.of(SectionRequest.builder().title("Education").build())).build();
 
-        resumeId = resumeService.create(null, resumeRequest);
+        resumeId = resumeService.create(resumeRequest);
 
-        Long layoutId = layoutService.create(resumeId, LayoutRequest.builder().numberOfColumns(1).build());
+        Long layoutId = layoutService.create(LayoutRequest.builder()
+                .resumeId(resumeId)
+                .numberOfColumns(1).build());
 
         methodIds = layoutService.getLatexMethodsMap(layoutId);
     }
@@ -95,10 +97,15 @@ public class SectionServiceWithItemsIntegrationTest {
                 .latexMethodId(methodIds.get("skillitem"))
                 .build());
 
-        SectionRequest request = SectionRequest.builder().title("Test Section").sectionItems(sectionItems).build();
+        SectionRequest request = SectionRequest.builder()
+                .resumeId(resumeId)
+                .title("Test Section")
+                .sectionItems(sectionItems)
+                .build();
+
 
         // Act
-        Long sectionId = sectionService.create(resumeId, request);
+        Long sectionId = sectionService.create(request);
         SectionResponse response = sectionService.get(sectionId);
 
         // Assert
@@ -136,9 +143,12 @@ public class SectionServiceWithItemsIntegrationTest {
                 .latexMethodId(methodIds.get("skillitem"))
                 .build());
 
-        SectionRequest request = SectionRequest.builder().title("Test Section").sectionItems(sectionItems).build();
+        SectionRequest request = SectionRequest.builder()
+                .resumeId(resumeId)
+                .title("Test Section")
+                .build();
 
-        Long sectionId = sectionService.create(resumeId, request);
+        Long sectionId = sectionService.create(request);
 
         // Update the section
         List<SectionItemRequest> updatedSectionItems = new ArrayList<>();
@@ -179,16 +189,19 @@ public class SectionServiceWithItemsIntegrationTest {
                 .type(SectionItemType.SKILL.name())
                 .itemOrder(1)
                 .data(new HashMap<>() {{
-                    put("name", "");
+                    put("name", "java");
+                    put("proficiency", 11);
                 }})
                 .latexMethodId(methodIds.get("skillitem"))
                 .build());
 
-        SectionRequest request = SectionRequest.builder().title("Test Section").sectionItems(sectionItems).build();
+        SectionRequest request = SectionRequest.builder()
+                .resumeId(resumeId)
+                .title("Test Section")
+                .sectionItems(sectionItems)
+                .build();
 
         // Act & Assert
-        assertThrows(ConstraintViolationException.class, () -> sectionService.create(resumeId, request));
+        assertThrows(ConstraintViolationException.class, () -> sectionService.create(request));
     }
-
-
 }

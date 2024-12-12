@@ -27,11 +27,11 @@ public class ColumnSectionService {
     private final ColumnSectionMapper columnSectionMapper;
 
     
-    public Long create(Long parentId, ColumnSectionRequest request) {
+    public Long create(ColumnSectionRequest request) {
         ColumnSection columnSection = columnSectionMapper.toEntity(request);
 
         // Set the column
-        Column column = columnRepository.findById(parentId).orElseThrow(() -> new EntityNotFoundException("Column not found"));
+        Column column = columnRepository.findById(request.getColumnId()).orElseThrow(() -> new EntityNotFoundException("Column not found"));
         column.addSectionMapping(columnSection);
 
         // Set the section

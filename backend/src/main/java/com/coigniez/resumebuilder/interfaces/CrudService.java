@@ -5,11 +5,10 @@ public interface CrudService<Response, Request> {
     /**
      * Create a new object
      * 
-     * @param parentId the id of the parent object
      * @param request the object to create
      * @return the id of the created object
      */
-    Long create(Long parentId, Request request);
+    Long create(Request request);
 
     /**
      * Get an object by its id

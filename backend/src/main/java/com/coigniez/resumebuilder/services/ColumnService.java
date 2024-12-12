@@ -25,9 +25,9 @@ public class ColumnService implements CrudService<ColumnResponse, ColumnRequest>
     private final ColumnMapper columnMapper;
     
 
-    public Long create(Long parentId, ColumnRequest request) {
+    public Long create(ColumnRequest request) {
         Column column = columnMapper.toEntity(request);
-        Layout layout = layoutRepository.findById(parentId).orElseThrow(() -> new EntityNotFoundException("Layout not found"));
+        Layout layout = layoutRepository.findById(request.getLayoutId()).orElseThrow(() -> new EntityNotFoundException("Layout not found"));
         layout.addColumn(column);
         
         return columnRepository.save(column).getId();

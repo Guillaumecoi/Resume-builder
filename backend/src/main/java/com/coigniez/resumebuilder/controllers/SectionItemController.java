@@ -33,6 +33,7 @@ public class SectionItemController {
             @RequestParam("request") String requestJson) throws JsonMappingException, JsonProcessingException {
         
         SectionItemRequest request = objectMapper.readValue(requestJson, SectionItemRequest.class);
-        return ResponseEntity.ok(sectionItemService.createPicture(sectionId, file, request));
+        request.setSectionId(sectionId);
+        return ResponseEntity.ok(sectionItemService.createPicture(file, request));
     }
 }
