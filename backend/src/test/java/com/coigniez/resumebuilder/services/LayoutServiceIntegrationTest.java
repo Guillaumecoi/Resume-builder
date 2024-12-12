@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.domain.layout;
+package com.coigniez.resumebuilder.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -16,11 +16,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
+import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
 import com.coigniez.resumebuilder.domain.section.SectionRequest;
-import com.coigniez.resumebuilder.services.LayoutService;
-import com.coigniez.resumebuilder.services.ResumeService;
 
 @SpringBootTest
 @ActiveProfiles("test")

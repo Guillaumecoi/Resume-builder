@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.domain.section;
+package com.coigniez.resumebuilder.services;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -16,8 +16,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
-import com.coigniez.resumebuilder.services.ResumeService;
-import com.coigniez.resumebuilder.services.SectionService;
+import com.coigniez.resumebuilder.domain.section.SectionRequest;
+import com.coigniez.resumebuilder.domain.section.SectionResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

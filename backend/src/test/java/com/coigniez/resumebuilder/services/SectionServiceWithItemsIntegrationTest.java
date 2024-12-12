@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.domain.section;
+package com.coigniez.resumebuilder.services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,11 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
 import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
+import com.coigniez.resumebuilder.domain.section.SectionRequest;
+import com.coigniez.resumebuilder.domain.section.SectionResponse;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
-import com.coigniez.resumebuilder.services.LayoutService;
-import com.coigniez.resumebuilder.services.ResumeService;
-import com.coigniez.resumebuilder.services.SectionService;
 
 import jakarta.validation.ConstraintViolationException;
 
