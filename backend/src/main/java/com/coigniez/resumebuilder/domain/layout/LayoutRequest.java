@@ -1,10 +1,12 @@
 package com.coigniez.resumebuilder.domain.layout;
 
 import java.util.List;
+import java.util.Set;
 
 import com.coigniez.resumebuilder.domain.column.ColumnRequest;
+import com.coigniez.resumebuilder.domain.latex.LatexMethodRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.*;
-import com.coigniez.resumebuilder.domain.layout.templates.LayoutTemplate;
+import com.coigniez.resumebuilder.templates.LayoutTemplate;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -36,5 +38,5 @@ public class LayoutRequest {
 
     @Builder.Default
     @NotNull
-    private LatexCommands latexCommands = LayoutTemplate.getBasicCommands();
+    private Set<LatexMethodRequest> latexMethods = LayoutTemplate.getStandardMethods();
 }

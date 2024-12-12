@@ -1,10 +1,11 @@
 package com.coigniez.resumebuilder.domain.layout;
 
 import java.util.List;
+import java.util.Set;
 
 import com.coigniez.resumebuilder.domain.column.Column;
+import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorScheme;
-import com.coigniez.resumebuilder.domain.layout.enums.LatexCommands;
 import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
 import com.coigniez.resumebuilder.domain.resume.Resume;
 import com.coigniez.resumebuilder.interfaces.BaseEntity;
@@ -49,9 +50,8 @@ public class Layout implements BaseEntity {
     @NotNull
     private ColorScheme colorScheme;
 
-    @Embedded
-    @NotNull
-    private LatexCommands latexCommands;
+    @OneToMany(mappedBy = "layout", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<LatexMethod> latexMethods;
 
     public void addColumn(Column column) {
         columns.add(column);

@@ -70,7 +70,7 @@ public class LayoutServiceIntegrationTest {
         assertEquals(1, createdLayout.getColumns().size());
         assertEquals(0.35, createdLayout.getColumnSeparator());
         assertEquals("Executive Suite", createdLayout.getColorScheme().getName());
-        assertNotNull(createdLayout.getLatexCommands());
+        assertNotNull(createdLayout.getLatexMethods());
 
         assertEquals(1, createdLayout.getColumns().get(0).getColumnNumber());
         assertEquals(ColorLocation.DARK_BG, createdLayout.getColumns().get(0).getBackgroundColor());
@@ -97,7 +97,7 @@ public class LayoutServiceIntegrationTest {
         assertEquals(2, createdLayout.getColumns().size());
         assertEquals(0.35, createdLayout.getColumnSeparator());
         assertEquals("Executive Suite", createdLayout.getColorScheme().getName());
-        assertNotNull(createdLayout.getLatexCommands());
+        assertNotNull(createdLayout.getLatexMethods());
 
         assertEquals(1, createdLayout.getColumns().get(0).getColumnNumber());
         assertEquals(ColorLocation.DARK_BG, createdLayout.getColumns().get(0).getBackgroundColor());

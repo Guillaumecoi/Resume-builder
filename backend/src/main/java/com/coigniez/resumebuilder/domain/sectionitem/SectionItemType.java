@@ -8,6 +8,7 @@ import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skillboxes;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Title;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.WorkExperience;
+import com.coigniez.resumebuilder.interfaces.SectionItemData;
 
 public enum SectionItemType {
     TITLE(Title.class),
@@ -19,30 +20,22 @@ public enum SectionItemType {
     PICTURE(Picture.class),
     CONTACT(Contact.class);
 
-    private final Class<?> dataType;
+    private final Class<? extends SectionItemData> dataType;
 
-    SectionItemType(Class<?> dataType) {
+    SectionItemType(Class<? extends SectionItemData> dataType) {
         this.dataType = dataType;
     }
 
-    public Class<?> getDataType() {
+    public Class<? extends SectionItemData> getDataType() {
         return dataType;
     }
 
-    /**
-     * Converts a string to SectionItemType, handling nulls and invalid values.
-     * @param typeName the name to convert
-     * @return the corresponding SectionItemType
-     * @throws IllegalArgumentException if the typeName is invalid
-     */
-    public static SectionItemType fromString(String typeName) {
-        if (typeName == null || typeName.isBlank()) {
-            throw new IllegalArgumentException("SectionItemType cannot be null or blank");
-        }
+    public int getNumberOfParameters() {
         try {
-            return SectionItemType.valueOf(typeName.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid SectionItemType: " + typeName, e);
+            return dataType.getDeclaredField("BASE_PARAMETER_COUNT").getInt(null);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Could not access BASE_PARAMETER_COUNT in " + dataType.getSimpleName(), e);
         }
     }
+
 }

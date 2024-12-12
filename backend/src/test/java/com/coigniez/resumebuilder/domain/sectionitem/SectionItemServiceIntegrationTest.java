@@ -24,10 +24,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
 import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
 import com.coigniez.resumebuilder.domain.section.SectionRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
+import com.coigniez.resumebuilder.services.LayoutService;
 import com.coigniez.resumebuilder.services.ResumeService;
 import com.coigniez.resumebuilder.services.SectionItemService;
 import com.coigniez.resumebuilder.services.SectionService;
@@ -47,9 +49,12 @@ public class SectionItemServiceIntegrationTest {
     private ResumeService resumeService;
     @Autowired
     private SectionService sectionService;
+    @Autowired
+    private LayoutService layoutService;
 
     private Authentication testuser;
     private Long sectionId;
+    private Map<String, Long> methodIds;
 
     @BeforeEach
     void setUp() {
@@ -63,12 +68,15 @@ public class SectionItemServiceIntegrationTest {
         // Set the Authentication object in the SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(testuser);
 
-        ResumeRequest resumeRequest = ResumeRequest.builder().title("Software Developer")
-                .sections(List.of(SectionRequest.builder().title("Education").build())).build();
+        ResumeRequest resumeRequest = ResumeRequest.builder().title("Software Developer").build();
 
         Long resumeId = resumeService.create(null, resumeRequest);
 
         sectionId = sectionService.create(resumeId, SectionRequest.builder().title("Education").build());
+        
+        Long layoutId = layoutService.create(resumeId, LayoutRequest.builder().numberOfColumns(1).build());
+
+        methodIds = layoutService.getLatexMethodsMap(layoutId);
     }
 
 
@@ -82,6 +90,7 @@ public class SectionItemServiceIntegrationTest {
                 .type(SectionItemType.TEXTBOX.name())
                 .itemOrder(1)
                 .data(data)
+                .latexMethodId(methodIds.get("textbox"))
                 .build();
     
         // Act
@@ -106,6 +115,7 @@ public class SectionItemServiceIntegrationTest {
                 .type(SectionItemType.PICTURE.name())
                 .itemOrder(1)
                 .data(new HashMap<>())
+                .latexMethodId(methodIds.get("pictureitem"))
                 .build();
     
     
@@ -136,6 +146,7 @@ public class SectionItemServiceIntegrationTest {
                 .type(SectionItemType.TEXTBOX.name())
                 .itemOrder(1)
                 .data(data)
+                .latexMethodId(methodIds.get("textbox"))
                 .build();
                 
         sectionItemService.create(sectionId, request1);
@@ -147,6 +158,7 @@ public class SectionItemServiceIntegrationTest {
                 .type(SectionItemType.TEXTBOX.name())
                 .itemOrder(2)
                 .data(data2)
+                .latexMethodId(methodIds.get("textbox"))
                 .build();
                 
         sectionItemService.create(sectionId, request2);

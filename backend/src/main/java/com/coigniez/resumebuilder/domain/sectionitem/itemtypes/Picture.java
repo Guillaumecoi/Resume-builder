@@ -1,11 +1,16 @@
 package com.coigniez.resumebuilder.domain.sectionitem.itemtypes;
 
+import java.util.List;
+import java.util.Optional;
+
 import com.coigniez.resumebuilder.interfaces.SectionItemData;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,30 +22,45 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Picture implements SectionItemData {
 
+    public static final int BASE_PARAMETER_COUNT = 9;
+
+    @NotBlank
     private String path;  
     private String caption;
 
     @Builder.Default
-    private boolean center = true;
-
-    @Builder.Default
     @DecimalMin("0.05") @DecimalMax("1.0")
-    private Double width = 0.9;
+    private double width = 0.9;
     @Builder.Default
-    private Double height = 1.1;
+    private double height = 1.1;
 
     @Builder.Default
-    private Integer rounded = 60;
+    private int rounded = 60;
 
     @Builder.Default
-    private Double zoom = 1.0;
+    private double zoom = 1.0;
 
     @Builder.Default
-    private Double xoffset = 0.0;
+    private double xoffset = 0.0;
     @Builder.Default
-    private Double yoffset = 0.0;
+    private double yoffset = 0.0;
 
     @Builder.Default
     @Min(0) @Max(5)
-    private Double shadow = 0.0;
+    private double shadow = 0.0;
+
+    @JsonIgnore
+    public List<String> getSectionItemData() {
+            return List.of(
+                path,
+                Optional.ofNullable(caption).orElse(""),
+                String.format("%.2f", width),
+                String.format("%.2f", height), 
+                String.format("%.1f", zoom),
+                String.format("%.1f", xoffset),
+                String.format("%.1f", yoffset),
+                String.format("%.1f", shadow),
+                Integer.toString(rounded)
+            );
+    }
 }

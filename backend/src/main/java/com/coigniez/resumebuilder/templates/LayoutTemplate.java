@@ -1,13 +1,16 @@
-package com.coigniez.resumebuilder.domain.layout.templates;
+package com.coigniez.resumebuilder.templates;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.coigniez.resumebuilder.domain.column.ColumnRequest;
+import com.coigniez.resumebuilder.domain.latex.LatexMethodRequest;
 import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorScheme;
-import com.coigniez.resumebuilder.domain.layout.enums.LatexCommands;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
 
 public final class LayoutTemplate {
     
@@ -18,7 +21,7 @@ public final class LayoutTemplate {
             .numberOfColumns(1)
             .columns(getDefaultColumns(1))
             .colorScheme(getExecutiveSuiteColors())
-            .latexCommands(getBasicCommands())
+            .latexMethods(getStandardMethods())
             .build();
 }
 
@@ -27,7 +30,7 @@ public final class LayoutTemplate {
             .numberOfColumns(2)
             .columns(getDefaultColumns(2))
             .colorScheme(getExecutiveSuiteColors())
-            .latexCommands(getBasicCommands())
+            .latexMethods(getStandardMethods())
             .build();
     }
 
@@ -64,17 +67,13 @@ public final class LayoutTemplate {
                 .build();
     }
 
-    public static LatexCommands getBasicCommands() {
-        return LatexCommands.builder()
-            .sectionTitle("""
-                \\newcommand{\\sectiontitle}[1] {
-                    \\hspace{6pt}\\textbf{\\Large{\\uppercase{#1}}}\\\\[-4pt]
-                    \\textcolor{%s}{\\rule{80pt}{2pt}}
-                }""".formatted(ColorLocation.ACCENT.toString())
-            )
-            .title("""
-                \\newcommand{\\cvtitle}[2]{
-                    \\item
+    public static Set<LatexMethodRequest> getStandardMethods() {
+        HashSet<LatexMethodRequest> result = new HashSet<>();
+        result.add(LatexMethodRequest.builder()
+            .type(SectionItemType.TITLE)
+            .name("cvtitle")
+            .method("""
+                {
                     \\begin{minipage}[t]{\\textwidth}
                         \\hspace{6pt}\\textbf{\\Huge \\textcolor{%s}{#1}}
                         \\ifthenelse{\\isempty{#2}}
@@ -85,10 +84,13 @@ public final class LayoutTemplate {
                         }
                     \\end{minipage}
                 }""".formatted(ColorLocation.ACCENT.toString())
-            )
-            .contactItem("""
-                \\newcommand{\\contactitem}[3]{
-                    \\item
+            ).build());
+
+        result.add(LatexMethodRequest.builder()
+            .type(SectionItemType.CONTACT)
+            .name("contactitem")
+            .method("""
+                {
                     \\ifthenelse{\\isempty{#1}}
                     {\\href{#3}{}}
                     {
@@ -97,23 +99,34 @@ public final class LayoutTemplate {
                     \\end{tabular}
                     }
                 }"""
-            )
-            .educationItem("""
-                \\newcommand{\\educationitem}[3]{
-                    \\item
+            ).build());
+
+        result.add(LatexMethodRequest.builder()
+            .type(SectionItemType.EDUCATION)
+            .name("educationitem")
+            .method("""
+                {
                     \\textbf{#1} \\newline
                     \\textit{#2} \\newline
                     #3
+                    \\ifthenelse{\\isempty{#4}}{}
+                    {
+                        \\footnotesize{#4}
+                    }
                 }"""
-            )
-            .experienceItem("""
-                \\newcommand{\\experienceitem}[5]{
-                    \\item
+            ).build());
+
+        result.add(LatexMethodRequest.builder()
+            .type(SectionItemType.WORK_EXPERIENCE)
+            .name("experienceitem")
+            .method("""
+                {
                     \\textbf{\\large#2} \\\\[4pt]
                     \\textbf{#1} \\hfill \\textit{#3} \\\\[-6pt]
                     \\textcolor{%s}{\\rule{\\linewidth}{0.4pt}} \\\\[2pt]
                     \\small#4
-                    \\ifthenelse{\\isempty{#5}}{}{
+                    \\ifthenelse{\\isempty{#5}}{}
+                    {
                         \\footnotesize{
                             \\begin{itemize}[left=5pt, itemsep=2pt, topsep=6pt]
                                 #5
@@ -121,28 +134,41 @@ public final class LayoutTemplate {
                         }
                     }
                 }""".formatted(ColorLocation.ACCENT.toString())
-            )
-            .textbox("""
-                \\newcommand{\\textbox}[1]{
-                    \\item \\small
+            ).build());
+
+        result.add(LatexMethodRequest.builder()
+            .type(SectionItemType.TEXTBOX)
+            .name("textbox")
+            .method("""
+                {
+                    \\small
                     #1
                 }"""
-            )
-            .skillitem("""
-                \\newcommand{\\skillitem}[1]{
-                    \\item
+            ).build());
+
+        result.add(LatexMethodRequest.builder()
+            .type(SectionItemType.SKILL)
+            .name("skillitem")
+            .method("""
+                {
                     \\textbf{#1}
                 }"""
-            )
-            .skilltext("""
-                \\newcommand{\\skilltext}[2]{
-                    \\item
+            ).build());
+        
+        result.add(LatexMethodRequest.builder()
+            .type(SectionItemType.SKILL)
+            .name("skilltext")
+            .method("""
+                {
                     \\textbf{#1} \\hfill #2
                 }"""
-            )
-            .skillbullets("""
-                \\newcommand{\\skillbullets}[2]{
-                    \\item
+            ).build());
+
+        result.add(LatexMethodRequest.builder()
+            .type(SectionItemType.SKILL)
+            .name("skillbullets")
+            .method("""
+                {
                     \\textbf{#1} \\hfill
                     \\foreach \\x in {1,2,3,4,5}{
                         \\pgfmathparse{#2/2>=\\x}
@@ -153,18 +179,37 @@ public final class LayoutTemplate {
                         \\fi
                     }
                 }""".formatted(ColorLocation.ACCENT.toString(), ColorLocation.LIGHT_TEXT.toString())
-            )
-            .skillbar("""
-                \\newcommand{\\skillbar}[2]{
-                    \\item
+            ).build());
+    
+        result.add(LatexMethodRequest.builder()
+            .type(SectionItemType.SKILL)
+            .name("skillbar")
+            .method("""
+                {
                     \\textbf{#1} \\hfill
                     \\begin{tikzpicture}[baseline]
                         \\fill[%s,rounded corners=2pt] (0,0) rectangle (2,.15);
                         \\fill[%s,rounded corners=2pt] (0,0) rectangle ({2*#2/10},.15);
                     \\end{tikzpicture}
                 }""".formatted(ColorLocation.LIGHT_TEXT.toString(), ColorLocation.ACCENT.toString())
-            )
-            .skillbox("""
+            ).build());
+
+        result.add(LatexMethodRequest.builder()
+            .type(SectionItemType.SKILL_BOXES)
+            .name("skillboxes")
+            .method("""
+                {
+                    \\begin{minipage}[t]{\\textwidth}
+                    \\setstretch{1.5}
+                    \\raggedright
+                    \\foreach \\skill in {#1} {
+                        \\skillbox{\\skill}\\hspace{-8pt}
+                    }
+                    \\end{minipage}
+                    \\setstretch{1}
+                    \\vspace{4pt}
+                }
+                    
                 \\newcommand{\\skillbox}[1]{
                     \\tcbox[
                         enhanced,
@@ -181,41 +226,30 @@ public final class LayoutTemplate {
                         valign=center,
                         fontupper=\\footnotesize\\bfseries,
                     ]{\\textcolor{%s}{#1}}
-                    \\vspace{2pt}
                 }""".formatted(ColorLocation.ACCENT.toString(), ColorLocation.LIGHT_TEXT.toString())
-            )
-            .skillboxes("""
-                \\newenvironment{skillboxes}[0]{
-                    \\item
-                    \\begin{minipage}[t]{\\textwidth}
-                    \\raggedright
-                        }{
-                    \\end{minipage}
+            ).build());
+
+        result.add(LatexMethodRequest.builder()
+            .type(SectionItemType.PICTURE)
+            .name("pictureitem")
+            .method("""
+                {
+                    %% widthratio, heightratio, xoffset, yoffset, zoom, shadow, cornerradius, imageurl
+                    \\begin{tikzpicture}
+                        %% Set the Shadow
+                        \\fill[rounded corners=#9, blur shadow={shadow xshift=#8, shadow yshift=-#8, shadow blur steps=10}] 
+                            (0,0) rectangle (#3\\linewidth,#4\\linewidth);
+                        %% Clip the image
+                        \\clip[rounded corners=#9] (0,0) rectangle (#3\\linewidth,#4\\linewidth);
+                        %% Insert the image
+                        \\node[anchor=center, inner sep=0] (image) at 
+                            ($(0.5*#3\\linewidth + #6,0.5*#4\\linewidth + #7)$) 
+                            {\\includegraphics[width=#5\\linewidth]{#1}};
+                    \\end{tikzpicture}
+                    {\\footnotesize #2}
                 }"""
-            )
-            .picture("""
-                    %% [center], widthratio, heightratio, xoffset, yoffset, zoom, shadow, cornerradius, imageurl
-                    \\newcommand{\\pictureitem}[9][]{
-                        \\item
-                        \\ifthenelse{\\equal{#1}{center}}{
-                            \\begin{center}
-                        }{}
-                        \\begin{tikzpicture}
-                            %% Set the Shadow
-                            \\fill[rounded corners=#8, blur shadow={shadow xshift=#7, shadow yshift=-#7, shadow blur steps=10}] 
-			                    (0,0) rectangle (#2\\linewidth,#3\\linewidth);
-                            %% Clip the image
-                            \\clip[rounded corners=#8] (0,0) rectangle (#2\\linewidth,#3\\linewidth);
-                            %% Insert the image
-                            \\node[anchor=center, inner sep=0] (image) at 
-                                ($(0.5*#2\\linewidth + #4,0.5*#3\\linewidth + #5)$) 
-                                {\\includegraphics[width=#6\\linewidth]{#9}};
-                        \\end{tikzpicture}
-                        \\ifthenelse{\\equal{#1}{center}}{
-                            \\end{center}
-                        }{}
-                    }"""
-            )
-            .build();
+            ).build());
+        
+        return result;
     }
 }

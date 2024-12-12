@@ -314,9 +314,8 @@ class SectionItemMapperTest {
         assertEquals("2020-2023", ((WorkExperience) entityCorrectComplete.getData()).getPeriod());
         assertEquals("This is a description", ((WorkExperience) entityCorrectComplete.getData()).getDescription());
         assertEquals("Responsibility 1\nResponsibility 2", ((WorkExperience) entityCorrectComplete.getData()).getResponsibilities());
-        assertEquals(2, ((WorkExperience) entityCorrectComplete.getData()).getResponsibilitiesAsList().size());
-        assertEquals("Responsibility 1", ((WorkExperience) entityCorrectComplete.getData()).getResponsibilitiesAsList().get(0));
-        assertEquals("Responsibility 2", ((WorkExperience) entityCorrectComplete.getData()).getResponsibilitiesAsList().get(1));
+        assertEquals("\\item Responsibility 1\n\\item Responsibility 2", ((WorkExperience) entityCorrectComplete.getData()).getResponsibilitiesAsItems());
+
 
         // Act & Assert
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
@@ -358,7 +357,6 @@ class SectionItemMapperTest {
         
         assertEquals("path/to/image.jpg", picture.getPath());
         assertEquals("Test Caption", picture.getCaption());
-        assertTrue(picture.isCenter());
         assertEquals(0.8, picture.getWidth());
         assertEquals(1.0, picture.getHeight());
         assertEquals(50, picture.getRounded());
@@ -375,6 +373,7 @@ class SectionItemMapperTest {
         data.put("content", "This is some example text");
 
         SectionItemRequest request = SectionItemRequest.builder()
+                .id(1L)
                 .type(SectionItemType.TEXTBOX.name())
                 .itemOrder(2)
                 .data(data)

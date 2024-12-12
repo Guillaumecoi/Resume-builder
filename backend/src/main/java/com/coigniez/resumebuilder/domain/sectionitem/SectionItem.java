@@ -3,26 +3,14 @@ package com.coigniez.resumebuilder.domain.sectionitem;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import com.coigniez.resumebuilder.domain.latex.LatexMethod;
+import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.interfaces.BaseEntity;
 import com.coigniez.resumebuilder.interfaces.SectionItemData;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Getter
 @Setter
@@ -41,10 +29,17 @@ public class SectionItem implements BaseEntity {
     @JoinColumn(name = "section_id", referencedColumnName = "id")
     private Section section;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "latex_method_id", referencedColumnName = "id")
+    private LatexMethod latexMethod;
+
     @Enumerated(EnumType.STRING)
     private SectionItemType type;
 
     private Integer itemOrder;
+
+    @Enumerated(EnumType.STRING)
+    private AlignmentType alignment;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")

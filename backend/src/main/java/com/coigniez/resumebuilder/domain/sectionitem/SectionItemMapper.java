@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import com.coigniez.resumebuilder.domain.latex.LatexMethodMapper;
 import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.interfaces.SectionItemData;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +24,7 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest
 
     private final Validator validator;
     private final ObjectMapper objectMapper;
+    private final LatexMethodMapper latexMethodMapper;
 
     @Override
     public SectionItem toEntity(SectionItemRequest request) {
@@ -33,8 +35,10 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest
         SectionItemType type = SectionItemType.valueOf(request.getType());
 
         SectionItem sectionItem = SectionItem.builder()
+                .id(request.getId())
                 .type(type) 
                 .itemOrder(request.getItemOrder())
+                .alignment(request.getAlignment())
                 .data(toDataObject(type, request.getData()))
                 .build();
     
@@ -56,6 +60,8 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest
             .id(entity.getId())
             .type(entity.getType().name())
             .itemOrder(entity.getItemOrder())
+            .alignment(entity.getAlignment())
+            .latexMethod(latexMethodMapper.toDto(entity.getLatexMethod()))
             .data(data)
             .build();
     }

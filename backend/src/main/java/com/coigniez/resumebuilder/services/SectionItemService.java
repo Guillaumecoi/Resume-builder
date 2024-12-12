@@ -6,6 +6,8 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.coigniez.resumebuilder.domain.latex.LatexMethod;
+import com.coigniez.resumebuilder.domain.latex.LatexMethodRepository;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.section.SectionRepository;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
@@ -26,6 +28,7 @@ public class SectionItemService {
 
     private final SectionItemRepository sectionitemRepository;
     private final SectionRepository sectionRepository;
+    private final LatexMethodRepository latexMethodRepository;
     private final SectionItemMapper sectionitemMapper;
     private final FileStorageService fileStorageService;
     private final SecurityUtils securityUtils;
@@ -35,6 +38,7 @@ public class SectionItemService {
             .orElseThrow(() -> new EntityNotFoundException("Section not found"));
 
         SectionItem sectionItem = sectionitemMapper.toEntity(request);
+        sectionItem.setId(null);
     
         // Find the maximum itemOrder in the section
         Integer maxOrder = sectionitemRepository.findMaxItemOrderBySectionId(section.getId());
@@ -47,6 +51,11 @@ public class SectionItemService {
     
         sectionItem.setItemOrder(newOrder);
         section.addSectionItem(sectionItem);
+
+        LatexMethod latexMethod = latexMethodRepository.findById(request.getLatexMethodId())
+            .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
+        
+        sectionItem.setLatexMethod(latexMethod);
     
         return sectionitemRepository.save(sectionItem).getId();
     }

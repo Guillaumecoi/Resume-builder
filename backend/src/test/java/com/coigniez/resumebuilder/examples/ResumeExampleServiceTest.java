@@ -18,8 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
-import com.coigniez.resumebuilder.latex.PdfGenerator;
-import com.coigniez.resumebuilder.latex.generators.LatexDocumentGenerator;
+import com.coigniez.resumebuilder.services.LayoutService;
 
 import jakarta.transaction.Transactional;
 
@@ -31,9 +30,7 @@ public class ResumeExampleServiceTest {
     @Autowired
     private ResumeExampleService resumeExampleService;
     @Autowired
-    private LatexDocumentGenerator latexDocumentGenerator;
-    @Autowired
-    private PdfGenerator pdfGenerator;
+    private LayoutService layoutService;
 
     private Authentication testuser;
 
@@ -52,16 +49,14 @@ public class ResumeExampleServiceTest {
     @Test
     void testCreateExampleResume() throws IOException, InterruptedException {
         //Act
-        List<Object> list = resumeExampleService.createExampleResume("Software Engineer 2");
+        List<Object> list = resumeExampleService.createExampleResume("Software Engineer");
         LayoutResponse layout = (LayoutResponse) list.get(1);
 
-        String latexContent = latexDocumentGenerator.generate(layout);
-
-        File generatedPdf = pdfGenerator.generatePdf(latexContent, "test_document");
+        File generatedPdf = layoutService.generateLatexPdf(layout.getId());
     
         // Assert
         assertTrue(generatedPdf.exists(), "The PDF file should be generated.");
-        assertTrue(generatedPdf.getName().equals("test_document.pdf"), "The PDF file should have the correct name.");
+        assertTrue(generatedPdf.getName().equals("Software Engineer.pdf"), "The PDF file should have the correct name.");
         assertTrue(generatedPdf.length() > 0, "PDF file should not be empty");
     
         // Use debug flag to inspect the generated PDF before it is deleted or comment out the line below and delete the file manually later

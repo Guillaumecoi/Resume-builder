@@ -1,12 +1,15 @@
 package com.coigniez.resumebuilder.domain.sectionitem.itemtypes;
 
-import com.coigniez.resumebuilder.interfaces.SectionItemData;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
-import jakarta.persistence.Enumerated;
+import com.coigniez.resumebuilder.interfaces.SectionItemData;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +20,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Skill implements SectionItemData {
+
+    public static final int BASE_PARAMETER_COUNT = 3;
+
     @NotBlank
     private String name;
     @Min(1)
@@ -24,15 +30,12 @@ public class Skill implements SectionItemData {
     private Integer proficiency; 
     private String description;
 
-    @NotNull
-    @Enumerated
-    @Builder.Default
-    private SkillType type = SkillType.SIMPLE;
-
-    public enum SkillType {
-        SIMPLE,
-        TEXT,       
-        BULLETS,    
-        BAR      
+    @JsonIgnore
+    public List<String> getSectionItemData() {
+        return List.of(
+            name, 
+            Objects.toString(proficiency, ""), 
+            Optional.ofNullable(description).orElse("")
+        );
     }
 }

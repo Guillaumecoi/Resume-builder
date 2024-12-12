@@ -12,9 +12,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
 import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
+import com.coigniez.resumebuilder.services.LayoutService;
 import com.coigniez.resumebuilder.services.ResumeService;
 import com.coigniez.resumebuilder.services.SectionService;
 
@@ -27,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @SpringBootTest
@@ -38,9 +41,12 @@ public class SectionServiceWithItemsIntegrationTest {
     private SectionService sectionService;
     @Autowired
     private ResumeService resumeService;
+    @Autowired
+    private LayoutService layoutService;
 
     private Authentication testuser;
     private Long resumeId;
+    private Map<String, Long> methodIds;
 
     @BeforeEach
     void setUp() {
@@ -58,6 +64,10 @@ public class SectionServiceWithItemsIntegrationTest {
                 .sections(List.of(SectionRequest.builder().title("Education").build())).build();
 
         resumeId = resumeService.create(null, resumeRequest);
+
+        Long layoutId = layoutService.create(resumeId, LayoutRequest.builder().numberOfColumns(1).build());
+
+        methodIds = layoutService.getLatexMethodsMap(layoutId);
     }
 
     @Test
@@ -72,6 +82,7 @@ public class SectionServiceWithItemsIntegrationTest {
                 .data(new HashMap<>() {{
                     put("content", "This is some example text");
                 }})
+                .latexMethodId(methodIds.get("textbox"))
                 .build());
 
         sectionItems.add(SectionItemRequest.builder()
@@ -81,6 +92,7 @@ public class SectionServiceWithItemsIntegrationTest {
                     put("name", "Java");
                     put("proficiency", 5);
                 }})
+                .latexMethodId(methodIds.get("skillitem"))
                 .build());
 
         SectionRequest request = SectionRequest.builder().title("Test Section").sectionItems(sectionItems).build();
@@ -111,6 +123,7 @@ public class SectionServiceWithItemsIntegrationTest {
                 .data(new HashMap<>() {{
                     put("content", "This is some example text");
                 }})
+                .latexMethodId(methodIds.get("textbox"))
                 .build());
 
         sectionItems.add(SectionItemRequest.builder()
@@ -120,6 +133,7 @@ public class SectionServiceWithItemsIntegrationTest {
                     put("name", "Java");
                     put("proficiency", 5);
                 }})
+                .latexMethodId(methodIds.get("skillitem"))
                 .build());
 
         SectionRequest request = SectionRequest.builder().title("Test Section").sectionItems(sectionItems).build();
@@ -137,6 +151,7 @@ public class SectionServiceWithItemsIntegrationTest {
                     put("name", "Python");
                     put("proficiency", 4);
                 }})
+                .latexMethodId(methodIds.get("skillitem"))
                 .build());
 
         SectionRequest updatedRequest = SectionRequest.builder().title("Updated Section").sectionItems(updatedSectionItems).build();
@@ -166,6 +181,7 @@ public class SectionServiceWithItemsIntegrationTest {
                 .data(new HashMap<>() {{
                     put("name", "");
                 }})
+                .latexMethodId(methodIds.get("skillitem"))
                 .build());
 
         SectionRequest request = SectionRequest.builder().title("Test Section").sectionItems(sectionItems).build();

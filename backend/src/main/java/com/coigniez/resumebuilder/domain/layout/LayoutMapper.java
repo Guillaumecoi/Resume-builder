@@ -1,13 +1,18 @@
 package com.coigniez.resumebuilder.domain.layout;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.column.Column;
 import com.coigniez.resumebuilder.domain.column.ColumnMapper;
 import com.coigniez.resumebuilder.domain.column.ColumnResponse;
+import com.coigniez.resumebuilder.domain.latex.LatexMethod;
+import com.coigniez.resumebuilder.domain.latex.LatexMethodMapper;
+import com.coigniez.resumebuilder.domain.latex.LatexMethodResponse;
 import com.coigniez.resumebuilder.interfaces.Mapper;
 
 import lombok.AllArgsConstructor;
@@ -17,6 +22,7 @@ import lombok.AllArgsConstructor;
 public class LayoutMapper implements Mapper<Layout, LayoutRequest, LayoutResponse> {
 
     private final ColumnMapper columnMapper;
+    private final LatexMethodMapper latexMethodMapper;
 
     @Override
     public Layout toEntity(LayoutRequest dto) {
@@ -29,6 +35,11 @@ public class LayoutMapper implements Mapper<Layout, LayoutRequest, LayoutRespons
             dto.getColumns().forEach(column -> columns.add(columnMapper.toEntity(column)));
         }
 
+        Set<LatexMethod> latexMethods = new HashSet<>();
+        if (dto.getLatexMethods() != null) {
+            dto.getLatexMethods().forEach(method -> latexMethods.add(latexMethodMapper.toEntity(method)));
+        }
+
         return Layout.builder()
                 .id(dto.getId())
                 .pageSize(dto.getPageSize())
@@ -36,7 +47,7 @@ public class LayoutMapper implements Mapper<Layout, LayoutRequest, LayoutRespons
                 .numberOfColumns(dto.getNumberOfColumns())
                 .columnSeparator(dto.getColumnSeparator())
                 .colorScheme(dto.getColorScheme())
-                .latexCommands(dto.getLatexCommands())
+                .latexMethods(latexMethods)
                 .build();
     }
 
@@ -51,6 +62,11 @@ public class LayoutMapper implements Mapper<Layout, LayoutRequest, LayoutRespons
             entity.getColumns().forEach(column -> columnDTOs.add(columnMapper.toDto(column)));
         }
 
+        Set<LatexMethodResponse> latexMethodDTOs = new HashSet<>();
+        if (entity.getLatexMethods() != null) {
+            entity.getLatexMethods().forEach(method -> latexMethodDTOs.add(latexMethodMapper.toDto(method)));
+        }
+
         return LayoutResponse.builder()
                 .id(entity.getId())
                 .pageSize(entity.getPageSize())
@@ -58,7 +74,7 @@ public class LayoutMapper implements Mapper<Layout, LayoutRequest, LayoutRespons
                 .numberOfColumns(entity.getNumberOfColumns())
                 .columnSeparator(entity.getColumnSeparator())
                 .colorScheme(entity.getColorScheme())
-                .latexCommands(entity.getLatexCommands())
+                .latexMethods(latexMethodDTOs)
                 .build();
     }
 }

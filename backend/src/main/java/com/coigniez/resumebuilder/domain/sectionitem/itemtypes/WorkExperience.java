@@ -2,6 +2,7 @@ package com.coigniez.resumebuilder.domain.sectionitem.itemtypes;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import com.coigniez.resumebuilder.interfaces.SectionItemData;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -17,6 +18,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class WorkExperience implements SectionItemData {
+
+    public static final int BASE_PARAMETER_COUNT = 5;
+
     @NotBlank
     private String jobTitle;
     private String companyName;
@@ -25,7 +29,24 @@ public class WorkExperience implements SectionItemData {
     private String responsibilities;  // Items are seperated by the newline character '\n'
 
     @JsonIgnore
-    public List<String> getResponsibilitiesAsList() {
-        return Arrays.asList(responsibilities.split("\n"));
+    public String getResponsibilitiesAsItems() {
+        if (responsibilities == null || responsibilities.trim().isEmpty()) {
+            return "";
+        }
+        return Arrays.stream(responsibilities.split("\n"))
+                     .filter(r -> !r.trim().isEmpty())
+                     .map(r -> "\\item " + r.trim())
+                     .reduce((a, b) -> a + "\n" + b)
+                     .orElse("");
+    }
+
+    @JsonIgnore
+    public List<String> getSectionItemData() {
+        return List.of(
+            jobTitle, 
+            Optional.ofNullable(companyName).orElse(""),
+            Optional.ofNullable(period).orElse(""),
+            Optional.ofNullable(description).orElse(""),
+            getResponsibilitiesAsItems());
     }
 }

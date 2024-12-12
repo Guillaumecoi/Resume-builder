@@ -26,6 +26,10 @@ public class Column implements BaseEntity {
     
     @Min(1) @Max(2)
     private Integer columnNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "layout_id", referencedColumnName = "id")
+    private Layout layout;
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("position ASC")
@@ -53,9 +57,6 @@ public class Column implements BaseEntity {
     private double borderTop;
     @Min(0)
     private double borderBottom;
-    
-    @ManyToOne
-    private Layout layout;
 
     public void addSectionMapping(ColumnSection sectionMapping) {
         sectionMappings.add(sectionMapping);

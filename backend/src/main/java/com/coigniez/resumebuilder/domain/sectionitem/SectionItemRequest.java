@@ -2,7 +2,9 @@ package com.coigniez.resumebuilder.domain.sectionitem;
 
 import java.util.Map;
 
-import jakarta.validation.constraints.NotEmpty;
+import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
+
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
@@ -11,11 +13,15 @@ import lombok.Data;
 @Builder
 public class SectionItemRequest{
 
+    private Long id;
     @NotNull
-    @NotEmpty
-    String type;
-    Integer itemOrder;
-    @NotNull
-    Map<String, Object> data;
+    private long latexMethodId;
+    @NotBlank
+    private String type;
+    private Integer itemOrder;
+    private AlignmentType alignment;
+
+    @NotBlank
+    private Map<String, Object> data;
 
 }

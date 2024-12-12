@@ -1,0 +1,74 @@
+package com.coigniez.resumebuilder.domain.latex;
+
+import java.util.List;
+import java.util.ArrayList;
+
+import com.coigniez.resumebuilder.domain.layout.Layout;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
+import com.coigniez.resumebuilder.interfaces.BaseEntity;
+import com.coigniez.resumebuilder.interfaces.SectionItemData;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
+
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@Builder
+@Entity
+@Table(name = "latex_method")
+public class LatexMethod implements BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "layout_id", referencedColumnName = "id")
+    private Layout layout;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "latexMethod", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<SectionItem> sectionItems = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    private SectionItemType type;
+
+    @NotBlank
+    private String name;
+
+    @Column(columnDefinition = "TEXT")
+    @NotBlank
+    private String method;
+
+    public void addSectionItem(SectionItem sectionItem) {
+        sectionItems.add(sectionItem);
+        sectionItem.setLatexMethod(this);
+    }
+
+    /**
+     * Generates the LaTeX command using the provided SectionItemData.
+     *
+     * @param item the SectionItemData instance containing parameters
+     * @return the LaTeX command as a string
+     * @throws IllegalArgumentException if the number of parameters is incorrect
+     */
+    public String generateCommand(SectionItemData item) {
+        List<String> parameters = item.getSectionItemData();
+
+        // Start with the command name
+        StringBuilder command = new StringBuilder("\\" + name);
+        // Append parameters one by one inside braces
+        for (String parameter : parameters) {
+            command.append("{" + parameter + "}");
+        }
+        return command.toString();
+    }
+
+    public String generateMethod() {
+        String header = "\\newcommand{\\" + name + "}[" + type.getNumberOfParameters() + "]\n";
+        return header + method;
+    }
+
+}

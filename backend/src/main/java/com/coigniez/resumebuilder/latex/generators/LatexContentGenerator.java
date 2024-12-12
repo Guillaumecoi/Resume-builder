@@ -2,9 +2,9 @@ package com.coigniez.resumebuilder.latex.generators;
 
 import org.springframework.stereotype.Component;
 
-import com.coigniez.resumebuilder.domain.column.ColumnResponse;
-import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionResponse;
-import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
+import com.coigniez.resumebuilder.domain.column.Column;
+import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
+import com.coigniez.resumebuilder.domain.layout.Layout;
 import com.coigniez.resumebuilder.util.StringUtils;
 
 import lombok.AllArgsConstructor;
@@ -14,33 +14,33 @@ import lombok.AllArgsConstructor;
  */
 @AllArgsConstructor
 @Component
-public class LatexContentGenerator implements LatexGenerator<LayoutResponse> {
+public class LatexContentGenerator implements LatexGenerator<Layout> {
 
     private final StringUtils stringUtils;
     private final LatexSectionGenerator latexSectionGenerator;
     
-    public String generate(LayoutResponse layout) {
+    public String generate(Layout layout) {
         StringBuilder content = new StringBuilder();
         content.append("\\begin{paracol}{%s}\n\n".formatted(layout.getNumberOfColumns()));
 
-        for (ColumnResponse columnDto : layout.getColumns()) {
-            content.append(getColumn(columnDto));
+        for (Column column : layout.getColumns()) {
+            content.append(getColumn(column));
         }
 
         content.append("\\end{paracol}\n");
         return content.toString();
     }
 
-    private String getColumn(ColumnResponse columnDto) {
-        StringBuilder column = new StringBuilder();
-        column.append("\\switchcolumn[%d]\n".formatted(columnDto.getColumnNumber() - 1));
-        column.append("\\begin{tcolorbox%d}\n".formatted(columnDto.getColumnNumber()));
-        for (ColumnSectionResponse columnSection : columnDto.getSectionMappings()) {
-            column.append(stringUtils.addTabToEachLine(latexSectionGenerator.generate(columnSection), 1) + "\n");
+    private String getColumn(Column column) {
+        StringBuilder result = new StringBuilder();
+        result.append("\\switchcolumn[%d]\n".formatted(column.getColumnNumber() - 1));
+        result.append("\\begin{tcolorbox%d}\n".formatted(column.getColumnNumber()));
+        for (ColumnSection columnSection : column.getSectionMappings()) {
+            result.append(stringUtils.addTabToEachLine(latexSectionGenerator.generate(columnSection), 1) + "\n");
         }
-        column.append("\\end{tcolorbox%d}\n\n".formatted(columnDto.getColumnNumber()));
+        result.append("\\end{tcolorbox%d}\n\n".formatted(column.getColumnNumber()));
 
-        return column.toString();
+        return result.toString();
     }
     
 }

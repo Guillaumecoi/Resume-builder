@@ -1,11 +1,12 @@
 package com.coigniez.resumebuilder.latex.generators;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.coigniez.resumebuilder.domain.column.ColumnResponse;
-import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
+import com.coigniez.resumebuilder.domain.column.Column;
+import com.coigniez.resumebuilder.domain.layout.Layout;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorScheme;
 import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
@@ -18,17 +19,21 @@ import lombok.AllArgsConstructor;
  */
 @AllArgsConstructor
 @Component
-public class LatexPreambleGenerator implements LatexGenerator<LayoutResponse> {
+public class LatexPreambleGenerator implements LatexGenerator<Layout> {
     
     private final StringUtils stringUtils;
 
-    public String generate(LayoutResponse layout) {
+    public String generate(Layout layout) {
         // Generate the imports
         String latexPreamble = getImports(layout.getPageSize(), layout.getColumnSeparator()) + "\n";
         // Generate the colors
         latexPreamble += getColors(layout.getColorScheme()) + "\n";
         // Add the latex methods
-        latexPreamble += layout.getLatexCommands().getAllMethods() + "\n";
+        String latexMethods = layout.getLatexMethods().stream()
+                .map(method -> method.generateMethod())
+                .collect(Collectors.joining("\n"));
+        latexPreamble += getStandardMethods() + "\n";
+        latexPreamble += latexMethods + "\n";
         latexPreamble += getColumnColorboxMethods(layout.getColumns()) + "\n";
 
         return latexPreamble;
@@ -103,15 +108,32 @@ public class LatexPreambleGenerator implements LatexGenerator<LayoutResponse> {
         return "\\definecolor{" + colorName + "}{HTML}{" + color.substring(1) + "} \n";
     }
 
+    private String getStandardMethods() {
+        return """
+            \\newenvironment{cvsection}[3]{
+                \\def\\cvsectionvspace{#3}
+                \\ifthenelse{\\equal{#1}{}}{}{\\sectiontitle{#1}}
+                \\begin{itemize}[left=0pt, itemsep=#2, label={}, topsep=10pt]
+                    }{
+                \\end{itemize}
+                \\vspace{\\cvsectionvspace}
+            }
+            \\newcommand{\\sectiontitle}[1] {
+                \\hspace{6pt}\\textbf{\\Large{\\uppercase{#1}}}\\\\[-4pt]
+                \\textcolor{%s}{\\rule{80pt}{2pt}}
+            }
+            """.formatted(ColorLocation.ACCENT.toString());
+    }
+
     /**
      * Generates the tcolorbox environments for each column.
      * 
      * @param columns The columns to generate the tcolorbox environments for
      * @return The tcolorbox environments for each column
      */
-    private String getColumnColorboxMethods(List<ColumnResponse> columns) {
+    private String getColumnColorboxMethods(List<Column> columns) {
         StringBuilder columnMethods = new StringBuilder();
-        for (ColumnResponse column : columns) {
+        for (Column column : columns) {
             String columnContent = String.format("\\newenvironment{tcolorbox%d}[0] { \n", column.getColumnNumber());
 
             columnContent += stringUtils.addTabToEachLine(

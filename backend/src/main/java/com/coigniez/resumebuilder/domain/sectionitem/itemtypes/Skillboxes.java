@@ -6,6 +6,7 @@ import java.util.List;
 import com.coigniez.resumebuilder.interfaces.SectionItemData;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,10 +17,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Skillboxes implements SectionItemData {
-    private String skills; // Seperated by '/n'
+    
+    public static final int BASE_PARAMETER_COUNT = 1;
+    
+    @NotBlank
+    private String skills; // Seperated by ','
 
     @JsonIgnore
-    public List<String> getSkillsAsList() {
-        return Arrays.asList(skills.split("\n"));
+    public List<String> getSectionItemData() {
+        return Arrays.asList(skills);
     }
 }
+
