@@ -33,6 +33,7 @@ public class LatexPreambleGenerator implements LatexGenerator<Layout> {
                 .map(method -> method.generateMethod())
                 .collect(Collectors.joining("\n"));
         latexPreamble += getStandardMethods() + "\n";
+        latexPreamble += layout.getSectionTitleMethod() + "\n";
         latexPreamble += latexMethods + "\n";
         latexPreamble += getColumnColorboxMethods(layout.getColumns()) + "\n";
 
@@ -118,11 +119,7 @@ public class LatexPreambleGenerator implements LatexGenerator<Layout> {
                 \\end{itemize}
                 \\vspace{\\cvsectionvspace}
             }
-            \\newcommand{\\sectiontitle}[1] {
-                \\hspace{6pt}\\textbf{\\Large{\\uppercase{#1}}}\\\\[-4pt]
-                \\textcolor{%s}{\\rule{80pt}{2pt}}
-            }
-            """.formatted(ColorLocation.ACCENT.toString());
+            """;
     }
 
     /**

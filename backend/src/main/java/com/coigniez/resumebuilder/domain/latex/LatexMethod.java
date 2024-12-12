@@ -52,7 +52,6 @@ public class LatexMethod implements BaseEntity {
      *
      * @param item the SectionItemData instance containing parameters
      * @return the LaTeX command as a string
-     * @throws IllegalArgumentException if the number of parameters is incorrect
      */
     public String generateCommand(SectionItemData item) {
         List<String> parameters = item.getSectionItemData();
@@ -66,6 +65,11 @@ public class LatexMethod implements BaseEntity {
         return command.toString();
     }
 
+    /**
+     * Generates the LaTeX method using the provided information.
+     *
+     * @return the LaTeX method as a string
+     */
     public String generateMethod() {
         String header = "\\newcommand{\\" + name + "}[" + type.getNumberOfParameters() + "]\n";
         return header + method;

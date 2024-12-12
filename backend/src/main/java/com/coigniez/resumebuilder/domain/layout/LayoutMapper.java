@@ -48,6 +48,7 @@ public class LayoutMapper implements Mapper<Layout, LayoutRequest, LayoutRespons
                 .columnSeparator(dto.getColumnSeparator())
                 .colorScheme(dto.getColorScheme())
                 .latexMethods(latexMethods)
+                .sectionTitleMethod(dto.getSectionTitleMethod())
                 .build();
     }
 
@@ -75,6 +76,7 @@ public class LayoutMapper implements Mapper<Layout, LayoutRequest, LayoutRespons
                 .columnSeparator(entity.getColumnSeparator())
                 .colorScheme(entity.getColorScheme())
                 .latexMethods(latexMethodDTOs)
+                .sectionTitleMethod(entity.getSectionTitleMethod())
                 .build();
     }
 }

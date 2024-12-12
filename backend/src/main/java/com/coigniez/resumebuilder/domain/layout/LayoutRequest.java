@@ -39,4 +39,12 @@ public class LayoutRequest {
     @Builder.Default
     @NotNull
     private Set<LatexMethodRequest> latexMethods = LayoutTemplate.getStandardMethods();
+
+    @Builder.Default
+    private String sectionTitleMethod = """
+            \\newcommand{\\sectiontitle}[1] {
+                \\hspace{6pt}\\textbf{\\Large{\\uppercase{#1}}}\\\\[-4pt]
+                \\textcolor{%s}{\\rule{80pt}{2pt}}
+            }
+            """.formatted(ColorLocation.ACCENT.toString());
 }

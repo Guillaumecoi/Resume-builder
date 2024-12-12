@@ -21,5 +21,6 @@ public class LayoutResponse {
     private Double columnSeparator;
     private ColorScheme colorScheme;
     private Set<LatexMethodResponse> latexMethods;
+    private String sectionTitleMethod;
     
 }
