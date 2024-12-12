@@ -38,6 +38,8 @@ public class LayoutService implements CrudService<LayoutResponse, LayoutRequest>
     private final LayoutMapper layoutMapper;
     private final ColumnMapper columnMapper;
     private final LatexDocumentGenerator latexDocumentGenerator;
+
+    //TODO: Authentication
     
     public Long create(LayoutRequest request) {
         Layout layout = layoutMapper.toEntity(request);

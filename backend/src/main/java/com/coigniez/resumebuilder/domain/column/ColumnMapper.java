@@ -75,4 +75,26 @@ public class ColumnMapper implements Mapper<Column, ColumnRequest, ColumnRespons
                 .borderBottom(entity.getBorderBottom())
                 .build();
     }
+
+    @Override
+    public Column updateEntity(Column entity, ColumnRequest request) {
+        if (request == null) {
+            return entity;
+        }
+
+        entity.setColumnNumber(request.getColumnNumber());
+        entity.setBackgroundColor(request.getBackgroundColor());
+        entity.setTextColor(request.getTextColor());
+        entity.setBorderColor(request.getBorderColor());
+        entity.setPaddingLeft(request.getPaddingLeft());
+        entity.setPaddingRight(request.getPaddingRight());
+        entity.setPaddingTop(request.getPaddingTop());
+        entity.setPaddingBottom(request.getPaddingBottom());
+        entity.setBorderLeft(request.getBorderLeft());
+        entity.setBorderRight(request.getBorderRight());
+        entity.setBorderTop(request.getBorderTop());
+        entity.setBorderBottom(request.getBorderBottom());
+
+        return entity;
+    }
 }

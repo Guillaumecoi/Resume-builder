@@ -79,4 +79,18 @@ public class LayoutMapper implements Mapper<Layout, LayoutRequest, LayoutRespons
                 .sectionTitleMethod(entity.getSectionTitleMethod())
                 .build();
     }
+
+    @Override
+    public Layout updateEntity(Layout entity, LayoutRequest request) {
+        if (entity == null || request == null) {
+            return null;
+        }
+
+        entity.setPageSize(request.getPageSize());
+        entity.setNumberOfColumns(request.getNumberOfColumns());
+        entity.setColumnSeparator(request.getColumnSeparator());
+        entity.setColorScheme(request.getColorScheme());
+        entity.setSectionTitleMethod(request.getSectionTitleMethod());
+        return entity;
+    }
 }

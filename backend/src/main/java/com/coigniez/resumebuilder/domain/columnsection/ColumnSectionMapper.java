@@ -14,6 +14,9 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, ColumnSectionR
 
     @Override
     public ColumnSection toEntity(ColumnSectionRequest request) {
+        if(request == null) {
+            return null;
+        }
         return ColumnSection.builder()
             .id(request.getId())
             .position(request.getPosition())
@@ -24,6 +27,9 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, ColumnSectionR
 
     @Override
     public ColumnSectionResponse toDto(ColumnSection entity) {
+        if(entity == null) {
+            return null;
+        }
         return ColumnSectionResponse.builder()
             .id(entity.getId())
             .section(sectionMapper.toDto(entity.getSection()))
@@ -31,6 +37,18 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, ColumnSectionR
             .itemsep(entity.getItemsep())
             .endsep(entity.getEndsep())
             .build();
+    }
+
+    @Override
+    public ColumnSection updateEntity(ColumnSection entity, ColumnSectionRequest request) {
+        if(request == null) {
+            return entity;
+        }
+
+        entity.setPosition(request.getPosition());
+        entity.setItemsep(request.getItemsep());
+        entity.setEndsep(request.getEndsep());
+        return entity;
     }
     
 }

@@ -24,6 +24,7 @@ public class ColumnService implements CrudService<ColumnResponse, ColumnRequest>
     private final LayoutRepository layoutRepository;
     private final ColumnMapper columnMapper;
     
+    //TODO: Authentication
 
     public Long create(ColumnRequest request) {
         Column column = columnMapper.toEntity(request);
@@ -34,17 +35,21 @@ public class ColumnService implements CrudService<ColumnResponse, ColumnRequest>
     }
 
     public ColumnResponse get(Long id) {
-        Column column = columnRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Column not found"));
+        Column column = columnRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Column not found"));
         return columnMapper.toDto(column);
     }
 
     public void update(Long id, ColumnRequest request) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        Column column = columnRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Column not found"));
+        columnRepository.save(column);
         
     }
 
     public void delete(Long id) {
+        columnRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Column not found"));
         columnRepository.deleteById(id);
     }
 }

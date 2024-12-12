@@ -14,7 +14,9 @@ import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRepository;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemResponse;
 import com.coigniez.resumebuilder.file.FileStorageService;
+import com.coigniez.resumebuilder.interfaces.CrudService;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -24,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class SectionItemService {
+public class SectionItemService implements CrudService<SectionItemResponse, SectionItemRequest> {
 
     private final SectionItemRepository sectionitemRepository;
     private final SectionRepository sectionRepository;
@@ -67,6 +69,43 @@ public class SectionItemService {
         request.setData(data);
         
         return create(request);
+    }
+
+
+    @Override
+    public SectionItemResponse get(Long id) {
+        return sectionitemRepository.findById(id)
+            .map(sectionitemMapper::toDto)
+            .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
+    }
+
+    @Override
+    public void update(Long id, SectionItemRequest request) {
+        SectionItem sectionItem = sectionitemRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
+    
+        SectionItem updatedSectionItem = sectionitemMapper.toEntity(request);
+        updatedSectionItem.setId(sectionItem.getId());
+        updatedSectionItem.setSection(sectionItem.getSection());
+    
+        // Shift other items
+        if (!sectionItem.getItemOrder().equals(request.getItemOrder())) {
+            sectionitemRepository.incrementItemOrderForSection(sectionItem.getSection().getId(), request.getItemOrder());
+            sectionitemRepository.decrementItemOrderForSection(sectionItem.getSection().getId(), sectionItem.getItemOrder());
+        }
+    
+        sectionitemRepository.save(updatedSectionItem);
+    }
+
+    @Override
+    public void delete(Long id) {
+        SectionItem sectionItem = sectionitemRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
+    
+        sectionitemRepository.deleteById(id);
+    
+        // Shift other items
+        sectionitemRepository.decrementItemOrderForSection(sectionItem.getSection().getId(), sectionItem.getItemOrder());
     }
 
     public List<SectionItem> getAll(Long id) {

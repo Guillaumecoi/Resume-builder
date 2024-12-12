@@ -63,4 +63,14 @@ public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeDetailR
             .lastModifiedDate(entity.getLastModifiedDate().toString())
             .build();
     }
+
+    @Override
+    public Resume updateEntity(Resume entity, ResumeRequest request) {
+        if (request == null) {
+            return null;
+        }
+
+        entity.setTitle(request.getTitle());
+        return entity;
+    }
 }

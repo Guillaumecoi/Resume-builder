@@ -89,4 +89,18 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest
             throw new ConstraintViolationException(violations);
         }
     }
+
+    @Override
+    public SectionItem updateEntity(SectionItem entity, SectionItemRequest request) {
+        if (request == null) {
+            return null;
+        }
+
+        entity.setType(SectionItemType.valueOf(request.getType()));
+        entity.setItemOrder(request.getItemOrder());
+        entity.setAlignment(request.getAlignment());
+        entity.setData(toDataObject(entity.getType(), request.getData()));
+
+        return entity;
+    }
 }

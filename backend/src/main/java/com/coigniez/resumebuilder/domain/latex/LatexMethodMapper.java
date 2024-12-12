@@ -9,7 +9,7 @@ public class LatexMethodMapper implements Mapper<LatexMethod, LatexMethodRequest
 
     @Override
     public LatexMethod toEntity(LatexMethodRequest dto) {
-        if (dto == null) {
+        if(dto == null) {
             return null;
         }
 
@@ -23,7 +23,7 @@ public class LatexMethodMapper implements Mapper<LatexMethod, LatexMethodRequest
 
     @Override
     public LatexMethodResponse toDto(LatexMethod entity) {
-        if (entity == null) {
+        if(entity == null) {
             return null;
         }
 
@@ -33,6 +33,17 @@ public class LatexMethodMapper implements Mapper<LatexMethod, LatexMethodRequest
                 .name(entity.getName())
                 .method(entity.getMethod())
                 .build();
+    }
+
+    @Override
+    public LatexMethod updateEntity(LatexMethod entity, LatexMethodRequest request) {
+       if(request == null) {
+           return entity;
+       }
+
+        entity.setName(request.getName());
+        entity.setMethod(request.getMethod());
+        return entity;
     }
     
 }

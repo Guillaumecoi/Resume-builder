@@ -52,5 +52,16 @@ public class SectionMapper implements Mapper<Section, SectionRequest, SectionRes
                 .sectionItems(sectionItems)
                 .build();
     }
-    
+
+    @Override
+    public Section updateEntity(Section entity, SectionRequest request) {
+        if (request == null) {
+            return null;
+        }
+
+        entity.setTitle(request.getTitle());
+        entity.setShowTitle(request.getShowTitle());
+
+        return entity;
+    }
 }
