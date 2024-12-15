@@ -17,6 +17,7 @@ import com.coigniez.resumebuilder.domain.resume.ResumeMapper;
 import com.coigniez.resumebuilder.domain.resume.ResumeRepository;
 import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
 import com.coigniez.resumebuilder.domain.resume.ResumeResponse;
+import com.coigniez.resumebuilder.domain.section.SectionRequest;
 import com.coigniez.resumebuilder.file.FileStorageService;
 import com.coigniez.resumebuilder.interfaces.CrudService;
 import com.coigniez.resumebuilder.util.SecurityUtils;
@@ -34,6 +35,7 @@ public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRe
 
     private final ResumeRepository resumeRepository;
     private final ResumeMapper resumeMapper;
+    private final SectionService sectionService;
     private final FileStorageService fileStorageService;
     private final SecurityUtils securityUtils;
 
@@ -42,24 +44,34 @@ public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRe
         return resumeRepository.save(resume).getId();
     }
 
-    public ResumeDetailResponse get(Long id) {
+    public ResumeDetailResponse get(long id) {
         hasAccess(id);
         Resume resume = resumeRepository.findById(id).orElseThrow();
         log.debug("retrieved from repository: " + resume.toString());
         return resumeMapper.toDto(resume);
     }
 
-    public void update(Long id, ResumeRequest request) {
+    public void update(ResumeRequest request) {
+        long id = request.getId();
         hasAccess(id);
         Resume resume = resumeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Resume with id " + id + " not found"));
+
+        for(SectionRequest section : request.getSections()) {
+            if (section.getId() == null) {
+                section.setResumeId(id);
+                sectionService.create(section);
+            } else {
+                sectionService.update(section);
+            }
+        }
         // Update the resume entity
         resumeMapper.updateEntity(resume, request);
         // Save the updated entity
         resumeRepository.save(resume);
     }
 
-    public void delete(Long id) {
+    public void delete(long id) {
         hasAccess(id);
         try {
             removePicture(resumeRepository.findById(id).orElseThrow());
@@ -101,15 +113,11 @@ public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRe
     }
 
     public void deleteAll() {
-        try {
-            List<Resume> resumes = resumeRepository.findAllByCreatedBy(securityUtils.getUserName());
-            for (Resume resume : resumes) {
-                removePicture(resume);
-            }
-            resumeRepository.deleteAllByCreatedBy(securityUtils.getUserName());
-        } catch (Exception e) {
-            throw e;
+        List<Resume> resumes = resumeRepository.findAllByCreatedBy(securityUtils.getUserName());
+        for (Resume resume : resumes) {
+            removePicture(resume);
         }
+        resumeRepository.deleteAllByCreatedBy(securityUtils.getUserName());
     }
 
     /**
@@ -121,13 +129,14 @@ public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRe
      */
     private void hasAccess(Long id) throws AccessDeniedException {
         String owner = resumeRepository.findCreatedBy(id).orElseThrow(() -> new EntityNotFoundException("Resume with id " + id + " not found"));
-        String connectedUser = securityUtils.getUserName();
-        if (!connectedUser.equals(owner)) {
-            log.debug("Access denied for user " + connectedUser + " to resume with id " + id + " created by " + owner);
-            throw new AccessDeniedException(connectedUser + " does not have access to the resume with id " + id);
-        }
+        securityUtils.hasAccess(List.of(owner));
     }
 
+    /**
+     * Remove the picture of the resume
+     * 
+     * @param resume the resume
+     */
     private void removePicture(Resume resume) {
         if (resume.getPicture() != null) {
             fileStorageService.deleteFile(resume.getPicture());

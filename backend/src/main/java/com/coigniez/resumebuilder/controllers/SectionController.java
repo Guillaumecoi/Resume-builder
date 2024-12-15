@@ -50,7 +50,8 @@ public class SectionController {
 
     @PostMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable Long id, @Valid @RequestBody SectionRequest request, Authentication user) {
-        sectionService.update(id, request);
+        request.setId(id);
+        sectionService.update(request);
         return ResponseEntity.ok().build();
     }
 

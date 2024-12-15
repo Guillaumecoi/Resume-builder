@@ -1,7 +1,8 @@
-package com.coigniez.resumebuilder.domain.sectionitem;
+package com.coigniez.resumebuilder.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -29,12 +31,12 @@ import org.springframework.test.context.ActiveProfiles;
 import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
 import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
 import com.coigniez.resumebuilder.domain.section.SectionRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRepository;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
-import com.coigniez.resumebuilder.services.LayoutService;
-import com.coigniez.resumebuilder.services.ResumeService;
-import com.coigniez.resumebuilder.services.SectionItemService;
-import com.coigniez.resumebuilder.services.SectionService;
 
 import jakarta.transaction.Transactional;
 
@@ -55,6 +57,7 @@ public class SectionItemServiceIntegrationTest {
     private LayoutService layoutService;
 
     private Authentication testuser;
+    private Authentication otheruser;
     private Long sectionId;
     private Map<String, Long> methodIds;
 
@@ -63,6 +66,12 @@ public class SectionItemServiceIntegrationTest {
         // Create mock users
         testuser = new UsernamePasswordAuthenticationToken(
                 "testuser", 
+                "password", 
+                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+
+        otheruser = new UsernamePasswordAuthenticationToken(
+                "otheruser", 
                 "password", 
                 List.of(new SimpleGrantedAuthority("ROLE_USER"))
         );
@@ -87,7 +96,6 @@ public class SectionItemServiceIntegrationTest {
         methodIds = layoutService.getLatexMethodsMap(layoutId);
     }
 
-
     @Test
     void testCreate() {
         // Arrange
@@ -107,12 +115,13 @@ public class SectionItemServiceIntegrationTest {
         SectionItem sectionItem = sectionItemRepository.findById(sectionItemId).orElseThrow();
     
         // Assert
-        assertNotNull(sectionItemId);
-        assertNotNull(sectionItem.getId());
-        assertNotNull(sectionItem.getData());
-        assertEquals(1, sectionItem.getItemOrder());
-        assertEquals(SectionItemType.TEXTBOX, sectionItem.getType());
-        assertEquals("This is some example text", ((Textbox) sectionItem.getData()).getContent());
+        assertNotNull(sectionItemId, "Section item ID should not be null");
+        assertNotNull(sectionItem.getId(), "Section item entity ID should not be null");
+        assertNotNull(sectionItem.getData(), "Section item data should not be null");
+        assertEquals(1, sectionItem.getItemOrder(), "Item order should be 1");
+        assertEquals(SectionItemType.TEXTBOX, sectionItem.getType(), "Item type should be TEXTBOX");
+        assertEquals("This is some example text", ((Textbox) sectionItem.getData()).getContent(), 
+            "Textbox content should be 'This is some example text'");
     }
 
     @Test
@@ -134,16 +143,16 @@ public class SectionItemServiceIntegrationTest {
         SectionItem sectionItem = sectionItemRepository.findById(pictureId).orElseThrow();
     
         // Assert
-        assertNotNull(pictureId);
-        assertNotNull(sectionItem.getId());
-        assertEquals(SectionItemType.PICTURE, sectionItem.getType());
-        assertEquals(1, sectionItem.getItemOrder());
-        assertNotNull(((Picture) sectionItem.getData()).getPath());
+        assertNotNull(pictureId, "The ID should not be null");
+        assertEquals(pictureId, sectionItem.getId(), "The ID of the entity should match the returned ID");
+        assertEquals(SectionItemType.PICTURE, sectionItem.getType(), "The type should be PICTURE");
+        assertEquals(1, sectionItem.getItemOrder(), "The item order should be 1");
+        assertNotNull(((Picture) sectionItem.getData()).getPath(), "The path should not be null");
         
         // Verify actual image content
         byte[] originalBytes = file.getBytes();
-        assertNotNull(originalBytes);
-        assertTrue(originalBytes.length > 0);
+        assertNotNull(originalBytes, "The retrieved image should not be null");
+        assertTrue(originalBytes.length > 0, "The retrieved image should not be empty");
     }
 
     @Test
@@ -250,7 +259,7 @@ public class SectionItemServiceIntegrationTest {
         Long itemId3 = sectionItemService.create(request3);
     
         // Act
-        sectionItemService.update(itemId3, SectionItemRequest.builder()
+        sectionItemService.update(SectionItemRequest.builder()
                 .id(itemId3)
                 .sectionId(sectionId)
                 .type(SectionItemType.TEXTBOX.name())
@@ -369,7 +378,37 @@ public class SectionItemServiceIntegrationTest {
         sectionItemService.deleteAllBySectionId(sectionId);
     
         // Assert
-        assertEquals(0, sectionItemRepository.count());
+        assertEquals(0, sectionItemRepository.count(), "There should be no section items left");
+    }
+
+    @Test
+    void testAccessControl() {
+        // Arrange
+        Map<String, Object> data = new HashMap<>();
+        data.put("content", "This is some example text");
+
+        SectionItemRequest request = SectionItemRequest.builder()
+                .sectionId(sectionId)
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(1)
+                .data(data)
+                .latexMethodId(methodIds.get("textbox"))
+                .build();
+
+        Long sectionItemId = sectionItemService.create(request);
+
+        // Act & Assert
+        SecurityContextHolder.getContext().setAuthentication(otheruser);
+
+        assertThrows(AccessDeniedException.class, () -> sectionItemService.create(request), 
+            "Should not be able to create a section item for a section that does not belong to the user");
+        assertThrows(AccessDeniedException.class, () -> sectionItemService.get(sectionItemId),
+            "Should not be able to get a section item that does not belong to the user");
+        request.setId(sectionItemId);
+        assertThrows(AccessDeniedException.class, () -> sectionItemService.update(request),
+            "Should not be able to update a section item that does not belong to the user");
+        assertThrows(AccessDeniedException.class, () -> sectionItemService.delete(sectionItemId),
+            "Should not be able to delete a section item that does not belong to the user");
     }
 
     // Helper method to get test image

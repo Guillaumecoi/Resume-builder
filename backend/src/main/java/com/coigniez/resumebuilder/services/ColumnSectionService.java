@@ -46,13 +46,18 @@ public class ColumnSectionService implements CrudService<ColumnSectionResponse, 
         return columnSectionRepository.save(columnSection).getId();
     }
 
-    public ColumnSectionResponse get(Long id) {
+    public ColumnSectionResponse get(long id) {
         ColumnSection columnSection = columnSectionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("ColumnSection not found"));
         return columnSectionMapper.toDto(columnSection);
     }
 
-    public void update(Long id, ColumnSectionRequest request) {
+    public void update(ColumnSectionRequest request) {
+        if (request.getId() == null) {
+            throw new IllegalArgumentException("ColumnSection id is required for update");
+        }
+        long id = request.getId();
+
         ColumnSection columnSection = columnSectionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("ColumnSection not found"));
         // Update theexistingColumnSection entity
@@ -61,7 +66,7 @@ public class ColumnSectionService implements CrudService<ColumnSectionResponse, 
         columnSectionRepository.save(columnSection);
     }
 
-    public void delete(Long id) {
+    public void delete(long id) {
         ColumnSection columnSection = columnSectionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("ColumnSection not found"));
         columnSectionRepository.delete(columnSection);

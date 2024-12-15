@@ -34,6 +34,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -42,9 +44,6 @@ public class ResumeServiceIntegrationTest {
 
     @Autowired
     private ResumeService resumeService;
-
-    @Autowired
-    private SectionService sectionService;
 
     private Authentication testuser;
     private Authentication otheruser;
@@ -83,46 +82,15 @@ public class ResumeServiceIntegrationTest {
         ResumeDetailResponse resume = resumeService.get(resumeId);
 
         // Assert
-        assertThat(resume).isNotNull();
-        assertThat(resume.getId()).isNotNull();
-        assertEquals("Software Engineer", resume.getTitle());
-        assertNotNull(resume.getCreatedDate());
-        assertNotNull(resume.getLastModifiedDate());
-        assertThat(resume.getSections()).hasSize(2);
+        assertNotNull(resume, "Resume should not be null after creation");
+        assertNotNull(resume.getId(), "The resume should have an id");
+        assertEquals("Software Engineer", resume.getTitle(), "Title should be Software Engineer");
+        assertNotNull(resume.getCreatedDate(), "Created date should not be null");
+        assertNotNull(resume.getLastModifiedDate(), "Last modified date should not be null");
+        assertEquals(resume.getCreatedDate(), resume.getLastModifiedDate(), "Created date and last modified date should be the same");
+        assertEquals(resume.getSections().size(), 2, "There should be 2 sections");
         assertThat(resume.getSections().stream().map(SectionResponse::getTitle))
             .containsExactlyInAnyOrder("Education", "Experience");
-    }
-
-    @Test
-    void testAddSectionAndGet() {
-        // Arrange
-        ResumeRequest resumeRequest = ResumeRequest.builder()
-                .title("Software Engineer")
-                .sections(List.of(
-                    SectionRequest.builder().title("Education").build(),
-                    SectionRequest.builder().title("Experience").build()))
-                .build();
-
-        Long resumeId = resumeService.create(resumeRequest);
-
-        SectionRequest sectionRequest = SectionRequest.builder()
-                .resumeId(resumeId)
-                .title("Summary")
-                .build();
-
-        // Act
-        sectionService.create(sectionRequest);
-        ResumeDetailResponse resume = resumeService.get(resumeId);
-
-        // Assert
-        assertThat(resume).isNotNull();
-        assertThat(resume.getId()).isNotNull();
-        assertEquals("Software Engineer", resume.getTitle());
-        assertNotNull(resume.getCreatedDate());
-        assertNotNull(resume.getLastModifiedDate());
-        assertThat(resume.getSections()).hasSize(3);
-        assertThat(resume.getSections().stream().map(SectionResponse::getTitle))
-        .containsExactlyInAnyOrder("Education", "Experience", "Summary");
     }
 
     @Test
@@ -143,12 +111,10 @@ public class ResumeServiceIntegrationTest {
         ResumeDetailResponse resume = resumeService.get(resumeId);
 
         // Assert
-        // Check if the picture is uploaded
-        assertNotNull(resume.getPicture());
-        assertArrayEquals(pictureFile.getBytes(), resume.getPicture());
-        // Check if nothing else is changed
-        assertEquals("Software Engineer", resume.getTitle());
-        assertThat(resume.getSections()).hasSize(2);
+        assertNotNull(resume.getPicture(), "Picture path should not be null after upload");
+        assertArrayEquals(pictureFile.getBytes(), resume.getPicture(), "Picture content should be the same as the uploaded file");
+        assertEquals("Software Engineer", resume.getTitle(), "Title should not be changed");
+        assertEquals(2, resume.getSections().size(), "Sections should not be changed");
     }
 
     @Test
@@ -166,15 +132,13 @@ public class ResumeServiceIntegrationTest {
 
         // Act
         resumeService.uploadPicture(resumeId, pictureFile);
-        resumeService.update(resumeId, ResumeRequest.builder().title("updated").build());
+        resumeService.update(ResumeRequest.builder().id(resumeId).title("updated").build());
         ResumeDetailResponse resume = resumeService.get(resumeId);
 
         // Assert
-        // Check if the picture is still there
-        assertNotNull(resume.getPicture());
-        assertArrayEquals(pictureFile.getBytes(), resume.getPicture());
-        // Check if the title is updated
-        assertEquals("updated", resume.getTitle());
+        assertNotNull(resume.getPicture(), "Picture path should not be null after update");
+        assertArrayEquals(pictureFile.getBytes(), resume.getPicture(), "Picture content should be the same as the uploaded file");
+        assertEquals("updated", resume.getTitle(), "Title should be updated");
     }
 
     @Test
@@ -190,18 +154,22 @@ public class ResumeServiceIntegrationTest {
         Long resumeId = resumeService.create(resumeRequest);
 
         ResumeRequest updatedResumeRequest = ResumeRequest.builder()
+                .id(resumeId)
                 .title("Barista")
                 .sections(List.of(
                     SectionRequest.builder().title("CoffeeLover").build()))
                 .build();
         // Act
-        resumeService.update(resumeId, updatedResumeRequest);
+        resumeService.update(updatedResumeRequest);
         ResumeDetailResponse updatedResume = resumeService.get(resumeId);
 
         // Assert
-        assertNotNull(updatedResume);
-        assertEquals("Barista", updatedResume.getTitle());
-        assertThat(updatedResume.getSections()).hasSize(2); // update should not change the sections
+        assertNotNull(updatedResume, "Resume should not be null after update");
+        assertEquals("Barista", updatedResume.getTitle(), "Title should be updated");
+        assertEquals(3, updatedResume.getSections().size(), "There should be 3 sections");
+        assertEquals(Set.of("Education", "Experience", "CoffeeLover"), 
+            updatedResume.getSections().stream().map(SectionResponse::getTitle).collect(Collectors.toSet()),
+            "The section should be added without removing the other sections");
     }
 
     @Test
@@ -220,7 +188,7 @@ public class ResumeServiceIntegrationTest {
         resumeService.delete(resumeId);
 
         // Assert
-        assertThrows(EntityNotFoundException.class, () -> { resumeService.get(resumeId); });
+        assertThrows(EntityNotFoundException.class, () -> { resumeService.get(resumeId); }, "Resume should not be found after deletion");
 
     }
 
@@ -240,9 +208,13 @@ public class ResumeServiceIntegrationTest {
         SecurityContextHolder.getContext().setAuthentication(otheruser);
 
         // Act & Assert
-        assertThrows(AccessDeniedException.class, () -> { resumeService.get(resumeId); });
-        assertThrows(AccessDeniedException.class, () -> { resumeService.update(resumeId, resumeRequest); });
-        assertThrows(AccessDeniedException.class, () -> { resumeService.delete(resumeId); });
+        resumeRequest.setId(resumeId);
+        assertThrows(AccessDeniedException.class, () -> { resumeService.get(resumeId); }, 
+            "Should throw AccessDeniedException when trying to get resume of other user");
+        assertThrows(AccessDeniedException.class, () -> { resumeService.update(resumeRequest); }, 
+            "Should throw AccessDeniedException when trying to update resume of other user");
+        assertThrows(AccessDeniedException.class, () -> { resumeService.delete(resumeId); }, 
+        "Should throw AccessDeniedException when trying to delete resume of other user");
     }
 
     @Test
@@ -251,9 +223,12 @@ public class ResumeServiceIntegrationTest {
         Long resumeId = -1L;
 
         // Act & Assert
-        assertThrows(EntityNotFoundException.class, () -> { resumeService.get(resumeId); });
-        assertThrows(EntityNotFoundException.class, () -> { resumeService.update(resumeId, ResumeRequest.builder().title("updated").build()); });
-        assertThrows(EntityNotFoundException.class, () -> { resumeService.delete(resumeId); });
+        assertThrows(EntityNotFoundException.class, () -> { resumeService.get(resumeId); }, 
+            "Should throw EntityNotFoundException when resume is not found");
+        assertThrows(EntityNotFoundException.class, () -> { resumeService.update(ResumeRequest.builder().id(resumeId).title("updated").build()); },
+            "Should throw EntityNotFoundException when trying to update non-existing resume");
+        assertThrows(EntityNotFoundException.class, () -> { resumeService.delete(resumeId); },
+            "Should throw EntityNotFoundException when trying to delete non-existing resume");
     }
 
     @Test
@@ -277,19 +252,19 @@ public class ResumeServiceIntegrationTest {
         PageResponse<ResumeResponse> resumes = resumeService.getAll(0, 10, "lastModifiedDate");
 
         // Assert
-        assertNotNull(resumes);
-        assertEquals(2, resumes.getContent().size());
+        assertNotNull(resumes, "Resumes should not be null");
+        assertEquals(2, resumes.getContent().size(), "There should be 2 resumes");
         // Check the order
-        assertEquals(resumeId2, resumes.getContent().get(0).getId()); // Jane was added last so should be first
-        assertEquals(resumeId1, resumes.getContent().get(1).getId());
+        assertEquals(resumeId2, resumes.getContent().get(0).getId(), "Barista was added last so should be first");
+        assertEquals(resumeId1, resumes.getContent().get(1).getId(), "Software Engineer was added first so should be last");
         // Check if resumes are correct
-        assertEquals("Software Engineer", resumes.getContent().get(1).getTitle());
-        assertEquals("Barista", resumes.getContent().get(0).getTitle());
+        assertEquals("Software Engineer", resumes.getContent().get(1).getTitle(), "Title should be Software Engineer");
+        assertEquals("Barista", resumes.getContent().get(0).getTitle(), "Title should be Barista");
         // Check the pageresponse
-        assertEquals(0, resumes.getNumber());
-        assertEquals(10, resumes.getSize());
-        assertEquals(2, resumes.getTotalElements());
-        assertEquals(1, resumes.getTotalPages());
+        assertEquals(0, resumes.getNumber(), "Page number should be 0");
+        assertEquals(10, resumes.getSize(), "Page size should be 10");
+        assertEquals(2, resumes.getTotalElements(), "Total elements should be 2");
+        assertEquals(1, resumes.getTotalPages(), "Total pages should be 1");
     }
 
     @Test
@@ -314,8 +289,8 @@ public class ResumeServiceIntegrationTest {
         resumeService.deleteAll();
 
         // Assert
-        assertThrows(EntityNotFoundException.class, () -> { resumeService.get(resumeId1); });
-        assertThrows(EntityNotFoundException.class, () -> { resumeService.get(resumeId2); });
+        assertThrows(EntityNotFoundException.class, () -> { resumeService.get(resumeId1); }, "Resume 1 should not be found after deletion");
+        assertThrows(EntityNotFoundException.class, () -> { resumeService.get(resumeId2); }, "Resume 2 should not be found after deletion");
 
     }
 

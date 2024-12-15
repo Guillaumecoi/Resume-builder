@@ -17,7 +17,7 @@ public interface CrudService<Response, Request> {
      * @return the object
      * @throws AccessDeniedException if the connected user is not the creator of the resume
      */
-    Response get(Long id);
+    Response get(long id);
 
     /**
      * Update an object
@@ -26,7 +26,7 @@ public interface CrudService<Response, Request> {
      * @param request the object to update
      * @throws AccessDeniedException if the connected user is not the creator of the resume
      */
-    void update(Long id, Request request);
+    void update(Request request);
 
     /**
      * Delete an object by its id
@@ -34,5 +34,5 @@ public interface CrudService<Response, Request> {
      * @param id the id of the object to delete
      * @throws AccessDeniedException if the connected user is not the creator of the resume
      */
-    void delete(Long id);
+    void delete(long id);
 }

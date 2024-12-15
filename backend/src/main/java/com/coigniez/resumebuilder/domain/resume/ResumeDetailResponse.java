@@ -13,8 +13,6 @@ public class ResumeDetailResponse {
 
     private Long id;
     private String title;
-    private String firstName;
-    private String lastName;
     private byte[] picture;
     private String createdDate;
     private String lastModifiedDate;

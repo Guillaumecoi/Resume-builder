@@ -40,7 +40,8 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
     private EntityManager entityManager;
 
     @Transactional
-    public Long create(SectionItemRequest request) {   
+    public Long create(SectionItemRequest request) { 
+        hasAccessSection(request.getSectionId());  
         Section section = sectionRepository.findById(request.getSectionId())
             .orElseThrow(() -> new EntityNotFoundException("Section not found"));
 
@@ -66,24 +67,32 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
     }
 
     public Long createPicture(MultipartFile file, SectionItemRequest request) {
+        hasAccessSection(request.getSectionId());
         String path = fileStorageService.saveFile(file, securityUtils.getUserName());
         Map<String, Object> data = request.getData();
         data.put("path", path);
         request.setData(data);
-        
+
         return create(request);
     }
 
 
     @Override
-    public SectionItemResponse get(Long id) {
+    public SectionItemResponse get(long id) {
+        hasAccess(id);
         return sectionItemRepository.findById(id)
             .map(sectionitemMapper::toDto)
             .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
     }
 
     @Override
-    public void update(Long id, SectionItemRequest request) {
+    public void update(SectionItemRequest request) {
+        if (request.getId() == null) {
+            throw new IllegalArgumentException("SectionItem id is required for update");
+        }
+        long id = request.getId();
+
+        hasAccess(id);
         SectionItem sectionItem = sectionItemRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
         Long sectionId = sectionItem.getSection().getId();
@@ -106,7 +115,8 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(long id) {
+        hasAccess(id);
         SectionItem sectionItem = sectionItemRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
         Long sectionId = sectionItem.getSection().getId();
@@ -126,8 +136,12 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
         sectionItemRepository.deleteAllBySectionId(sectionId);
     }
 
-    /*
+    /**
      * Increment the itemOrder for all items in the section starting from startOrder
+     * 
+     * @param sectionId the section id
+     * @param newOrder the new order
+     * @param oldOrder the old order
      */
     @Transactional
     private void incrementItemOrder(Long sectionId, int newOrder, int oldOrder) {
@@ -135,16 +149,40 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
         refreshSectionItems(sectionId);
     }
 
+    /**
+     * Decrement the itemOrder for all items in the section starting from startOrder
+     * 
+     * @param sectionId the section id
+     * @param newOrder the new order
+     * @param oldOrder the old order
+     */
     @Transactional
     private void decrementItemOrder(Long sectionId, int newOrder, int oldOrder) {
         sectionItemRepository.decrementItemOrderBetween(sectionId, newOrder, oldOrder);
         refreshSectionItems(sectionId);
     }
 
+    /**
+     * Refresh the section items
+     * 
+     * @param sectionId the section id
+     */
     private void refreshSectionItems(Long sectionId) {
         List<SectionItem> items = sectionItemRepository.findAllBySectionId(sectionId);
         for (SectionItem item : items) {
             entityManager.refresh(item);
         }
+    }
+
+    private void hasAccess(Long id) {
+        String owner = sectionItemRepository.findCreatedBy(id)
+            .orElseThrow(() -> new EntityNotFoundException("Accompanying resume is not found"));
+        securityUtils.hasAccess(List.of(owner));
+    }
+
+    private void hasAccessSection(Long id) {
+        String owner = sectionRepository.findCreatedBy(id)
+            .orElseThrow(() -> new EntityNotFoundException("Accompanying resume is not found"));
+        securityUtils.hasAccess(List.of(owner));
     }
 }

@@ -17,6 +17,7 @@ import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
 import com.coigniez.resumebuilder.domain.section.SectionRequest;
 import com.coigniez.resumebuilder.domain.section.SectionResponse;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemResponse;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
 
 import jakarta.validation.ConstraintViolationException;
@@ -172,25 +173,26 @@ public class SectionServiceWithItemsIntegrationTest {
                 .latexMethodId(methodIds.get("textbox"))
                 .build());
 
-        SectionRequest updatedRequest = SectionRequest.builder().title("Updated Section").sectionItems(updatedSectionItems).build();
+        SectionRequest updatedRequest = SectionRequest.builder().id(sectionId).title("Updated Section").sectionItems(updatedSectionItems).build();
 
         // Act
-        sectionService.update(sectionId, updatedRequest);
+        sectionService.update(updatedRequest);
         SectionResponse response = sectionService.get(sectionId);
 
         // Assert
         assertNotNull(sectionId);
-        assertEquals("Updated Section", response.getTitle());
-        assertEquals(3, response.getSectionItems().size());
-        assertEquals(1, response.getSectionItems().get(0).getItemOrder());
-        assertEquals(SectionItemType.SKILL.name(), response.getSectionItems().get(0).getType());
-        assertEquals("Python", response.getSectionItems().get(0).getData().get("name"));
-        assertEquals(4, response.getSectionItems().get(0).getData().get("proficiency"));
-        assertEquals(2, response.getSectionItems().get(1).getItemOrder());
-        assertEquals(SectionItemType.SKILL.name(), response.getSectionItems().get(1).getType());
-        assertEquals(3, response.getSectionItems().get(2).getItemOrder());
-        assertEquals("This is some updated text", response.getSectionItems().get(2).getData().get("content"));
+        assertEquals("Updated Section", response.getTitle(), "Section title should be updated");
+        assertEquals(3, response.getSectionItems().size(), "Section should have 3 items after update");
+        assertEquals(List.of(1,2,3), response.getSectionItems().stream().map(SectionItemResponse::getItemOrder).toList(), "Item order should be updated");
+        assertEquals(SectionItemType.SKILL.name(), response.getSectionItems().get(0).getType(), "First item should be a skill item");
+        assertEquals("Python", response.getSectionItems().get(0).getData().get("name"), "Skill name is Python");
+        assertEquals(4, response.getSectionItems().get(0).getData().get("proficiency"), "Skill proficiency is 4");
+        assertEquals(SectionItemType.SKILL.name(), response.getSectionItems().get(1).getType(), "Second item should be a skill item");
+        assertEquals("Java", response.getSectionItems().get(1).getData().get("name"), "Skill name is Java");
+        assertEquals(5, response.getSectionItems().get(1).getData().get("proficiency"), "Skill proficiency is 5");
+        assertEquals(SectionItemType.TEXTBOX.name(), response.getSectionItems().get(2).getType(), "Third item should be a textbox item");
         assertEquals(initialResponse.getSectionItems().get(0).getId(), response.getSectionItems().get(2).getId(), "Item ID should not change");
+        assertEquals("This is some updated text", response.getSectionItems().get(2).getData().get("content"), "Textbox content should be updated");
     }
 
     @Test
@@ -215,6 +217,7 @@ public class SectionServiceWithItemsIntegrationTest {
                 .build();
 
         // Act & Assert
-        assertThrows(ConstraintViolationException.class, () -> sectionService.create(request));
+        assertThrows(ConstraintViolationException.class, () -> sectionService.create(request),
+                "Validation should fail when skill proficiency is greater than 10");
     }
 }

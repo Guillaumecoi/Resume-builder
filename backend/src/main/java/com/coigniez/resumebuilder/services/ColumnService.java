@@ -34,13 +34,18 @@ public class ColumnService implements CrudService<ColumnResponse, ColumnRequest>
         return columnRepository.save(column).getId();
     }
 
-    public ColumnResponse get(Long id) {
+    public ColumnResponse get(long id) {
         Column column = columnRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Column not found"));
         return columnMapper.toDto(column);
     }
 
-    public void update(Long id, ColumnRequest request) {
+    public void update(ColumnRequest request) {
+        if (request.getId() == null) {
+            throw new IllegalArgumentException("Column id is required for update");
+        }
+        long id = request.getId();
+
         Column column = columnRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Column not found"));
         // Update the entity
@@ -50,7 +55,7 @@ public class ColumnService implements CrudService<ColumnResponse, ColumnRequest>
         
     }
 
-    public void delete(Long id) {
+    public void delete(long id) {
         columnRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Column not found"));
         columnRepository.deleteById(id);

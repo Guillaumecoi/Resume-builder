@@ -60,12 +60,17 @@ public class LayoutService implements CrudService<LayoutResponse, LayoutRequest>
         return layoutRepository.save(layout).getId();
     }
 
-    public LayoutResponse get(Long id) {
+    public LayoutResponse get(long id) {
         Layout layout = layoutRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Layout not found"));
         return layoutMapper.toDto(layout);
     }
 
-    public void update(Long id, LayoutRequest request) {
+    public void update(LayoutRequest request) {
+        if (request.getId() == null) {
+            throw new IllegalArgumentException("Layout id is required for update");
+        }
+        long id = request.getId();
+
         Layout layout = layoutRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Layout not found"));
         // UpexistingLayoutdate the entity
         layoutMapper.updateEntity(layout, request);
@@ -73,11 +78,17 @@ public class LayoutService implements CrudService<LayoutResponse, LayoutRequest>
         layoutRepository.save(layout);        
     }
 
-    public void delete(Long id) {
+    public void delete(long id) {
         layoutRepository.deleteById(id);
     }
 
-    public File generateLatexPdf(Long id) throws IOException, InterruptedException {
+    /**
+     * Generate a PDF file from a layout
+     * 
+     * @param id layout id to generate the PDF from
+     * @return the generated PDF file
+     */
+    public File generateLatexPdf(long id) throws IOException, InterruptedException {
         Layout layout = layoutRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Layout not found"));
         return latexDocumentGenerator.generateFile(layout, layout.getResume().getTitle());
     }
@@ -87,5 +98,4 @@ public class LayoutService implements CrudService<LayoutResponse, LayoutRequest>
         return layout.getLatexMethods().stream()
             .collect(Collectors.toMap(LatexMethod::getName, LatexMethod::getId));
     }
-
 }

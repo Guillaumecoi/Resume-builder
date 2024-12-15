@@ -54,7 +54,8 @@ public class ResumeController {
 
     @PostMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable Long id, @Valid @RequestBody ResumeRequest request, Authentication user) {
-        resumeService.update(id, request);
+        request.setId(id);
+        resumeService.update(request);
         return ResponseEntity.ok().build();
     }
 

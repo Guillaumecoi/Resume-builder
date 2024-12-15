@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.coigniez.resumebuilder.domain.resume.ResumeDetailResponse;
 import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
 import com.coigniez.resumebuilder.domain.section.SectionRequest;
 import com.coigniez.resumebuilder.domain.section.SectionResponse;
@@ -24,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @SpringBootTest
@@ -73,11 +76,19 @@ public class SectionServiceIntegrationTest {
 
         // Act
         Long sectionId = sectionService.create(request);
-        SectionResponse response = sectionService.get(sectionId);
 
         // Assert
-        assertNotNull(sectionId);
-        assertEquals("Test Section", response.getTitle());
+        assertNotNull(sectionId, "The sectionId should not be null after creation");
+        SectionResponse response = sectionService.get(sectionId);
+        ResumeDetailResponse resume = resumeService.get(resumeId);
+
+        assertNotNull(response, "The section should not be null after creation");
+        assertEquals(sectionId, response.getId(), "Section id is not correct");
+        assertEquals("Test Section", response.getTitle(), "Section title is not correct");
+        assertEquals(2, resume.getSections().size(), "The resume should have 2 sections after creation of the new section");
+        assertEquals(Set.of("Education", "Test Section"), 
+            resume.getSections().stream().map(SectionResponse::getTitle).collect(Collectors.toSet()),
+            "The resume should have the correct sections after creation of the new section");
 
     }
 
@@ -92,12 +103,15 @@ public class SectionServiceIntegrationTest {
         Long sectionId = sectionService.create(request);
 
         // Act
-        SectionRequest updatedRequest = SectionRequest.builder().title("Updated Section").build();
-        sectionService.update(sectionId, updatedRequest);
-        SectionResponse response = sectionService.get(sectionId);
+        SectionRequest updatedRequest = SectionRequest.builder().id(sectionId).title("Updated Section").build();
+        sectionService.update(updatedRequest);
 
         // Assert
-        assertEquals("Updated Section", response.getTitle());
+        SectionResponse response = sectionService.get(sectionId);
+
+        assertNotNull(response, "The section should not be null after update");
+        assertEquals(sectionId, response.getId(), "Section id should stay the same after update");
+        assertEquals("Updated Section", response.getTitle(), "Section title should be updated");
 
     }
 
@@ -115,7 +129,7 @@ public class SectionServiceIntegrationTest {
         sectionService.delete(sectionId);
 
         // Assert
-        assertThrows(EntityNotFoundException.class, () -> { sectionService.get(sectionId); });
+        assertThrows(EntityNotFoundException.class, () -> { sectionService.get(sectionId); }, "The section should not be found after deletion");
 
     }
 
@@ -133,9 +147,15 @@ public class SectionServiceIntegrationTest {
         SecurityContextHolder.getContext().setAuthentication(otheruser);
 
         // Act & Assert
-        assertThrows(AccessDeniedException.class, () -> { sectionService.get(sectionId); });
-        assertThrows(AccessDeniedException.class, () -> { sectionService.update(sectionId, request); });
-        assertThrows(AccessDeniedException.class, () -> { sectionService.delete(sectionId); });
+        assertThrows(AccessDeniedException.class, () -> { sectionService.create(request); },
+            "Other user should not be able to create a section in another user's resume");
+        assertThrows(AccessDeniedException.class, () -> { sectionService.get(sectionId); },
+            "Other user should not be able to get a section in another user's resume");
+        request.setId(sectionId);
+        assertThrows(AccessDeniedException.class, () -> { sectionService.update(request); },
+            "Other user should not be able to update a section in another user's resume");
+        assertThrows(AccessDeniedException.class, () -> { sectionService.delete(sectionId); },
+            "Other user should not be able to delete a section in another user's resume");
     }
 
     @Test
@@ -144,9 +164,11 @@ public class SectionServiceIntegrationTest {
         Long sectionId = -1L;
 
         // Act & Assert
-        assertThrows(EntityNotFoundException.class, () -> { sectionService.get(sectionId); });
-        assertThrows(EntityNotFoundException.class, () -> { sectionService.update(sectionId, SectionRequest.builder().id(sectionId).build()); });
-        assertThrows(EntityNotFoundException.class, () -> { sectionService.delete(sectionId); });
+        assertThrows(EntityNotFoundException.class, () -> { sectionService.get(sectionId); }, "Section should not be found");
+        assertThrows(EntityNotFoundException.class, () -> { sectionService.update(SectionRequest.builder().id(sectionId).build()); },
+            "Section should not be found");
+        assertThrows(EntityNotFoundException.class, () -> { sectionService.delete(sectionId); },
+            "Section should not be found");
     }
 
 }

@@ -45,7 +45,7 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
         return sectionId;
     }
 
-    public SectionResponse get(Long id) {
+    public SectionResponse get(long id) {
         hasAccess(id);
         Section section = sectionRepository.findByIdWithOrderedItems(id)
                 .orElseThrow(() -> new EntityNotFoundException(""));
@@ -53,7 +53,12 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
         return sectionMapper.toDto(section);
     }
 
-    public void update(Long id, SectionRequest request) {
+    public void update(SectionRequest request) {
+        if (request.getId() == null) {
+            throw new IllegalArgumentException("Section id is required for update");
+        }
+        long id = request.getId();
+
         hasAccess(id);
         Section existingSection = sectionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Section not found"));
@@ -64,7 +69,7 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
                 sectionItemRequest.setSectionId(id);
                 sectionItemService.create(sectionItemRequest);
             } else {
-                sectionItemService.update(sectionItemRequest.getId(), sectionItemRequest);
+                sectionItemService.update(sectionItemRequest);
             }
         }
         // Update the entity
@@ -73,7 +78,7 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
         sectionRepository.save(existingSection);
     }
 
-    public void delete(Long id) {
+    public void delete(long id) {
         hasAccess(id);
         Section section = sectionRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(""));
@@ -101,19 +106,27 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
         }
     }
 
+    /**
+     * Check if the user has access to the section
+     * 
+     * @param id the section id
+     * @throws AccessDeniedException if the user does not have access
+     */
     private void hasAccess(Long id) {
         String owner = sectionRepository.findCreatedBy(id)
                 .orElseThrow(() -> new EntityNotFoundException(""));
-        if (!owner.equals(securityUtils.getUserName())) {
-            throw new AccessDeniedException("");
-        }
+        securityUtils.hasAccess(List.of(owner));
     }
 
+    /**
+     * Check if the user has access to the resume
+     * 
+     * @param id the resume id
+     * @throws AccessDeniedException if the user does not have access
+     */
     private void hasAccessResume(Long id) {
         String owner = resumeRepository.findCreatedBy(id)
                 .orElseThrow(() -> new EntityNotFoundException(""));
-        if (!owner.equals(securityUtils.getUserName())) {
-            throw new AccessDeniedException("");
-        }
+        securityUtils.hasAccess(List.of(owner));
     }
 }
