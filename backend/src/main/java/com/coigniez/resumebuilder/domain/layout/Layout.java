@@ -61,4 +61,9 @@ public class Layout implements BaseEntity {
         columns.add(column);
         column.setLayout(this);
     }
+
+    public void removeColumn(Column column) {
+        columns.remove(column);
+        column.setLayout(null);
+    }
 }

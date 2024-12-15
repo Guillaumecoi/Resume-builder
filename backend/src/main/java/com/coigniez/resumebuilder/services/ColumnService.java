@@ -1,5 +1,7 @@
 package com.coigniez.resumebuilder.services;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.column.Column;
@@ -10,6 +12,7 @@ import com.coigniez.resumebuilder.domain.column.ColumnResponse;
 import com.coigniez.resumebuilder.domain.layout.Layout;
 import com.coigniez.resumebuilder.domain.layout.LayoutRepository;
 import com.coigniez.resumebuilder.interfaces.CrudService;
+import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -23,10 +26,11 @@ public class ColumnService implements CrudService<ColumnResponse, ColumnRequest>
     private final ColumnRepository columnRepository;
     private final LayoutRepository layoutRepository;
     private final ColumnMapper columnMapper;
-    
-    //TODO: Authentication
+    private final SecurityUtils securityUtils;
 
     public Long create(ColumnRequest request) {
+        hasAccessLayout(request.getLayoutId());
+
         Column column = columnMapper.toEntity(request);
         Layout layout = layoutRepository.findById(request.getLayoutId()).orElseThrow(() -> new EntityNotFoundException("Layout not found"));
         layout.addColumn(column);
@@ -35,12 +39,16 @@ public class ColumnService implements CrudService<ColumnResponse, ColumnRequest>
     }
 
     public ColumnResponse get(long id) {
+        hasAccess(id);
+
         Column column = columnRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Column not found"));
         return columnMapper.toDto(column);
     }
 
     public void update(ColumnRequest request) {
+        hasAccess(request.getId());
+
         if (request.getId() == null) {
             throw new IllegalArgumentException("Column id is required for update");
         }
@@ -56,8 +64,25 @@ public class ColumnService implements CrudService<ColumnResponse, ColumnRequest>
     }
 
     public void delete(long id) {
-        columnRepository.findById(id)
+        hasAccess(id);
+        Column column = columnRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Column not found"));
+
+        Layout layout = column.getLayout();
+        layout.removeColumn(column);
+        
         columnRepository.deleteById(id);
+    }
+
+    private void hasAccess(long id) {
+        String owner = columnRepository.findCreatedBy(id)
+            .orElseThrow(() -> new EntityNotFoundException("Column not found"));
+        securityUtils.hasAccess(List.of(owner));
+    }
+
+    private void hasAccessLayout(long id) {
+        String owner = layoutRepository.findCreatedBy(id)
+            .orElseThrow(() -> new EntityNotFoundException("Layout not found"));
+        securityUtils.hasAccess(List.of(owner));
     }
 }
