@@ -2,6 +2,7 @@ package com.coigniez.resumebuilder.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
@@ -22,6 +24,8 @@ import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
 import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
 import com.coigniez.resumebuilder.domain.section.SectionRequest;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -35,6 +39,7 @@ public class LayoutServiceIntegrationTest {
     private ResumeService resumeService;
 
     private Authentication testuser;
+    private Authentication otheruser;
     private Long resumeId;
 
     @BeforeEach
@@ -42,6 +47,12 @@ public class LayoutServiceIntegrationTest {
         // Create mock users
         testuser = new UsernamePasswordAuthenticationToken(
                 "testuser", 
+                "password", 
+                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+
+        otheruser = new UsernamePasswordAuthenticationToken(
+                "otheruser", 
                 "password", 
                 List.of(new SimpleGrantedAuthority("ROLE_USER"))
         );
@@ -125,5 +136,45 @@ public class LayoutServiceIntegrationTest {
         assertEquals(20.0, createdLayout.getColumns().get(1).getPaddingTop(), "Padding top should be 20.0");
         assertEquals(20.0, createdLayout.getColumns().get(1).getPaddingBottom(), "Padding bottom should be 20.0");
     }
+
+    @Test
+    void testAccessControl() {
+        // Arrange
+        LayoutRequest layoutRequest = LayoutRequest.builder()
+                .resumeId(resumeId)
+                .numberOfColumns(1)
+                .build();
+
+        Long layoutId = layoutService.create(layoutRequest);
+
+        // Act & Assert
+        SecurityContextHolder.getContext().setAuthentication(otheruser);
+
+        assertThrows(AccessDeniedException.class, () -> layoutService.create(layoutRequest),
+                "User should not be able to create a layout for an others resume");
+        assertThrows(AccessDeniedException.class, () -> layoutService.get(layoutId),
+                "User should not be able to get a layout for an others resume");
+        layoutRequest.setId(layoutId);
+        assertThrows(AccessDeniedException.class, () -> layoutService.update(layoutRequest),
+                "User should not be able to update a layout for an others resume");
+        assertThrows(AccessDeniedException.class, () -> layoutService.delete(layoutId),
+                "User should not be able to delete a layout for an others resume");
+    }
+
+    @Test
+    void testEntityNotFound() {
+        // Act & Assert
+        assertThrows(EntityNotFoundException.class, () -> layoutService.get(-1L),
+                "Should throw EntityNotFoundException when layout is not found");
+        assertThrows(EntityNotFoundException.class, () -> layoutService.update(LayoutRequest.builder().id(-1L).build()),
+                "Should throw EntityNotFoundException when layout is not found");
+        assertThrows(EntityNotFoundException.class, () -> layoutService.delete(-1L),
+                "Should throw EntityNotFoundException when layout is not found");
+        assertThrows(EntityNotFoundException.class, () -> layoutService.generateLatexPdf(-1L),
+                "Should throw EntityNotFoundException when layout is not found");
+        assertThrows(EntityNotFoundException.class, () -> layoutService.getLatexMethodsMap(-1L),
+                "Should throw EntityNotFoundException when layout is not found");
+    }
+
 
 }

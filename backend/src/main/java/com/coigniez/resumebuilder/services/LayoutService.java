@@ -22,6 +22,7 @@ import com.coigniez.resumebuilder.domain.resume.ResumeRepository;
 import com.coigniez.resumebuilder.interfaces.CrudService;
 import com.coigniez.resumebuilder.latex.generators.LatexDocumentGenerator;
 import com.coigniez.resumebuilder.templates.LayoutTemplate;
+import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -37,10 +38,11 @@ public class LayoutService implements CrudService<LayoutResponse, LayoutRequest>
     private final LayoutMapper layoutMapper;
     private final ColumnMapper columnMapper;
     private final LatexDocumentGenerator latexDocumentGenerator;
-
-    //TODO: Authentication
+    private final SecurityUtils securityUtils;
     
     public Long create(LayoutRequest request) {
+        hasAccessResume(request.getResumeId());
+
         Layout layout = layoutMapper.toEntity(request);
         Resume resume = resumeRepository.findById(request.getResumeId()).orElseThrow(() -> new EntityNotFoundException("Resume not found"));
         resume.addLayout(layout);
@@ -61,11 +63,13 @@ public class LayoutService implements CrudService<LayoutResponse, LayoutRequest>
     }
 
     public LayoutResponse get(long id) {
+        hasAccess(id);
         Layout layout = layoutRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Layout not found"));
         return layoutMapper.toDto(layout);
     }
 
     public void update(LayoutRequest request) {
+        hasAccess(request.getId());
         if (request.getId() == null) {
             throw new IllegalArgumentException("Layout id is required for update");
         }
@@ -79,6 +83,7 @@ public class LayoutService implements CrudService<LayoutResponse, LayoutRequest>
     }
 
     public void delete(long id) {
+        hasAccess(id);
         layoutRepository.deleteById(id);
     }
 
@@ -98,4 +103,17 @@ public class LayoutService implements CrudService<LayoutResponse, LayoutRequest>
         return layout.getLatexMethods().stream()
             .collect(Collectors.toMap(LatexMethod::getName, LatexMethod::getId));
     }
+
+    private void hasAccess(Long layoutId) {
+        String owner = layoutRepository.findCreatedBy(layoutId)
+            .orElseThrow(() -> new EntityNotFoundException("Layout not found"));
+        securityUtils.hasAccess(List.of(owner));
+    }
+
+    private void hasAccessResume(Long resumeId) {
+        String owner = resumeRepository.findCreatedBy(resumeId)
+            .orElseThrow(() -> new EntityNotFoundException("Resume not found"));
+        securityUtils.hasAccess(List.of(owner));
+    }
+
 }
