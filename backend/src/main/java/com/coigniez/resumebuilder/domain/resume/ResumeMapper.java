@@ -65,12 +65,11 @@ public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeDetailR
     }
 
     @Override
-    public Resume updateEntity(Resume entity, ResumeRequest request) {
+    public void updateEntity(Resume entity, ResumeRequest request) {
         if (request == null) {
-            return null;
+            return;
         }
 
         entity.setTitle(request.getTitle());
-        return entity;
     }
 }

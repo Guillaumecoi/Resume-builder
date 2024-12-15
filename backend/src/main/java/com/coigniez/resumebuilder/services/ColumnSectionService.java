@@ -1,6 +1,5 @@
 package com.coigniez.resumebuilder.services;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.column.Column;
@@ -54,15 +53,12 @@ public class ColumnSectionService implements CrudService<ColumnSectionResponse, 
     }
 
     public void update(Long id, ColumnSectionRequest request) {
-        ColumnSection existingColumnSection = columnSectionRepository.findById(id)
+        ColumnSection columnSection = columnSectionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("ColumnSection not found"));
-
-        ColumnSection columnSection = columnSectionMapper.toEntity(request);
-
-        // Copy the properties from the updated columnSection to the existing columnSection
-        BeanUtils.copyProperties(columnSection, existingColumnSection, "id", "column", "section");
-
-        columnSectionRepository.save(existingColumnSection);
+        // Update theexistingColumnSection entity
+        columnSectionMapper.updateEntity(columnSection, request);
+        // Save the updated entity
+        columnSectionRepository.save(columnSection);
     }
 
     public void delete(Long id) {

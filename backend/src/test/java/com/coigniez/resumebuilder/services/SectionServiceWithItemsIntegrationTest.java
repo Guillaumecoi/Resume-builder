@@ -125,7 +125,6 @@ public class SectionServiceWithItemsIntegrationTest {
 
         sectionItems.add(SectionItemRequest.builder()
                 .type(SectionItemType.TEXTBOX.name())
-                .itemOrder(1)
                 .data(new HashMap<>() {{
                     put("content", "This is some example text");
                 }})
@@ -134,7 +133,6 @@ public class SectionServiceWithItemsIntegrationTest {
 
         sectionItems.add(SectionItemRequest.builder()
                 .type(SectionItemType.SKILL.name())
-                .itemOrder(2)
                 .data(new HashMap<>() {{
                     put("name", "Java");
                     put("proficiency", 5);
@@ -145,9 +143,11 @@ public class SectionServiceWithItemsIntegrationTest {
         SectionRequest request = SectionRequest.builder()
                 .resumeId(resumeId)
                 .title("Test Section")
+                .sectionItems(sectionItems)
                 .build();
 
         Long sectionId = sectionService.create(request);
+        SectionResponse initialResponse = sectionService.get(sectionId);
 
         // Update the section
         List<SectionItemRequest> updatedSectionItems = new ArrayList<>();
@@ -162,6 +162,15 @@ public class SectionServiceWithItemsIntegrationTest {
                 }})
                 .latexMethodId(methodIds.get("skillitem"))
                 .build());
+        updatedSectionItems.add(SectionItemRequest.builder()
+                .id(initialResponse.getSectionItems().get(0).getId())
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(3)
+                .data(new HashMap<>() {{
+                    put("content", "This is some updated text");
+                }})
+                .latexMethodId(methodIds.get("textbox"))
+                .build());
 
         SectionRequest updatedRequest = SectionRequest.builder().title("Updated Section").sectionItems(updatedSectionItems).build();
 
@@ -172,11 +181,16 @@ public class SectionServiceWithItemsIntegrationTest {
         // Assert
         assertNotNull(sectionId);
         assertEquals("Updated Section", response.getTitle());
-        assertEquals(1, response.getSectionItems().size());
+        assertEquals(3, response.getSectionItems().size());
         assertEquals(1, response.getSectionItems().get(0).getItemOrder());
         assertEquals(SectionItemType.SKILL.name(), response.getSectionItems().get(0).getType());
         assertEquals("Python", response.getSectionItems().get(0).getData().get("name"));
         assertEquals(4, response.getSectionItems().get(0).getData().get("proficiency"));
+        assertEquals(2, response.getSectionItems().get(1).getItemOrder());
+        assertEquals(SectionItemType.SKILL.name(), response.getSectionItems().get(1).getType());
+        assertEquals(3, response.getSectionItems().get(2).getItemOrder());
+        assertEquals("This is some updated text", response.getSectionItems().get(2).getData().get("content"));
+        assertEquals(initialResponse.getSectionItems().get(0).getId(), response.getSectionItems().get(2).getId(), "Item ID should not change");
     }
 
     @Test

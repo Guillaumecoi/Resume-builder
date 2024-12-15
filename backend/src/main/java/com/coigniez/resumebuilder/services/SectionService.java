@@ -2,7 +2,6 @@ package com.coigniez.resumebuilder.services;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -48,8 +47,9 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
 
     public SectionResponse get(Long id) {
         hasAccess(id);
-        Section section = sectionRepository.findById(id)
+        Section section = sectionRepository.findByIdWithOrderedItems(id)
                 .orElseThrow(() -> new EntityNotFoundException(""));
+        
         return sectionMapper.toDto(section);
     }
 
@@ -57,17 +57,19 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
         hasAccess(id);
         Section existingSection = sectionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Section not found"));
-                
-        // Update basic properties
-        Section updatedSection = sectionMapper.toEntity(request);
-        BeanUtils.copyProperties(updatedSection, existingSection, "id", "resume", "items", "columnSections");
-        
-        // Clear and update items in one transaction
-        existingSection.getItems().clear();
-        if (request.getSectionItems() != null) {
-            createSectionItems(existingSection.getId(), request.getSectionItems());
+
+        // Update section items
+        for (SectionItemRequest sectionItemRequest : request.getSectionItems()) {
+            if (sectionItemRequest.getId() == null) {
+                sectionItemRequest.setSectionId(id);
+                sectionItemService.create(sectionItemRequest);
+            } else {
+                sectionItemService.update(sectionItemRequest.getId(), sectionItemRequest);
+            }
         }
-        
+        // Update the entity
+        sectionMapper.updateEntity(existingSection, request);
+        // Save the updated entity
         sectionRepository.save(existingSection);
     }
 

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.column.Column;
@@ -67,12 +66,11 @@ public class LayoutService implements CrudService<LayoutResponse, LayoutRequest>
     }
 
     public void update(Long id, LayoutRequest request) {
-        Layout existingLayout = layoutRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Layout not found"));
-        Layout updatedLayout = layoutMapper.toEntity(request);
-
-        BeanUtils.copyProperties(updatedLayout, existingLayout, "id", "resume");
-
-        layoutRepository.save(existingLayout);        
+        Layout layout = layoutRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Layout not found"));
+        // UpexistingLayoutdate the entity
+        layoutMapper.updateEntity(layout, request);
+        // Save the updated entity
+        layoutRepository.save(layout);        
     }
 
     public void delete(Long id) {
@@ -81,7 +79,6 @@ public class LayoutService implements CrudService<LayoutResponse, LayoutRequest>
 
     public File generateLatexPdf(Long id) throws IOException, InterruptedException {
         Layout layout = layoutRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Layout not found"));
-
         return latexDocumentGenerator.generateFile(layout, layout.getResume().getTitle());
     }
 

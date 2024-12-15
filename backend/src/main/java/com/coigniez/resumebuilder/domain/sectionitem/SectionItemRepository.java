@@ -15,12 +15,24 @@ public interface SectionItemRepository extends JpaRepository<SectionItem, Long> 
     Integer findMaxItemOrderBySectionId(@Param("sectionId") Long sectionId);
 
     @Modifying
-    @Query("UPDATE SectionItem si SET si.itemOrder = si.itemOrder + 1 WHERE si.section.id = :sectionId AND si.itemOrder >= :startOrder")
-    void incrementItemOrderForSection(@Param("sectionId") Long sectionId, @Param("startOrder") int startOrder);
+    @Query("""
+        UPDATE SectionItem si 
+        SET si.itemOrder = si.itemOrder + 1 
+        WHERE si.section.id = :sectionId 
+        AND si.itemOrder >= :newOrder 
+        AND si.itemOrder < :oldOrder
+    """)
+    void incrementItemOrderBetween(@Param("sectionId") Long sectionId, @Param("newOrder") int newOrder, @Param("oldOrder") int oldOrder);
 
     @Modifying
-    @Query("UPDATE SectionItem si SET si.itemOrder = si.itemOrder - 1 WHERE si.section.id = :sectionId AND si.itemOrder > :startOrder")
-    void decrementItemOrderForSection(Long sectionId, int startOrder);
+    @Query("""
+        UPDATE SectionItem si 
+        SET si.itemOrder = si.itemOrder - 1 
+        WHERE si.section.id = :sectionId 
+        AND si.itemOrder > :oldOrder 
+        AND si.itemOrder <= :newOrder
+    """)
+    void decrementItemOrderBetween(@Param("sectionId") Long sectionId, @Param("newOrder") int newOrder, @Param("oldOrder") int oldOrder);
 
     @Query("SELECT si FROM SectionItem si WHERE si.section.id = :sectionId")
     List<SectionItem> findAllBySectionId(@Param("sectionId") Long sectionId);

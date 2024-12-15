@@ -3,6 +3,7 @@ package com.coigniez.resumebuilder.services;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +20,7 @@ import com.coigniez.resumebuilder.file.FileStorageService;
 import com.coigniez.resumebuilder.interfaces.CrudService;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,13 +30,16 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class SectionItemService implements CrudService<SectionItemResponse, SectionItemRequest> {
 
-    private final SectionItemRepository sectionitemRepository;
+    private final SectionItemRepository sectionItemRepository;
     private final SectionRepository sectionRepository;
     private final LatexMethodRepository latexMethodRepository;
     private final SectionItemMapper sectionitemMapper;
     private final FileStorageService fileStorageService;
     private final SecurityUtils securityUtils;
+    @Autowired
+    private EntityManager entityManager;
 
+    @Transactional
     public Long create(SectionItemRequest request) {   
         Section section = sectionRepository.findById(request.getSectionId())
             .orElseThrow(() -> new EntityNotFoundException("Section not found"));
@@ -43,13 +48,11 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
         sectionItem.setId(null);
     
         // Find the maximum itemOrder in the section
-        Integer maxOrder = sectionitemRepository.findMaxItemOrderBySectionId(section.getId());
+        Integer maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(section.getId());
         int newOrder = request.getItemOrder() == null ? (maxOrder == null ? 1 : maxOrder + 1) : request.getItemOrder();
-    
-        if (request.getItemOrder() != null) {
-            // Shift other items
-            sectionitemRepository.incrementItemOrderForSection(section.getId(), newOrder);
-        }
+
+        // Shift other items
+        incrementItemOrder(section.getId(), newOrder, (maxOrder == null ? 0 : maxOrder) +1);
     
         sectionItem.setItemOrder(newOrder);
         section.addSectionItem(sectionItem);
@@ -59,7 +62,7 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
         
         sectionItem.setLatexMethod(latexMethod);
     
-        return sectionitemRepository.save(sectionItem).getId();
+        return sectionItemRepository.save(sectionItem).getId();
     }
 
     public Long createPicture(MultipartFile file, SectionItemRequest request) {
@@ -74,45 +77,74 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
 
     @Override
     public SectionItemResponse get(Long id) {
-        return sectionitemRepository.findById(id)
+        return sectionItemRepository.findById(id)
             .map(sectionitemMapper::toDto)
             .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
     }
 
     @Override
     public void update(Long id, SectionItemRequest request) {
-        SectionItem sectionItem = sectionitemRepository.findById(id)
+        SectionItem sectionItem = sectionItemRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
-    
-        SectionItem updatedSectionItem = sectionitemMapper.toEntity(request);
-        updatedSectionItem.setId(sectionItem.getId());
-        updatedSectionItem.setSection(sectionItem.getSection());
-    
+        Long sectionId = sectionItem.getSection().getId();
+        
         // Shift other items
         if (!sectionItem.getItemOrder().equals(request.getItemOrder())) {
-            sectionitemRepository.incrementItemOrderForSection(sectionItem.getSection().getId(), request.getItemOrder());
-            sectionitemRepository.decrementItemOrderForSection(sectionItem.getSection().getId(), sectionItem.getItemOrder());
+            if (request.getItemOrder() > sectionItem.getItemOrder()) {
+                decrementItemOrder(sectionId, request.getItemOrder(), sectionItem.getItemOrder());
+            } else {
+                incrementItemOrder(sectionId, request.getItemOrder(), sectionItem.getItemOrder());
+            }
         }
+
+        // Update the entity
+        sectionitemMapper.updateEntity(sectionItem, request);
+
+        //TODO: Update latexMethod
     
-        sectionitemRepository.save(updatedSectionItem);
+        sectionItemRepository.save(sectionItem);
     }
 
     @Override
     public void delete(Long id) {
-        SectionItem sectionItem = sectionitemRepository.findById(id)
+        SectionItem sectionItem = sectionItemRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
+        Long sectionId = sectionItem.getSection().getId();
     
-        sectionitemRepository.deleteById(id);
-    
+        sectionItemRepository.deleteById(id);
+        
         // Shift other items
-        sectionitemRepository.decrementItemOrderForSection(sectionItem.getSection().getId(), sectionItem.getItemOrder());
+        Integer maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(sectionId);
+        decrementItemOrder(sectionId, sectionItem.getItemOrder(), maxOrder+1);
     }
 
     public List<SectionItem> getAll(Long id) {
-        return sectionitemRepository.findAllBySectionId(id);
+        return sectionItemRepository.findAllBySectionId(id);
     }
     
     public void deleteAllBySectionId(Long sectionId) {
-        sectionitemRepository.deleteAllBySectionId(sectionId);
+        sectionItemRepository.deleteAllBySectionId(sectionId);
+    }
+
+    /*
+     * Increment the itemOrder for all items in the section starting from startOrder
+     */
+    @Transactional
+    private void incrementItemOrder(Long sectionId, int newOrder, int oldOrder) {
+        sectionItemRepository.incrementItemOrderBetween(sectionId, newOrder, oldOrder);
+        refreshSectionItems(sectionId);
+    }
+
+    @Transactional
+    private void decrementItemOrder(Long sectionId, int newOrder, int oldOrder) {
+        sectionItemRepository.decrementItemOrderBetween(sectionId, newOrder, oldOrder);
+        refreshSectionItems(sectionId);
+    }
+
+    private void refreshSectionItems(Long sectionId) {
+        List<SectionItem> items = sectionItemRepository.findAllBySectionId(sectionId);
+        for (SectionItem item : items) {
+            entityManager.refresh(item);
+        }
     }
 }

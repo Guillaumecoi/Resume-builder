@@ -81,9 +81,9 @@ public class LayoutMapper implements Mapper<Layout, LayoutRequest, LayoutRespons
     }
 
     @Override
-    public Layout updateEntity(Layout entity, LayoutRequest request) {
+    public void updateEntity(Layout entity, LayoutRequest request) {
         if (entity == null || request == null) {
-            return null;
+            return;
         }
 
         entity.setPageSize(request.getPageSize());
@@ -91,6 +91,5 @@ public class LayoutMapper implements Mapper<Layout, LayoutRequest, LayoutRespons
         entity.setColumnSeparator(request.getColumnSeparator());
         entity.setColorScheme(request.getColorScheme());
         entity.setSectionTitleMethod(request.getSectionTitleMethod());
-        return entity;
     }
 }

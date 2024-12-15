@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -142,6 +144,196 @@ public class SectionItemServiceIntegrationTest {
         byte[] originalBytes = file.getBytes();
         assertNotNull(originalBytes);
         assertTrue(originalBytes.length > 0);
+    }
+
+    @Test
+    void testCreateIncrementsItemOrder() {
+        // Arrange
+        SectionItemRequest request1 = SectionItemRequest.builder()
+                .sectionId(sectionId)
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(1)
+                .data(new HashMap<String, Object>() {{
+                    put("content", "First item");
+                }})
+                .latexMethodId(methodIds.get("textbox"))
+                .build();
+
+        sectionItemService.create(request1);
+
+        SectionItemRequest request2 = SectionItemRequest.builder()
+                .sectionId(sectionId)
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(2)
+                .data(new HashMap<String, Object>() {{
+                    put("content", "Second item");
+                }})
+                .latexMethodId(methodIds.get("textbox"))
+                .build();
+
+        sectionItemService.create(request2);
+
+        // Act
+        SectionItemRequest request3 = SectionItemRequest.builder()
+                .sectionId(sectionId)
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(2)
+                .data(new HashMap<String, Object>() {{
+                    put("content", "Third item");
+                }})
+                .latexMethodId(methodIds.get("textbox"))
+                .build();
+
+        sectionItemService.create(request3);
+
+        SectionItemRequest request4 = SectionItemRequest.builder()
+                .sectionId(sectionId)
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(4)
+                .data(new HashMap<String, Object>() {{
+                    put("content", "Fourth item");
+                }})
+                .latexMethodId(methodIds.get("textbox"))
+                .build();
+
+        sectionItemService.create(request4);
+
+        // Assert
+        List<SectionItem> items = sectionItemRepository.findAllBySectionId(sectionId);
+        items.sort(Comparator.comparing(SectionItem::getItemOrder));  // Sort by item order for easier comparison
+
+        assertEquals(4, items.size(), "There should be 4 items");
+        assertEquals(List.of(1, 2, 3, 4), items.stream().map(SectionItem::getItemOrder).collect(Collectors.toList()), "Item orders should be 1, 2, 3, 4");
+        assertEquals("First item", ((Textbox) items.get(0).getData()).getContent(), "First item in the list should be the first item created");
+        assertEquals("Third item", ((Textbox) items.get(1).getData()).getContent(), "Second item in the list should be the third item created");
+        assertEquals("Second item", ((Textbox) items.get(2).getData()).getContent(), "Third item in the list should be the second item created");
+        assertEquals("Fourth item", ((Textbox) items.get(3).getData()).getContent(), "Fourth item in the list should be the fourth item created");
+    }
+
+    @Test
+    void testDecrementItemOrder() {
+        // Arrange
+        SectionItemRequest request1 = SectionItemRequest.builder()
+                .sectionId(sectionId)
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(1)
+                .data(new HashMap<String, Object>() {{
+                    put("content", "First item");
+                }})
+                .latexMethodId(methodIds.get("textbox"))
+                .build();
+    
+        sectionItemService.create(request1);
+    
+        SectionItemRequest request2 = SectionItemRequest.builder()
+                .sectionId(sectionId)
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(2)
+                .data(new HashMap<String, Object>() {{
+                    put("content", "Second item");
+                }})
+                .latexMethodId(methodIds.get("textbox"))
+                .build();
+    
+        sectionItemService.create(request2);
+    
+        SectionItemRequest request3 = SectionItemRequest.builder()
+                .sectionId(sectionId)
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(3)
+                .data(new HashMap<String, Object>() {{
+                    put("content", "Third item");
+                }})
+                .latexMethodId(methodIds.get("textbox"))
+                .build();
+    
+        Long itemId3 = sectionItemService.create(request3);
+    
+        // Act
+        sectionItemService.update(itemId3, SectionItemRequest.builder()
+                .id(itemId3)
+                .sectionId(sectionId)
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(2)
+                .data(new HashMap<String, Object>() {{
+                    put("content", "Updated Third item");
+                }})
+                .latexMethodId(methodIds.get("textbox"))
+                .build());
+    
+        // Assert
+        List<SectionItem> items = sectionItemRepository.findAllBySectionId(sectionId);
+        items.sort(Comparator.comparing(SectionItem::getItemOrder));  // Sort by item order for easier comparison
+    
+        assertEquals(3, items.size(), "There should be 3 items");
+        assertEquals(List.of(1, 2, 3), items.stream().map(SectionItem::getItemOrder).collect(Collectors.toList()), "Item orders should be 1, 2, 3");
+        assertEquals("First item", ((Textbox) items.get(0).getData()).getContent(), "First item in the list should be the first item created");
+        assertEquals("Updated Third item", ((Textbox) items.get(1).getData()).getContent(), "Second item in the list should be the third item created");
+        assertEquals("Second item", ((Textbox) items.get(2).getData()).getContent(), "Third item in the list should be the second item created");
+    }
+
+    @Test
+    void testUpdateIncrementsItemOrder() {
+        // Arrange
+        SectionItemRequest request1 = SectionItemRequest.builder()
+                .sectionId(sectionId)
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(1)
+                .data(new HashMap<String, Object>() {{
+                    put("content", "First item");
+                }})
+                .latexMethodId(methodIds.get("textbox"))
+                .build();
+    
+        sectionItemService.create(request1);
+    
+        SectionItemRequest request2 = SectionItemRequest.builder()
+                .sectionId(sectionId)
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(2)
+                .data(new HashMap<String, Object>() {{
+                    put("content", "Second item");
+                }})
+                .latexMethodId(methodIds.get("textbox"))
+                .build();
+    
+        sectionItemService.create(request2);
+    
+        SectionItemRequest request3 = SectionItemRequest.builder()
+                .sectionId(sectionId)
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(3)
+                .data(new HashMap<String, Object>() {{
+                    put("content", "Third item");
+                }})
+                .latexMethodId(methodIds.get("textbox"))
+                .build();
+    
+        sectionItemService.create(request3);
+    
+        // Act
+        SectionItemRequest request4 = SectionItemRequest.builder()
+                .sectionId(sectionId)
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(2)
+                .data(new HashMap<String, Object>() {{
+                    put("content", "Fourth item");
+                }})
+                .latexMethodId(methodIds.get("textbox"))
+                .build();
+    
+        sectionItemService.create(request4);
+    
+        // Assert
+        List<SectionItem> items = sectionItemRepository.findAllBySectionId(sectionId);
+        items.sort(Comparator.comparing(SectionItem::getItemOrder));  // Sort by item order for easier comparison
+    
+        assertEquals(4, items.size(), "There should be 4 items");
+        assertEquals(List.of(1, 2, 3, 4), items.stream().map(SectionItem::getItemOrder).collect(Collectors.toList()), "Item orders should be 1, 2, 3, 4");
+        assertEquals("First item", ((Textbox) items.get(0).getData()).getContent(), "First item in the list should be the first item created");
+        assertEquals("Fourth item", ((Textbox) items.get(1).getData()).getContent(), "Second item in the list should be the fourth item created");
+        assertEquals("Second item", ((Textbox) items.get(2).getData()).getContent(), "Third item in the list should be the second item created");
+        assertEquals("Third item", ((Textbox) items.get(3).getData()).getContent(), "Fourth item in the list should be the third item created");
     }
     
     @Test

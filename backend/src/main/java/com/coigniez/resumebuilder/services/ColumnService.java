@@ -43,6 +43,9 @@ public class ColumnService implements CrudService<ColumnResponse, ColumnRequest>
     public void update(Long id, ColumnRequest request) {
         Column column = columnRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Column not found"));
+        // Update the entity
+        columnMapper.updateEntity(column, request);
+        // Save the updated entity
         columnRepository.save(column);
         
     }

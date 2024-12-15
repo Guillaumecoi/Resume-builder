@@ -40,15 +40,14 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, ColumnSectionR
     }
 
     @Override
-    public ColumnSection updateEntity(ColumnSection entity, ColumnSectionRequest request) {
+    public void updateEntity(ColumnSection entity, ColumnSectionRequest request) {
         if(request == null) {
-            return entity;
+            return;
         }
 
         entity.setPosition(request.getPosition());
         entity.setItemsep(request.getItemsep());
         entity.setEndsep(request.getEndsep());
-        return entity;
     }
     
 }

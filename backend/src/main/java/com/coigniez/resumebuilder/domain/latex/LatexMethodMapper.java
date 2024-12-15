@@ -36,14 +36,13 @@ public class LatexMethodMapper implements Mapper<LatexMethod, LatexMethodRequest
     }
 
     @Override
-    public LatexMethod updateEntity(LatexMethod entity, LatexMethodRequest request) {
+    public void updateEntity(LatexMethod entity, LatexMethodRequest request) {
        if(request == null) {
-           return entity;
+           return;
        }
 
         entity.setName(request.getName());
         entity.setMethod(request.getMethod());
-        return entity;
     }
     
 }

@@ -24,8 +24,7 @@ public interface Mapper<Entity, Request, Response> {
      * 
      * @param entity the entity to update
      * @param request the request to update with
-     * @return the updated entity
      */
-    Entity updateEntity(Entity entity, Request request);
+    void updateEntity(Entity entity, Request request);
 
 }

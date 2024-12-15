@@ -40,7 +40,7 @@ public class Section implements BaseEntity {
     @Builder.Default
     private List<SectionItem> items = new ArrayList<>();
 
-    @OneToMany(mappedBy = "section", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "section", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default
     private List<ColumnSection> columnSections = new ArrayList<>();
 

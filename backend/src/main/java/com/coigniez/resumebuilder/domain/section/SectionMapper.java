@@ -1,10 +1,12 @@
 package com.coigniez.resumebuilder.domain.section;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemResponse;
 import com.coigniez.resumebuilder.interfaces.Mapper;
@@ -36,14 +38,12 @@ public class SectionMapper implements Mapper<Section, SectionRequest, SectionRes
             return null;
         }
 
-        List<SectionItemResponse> sectionItems;
-        if (entity.getItems() == null) {
-            sectionItems = List.of();
-        } else {
-            sectionItems = entity.getItems().stream()
+        List<SectionItemResponse> sectionItems = entity.getItems() == null 
+            ? List.of()
+            : entity.getItems().stream()
+                .sorted(Comparator.comparing(SectionItem::getItemOrder)) // Sort items by itemOrder
                 .map(sectionItemMapper::toDto)
                 .collect(Collectors.toList());
-        }
 
         return SectionResponse.builder()
                 .id(entity.getId())
@@ -54,14 +54,12 @@ public class SectionMapper implements Mapper<Section, SectionRequest, SectionRes
     }
 
     @Override
-    public Section updateEntity(Section entity, SectionRequest request) {
+    public void updateEntity(Section entity, SectionRequest request) {
         if (request == null) {
-            return null;
+            return;
         }
 
         entity.setTitle(request.getTitle());
         entity.setShowTitle(request.getShowTitle());
-
-        return entity;
     }
 }

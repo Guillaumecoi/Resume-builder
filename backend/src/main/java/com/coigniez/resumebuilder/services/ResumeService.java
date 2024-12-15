@@ -2,7 +2,6 @@ package com.coigniez.resumebuilder.services;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -52,13 +51,12 @@ public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRe
 
     public void update(Long id, ResumeRequest request) {
         hasAccess(id);
-        Resume existingResume = resumeRepository.findById(id).orElseThrow();
-        Resume updatedResume = resumeMapper.toEntity(request);
-        
-        // Copy the properties from the updated resume to the existing resume
-        BeanUtils.copyProperties(updatedResume, existingResume, "id", "createdBy", "createdDate", "lastModifiedDate", "sections", "layouts", "picture");
-    
-        resumeRepository.save(existingResume);
+        Resume resume = resumeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Resume with id " + id + " not found"));
+        // Update the resume entity
+        resumeMapper.updateEntity(resume, request);
+        // Save the updated entity
+        resumeRepository.save(resume);
     }
 
     public void delete(Long id) {

@@ -91,16 +91,14 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest
     }
 
     @Override
-    public SectionItem updateEntity(SectionItem entity, SectionItemRequest request) {
+    public void updateEntity(SectionItem entity, SectionItemRequest request) {
         if (request == null) {
-            return null;
+            return;
         }
 
         entity.setType(SectionItemType.valueOf(request.getType()));
         entity.setItemOrder(request.getItemOrder());
         entity.setAlignment(request.getAlignment());
         entity.setData(toDataObject(entity.getType(), request.getData()));
-
-        return entity;
     }
 }

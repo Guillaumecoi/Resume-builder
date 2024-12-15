@@ -77,9 +77,9 @@ public class ColumnMapper implements Mapper<Column, ColumnRequest, ColumnRespons
     }
 
     @Override
-    public Column updateEntity(Column entity, ColumnRequest request) {
+    public void updateEntity(Column entity, ColumnRequest request) {
         if (request == null) {
-            return entity;
+            return;
         }
 
         entity.setColumnNumber(request.getColumnNumber());
@@ -94,7 +94,5 @@ public class ColumnMapper implements Mapper<Column, ColumnRequest, ColumnRespons
         entity.setBorderRight(request.getBorderRight());
         entity.setBorderTop(request.getBorderTop());
         entity.setBorderBottom(request.getBorderBottom());
-
-        return entity;
     }
 }
