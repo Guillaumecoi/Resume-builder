@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 public interface SectionItemRepository extends JpaRepository<SectionItem, Long> {
 
     @Query("SELECT MAX(si.itemOrder) FROM SectionItem si WHERE si.section.id = :sectionId")
-    Integer findMaxItemOrderBySectionId(@Param("sectionId") Long sectionId);
+    Optional<Integer> findMaxItemOrderBySectionId(@Param("sectionId") Long sectionId);
 
     @Modifying
     @Query("""

@@ -12,9 +12,7 @@ import lombok.*;
 @NoArgsConstructor @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "column_section_order", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"column_id", "position"})
-})
+@Table(name = "column_section")
 public class ColumnSection implements BaseEntity {
 
     @Id
@@ -28,8 +26,9 @@ public class ColumnSection implements BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @NotNull
     private Section section;
+
     @NotNull
-    private Integer position;
+    private Integer sectionOrder;
     private double itemsep;
     private double endsep;
 }

@@ -40,29 +40,34 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
     private EntityManager entityManager;
 
     @Transactional
-    public Long create(SectionItemRequest request) { 
+    public Long create(SectionItemRequest request) {
+        // Check if the user has access to the section
         hasAccessSection(request.getSectionId());  
+
+        // Get the section and latexMethod
         Section section = sectionRepository.findById(request.getSectionId())
-            .orElseThrow(() -> new EntityNotFoundException("Section not found"));
-
-        SectionItem sectionItem = sectionitemMapper.toEntity(request);
-        sectionItem.setId(null);
-    
-        // Find the maximum itemOrder in the section
-        Integer maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(section.getId());
-        int newOrder = request.getItemOrder() == null ? (maxOrder == null ? 1 : maxOrder + 1) : request.getItemOrder();
-
-        // Shift other items
-        incrementItemOrder(section.getId(), newOrder, (maxOrder == null ? 0 : maxOrder) +1);
-    
-        sectionItem.setItemOrder(newOrder);
-        section.addSectionItem(sectionItem);
-
+                .orElseThrow(() -> new EntityNotFoundException("Section not found"));
         LatexMethod latexMethod = latexMethodRepository.findById(request.getLatexMethodId())
             .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
-        
-        sectionItem.setLatexMethod(latexMethod);
+
+        // Find the maximum itemOrder in the section
+        int maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(section.getId()).orElse(0);
+        int newOrder = request.getItemOrder() == null ? maxOrder + 1 : request.getItemOrder();
+
+        // Shift the order
+        incrementItemOrder(section.getId(), newOrder, maxOrder +1);
+
+        // Create the entity from the request
+        request.setId(null);
+        request.setItemOrder(newOrder);
+        SectionItem sectionItem = sectionitemMapper.toEntity(request);
+
+        // Add the sectionItem to the section and latexMethod
+        section.addSectionItem(sectionItem);
+        latexMethod.addSectionItem(sectionItem);
+            
     
+        // Save the item
         return sectionItemRepository.save(sectionItem).getId();
     }
 
@@ -129,20 +134,36 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
         sectionItemRepository.deleteById(id);
         
         // Shift other items
-        Integer maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(sectionId);
-        decrementItemOrder(sectionId, sectionItem.getItemOrder(), maxOrder+1);
+        int maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(section.getId()).orElse(0);
+        decrementItemOrder(sectionId, maxOrder + 1, sectionItem.getItemOrder());
     }
 
-    public List<SectionItem> getAll(Long id) {
-        return sectionItemRepository.findAllBySectionId(id);
+    public List<SectionItemResponse> getAllBySectionId(Long id) {
+        // Check if the user has access to the section
+        hasAccessSection(id);
+
+        List<SectionItem> items = sectionItemRepository.findAllBySectionId(id);
+        return items.stream()
+            .map(sectionitemMapper::toDto)
+            .toList();
+    }
+
+    public void deleteAllBySectionId(Long id) {
+        // Check if the user has access to the section
+        hasAccessSection(id);
+
+        Section section = sectionRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Section not found"));
+
+        // Remove all items from the section
+        section.clearSectionItems();
+
+        sectionItemRepository.deleteAllBySectionId(id);
     }
     
-    public void deleteAllBySectionId(Long sectionId) {
-        sectionItemRepository.deleteAllBySectionId(sectionId);
-    }
-
     /**
      * Increment the itemOrder for all items in the section starting from startOrder
+     * All other items with order >= newOrder and < oldOrder will be incremented
      * 
      * @param sectionId the section id
      * @param newOrder the new order
@@ -156,6 +177,7 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
 
     /**
      * Decrement the itemOrder for all items in the section starting from startOrder
+     * All other items with order > oldOrder and <= newOrder will be decremented
      * 
      * @param sectionId the section id
      * @param newOrder the new order
@@ -179,12 +201,22 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
         }
     }
 
+    /**
+     * Check if the user has access to the sectionItem
+     * 
+     * @param id the id of the sectionItem
+     */
     private void hasAccess(Long id) {
         String owner = sectionItemRepository.findCreatedBy(id)
             .orElseThrow(() -> new EntityNotFoundException("Accompanying resume is not found"));
         securityUtils.hasAccess(List.of(owner));
     }
 
+    /**
+     * Check if the user has access to the section
+     * 
+     * @param id the id of the section
+     */
     private void hasAccessSection(Long id) {
         String owner = sectionRepository.findCreatedBy(id)
             .orElseThrow(() -> new EntityNotFoundException("Accompanying resume is not found"));

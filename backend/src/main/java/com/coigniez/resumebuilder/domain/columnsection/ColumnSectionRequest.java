@@ -14,8 +14,7 @@ public class ColumnSectionRequest {
     private Long columnId;
     @NotNull
     private Long sectionId;
-    @NotNull
-    private Integer position;
+    private Integer sectionOrder;
     
     @Builder.Default
     private double itemsep = 8.0;

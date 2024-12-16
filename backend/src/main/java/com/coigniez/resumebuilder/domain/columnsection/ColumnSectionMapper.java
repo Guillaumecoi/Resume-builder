@@ -19,7 +19,7 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, ColumnSectionR
         }
         return ColumnSection.builder()
             .id(request.getId())
-            .position(request.getPosition())
+            .sectionOrder(request.getSectionOrder())
             .itemsep(request.getItemsep())
             .endsep(request.getEndsep())
             .build();
@@ -33,7 +33,7 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, ColumnSectionR
         return ColumnSectionResponse.builder()
             .id(entity.getId())
             .section(sectionMapper.toDto(entity.getSection()))
-            .position(entity.getPosition())
+            .sectionOrder(entity.getSectionOrder())
             .itemsep(entity.getItemsep())
             .endsep(entity.getEndsep())
             .build();
@@ -45,7 +45,7 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, ColumnSectionR
             return;
         }
 
-        entity.setPosition(request.getPosition());
+        entity.setSectionOrder(request.getSectionOrder());
         entity.setItemsep(request.getItemsep());
         entity.setEndsep(request.getEndsep());
     }

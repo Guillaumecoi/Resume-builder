@@ -64,7 +64,7 @@ public class ResumeExampleService {
         return resumeService.get(resumeId);
     }
 
-    private void addPictureSection(Long resumeId, Long columnId, int position, Map<String, Long> methodIds) throws IOException {
+    private void addPictureSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) throws IOException {
         Long sectionId = sectionService.create(SectionRequest.builder()
                 .resumeId(resumeId)
                 .title("Picture")
@@ -100,11 +100,11 @@ public class ResumeExampleService {
         columnSectionService.create(ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .position(position)
+                .sectionOrder(sectionOrder)
                 .build());
     }
 
-    private void addContactSection(Long resumeId, Long columnId, int position, Map<String, Long> methodIds) {
+    private void addContactSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
         List<SectionItemRequest> contactItems = new ArrayList<>();
         contactItems.add(SectionItemRequest.builder()
                 .type(SectionItemType.CONTACT.name())
@@ -174,13 +174,13 @@ public class ResumeExampleService {
         columnSectionService.create(ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(contactId)
-                .position(position)
+                .sectionOrder(sectionOrder)
                 .itemsep(4.0)
                 .build());
         }
 
 
-    private void addEducationSection(Long resumeId, Long columnId, int position, Map<String, Long> methodIds) {
+    private void addEducationSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
         List<SectionItemRequest> educationItems = new ArrayList<>();
         educationItems.add(SectionItemRequest.builder()
                 .type(SectionItemType.EDUCATION.name())
@@ -224,12 +224,12 @@ public class ResumeExampleService {
         columnSectionService.create(ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(educationId)
-                .position(position)
+                .sectionOrder(sectionOrder)
                 .build());
 
     }
 
-    private void addExperienceSection(Long resumeId, Long columnId, int position, Map<String, Long> methodIds) {
+    private void addExperienceSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
         List<SectionItemRequest> experienceItems = new ArrayList<>();
         experienceItems.add(SectionItemRequest.builder()
                 .type(SectionItemType.WORK_EXPERIENCE.name())
@@ -252,11 +252,11 @@ public class ResumeExampleService {
         columnSectionService.create(ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(experienceId)
-                .position(position)
+                .sectionOrder(sectionOrder)
                 .build());
     }
 
-    private void addTitleSection(Long resumeId, Long columnId, int position, Map<String, Long> methodIds) {
+    private void addTitleSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
         SectionItemRequest title = SectionItemRequest.builder()
                 .type(SectionItemType.TITLE.name())
                 .data(new HashMap<>() {{
@@ -275,12 +275,12 @@ public class ResumeExampleService {
         columnSectionService.create(ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(titleId)
-                .position(position)
+                .sectionOrder(sectionOrder)
                 .endsep(6)
                 .build());
     }
 
-    private void addSummarySection(Long resumeId, Long columnId, int position, Map<String, Long> methodIds) {
+    private void addSummarySection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
         List<SectionItemRequest> summaryItems = new ArrayList<>();
         summaryItems.add(SectionItemRequest.builder()
                 .type(SectionItemType.TEXTBOX.name())
@@ -302,11 +302,11 @@ public class ResumeExampleService {
         columnSectionService.create(ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(summaryId)
-                .position(position)
+                .sectionOrder(sectionOrder)
                 .build());
     }
 
-    private void addSkillsSection(Long resumeId, Long columnId, int position, Map<String, Long> methodIds) {
+    private void addSkillsSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
         List<SectionItemRequest> skillsItems = new ArrayList<>();
         skillsItems.add(SectionItemRequest.builder()
                 .type(SectionItemType.SKILL_BOXES.name())
@@ -359,7 +359,7 @@ public class ResumeExampleService {
         columnSectionService.create(ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(skillsId)
-                .position(position)
+                .sectionOrder(sectionOrder)
                 .itemsep(4.0)
                 .build());
     }

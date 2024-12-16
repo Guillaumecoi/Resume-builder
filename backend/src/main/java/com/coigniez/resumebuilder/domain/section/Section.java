@@ -54,6 +54,11 @@ public class Section implements BaseEntity {
         item.setSection(null);
     }
 
+    public void clearSectionItems() {
+        items.forEach(item -> item.setSection(null));
+        items.clear();
+    }
+
     public void addColumnSection(ColumnSection columnSection) {
         columnSections.add(columnSection);
         columnSection.setSection(this);

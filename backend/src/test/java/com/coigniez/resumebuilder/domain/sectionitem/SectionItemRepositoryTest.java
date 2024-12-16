@@ -64,7 +64,7 @@ public class SectionItemRepositoryTest {
     @Test
     public void testFindMaxItemOrderBySectionId() {
         // Act
-        Integer maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(section.getId());
+        int maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(section.getId()).orElse(0);
     
         // Assert
         assertEquals(3, maxOrder, "The maximum item order should be 3");

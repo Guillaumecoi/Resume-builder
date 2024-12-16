@@ -9,9 +9,9 @@ import lombok.Data;
 @Builder
 public class ColumnSectionResponse {
 
-    private Long id;
+    private long id;
     private SectionResponse section;
-    private Integer position;
+    private int sectionOrder;
     private double itemsep;
     private double endsep;
 }
