@@ -62,4 +62,9 @@ public class Column implements BaseEntity {
         sectionMappings.add(sectionMapping);
         sectionMapping.setColumn(this);
     }
+
+    public void removeSectionMapping(ColumnSection sectionMapping) {
+        sectionMappings.remove(sectionMapping);
+        sectionMapping.setColumn(null);
+    }
 }

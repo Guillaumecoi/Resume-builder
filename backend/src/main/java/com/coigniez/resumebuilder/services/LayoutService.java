@@ -52,7 +52,8 @@ public class LayoutService implements CrudService<LayoutResponse, LayoutRequest>
             List<Column> mappedColumns = columnRequests.stream()
                 .map(columnMapper::toEntity)
                 .collect(Collectors.toList());
-            layout.setColumns(mappedColumns);
+            
+            mappedColumns.forEach(layout::addColumn);
         }
 
         for(LatexMethod method : layout.getLatexMethods()) {

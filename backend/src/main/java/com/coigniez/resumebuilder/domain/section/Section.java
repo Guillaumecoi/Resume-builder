@@ -49,8 +49,18 @@ public class Section implements BaseEntity {
         item.setSection(this);
     }
 
+    public void removeSectionItem(SectionItem item) {
+        items.remove(item);
+        item.setSection(null);
+    }
+
     public void addColumnSection(ColumnSection columnSection) {
         columnSections.add(columnSection);
         columnSection.setSection(this);
+    }
+
+    public void removeColumnSection(ColumnSection columnSection) {
+        columnSections.remove(columnSection);
+        columnSection.setSection(null);
     }
 }
