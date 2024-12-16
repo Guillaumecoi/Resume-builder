@@ -114,8 +114,17 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
         // Update the entity
         sectionitemMapper.updateEntity(sectionItem, request);
 
-        //TODO: Update latexMethod
-    
+        // Update the latexMethod
+        if (request.getLatexMethodId() != sectionItem.getLatexMethod().getId()) {
+            // Remove the item from the latexMethod
+            sectionItem.getLatexMethod().removeSectionItem(sectionItem);
+            // Add the item to the new latexMethod
+            LatexMethod newLatexMethod = latexMethodRepository.findById(request.getLatexMethodId())
+                .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
+            newLatexMethod.addSectionItem(sectionItem);
+        }
+        
+        // save the updated item
         sectionItemRepository.save(sectionItem);
     }
 

@@ -1,6 +1,7 @@
 package com.coigniez.resumebuilder.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,6 +29,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
 import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
 import com.coigniez.resumebuilder.domain.section.SectionRequest;
@@ -122,6 +124,7 @@ public class SectionItemServiceIntegrationTest {
         assertNotNull(sectionItem.getData(), "Section item data should not be null");
         assertEquals(1, sectionItem.getItemOrder(), "Item order should be 1");
         assertEquals(SectionItemType.TEXTBOX, sectionItem.getType(), "Item type should be TEXTBOX");
+        assertEquals(methodIds.get("textbox"), sectionItem.getLatexMethod().getId(), "LatexMethod ID should be the same as the request");
         assertEquals("This is some example text", ((Textbox) sectionItem.getData()).getContent(), 
             "Textbox content should be 'This is some example text'");
     }
@@ -254,6 +257,46 @@ public class SectionItemServiceIntegrationTest {
         assertEquals("Third item", ((Textbox) items.get(1).getData()).getContent(), "Second item in the list should be the third item created");
         assertEquals("Second item", ((Textbox) items.get(2).getData()).getContent(), "Third item in the list should be the second item created");
         assertEquals("Fourth item", ((Textbox) items.get(3).getData()).getContent(), "Fourth item in the list should be the fourth item created");
+    }
+
+    @Test
+    void testUpdateLatexMethod() {
+        // Arrange
+        SectionItemRequest createRequest = SectionItemRequest.builder()
+                .sectionId(sectionId)
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(1)
+                .data(new HashMap<String, Object>() {{
+                    put("content", "First item");
+                }})
+                .latexMethodId(methodIds.get("textbox"))
+                .build();
+        Long sectionItemId = sectionItemService.create(createRequest);
+
+        SectionItem sectionItem = sectionItemRepository.findById(sectionItemId).orElseThrow();
+        LatexMethod oldLatexMethod = sectionItem.getLatexMethod();
+
+
+        // Act
+        SectionItemRequest updateRequest = SectionItemRequest.builder()
+                .id(sectionItemId)
+                .sectionId(sectionId)
+                .type(SectionItemType.TEXTBOX.name())
+                .itemOrder(1)
+                .data(new HashMap<String, Object>() {{
+                    put("content", "Updated item");
+                }})
+                .latexMethodId(methodIds.get("skillitem"))
+                .build();
+        sectionItemService.update(updateRequest);
+
+        // Assert
+        SectionItem updatedSectionItem = sectionItemRepository.findById(sectionItemId).orElseThrow();
+        LatexMethod newLatexMethod = sectionItem.getLatexMethod();
+
+        assertEquals(methodIds.get("skillitem"), updatedSectionItem.getLatexMethod().getId(), "LatexMethod should be updated");
+        assertFalse(oldLatexMethod.getSectionItems().contains(updatedSectionItem), "Old LatexMethod should not contain the updated SectionItem");
+        assertTrue(newLatexMethod.getSectionItems().contains(updatedSectionItem), "New LatexMethod should contain the updated SectionItem");
     }
 
     @Test

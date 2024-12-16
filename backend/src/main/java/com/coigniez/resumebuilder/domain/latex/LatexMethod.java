@@ -47,6 +47,11 @@ public class LatexMethod implements BaseEntity {
         sectionItem.setLatexMethod(this);
     }
 
+    public void removeSectionItem(SectionItem sectionItem) {
+        sectionItems.remove(sectionItem);
+        sectionItem.setLatexMethod(null);
+    }
+
     /**
      * Generates the LaTeX command using the provided SectionItemData.
      *
