@@ -66,4 +66,14 @@ public class Layout implements BaseEntity {
         columns.remove(column);
         column.setLayout(null);
     }
+
+    public void addLatexMethod(LatexMethod latexMethod) {
+        latexMethods.add(latexMethod);
+        latexMethod.setLayout(this);
+    }
+
+    public void removeLatexMethod(LatexMethod latexMethod) {
+        latexMethods.remove(latexMethod);
+        latexMethod.setLayout(null);
+    }
 }

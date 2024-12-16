@@ -83,9 +83,11 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
         Section section = sectionRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(""));
 
+        // Remove the section from the resume
         Resume resume = section.getResume();
         resume.getSections().remove(section);
-
+        
+        // Delete the section
         sectionRepository.deleteById(id);
     }
 

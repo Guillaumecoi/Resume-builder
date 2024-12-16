@@ -11,7 +11,7 @@ import lombok.Data;
 public class LatexMethodRequest {
 
     private Long id;
-    private Integer layoutId;
+    private long layoutId;
 
     @NotBlank
     private SectionItemType type;

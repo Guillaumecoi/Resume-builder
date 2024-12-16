@@ -120,7 +120,12 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
         SectionItem sectionItem = sectionItemRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
         Long sectionId = sectionItem.getSection().getId();
+
+        // Remove the item from the section
+        Section section = sectionItem.getSection();
+        section.removeSectionItem(sectionItem);
     
+        // Delete the item
         sectionItemRepository.deleteById(id);
         
         // Shift other items
