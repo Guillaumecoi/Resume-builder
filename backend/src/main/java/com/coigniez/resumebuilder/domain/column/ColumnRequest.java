@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
+import com.coigniez.resumebuilder.interfaces.ObjectHasID;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -14,7 +15,7 @@ import lombok.*;
 
 @Data
 @Builder
-public class ColumnRequest {
+public class ColumnRequest implements ObjectHasID {
 
     private Long id;
 

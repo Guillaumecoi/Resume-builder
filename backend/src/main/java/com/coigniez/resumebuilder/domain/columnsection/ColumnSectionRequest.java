@@ -1,12 +1,14 @@
 package com.coigniez.resumebuilder.domain.columnsection;
 
+import com.coigniez.resumebuilder.interfaces.ObjectHasID;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class ColumnSectionRequest {
+public class ColumnSectionRequest implements ObjectHasID {
 
     private Long id;
 

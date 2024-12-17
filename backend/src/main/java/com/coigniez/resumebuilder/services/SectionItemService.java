@@ -1,7 +1,6 @@
 package com.coigniez.resumebuilder.services;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,18 +16,16 @@ import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRepository;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemResponse;
 import com.coigniez.resumebuilder.file.FileStorageService;
-import com.coigniez.resumebuilder.interfaces.CrudService;
+import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
-public class SectionItemService implements CrudService<SectionItemResponse, SectionItemRequest> {
+public class SectionItemService implements ParentEntityService<SectionItemRequest, SectionItemResponse, Long> {
 
     private final SectionItemRepository sectionItemRepository;
     private final SectionRepository sectionRepository;
@@ -39,7 +36,7 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
     @Autowired
     private EntityManager entityManager;
 
-    @Transactional
+    @Override
     public Long create(SectionItemRequest request) {
         // Check if the user has access to the section
         hasAccessSection(request.getSectionId());  
@@ -71,20 +68,30 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
         return sectionItemRepository.save(sectionItem).getId();
     }
 
+    /**
+     * Create a picture item
+     * 
+     * @param file the file that contains the picture
+     * @param request the section item request for the picture
+     * @return the id of the created item
+     */
     public Long createPicture(MultipartFile file, SectionItemRequest request) {
+        // Check if the user has access to the section
         hasAccessSection(request.getSectionId());
+        
+        // Save the file to the file storage and add the path to the request
         String path = fileStorageService.saveFile(file, securityUtils.getUserName());
-        Map<String, Object> data = request.getData();
-        data.put("path", path);
-        request.setData(data);
+        request.getData().put("path", path);
 
+        // Create the item
         return create(request);
     }
 
-
     @Override
-    public SectionItemResponse get(long id) {
+    public SectionItemResponse get(Long id) {
+        // Check if the user has access to the sectionItem
         hasAccess(id);
+        // Get the item
         return sectionItemRepository.findById(id)
             .map(sectionitemMapper::toDto)
             .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
@@ -92,13 +99,11 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
 
     @Override
     public void update(SectionItemRequest request) {
-        if (request.getId() == null) {
-            throw new IllegalArgumentException("SectionItem id is required for update");
-        }
-        long id = request.getId();
+        // Check if the user has access to the sectionItem
+        hasAccess(request.getId());
 
-        hasAccess(id);
-        SectionItem sectionItem = sectionItemRepository.findById(id)
+        // Get the entity
+        SectionItem sectionItem = sectionItemRepository.findById(request.getId())
             .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
         Long sectionId = sectionItem.getSection().getId();
         
@@ -129,25 +134,28 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(Long id) {
+        // Check if the user has access to the sectionItem
         hasAccess(id);
+
+        // Get the item
         SectionItem sectionItem = sectionItemRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
-        Long sectionId = sectionItem.getSection().getId();
+        long sectionId = sectionItem.getSection().getId();
 
         // Remove the item from the section
-        Section section = sectionItem.getSection();
-        section.removeSectionItem(sectionItem);
+        sectionItem.getSection().removeSectionItem(sectionItem);
     
         // Delete the item
         sectionItemRepository.deleteById(id);
         
         // Shift other items
-        int maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(section.getId()).orElse(0);
+        int maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(sectionId).orElse(0);
         decrementItemOrder(sectionId, maxOrder + 1, sectionItem.getItemOrder());
     }
 
-    public List<SectionItemResponse> getAllBySectionId(Long id) {
+    @Override
+    public List<SectionItemResponse> getAllByParentId(Long id) {
         // Check if the user has access to the section
         hasAccessSection(id);
 
@@ -157,7 +165,8 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
             .toList();
     }
 
-    public void deleteAllBySectionId(Long id) {
+    @Override
+    public void removeAllByParentId(Long id) {
         // Check if the user has access to the section
         hasAccessSection(id);
 
@@ -178,7 +187,6 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
      * @param newOrder the new order
      * @param oldOrder the old order
      */
-    @Transactional
     private void incrementItemOrder(Long sectionId, int newOrder, int oldOrder) {
         sectionItemRepository.incrementItemOrderBetween(sectionId, newOrder, oldOrder);
         refreshSectionItems(sectionId);
@@ -192,7 +200,6 @@ public class SectionItemService implements CrudService<SectionItemResponse, Sect
      * @param newOrder the new order
      * @param oldOrder the old order
      */
-    @Transactional
     private void decrementItemOrder(Long sectionId, int newOrder, int oldOrder) {
         sectionItemRepository.decrementItemOrderBetween(sectionId, newOrder, oldOrder);
         refreshSectionItems(sectionId);

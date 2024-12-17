@@ -1,6 +1,7 @@
 package com.coigniez.resumebuilder.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -9,78 +10,119 @@ import com.coigniez.resumebuilder.domain.latex.LatexMethodMapper;
 import com.coigniez.resumebuilder.domain.latex.LatexMethodRepository;
 import com.coigniez.resumebuilder.domain.latex.LatexMethodRequest;
 import com.coigniez.resumebuilder.domain.latex.LatexMethodResponse;
-import com.coigniez.resumebuilder.domain.layout.Layout;
 import com.coigniez.resumebuilder.domain.layout.LayoutRepository;
-import com.coigniez.resumebuilder.interfaces.CrudService;
+import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-@Transactional
 @Service
-public class LatexMethodService implements CrudService<LatexMethodResponse, LatexMethodRequest> {
+public class LatexMethodService implements ParentEntityService<LatexMethodRequest, LatexMethodResponse, Long> {
 
     private final LayoutRepository layoutRepository;
     private final LatexMethodRepository latexMethodRepository;
     private final LatexMethodMapper latexMethodMapper;
     private final SecurityUtils securityUtils;
 
+    @Override
     public Long create(LatexMethodRequest request) {
+        // Check if the user has access to the layout
         hasAccessLayout(request.getLayoutId());
 
+        // Create the entity
+        request.setId(null);
         LatexMethod latexMethod = latexMethodMapper.toEntity(request);
-        Layout layout = layoutRepository.findById(request.getLayoutId())
-                .orElseThrow(() -> new EntityNotFoundException("Layout not found"));
+        layoutRepository.findById(request.getLayoutId())
+                .orElseThrow(() -> new EntityNotFoundException("Layout not found"))
+                .addLatexMethod(latexMethod);
 
-        layout.addLatexMethod(latexMethod);
-
+        // Save the entity
         return latexMethodRepository.save(latexMethod).getId();
     }
 
-    public LatexMethodResponse get(long id) {
+    @Override
+    public LatexMethodResponse get(Long id) {
+        // Check if the user has access to the method
         hasAccess(id);
 
-        LatexMethod latexMethod = latexMethodRepository.findById(id)
+        // Get the entity
+        return latexMethodRepository.findById(id)
+                .map(latexMethodMapper::toDto)
                 .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
-        return latexMethodMapper.toDto(latexMethod);
     }
 
+    @Override
     public void update(LatexMethodRequest request) {
+        // Check if the user has access to the method
         hasAccess(request.getId());
 
-        if (request.getId() == null) {
-            throw new IllegalArgumentException("LatexMethod id is required for update");
-        }
-        long id = request.getId();
-
-        LatexMethod latexMethod = latexMethodRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
         // Update the entity
+        LatexMethod latexMethod = latexMethodRepository.findById(request.getId())
+                .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
+
         latexMethodMapper.updateEntity(latexMethod, request);
+
+        // Save the entity
+        latexMethodRepository.save(latexMethod);
     }
 
-    public void delete(long id) {
+    @Override
+    public void delete(Long id) {
+        // Check if the user has access to the method
         hasAccess(id);
 
+        // Remove the method from the layout
         LatexMethod latexMethod = latexMethodRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
+        Optional.ofNullable(latexMethod.getLayout()).ifPresent(layout -> layout.removeLatexMethod(latexMethod));
 
-        // Remove the method from the layout
-        Layout layout = latexMethod.getLayout();
-        layout.removeLatexMethod(latexMethod);
         // Delete the method
-        latexMethodRepository.delete(latexMethod);
+        latexMethodRepository.deleteById(id);
     }
 
+    @Override
+    public List<LatexMethodResponse> getAllByParentId(Long layoutId) {
+        // Check if the user has access to the layout
+        hasAccessLayout(layoutId);
+
+        // Get all methods for the layout
+        return latexMethodRepository.findAllByLayoutId(layoutId).stream()
+                .map(latexMethodMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public void removeAllByParentId(Long layoutId) {
+        // Check if the user has access to the layout
+        hasAccessLayout(layoutId);
+
+        // Remove all methods from the layout
+        layoutRepository.findById(layoutId)
+                .orElseThrow(() -> new EntityNotFoundException("Layout not found"))
+                .clearLatexMethods();
+        
+        // Delete all methods
+        latexMethodRepository.deleteAllByLayoutId(layoutId);
+    }
+
+    /**
+     * Check if the user has access to the LatexMethod
+     * 
+     * @param id The id of the LatexMethod
+     */
     private void hasAccess(long id) {
         String owner = latexMethodRepository.findCreatedBy(id)
                 .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
         securityUtils.hasAccess(List.of(owner));
     }
 
+    /**
+     * Check if the user has access to the Layout
+     * 
+     * @param layoutId The id of the Layout
+     */
     private void hasAccessLayout(long layoutId) {
         String owner = layoutRepository.findCreatedBy(layoutId)
                 .orElseThrow(() -> new EntityNotFoundException("Layout not found"));

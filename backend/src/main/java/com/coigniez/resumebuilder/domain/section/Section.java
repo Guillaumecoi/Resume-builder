@@ -68,4 +68,9 @@ public class Section implements BaseEntity {
         columnSections.remove(columnSection);
         columnSection.setSection(null);
     }
+
+    public void clearColumnSections() {
+        columnSections.forEach(columnSection -> columnSection.setSection(null));
+        columnSections.clear();
+    }
 }

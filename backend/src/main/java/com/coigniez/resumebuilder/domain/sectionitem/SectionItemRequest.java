@@ -3,6 +3,7 @@ package com.coigniez.resumebuilder.domain.sectionitem;
 import java.util.Map;
 
 import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
+import com.coigniez.resumebuilder.interfaces.ObjectHasID;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +12,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class SectionItemRequest{
+public class SectionItemRequest implements ObjectHasID {
 
     private Long id;
     private long sectionId;

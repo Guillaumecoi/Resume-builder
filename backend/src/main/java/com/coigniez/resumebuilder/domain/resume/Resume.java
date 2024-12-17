@@ -64,8 +64,28 @@ public class Resume implements BaseEntity, TimeTrackable, Creatable {
         section.setResume(this);
     }
 
+    public void removeSection(Section section) {
+        sections.remove(section);
+        section.setResume(null);
+    }
+
+    public void clearSections() {
+        sections.forEach(section -> section.setResume(null));
+        sections.clear();
+    }
+
     public void addLayout(Layout layout) {
         layouts.add(layout);
         layout.setResume(this);
+    }
+
+    public void removeLayout(Layout layout) {
+        layouts.remove(layout);
+        layout.setResume(null);
+    }
+
+    public void clearLayouts() {
+        layouts.forEach(layout -> layout.setResume(null));
+        layouts.clear();
     }
 }

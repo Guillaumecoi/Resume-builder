@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.coigniez.resumebuilder.domain.section.SectionRequest;
+import com.coigniez.resumebuilder.interfaces.ObjectHasID;
 
 import jakarta.validation.constraints.NotBlank;
 
@@ -12,7 +13,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ResumeRequest {
+public class ResumeRequest implements ObjectHasID {
 
     Long id;
 

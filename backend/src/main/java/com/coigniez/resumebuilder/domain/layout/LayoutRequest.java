@@ -6,6 +6,7 @@ import java.util.Set;
 import com.coigniez.resumebuilder.domain.column.ColumnRequest;
 import com.coigniez.resumebuilder.domain.latex.LatexMethodRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.*;
+import com.coigniez.resumebuilder.interfaces.ObjectHasID;
 import com.coigniez.resumebuilder.templates.LayoutTemplate;
 
 import jakarta.validation.constraints.Max;
@@ -16,7 +17,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class LayoutRequest {
+public class LayoutRequest implements ObjectHasID {
     
     private Long id;
 

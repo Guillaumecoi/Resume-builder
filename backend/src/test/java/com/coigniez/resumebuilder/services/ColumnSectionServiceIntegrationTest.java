@@ -2,10 +2,12 @@ package com.coigniez.resumebuilder.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.validation.annotation.Validated;
 
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionRepository;
@@ -34,6 +37,7 @@ import java.util.stream.Collectors;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
+@Validated
 public class ColumnSectionServiceIntegrationTest {
 
     @Autowired
@@ -251,6 +255,25 @@ public class ColumnSectionServiceIntegrationTest {
     }
 
     @Test
+    void testUpdate_WithoutId() {
+        // Arrange
+        ColumnSectionRequest request = ColumnSectionRequest.builder()
+                .columnId(columnId)
+                .sectionId(sectionId)
+                .sectionOrder(1)
+                .build();
+
+        columnSectionService.create(request);
+
+        request.setSectionOrder(2);
+
+        // Act & Assert
+        assertNull(request.getId(), "ID should be null before update");
+        assertThrows(ConstraintViolationException.class, () -> columnSectionService.update(request), 
+            "Should throw ConstraintViolationException for missing ID on update");
+    }
+
+    @Test
     void testUpdate_IncrementsSectionOrder() {
         // Arrange
         ColumnSectionRequest request1 = ColumnSectionRequest.builder()
@@ -401,6 +424,19 @@ public class ColumnSectionServiceIntegrationTest {
         assertEquals(List.of(1, 2), items.stream().map(ColumnSection::getSectionOrder).collect(Collectors.toList()), "Section orders should be 1, 2");
         assertEquals(id1, items.get(0).getId(), "First item should have ID of id1");
         assertEquals(id3, items.get(1).getId(), "Second item should have ID of id3");
+    }
+
+    @Test
+    void testNullChecks() {
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () -> columnSectionService.create(null), 
+            "Should throw ConstraintViolationException for null request on create");
+        assertThrows(ConstraintViolationException.class, () -> columnSectionService.get(null), 
+            "Should throw ConstraintViolationException for null ID on get");
+        assertThrows(ConstraintViolationException.class, () -> columnSectionService.update(null), 
+            "Should throw ConstraintViolationException for null request on update");
+        assertThrows(ConstraintViolationException.class, () -> columnSectionService.delete(null), 
+            "Should throw ConstraintViolationException for null ID on delete");
     }
 
     @Test

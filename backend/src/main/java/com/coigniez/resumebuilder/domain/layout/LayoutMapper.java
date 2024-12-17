@@ -7,10 +7,8 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import com.coigniez.resumebuilder.domain.column.Column;
 import com.coigniez.resumebuilder.domain.column.ColumnMapper;
 import com.coigniez.resumebuilder.domain.column.ColumnResponse;
-import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.latex.LatexMethodMapper;
 import com.coigniez.resumebuilder.domain.latex.LatexMethodResponse;
 import com.coigniez.resumebuilder.interfaces.Mapper;
@@ -26,30 +24,34 @@ public class LayoutMapper implements Mapper<Layout, LayoutRequest, LayoutRespons
 
     @Override
     public Layout toEntity(LayoutRequest dto) {
+        // Check if the request is null
         if (dto == null) {
             return null;
         }
 
-        List<Column> columns = new ArrayList<>();
-        if (dto.getColumns() != null) {
-            dto.getColumns().forEach(column -> columns.add(columnMapper.toEntity(column)));
-        }
-
-        Set<LatexMethod> latexMethods = new HashSet<>();
-        if (dto.getLatexMethods() != null) {
-            dto.getLatexMethods().forEach(method -> latexMethods.add(latexMethodMapper.toEntity(method)));
-        }
-
-        return Layout.builder()
-                .id(dto.getId())
+        // Create the layout entity
+        Layout layout = Layout.builder()
                 .pageSize(dto.getPageSize())
-                .columns(columns)
                 .numberOfColumns(dto.getNumberOfColumns())
                 .columnSeparator(dto.getColumnSeparator())
                 .colorScheme(dto.getColorScheme())
-                .latexMethods(latexMethods)
                 .sectionTitleMethod(dto.getSectionTitleMethod())
                 .build();
+
+        // Add columns and latex methods to the layout
+        if (dto.getColumns() != null) {
+            dto.getColumns().stream()
+                    .map(columnMapper::toEntity)
+                    .forEach(layout::addColumn);
+        }
+
+        if (dto.getLatexMethods() != null) {
+            dto.getLatexMethods().stream()
+                    .map(latexMethodMapper::toEntity)
+                    .forEach(layout::addLatexMethod);
+        }
+
+        return layout;
     }
 
     @Override

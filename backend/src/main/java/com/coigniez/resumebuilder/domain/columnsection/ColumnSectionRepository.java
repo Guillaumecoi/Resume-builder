@@ -39,6 +39,17 @@ public interface ColumnSectionRepository extends JpaRepository<ColumnSection, Lo
     @Query("SELECT cs FROM ColumnSection cs WHERE cs.column.id = :columnId ORDER BY cs.sectionOrder")
     List<ColumnSection> findAllByColumnId(long columnId);
 
+    @Modifying
+    @Query("DELETE FROM ColumnSection cs WHERE cs.column.id = :columnId")
+    void removeAllByColumnId(long columnId);
+
+    @Query("SELECT cs FROM ColumnSection cs WHERE cs.section.id = :id")
+    Optional<ColumnSection> findAllBySectionId(@Param("id") Long id);
+
+    @Modifying
+    @Query("DELETE FROM ColumnSection cs WHERE cs.section.id = :sectionId")
+    void removeAllBySectionId(long sectionId);
+
 
     @Query("SELECT r.createdBy FROM ColumnSection cs JOIN cs.column c JOIN c.layout l JOIN l.resume r WHERE cs.id = :id")
     Optional<String> findCreatedBy(@Param("id") Long id);

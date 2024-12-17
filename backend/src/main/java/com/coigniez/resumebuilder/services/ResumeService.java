@@ -23,15 +23,11 @@ import com.coigniez.resumebuilder.interfaces.CrudService;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
-public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRequest> {
+public class ResumeService implements CrudService<ResumeRequest, ResumeDetailResponse, Long> {
 
     private final ResumeRepository resumeRepository;
     private final ResumeMapper resumeMapper;
@@ -39,59 +35,71 @@ public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRe
     private final FileStorageService fileStorageService;
     private final SecurityUtils securityUtils;
 
+    @Override
     public Long create(ResumeRequest request) {
-        Resume resume = resumeMapper.toEntity(request);
-        return resumeRepository.save(resume).getId();
+        return resumeRepository.save(resumeMapper.toEntity(request)).getId();
     }
 
-    public ResumeDetailResponse get(long id) {
+    @Override
+    public ResumeDetailResponse get(Long id) {
+        // Check if the connected user has access to the resume
         hasAccess(id);
-        Resume resume = resumeRepository.findById(id).orElseThrow();
-        log.debug("retrieved from repository: " + resume.toString());
-        return resumeMapper.toDto(resume);
-    }
 
-    public void update(ResumeRequest request) {
-        long id = request.getId();
-        hasAccess(id);
-        Resume resume = resumeRepository.findById(id)
+        // Get the resume entity
+        return resumeRepository.findById(id)
+                .map(resumeMapper::toDto)
                 .orElseThrow(() -> new EntityNotFoundException("Resume with id " + id + " not found"));
+    }
+
+    @Override
+    public void update(ResumeRequest request) {
+        // Check if the connected user has access to the resume
+        hasAccess(request.getId());
 
         for(SectionRequest section : request.getSections()) {
             if (section.getId() == null) {
-                section.setResumeId(id);
+                section.setResumeId(request.getId());
                 sectionService.create(section);
             } else {
                 sectionService.update(section);
             }
         }
+
         // Update the resume entity
+        Resume resume = resumeRepository.findById(request.getId())
+        .orElseThrow(() -> new EntityNotFoundException("Resume with id " + request.getId() + " not found"));
         resumeMapper.updateEntity(resume, request);
         // Save the updated entity
         resumeRepository.save(resume);
     }
 
-    public void delete(long id) {
+    @Override
+    public void delete(Long id) {
+        // Check if the connected user has access to the resume
         hasAccess(id);
-        try {
-            removePicture(resumeRepository.findById(id).orElseThrow());
-            resumeRepository.deleteById(id);
-        } catch (Exception e) {
-            throw e;
-        }
-    }
-        
 
+        // Delete the resume entity and remove the picture
+        removePicture(resumeRepository.findById(id).orElseThrow());
+        resumeRepository.deleteById(id);
+    }
+    
+    /**
+     * Get all the resumes of the connected user
+     * 
+     * @param page the page number
+     * @param size the page size
+     * @param order on what field to order the resumes
+     * @return the page of resumes
+     */
     public PageResponse<ResumeResponse> getAll(int page, int size, String order) {
+        // Get the page of resumes
+        //TODO: Make order an enum and implement ascending/descending
         Pageable pageable = PageRequest.of(page, size, Sort.by(order).descending());
         Page<Resume> resumes = resumeRepository.findAllByCreatedBy(pageable, securityUtils.getUserName());
-        // Convert the page of resumes to a list of resume responses
-        List<ResumeResponse> resumeResponses = resumes.stream()
-            .map(resumeMapper::toSimpleDto)
-            .toList();
-        // Return a page response with the list of resume responses
+        
+        // Return the page of resumes
         return new PageResponse<>(
-            resumeResponses, 
+            resumes.stream().map(resumeMapper::toSimpleDto).toList(),
             resumes.getNumber(),
             resumes.getSize(),
             resumes.getTotalElements(),
@@ -101,22 +109,37 @@ public class ResumeService implements CrudService<ResumeDetailResponse, ResumeRe
         );
     }
  
+    /**
+     * Upload a picture for the resume
+     * 
+     * @param id the id of the resume
+     * @param file the picture file
+     */
     public void uploadPicture(Long id, MultipartFile file) {
+        // Check if the connected user has access to the resume
         hasAccess(id);
-        Resume resume = resumeRepository.findById(id).orElseThrow();
+
+        // Get the resume entity
+        Resume resume = resumeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Resume with id " + id + " not found"));
+        
+        // Remove the existing picture (if there is one) and save the new one
         removePicture(resume);
-        log.debug(null == file ? "null file" : "file name: " + file.getOriginalFilename());
         String picture = fileStorageService.saveFile(file, securityUtils.getUserName());
         resume.setPicture(picture);
+
+        // Save the updated entity
         resumeRepository.save(resume);
-        log.debug(picture + " saved to resume with id " + id);
     }
 
+    /**
+     * Delete all the resumes of the connected user
+     */
     public void deleteAll() {
-        List<Resume> resumes = resumeRepository.findAllByCreatedBy(securityUtils.getUserName());
-        for (Resume resume : resumes) {
-            removePicture(resume);
-        }
+        // Remove all the pictures
+        fileStorageService.deleteAllUserFiles(securityUtils.getUserName());
+
+        // Remove all the resumes
         resumeRepository.deleteAllByCreatedBy(securityUtils.getUserName());
     }
 

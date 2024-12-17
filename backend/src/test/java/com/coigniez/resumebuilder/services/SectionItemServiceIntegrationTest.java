@@ -532,7 +532,7 @@ public class SectionItemServiceIntegrationTest {
         sectionItemService.create(request2);
     
         // Act
-        sectionItemService.deleteAllBySectionId(sectionId);
+        sectionItemService.removeAllByParentId(sectionId);
     
         // Assert
         SectionResponse section = sectionService.get(sectionId);

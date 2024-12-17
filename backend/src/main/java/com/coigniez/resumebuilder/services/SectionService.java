@@ -13,17 +13,15 @@ import com.coigniez.resumebuilder.domain.section.SectionRepository;
 import com.coigniez.resumebuilder.domain.section.SectionRequest;
 import com.coigniez.resumebuilder.domain.section.SectionResponse;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
-import com.coigniez.resumebuilder.interfaces.CrudService;
+import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
-public class SectionService implements CrudService<SectionResponse, SectionRequest> {
+public class SectionService implements ParentEntityService<SectionRequest, SectionResponse, Long> {
 
     private final SectionRepository sectionRepository;
     private final SectionMapper sectionMapper;
@@ -31,59 +29,77 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
     private final SectionItemService sectionItemService;
     private final SecurityUtils securityUtils;
 
+    @Override
     public Long create(SectionRequest request) {
+        // Check if the user has access to the resume
         hasAccessResume(request.getResumeId());
 
+        // Create the section entity
         Section section = sectionMapper.toEntity(request);
-        Resume resume = resumeRepository.findById(request.getResumeId())
-                .orElseThrow(() -> new EntityNotFoundException("Resume not found"));
-        resume.addSection(section);
+
+        // Add the section to the resume
+        resumeRepository.findById(request.getResumeId())
+                .orElseThrow(() -> new EntityNotFoundException("Resume not found"))
+                .addSection(section);
+
+        // Save the section
         Long sectionId = sectionRepository.save(section).getId();
 
-        createSectionItems(sectionId, request.getSectionItems());
+        // Create the section items
+        if (request.getSectionItems() != null) {
+            for (SectionItemRequest sectionItemRequest : request.getSectionItems()) {
+                sectionItemRequest.setSectionId(sectionId);
+                sectionItemService.create(sectionItemRequest);
+            }
+        }
 
+        // Return the section id
         return sectionId;
     }
 
-    public SectionResponse get(long id) {
+    @Override
+    public SectionResponse get(Long id) {
+        // Check if the user has access to the section
         hasAccess(id);
-        Section section = sectionRepository.findByIdWithOrderedItems(id)
+
+        // Retrieve the section
+        return sectionRepository.findByIdWithOrderedItems(id)
+                .map(sectionMapper::toDto)
                 .orElseThrow(() -> new EntityNotFoundException(""));
-        
-        return sectionMapper.toDto(section);
     }
 
+    @Override
     public void update(SectionRequest request) {
-        if (request.getId() == null) {
-            throw new IllegalArgumentException("Section id is required for update");
-        }
-        long id = request.getId();
-
-        hasAccess(id);
-        Section existingSection = sectionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Section not found"));
+        // Check if the user has access to the section
+        hasAccess(request.getId());
 
         // Update section items
         for (SectionItemRequest sectionItemRequest : request.getSectionItems()) {
             if (sectionItemRequest.getId() == null) {
-                sectionItemRequest.setSectionId(id);
+                sectionItemRequest.setSectionId(request.getId());
                 sectionItemService.create(sectionItemRequest);
             } else {
                 sectionItemService.update(sectionItemRequest);
             }
         }
-        // Update the entity
+
+        // retrieve and update the existing entity
+        Section existingSection = sectionRepository.findById(request.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Section not found"));
         sectionMapper.updateEntity(existingSection, request);
+
         // Save the updated entity
         sectionRepository.save(existingSection);
     }
 
-    public void delete(long id) {
+    @Override
+    public void delete(Long id) {
+        // Check if the user has access to the section
         hasAccess(id);
-        Section section = sectionRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(""));
 
         // Remove the section from the resume
+        Section section = sectionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(""));
         Resume resume = section.getResume();
         resume.getSections().remove(section);
         
@@ -91,21 +107,23 @@ public class SectionService implements CrudService<SectionResponse, SectionReque
         sectionRepository.deleteById(id);
     }
 
-    public List<SectionResponse> getAll(Long resumeId) {
-        List<Section> sections = sectionRepository.findAllByResumeId(resumeId);
-        return sections.stream()
+    @Override
+    public List<SectionResponse> getAllByParentId(Long resumeId) {
+        return sectionRepository.findAllByResumeId(resumeId).stream()
                 .map(sectionMapper::toDto)
                 .toList();
     }
 
-    private void createSectionItems(long sectionId, List<SectionItemRequest> sectionItems) {
-        if(sectionItems == null) {
-            return;
-        }
-        for (SectionItemRequest sectionItemRequest : sectionItems) {
-            sectionItemRequest.setSectionId(sectionId);
-            sectionItemService.create(sectionItemRequest);
-        }
+    @Override
+    public void removeAllByParentId(Long resumeId) {
+        // Clear the sections from the resume
+        resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new EntityNotFoundException("Resume not found"))
+                .clearSections();
+
+        // Delete the sections
+        sectionRepository.deleteAll(sectionRepository.findAllByResumeId(resumeId));
+        
     }
 
     /**

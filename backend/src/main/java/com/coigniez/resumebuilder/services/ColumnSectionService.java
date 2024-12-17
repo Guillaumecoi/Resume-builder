@@ -8,23 +8,22 @@ import com.coigniez.resumebuilder.domain.column.Column;
 import com.coigniez.resumebuilder.domain.column.ColumnRepository;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionMapper;
+import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionParentType;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionRepository;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionRequest;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionResponse;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.section.SectionRepository;
-import com.coigniez.resumebuilder.interfaces.CrudService;
+import com.coigniez.resumebuilder.interfaces.MultiParentEntityService;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-@Transactional
 @Service
-public class ColumnSectionService implements CrudService<ColumnSectionResponse, ColumnSectionRequest> {
+public class ColumnSectionService implements MultiParentEntityService<ColumnSectionRequest, ColumnSectionResponse, Long, ColumnSectionParentType> {
 
     private final ColumnSectionRepository columnSectionRepository;
     private final ColumnRepository columnRepository;
@@ -33,6 +32,7 @@ public class ColumnSectionService implements CrudService<ColumnSectionResponse, 
     private final SecurityUtils securityUtils;
     private final EntityManager entityManager;
     
+    @Override
     public Long create(ColumnSectionRequest request) {
         // Check if the user has access to the column and section
         hasAccessColumn(request.getColumnId());
@@ -50,11 +50,11 @@ public class ColumnSectionService implements CrudService<ColumnSectionResponse, 
         }
 
         // Find the maximum sectionOrder in the column
-        int maxOrder = columnSectionRepository.findMaxSectionOrderByColumnId(column.getId()).orElse(0);
+        int maxOrder = columnSectionRepository.findMaxSectionOrderByColumnId(request.getColumnId()).orElse(0);
         int newOrder = request.getSectionOrder() == null ? maxOrder + 1 : request.getSectionOrder();
 
         // Shift the order
-        incrementSectionOrder(column.getId(), newOrder, maxOrder + 1);
+        incrementSectionOrder(request.getColumnId(), newOrder, maxOrder + 1);
 
         // Create the entity from the request
         request.setId(null);
@@ -69,7 +69,8 @@ public class ColumnSectionService implements CrudService<ColumnSectionResponse, 
         return columnSectionRepository.save(columnSection).getId();
     }
 
-    public ColumnSectionResponse get(long id) {
+    @Override
+    public ColumnSectionResponse get(Long id) {
         // Check if the user has access to this columnSection
         hasAccess(id);
 
@@ -79,18 +80,13 @@ public class ColumnSectionService implements CrudService<ColumnSectionResponse, 
         return columnSectionMapper.toDto(columnSection);
     }
 
+    @Override
     public void update(ColumnSectionRequest request) {
-        // Check if the id is provided
-        if (request.getId() == null) {
-            throw new IllegalArgumentException("ColumnSection id is required for update");
-        }
-        long id = request.getId();
-
         // Check if the user has access to this columnSection
-        hasAccess(id);
+        hasAccess(request.getId());
 
         // Get the existing columnSection entity
-        ColumnSection columnSection = columnSectionRepository.findById(id)
+        ColumnSection columnSection = columnSectionRepository.findById(request.getId())
                 .orElseThrow(() -> new EntityNotFoundException("ColumnSection not found"));
         
         // Shift the order
@@ -109,7 +105,8 @@ public class ColumnSectionService implements CrudService<ColumnSectionResponse, 
         columnSectionRepository.save(columnSection);
     }
 
-    public void delete(long id) {
+    @Override
+    public void delete(Long id) {
         // Check if the user has access to this columnSection
         hasAccess(id);
 
@@ -132,14 +129,59 @@ public class ColumnSectionService implements CrudService<ColumnSectionResponse, 
         decrementSectionOrder(column.getId(), maxOrder + 1, columnSection.getSectionOrder());
     }
 
-    public List<ColumnSectionResponse> getAllByColumnId(long id) {
-        // Check if the user has access to the column
-        hasAccessColumn(id);
+    @Override
+    public List<ColumnSectionResponse> getAllByParentId(ColumnSectionParentType parentType, Long parentId) {
+        if (parentType == ColumnSectionParentType.COLUMN) {
+            // Check if the user has access to the column
+            hasAccessColumn(parentId);
 
-        // Get all columnSections and map them to DTOs
-        return columnSectionRepository.findAllByColumnId(id).stream()
-                .map(columnSectionMapper::toDto)
-                .toList();
+            // Get all columnSections in the column
+            return columnSectionRepository.findAllByColumnId(parentId).stream()
+                    .map(columnSectionMapper::toDto)
+                    .toList();
+
+        } else if (parentType == ColumnSectionParentType.SECTION) {
+            // Check if the user has access to the section
+            hasAccessSection(parentId);
+
+            // Get all columnSections in the section
+            return columnSectionRepository.findAllBySectionId(parentId).stream()
+                    .map(columnSectionMapper::toDto)
+                    .toList();
+
+        } else {
+            throw new UnsupportedOperationException(parentType + " is not supported");
+        }
+    }
+
+    @Override
+    public void removeAllByParentId(ColumnSectionParentType parentType, Long parentId) {
+        if (parentType == ColumnSectionParentType.COLUMN) {
+            // Check if the user has access to the column
+            hasAccessColumn(parentId);
+
+            // Remove all columnSections from the column
+            columnRepository.findById(parentId)
+                    .orElseThrow(() -> new EntityNotFoundException("Column not found"))
+                    .clearSectionMappings();
+
+            // Remove all columnSections in the column
+            columnSectionRepository.removeAllByColumnId(parentId);
+
+        } else if (parentType == ColumnSectionParentType.SECTION) {
+            // Check if the user has access to the section
+            hasAccessSection(parentId);
+
+            // Remove all columnSections from the section
+            sectionRepository.findById(parentId)
+                    .orElseThrow(() -> new EntityNotFoundException("Section not found"))
+                    .clearColumnSections();
+
+            // Remove all columnSections in the section
+            columnSectionRepository.removeAllBySectionId(parentId);
+        } else {
+            throw new UnsupportedOperationException(parentType + " is not supported");
+        }
     }
 
     /**

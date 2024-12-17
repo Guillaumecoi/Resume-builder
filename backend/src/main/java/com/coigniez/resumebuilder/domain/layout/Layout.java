@@ -1,7 +1,9 @@
 package com.coigniez.resumebuilder.domain.layout;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
+import java.util.HashSet;
 
 import com.coigniez.resumebuilder.domain.column.Column;
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
@@ -28,31 +30,32 @@ public class Layout implements BaseEntity {
     @GeneratedValue
     private Long id;
 
-    // Page Settings
-    @Enumerated(EnumType.STRING)
-    private PageSize pageSize;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "resume_id", referencedColumnName = "id")
+    private Resume resume;
 
-    // Culomns
+    @Builder.Default
     @OneToMany(mappedBy = "layout", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("columnNumber ASC")
-    private List<Column> columns;
+    private List<Column> columns = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "layout", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<LatexMethod> latexMethods = new HashSet<>();
+
+    @Enumerated(EnumType.STRING)
+    private PageSize pageSize;
     
+
     @NotNull @Min(1) @Max(2)
     private Integer numberOfColumns;
     
     @NotNull @Min(0) @Max(1)
     private Double columnSeparator;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resume_id", referencedColumnName = "id")
-    private Resume resume;
-
     @Embedded
     @NotNull
     private ColorScheme colorScheme;
-
-    @OneToMany(mappedBy = "layout", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<LatexMethod> latexMethods;
 
     @NotBlank
     private String sectionTitleMethod;
@@ -67,6 +70,11 @@ public class Layout implements BaseEntity {
         column.setLayout(null);
     }
 
+    public void clearColumns() {
+        columns.forEach(column -> column.setLayout(null));
+        columns.clear();
+    }
+
     public void addLatexMethod(LatexMethod latexMethod) {
         latexMethods.add(latexMethod);
         latexMethod.setLayout(this);
@@ -75,5 +83,10 @@ public class Layout implements BaseEntity {
     public void removeLatexMethod(LatexMethod latexMethod) {
         latexMethods.remove(latexMethod);
         latexMethod.setLayout(null);
+    }
+
+    public void clearLatexMethods() {
+        latexMethods.forEach(latexMethod -> latexMethod.setLayout(null));
+        latexMethods.clear();
     }
 }
