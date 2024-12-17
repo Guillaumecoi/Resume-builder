@@ -18,4 +18,13 @@ public interface Mapper<Entity, Request, Response> {
      */
     Response toDto(Entity entity);
 
+    /**
+     * Update an entity with a request
+     * This method makes sure that only the fields that are allowed to be updated are updated
+     * 
+     * @param entity the entity to update
+     * @param request the request to update with
+     */
+    void updateEntity(Entity entity, Request request);
+
 }

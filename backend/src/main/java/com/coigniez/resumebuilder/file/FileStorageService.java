@@ -26,18 +26,37 @@ public class FileStorageService {
     public String saveFile(
             @Nonnull MultipartFile sourceFile,
             @Nonnull String userId) {
+        //TODO: implement sub path string for easier file removal
         final String fileUploadSubPath = "users" + separator + userId;
         return uploadFile(sourceFile, fileUploadSubPath);
     }
 
-    public void deleteFile(
-            @Nonnull String filePath) {
+    public void deleteFile(@Nonnull String filePath) {
         Path targetPath = Paths.get(filePath);
         try {
             Files.delete(targetPath);
             log.info("File deleted: " + filePath);
         } catch (IOException e) {
             log.error("File was not deleted", e);
+        }
+    }
+
+    public void deleteAllUserFiles(@Nonnull String userId) {
+        final String fileUploadSubPath = "users" + separator + userId;
+        Path targetPath = Paths.get(fileUploadPath, fileUploadSubPath);
+        try {
+            Files.walk(targetPath)
+                    .sorted((p1, p2) -> -p1.compareTo(p2))
+                    .forEach(path -> {
+                        try {
+                            Files.delete(path);
+                        } catch (IOException e) {
+                            log.error("File was not deleted", e);
+                        }
+                    });
+            log.info("All files for user {} deleted", userId);
+        } catch (IOException e) {
+            log.error("Files were not deleted", e);
         }
     }
 

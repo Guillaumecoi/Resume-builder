@@ -31,8 +31,8 @@ Transform your professional story into a stunning resume in minutes. Built with 
    - ~~PostgreSQL database integration~~
    - ~~Keycloak authentication setup~~
    - ~~Local development environment with Docker Compose~~
-   - Basic resume CRUD operations
-   - Simple PDF generation
+   - ~~Basic resume CRUD operations~~
+   - ~~Simple PDF generation~~
 
 2. **Phase 2**: Frontend Development
    > Simple but functional GUI implementation focusing on the core features
