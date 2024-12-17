@@ -1,10 +1,9 @@
 package com.coigniez.resumebuilder.examples;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -48,19 +47,16 @@ public class ResumeExampleServiceTest {
     
     @Test
     void testCreateExampleResume() throws IOException, InterruptedException {
-        //Act
+        // Act
         List<Object> list = resumeExampleService.createExampleResume("Software Engineer");
         LayoutResponse layout = (LayoutResponse) list.get(1);
 
-        File generatedPdf = layoutService.generateLatexPdf(layout.getId());
-    
+        byte[] generatedPdf = layoutService.generateLatexPdf(layout.getId());
+
         // Assert
-        assertTrue(generatedPdf.exists(), "The PDF file should be generated.");
-        assertTrue(generatedPdf.getName().equals("Software Engineer.pdf"), "The PDF file should have the correct name.");
-        assertTrue(generatedPdf.length() > 0, "PDF file should not be empty");
-    
-        // Use debug flag to inspect the generated PDF before it is deleted or comment out the line below and delete the file manually later
-        // Clean up
-        Files.deleteIfExists(generatedPdf.toPath());
+        assertNotNull(generatedPdf);
+        assertTrue(generatedPdf.length > 0);
+
+        // Feel free to write the PDF to a file to open and inspect it
     }
 }

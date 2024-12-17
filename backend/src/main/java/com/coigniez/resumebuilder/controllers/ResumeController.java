@@ -10,6 +10,7 @@ import com.coigniez.resumebuilder.domain.common.PageResponse;
 import com.coigniez.resumebuilder.domain.resume.ResumeDetailResponse;
 import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
 import com.coigniez.resumebuilder.domain.resume.ResumeResponse;
+import com.coigniez.resumebuilder.interfaces.CrudController;
 import com.coigniez.resumebuilder.services.ResumeService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,7 +32,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequestMapping("resumes")
 @RequiredArgsConstructor
 @Tag(name = "Resume")
-public class ResumeController {
+public class ResumeController implements CrudController<ResumeRequest, ResumeDetailResponse> {
 
     private final ResumeService resumeService;
 
@@ -47,7 +48,7 @@ public class ResumeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResumeDetailResponse> getResume(@PathVariable Long id, Authentication user) {
+    public ResponseEntity<ResumeDetailResponse> get(@PathVariable Long id, Authentication user) {
         ResumeDetailResponse resume = resumeService.get(id);
         return ResponseEntity.ok(resume);
     }
@@ -88,5 +89,4 @@ public class ResumeController {
         resumeService.deleteAll();
         return ResponseEntity.noContent().build();
     }
-    
 }

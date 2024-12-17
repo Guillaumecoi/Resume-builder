@@ -1,6 +1,5 @@
 package com.coigniez.resumebuilder.services;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -124,7 +123,7 @@ public class LayoutService implements ParentEntityService<LayoutRequest, LayoutR
      * @param id layout id to generate the PDF from
      * @return the generated PDF file
      */
-    public File generateLatexPdf(long id) throws IOException, InterruptedException {
+    public byte[] generateLatexPdf(long id) throws IOException, InterruptedException {
         Layout layout = layoutRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Layout not found"));
         return latexDocumentGenerator.generateFile(layout, layout.getResume().getTitle());
     }
