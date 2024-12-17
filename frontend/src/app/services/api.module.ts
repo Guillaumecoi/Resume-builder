@@ -4,7 +4,12 @@ import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
-import { AuthenticationService } from './services/authentication.service';
+import { ResumeSectionsService } from './services/resume-sections.service';
+import { SectionItemControllerService } from './services/section-item-controller.service';
+import { ResumeService } from './services/resume.service';
+import { LayoutService } from './services/layout.service';
+import { LatexMethodService } from './services/latex-method.service';
+import { ColumnSectionService } from './services/column-section.service';
 
 /**
  * Module that provides all services and configuration.
@@ -14,7 +19,12 @@ import { AuthenticationService } from './services/authentication.service';
   exports: [],
   declarations: [],
   providers: [
-    AuthenticationService,
+    ResumeSectionsService,
+    SectionItemControllerService,
+    ResumeService,
+    LayoutService,
+    LatexMethodService,
+    ColumnSectionService,
     ApiConfiguration
   ],
 })
