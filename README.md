@@ -19,13 +19,13 @@ Transform your professional story into a stunning resume in minutes. Built with 
 
 ## 🎯 Development Approach
 
-> 🚧 **Current Phase**: Phase 1 - Core Backend Functionality
+> 🚧 **Current Phase**: Phase 2 - Frontend Development
 > 
 > This project uses rapid development to quickly achieve a working proof of concept. Code quality and comprehensive testing will be addressed after core functionality is established.
 
 ### Development Phases
 
-1. **Phase 1**: Core Backend Functionality *(Current)*
+1. **Phase 1**: Core Backend Functionality
    > Establishing foundational backend services with security, database, and core business logic
    - ~~Spring Boot REST API setup~~
    - ~~PostgreSQL database integration~~
@@ -34,7 +34,7 @@ Transform your professional story into a stunning resume in minutes. Built with 
    - ~~Basic resume CRUD operations~~
    - ~~Simple PDF generation~~
 
-2. **Phase 2**: Frontend Development
+2. **Phase 2**: Frontend Development *(Current)*
    > Simple but functional GUI implementation focusing on the core features
    - ~~Keycloak authentication integration~~
    - Backend service integration
