@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
@@ -58,14 +58,10 @@ public class PdfGeneratorTest {
         String fileName = "test_document";
     
         // Act
-        File generatedPdf = pdfGenerator.generatePdf(latexContent, fileName);
+        byte[] generatedPdf = pdfGenerator.generatePdf(latexContent, fileName);
     
         // Assert
-        assertTrue(generatedPdf.exists(), "The PDF file should be generated.");
-        assertTrue(generatedPdf.getName().equals(fileName + ".pdf"), "The PDF file should have the correct name.");
-        assertTrue(generatedPdf.length() > 0, "PDF file should not be empty");
-    
-        // Clean up
-        Files.deleteIfExists(generatedPdf.toPath());
+        assertNotNull(generatedPdf, "The PDF byte array should not be null.");
+        assertTrue(generatedPdf.length > 0, "PDF byte array should not be empty.");
     }
 }

@@ -1,6 +1,5 @@
 package com.coigniez.resumebuilder.latex.generators;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.springframework.stereotype.Service;
@@ -36,7 +35,7 @@ public class LatexDocumentGenerator implements LatexGenerator<Layout> {
         return document;
     }
 
-    public File generateFile(Layout layout, String filename) throws IOException, InterruptedException {
+    public byte[] generateFile(Layout layout, String filename) throws IOException, InterruptedException {
         String document = generate(layout);
         return pdfGenerator.generatePdf(document, filename);
     }

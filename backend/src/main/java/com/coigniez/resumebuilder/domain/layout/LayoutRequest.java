@@ -21,6 +21,7 @@ public class LayoutRequest implements ObjectHasID {
     
     private Long id;
 
+    @NotNull
     private long resumeId;
 
     @Builder.Default
@@ -33,7 +34,7 @@ public class LayoutRequest implements ObjectHasID {
     private Integer numberOfColumns = 1;
 
     @Builder.Default
-    @NotNull @Min(1) @Max(2)
+    @NotNull @Min(0) @Max(1)
     private Double columnSeparator = 0.35;
 
     @Builder.Default

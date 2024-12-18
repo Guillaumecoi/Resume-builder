@@ -1,16 +1,13 @@
 package com.coigniez.resumebuilder.latex;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.Scanner;
 
@@ -18,10 +15,7 @@ import java.util.Scanner;
 public class PdfGenerator {
     private static final Logger logger = LoggerFactory.getLogger(PdfGenerator.class);
 
-    @Value("${application.file.uploads.pdf-output-path}")
-    private String pdfOutputPath;
-
-    public File generatePdf(String latexContent, String fileName) throws IOException, InterruptedException {
+    public byte[] generatePdf(String latexContent, String fileName) throws IOException, InterruptedException {
         if (latexContent == null || latexContent.isEmpty()) {
             throw new IllegalArgumentException("LaTeX content cannot be null or empty");
         }
@@ -64,11 +58,7 @@ public class PdfGenerator {
                 throw new IOException("PDF file was not generated: " + pdfFilePath + "\nOutput: " + output);
             }
 
-            Path outputPdfPath = Paths.get(pdfOutputPath, fileName + ".pdf");
-            Files.createDirectories(outputPdfPath.getParent());
-            Files.move(pdfFilePath, outputPdfPath);
-
-            return outputPdfPath.toFile();
+            return Files.readAllBytes(pdfFilePath);
         } finally {
             try {
                 if (Files.exists(tempDir)) {
