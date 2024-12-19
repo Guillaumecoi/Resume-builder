@@ -1,0 +1,19 @@
+<div class="navbar bg-base-100 shadow-md text-base-content">
+  <div class="flex-1">
+    <a class="btn btn-ghost text-xl">Resume Builder</a>
+  </div>
+  <div class="flex-none flex items-center gap-2 px-4">
+    <app-theme-toggle class="flex"></app-theme-toggle>
+    
+    <div class="dropdown dropdown-end">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+        <i class="fas fa-user fa-lg"></i>
+      </div>
+      <ul tabindex="0"
+          class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-lg bg-base-200 rounded-box w-52">
+        <li><a class="text-base-content hover:bg-base-300" (click)="accountManagement()">Settings</a></li>
+        <li><a class="text-base-content hover:bg-base-300" (click)="logout()">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</div>

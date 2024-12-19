@@ -54,10 +54,7 @@ services:
       - ~/.m2:/root/.m2  
     environment:
       SPRING_PROFILES_ACTIVE: dev
-      SPRING_DEVTOOLS_RESTART_ENABLED: true
-    ports:
-      - "8080:8080"
-      - "5005:5005" 
+      SPRING_DEVTOOLS_RESTART_ENABLED: "true"
     network_mode: "host"
     depends_on:
       - postgres

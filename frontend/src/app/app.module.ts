@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './pages/login/login.component';
 import {FormsModule} from '@angular/forms';
-import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
 import {HttpTokenInterceptor} from './services/interceptor/http-token.interceptor';
 import {CodeInputModule} from 'angular-code-input';
 import {KeycloakService} from './services/keycloak/keycloak.service';
@@ -23,7 +23,6 @@ export function kcFactory(kcService: KeycloakService) {
         BrowserModule,
         AppRoutingModule,
         FormsModule,
-        HttpClientModule,
         CodeInputModule
     ],
   providers: [
@@ -38,8 +37,8 @@ export function kcFactory(kcService: KeycloakService) {
       deps: [KeycloakService],
       useFactory: kcFactory,
       multi: true
-    }
-
+    },
+    provideHttpClient(withInterceptorsFromDi())
   ],
   bootstrap: [AppComponent]
 })
