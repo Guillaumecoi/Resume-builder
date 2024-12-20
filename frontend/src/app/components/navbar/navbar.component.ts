@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ThemeToggleComponent } from './components/theme-toggle/theme-toggle.component';
-import { KeycloakService } from '../../../../services/keycloak/keycloak.service';
+import { KeycloakService } from '../../services/keycloak/keycloak.service';
 
 @Component({
   selector: 'app-navbar',

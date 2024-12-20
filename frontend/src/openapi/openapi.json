@@ -1189,6 +1189,15 @@
         }
       },
       "PageResponseResumeResponse": {
+        "required": [
+          "content",
+          "first",
+          "last",
+          "number",
+          "size",
+          "totalElements",
+          "totalPages"
+        ],
         "type": "object",
         "properties": {
           "content": {
