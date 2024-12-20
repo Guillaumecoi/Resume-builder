@@ -6,13 +6,18 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { LatexMethodRequest } from '../../models/latex-method-request';
 
-export interface PostMethodName$Params {
+export interface UpdateLatexMethod$Params {
+  id: number;
+      body: LatexMethodRequest
 }
 
-export function postMethodName(http: HttpClient, rootUrl: string, params?: PostMethodName$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, postMethodName.PATH, 'post');
+export function updateLatexMethod(http: HttpClient, rootUrl: string, params: UpdateLatexMethod$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, updateLatexMethod.PATH, 'post');
   if (params) {
+    rb.path('id', params.id, {});
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -25,4 +30,4 @@ export function postMethodName(http: HttpClient, rootUrl: string, params?: PostM
   );
 }
 
-postMethodName.PATH = '/resumes/deleteAll';
+updateLatexMethod.PATH = '/latexmethods/{id}';

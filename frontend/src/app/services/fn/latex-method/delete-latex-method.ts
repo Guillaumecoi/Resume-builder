@@ -6,26 +6,25 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { ResumeDetailResponse } from '../../models/resume-detail-response';
 
-export interface Get2$Params {
+export interface DeleteLatexMethod$Params {
   id: number;
 }
 
-export function get2(http: HttpClient, rootUrl: string, params: Get2$Params, context?: HttpContext): Observable<StrictHttpResponse<ResumeDetailResponse>> {
-  const rb = new RequestBuilder(rootUrl, get2.PATH, 'get');
+export function deleteLatexMethod(http: HttpClient, rootUrl: string, params: DeleteLatexMethod$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, deleteLatexMethod.PATH, 'post');
   if (params) {
     rb.path('id', params.id, {});
   }
 
   return http.request(
-    rb.build({ responseType: 'json', accept: 'application/json', context })
+    rb.build({ responseType: 'text', accept: '*/*', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<ResumeDetailResponse>;
+      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
     })
   );
 }
 
-get2.PATH = '/resumes/{id}';
+deleteLatexMethod.PATH = '/latexmethods/{id}/delete';

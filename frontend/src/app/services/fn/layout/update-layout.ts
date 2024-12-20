@@ -6,15 +6,18 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { LayoutRequest } from '../../models/layout-request';
 
-export interface Delete5$Params {
+export interface UpdateLayout$Params {
   id: number;
+      body: LayoutRequest
 }
 
-export function delete5(http: HttpClient, rootUrl: string, params: Delete5$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, delete5.PATH, 'post');
+export function updateLayout(http: HttpClient, rootUrl: string, params: UpdateLayout$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, updateLayout.PATH, 'post');
   if (params) {
     rb.path('id', params.id, {});
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -27,4 +30,4 @@ export function delete5(http: HttpClient, rootUrl: string, params: Delete5$Param
   );
 }
 
-delete5.PATH = '/columnsections/{id}/delete';
+updateLayout.PATH = '/layouts/{id}';

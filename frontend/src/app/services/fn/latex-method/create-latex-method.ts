@@ -6,14 +6,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { LayoutRequest } from '../../models/layout-request';
+import { LatexMethodRequest } from '../../models/latex-method-request';
 
-export interface Create3$Params {
-      body: LayoutRequest
+export interface CreateLatexMethod$Params {
+      body: LatexMethodRequest
 }
 
-export function create3(http: HttpClient, rootUrl: string, params: Create3$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
-  const rb = new RequestBuilder(rootUrl, create3.PATH, 'post');
+export function createLatexMethod(http: HttpClient, rootUrl: string, params: CreateLatexMethod$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
+  const rb = new RequestBuilder(rootUrl, createLatexMethod.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -28,4 +28,4 @@ export function create3(http: HttpClient, rootUrl: string, params: Create3$Param
   );
 }
 
-create3.PATH = '/layouts';
+createLatexMethod.PATH = '/latexmethods';

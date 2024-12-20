@@ -6,14 +6,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { SectionResponse } from '../../models/section-response';
+import { LayoutResponse } from '../../models/layout-response';
 
-export interface Get$Params {
+export interface GetLayout$Params {
   id: number;
 }
 
-export function get(http: HttpClient, rootUrl: string, params: Get$Params, context?: HttpContext): Observable<StrictHttpResponse<SectionResponse>> {
-  const rb = new RequestBuilder(rootUrl, get.PATH, 'get');
+export function getLayout(http: HttpClient, rootUrl: string, params: GetLayout$Params, context?: HttpContext): Observable<StrictHttpResponse<LayoutResponse>> {
+  const rb = new RequestBuilder(rootUrl, getLayout.PATH, 'get');
   if (params) {
     rb.path('id', params.id, {});
   }
@@ -23,9 +23,9 @@ export function get(http: HttpClient, rootUrl: string, params: Get$Params, conte
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SectionResponse>;
+      return r as StrictHttpResponse<LayoutResponse>;
     })
   );
 }
 
-get.PATH = '/sections/{id}';
+getLayout.PATH = '/layouts/{id}';

@@ -7,18 +7,14 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 
-export interface UploadPicture$Params {
+export interface DeleteSection$Params {
   id: number;
-      body?: {
-'file': Blob;
-}
 }
 
-export function uploadPicture(http: HttpClient, rootUrl: string, params: UploadPicture$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, uploadPicture.PATH, 'post');
+export function deleteSection(http: HttpClient, rootUrl: string, params: DeleteSection$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, deleteSection.PATH, 'post');
   if (params) {
     rb.path('id', params.id, {});
-    rb.body(params.body, 'multipart/form-data');
   }
 
   return http.request(
@@ -31,4 +27,4 @@ export function uploadPicture(http: HttpClient, rootUrl: string, params: UploadP
   );
 }
 
-uploadPicture.PATH = '/resumes/{id}/uploadPicture';
+deleteSection.PATH = '/sections/{id}/delete';

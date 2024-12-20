@@ -14,6 +14,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -34,6 +35,7 @@ public class SectionItemController implements CrudController<SectionItemRequest,
     private final ObjectMapper objectMapper;
 
     @Override
+    @Operation(operationId = "createSectionItem")
     public ResponseEntity<Long> create(@Valid SectionItemRequest request, Authentication user) {
         Long id = sectionItemService.create(request);
         URI location = ServletUriComponentsBuilder
@@ -45,12 +47,14 @@ public class SectionItemController implements CrudController<SectionItemRequest,
     }
 
     @Override
+    @Operation(operationId = "getSectionItem")
     public ResponseEntity<SectionItemResponse> get(Long id, Authentication user) {
         SectionItemResponse sectionItem = sectionItemService.get(id);
         return ResponseEntity.ok(sectionItem);
     }
 
     @Override
+    @Operation(operationId = "updateSectionItem")
     public ResponseEntity<Void> update(Long id, @Valid SectionItemRequest request, Authentication user) {
         request.setId(id);
         sectionItemService.update(request);
@@ -58,6 +62,7 @@ public class SectionItemController implements CrudController<SectionItemRequest,
     }
 
     @Override
+    @Operation(operationId = "deleteSectionItem")
     public ResponseEntity<Void> delete(Long id, Authentication user) {
         sectionItemService.delete(id);
         return ResponseEntity.noContent().build();

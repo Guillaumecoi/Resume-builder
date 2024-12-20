@@ -6,14 +6,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { SectionItemResponse } from '../../models/section-item-response';
+import { ColumnSectionResponse } from '../../models/column-section-response';
 
-export interface Get1$Params {
+export interface GetColumnSection$Params {
   id: number;
 }
 
-export function get1(http: HttpClient, rootUrl: string, params: Get1$Params, context?: HttpContext): Observable<StrictHttpResponse<SectionItemResponse>> {
-  const rb = new RequestBuilder(rootUrl, get1.PATH, 'get');
+export function getColumnSection(http: HttpClient, rootUrl: string, params: GetColumnSection$Params, context?: HttpContext): Observable<StrictHttpResponse<ColumnSectionResponse>> {
+  const rb = new RequestBuilder(rootUrl, getColumnSection.PATH, 'get');
   if (params) {
     rb.path('id', params.id, {});
   }
@@ -23,9 +23,9 @@ export function get1(http: HttpClient, rootUrl: string, params: Get1$Params, con
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SectionItemResponse>;
+      return r as StrictHttpResponse<ColumnSectionResponse>;
     })
   );
 }
 
-get1.PATH = '/section-items/{id}';
+getColumnSection.PATH = '/columnsections/{id}';

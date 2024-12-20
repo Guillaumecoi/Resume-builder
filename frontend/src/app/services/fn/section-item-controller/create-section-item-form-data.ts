@@ -6,18 +6,19 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { SectionItemRequest } from '../../models/section-item-request';
 
-export interface Create1$Json$Params {
+export interface CreateSectionItem$FormData$Params {
   request: string;
-      body: SectionItemRequest
+      body: {
+'file': Blob;
+}
 }
 
-export function create1$Json(http: HttpClient, rootUrl: string, params: Create1$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
-  const rb = new RequestBuilder(rootUrl, create1$Json.PATH, 'post');
+export function createSectionItem$FormData(http: HttpClient, rootUrl: string, params: CreateSectionItem$FormData$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
+  const rb = new RequestBuilder(rootUrl, createSectionItem$FormData.PATH, 'post');
   if (params) {
     rb.query('request', params.request, {});
-    rb.body(params.body, 'application/json');
+    rb.body(params.body, 'multipart/form-data');
   }
 
   return http.request(
@@ -30,4 +31,4 @@ export function create1$Json(http: HttpClient, rootUrl: string, params: Create1$
   );
 }
 
-create1$Json.PATH = '/section-items';
+createSectionItem$FormData.PATH = '/section-items';

@@ -6,25 +6,26 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { LatexMethodResponse } from '../../models/latex-method-response';
 
-export interface Delete1$Params {
+export interface GetLatexMethod$Params {
   id: number;
 }
 
-export function delete1(http: HttpClient, rootUrl: string, params: Delete1$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, delete1.PATH, 'post');
+export function getLatexMethod(http: HttpClient, rootUrl: string, params: GetLatexMethod$Params, context?: HttpContext): Observable<StrictHttpResponse<LatexMethodResponse>> {
+  const rb = new RequestBuilder(rootUrl, getLatexMethod.PATH, 'get');
   if (params) {
     rb.path('id', params.id, {});
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return r as StrictHttpResponse<LatexMethodResponse>;
     })
   );
 }
 
-delete1.PATH = '/section-items/{id}/delete';
+getLatexMethod.PATH = '/latexmethods/{id}';

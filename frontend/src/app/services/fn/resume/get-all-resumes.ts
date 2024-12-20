@@ -8,14 +8,14 @@ import { RequestBuilder } from '../../request-builder';
 
 import { PageResponseResumeResponse } from '../../models/page-response-resume-response';
 
-export interface GetAll$Params {
+export interface GetAllResumes$Params {
   page?: number;
   size?: number;
   order?: string;
 }
 
-export function getAll(http: HttpClient, rootUrl: string, params?: GetAll$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseResumeResponse>> {
-  const rb = new RequestBuilder(rootUrl, getAll.PATH, 'get');
+export function getAllResumes(http: HttpClient, rootUrl: string, params?: GetAllResumes$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseResumeResponse>> {
+  const rb = new RequestBuilder(rootUrl, getAllResumes.PATH, 'get');
   if (params) {
     rb.query('page', params.page, {});
     rb.query('size', params.size, {});
@@ -32,4 +32,4 @@ export function getAll(http: HttpClient, rootUrl: string, params?: GetAll$Params
   );
 }
 
-getAll.PATH = '/resumes';
+getAllResumes.PATH = '/resumes';

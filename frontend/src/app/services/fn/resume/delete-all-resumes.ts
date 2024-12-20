@@ -6,18 +6,13 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { ResumeRequest } from '../../models/resume-request';
 
-export interface Update2$Params {
-  id: number;
-      body: ResumeRequest
+export interface DeleteAllResumes$Params {
 }
 
-export function update2(http: HttpClient, rootUrl: string, params: Update2$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, update2.PATH, 'post');
+export function deleteAllResumes(http: HttpClient, rootUrl: string, params?: DeleteAllResumes$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, deleteAllResumes.PATH, 'post');
   if (params) {
-    rb.path('id', params.id, {});
-    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -30,4 +25,4 @@ export function update2(http: HttpClient, rootUrl: string, params: Update2$Param
   );
 }
 
-update2.PATH = '/resumes/{id}';
+deleteAllResumes.PATH = '/resumes/deleteAll';

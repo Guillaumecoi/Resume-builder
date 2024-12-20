@@ -8,12 +8,12 @@ import { RequestBuilder } from '../../request-builder';
 
 import { ResumeRequest } from '../../models/resume-request';
 
-export interface Create2$Params {
+export interface CreateResume$Params {
       body: ResumeRequest
 }
 
-export function create2(http: HttpClient, rootUrl: string, params: Create2$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
-  const rb = new RequestBuilder(rootUrl, create2.PATH, 'post');
+export function createResume(http: HttpClient, rootUrl: string, params: CreateResume$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
+  const rb = new RequestBuilder(rootUrl, createResume.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -28,4 +28,4 @@ export function create2(http: HttpClient, rootUrl: string, params: Create2$Param
   );
 }
 
-create2.PATH = '/resumes';
+createResume.PATH = '/resumes';

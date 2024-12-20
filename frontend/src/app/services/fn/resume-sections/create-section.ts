@@ -8,12 +8,12 @@ import { RequestBuilder } from '../../request-builder';
 
 import { SectionRequest } from '../../models/section-request';
 
-export interface Create$Params {
+export interface CreateSection$Params {
       body: SectionRequest
 }
 
-export function create(http: HttpClient, rootUrl: string, params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
-  const rb = new RequestBuilder(rootUrl, create.PATH, 'post');
+export function createSection(http: HttpClient, rootUrl: string, params: CreateSection$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
+  const rb = new RequestBuilder(rootUrl, createSection.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -28,4 +28,4 @@ export function create(http: HttpClient, rootUrl: string, params: Create$Params,
   );
 }
 
-create.PATH = '/sections';
+createSection.PATH = '/sections';

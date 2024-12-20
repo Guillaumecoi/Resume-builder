@@ -17,7 +17,7 @@
     "/sections": {
       "post": {
         "tags": ["Resume Sections"],
-        "operationId": "create",
+        "operationId": "createSection",
         "requestBody": {
           "content": {
             "application/json": {
@@ -41,7 +41,7 @@
     "/sections/{id}": {
       "get": {
         "tags": ["Resume Sections"],
-        "operationId": "get",
+        "operationId": "getSection",
         "parameters": [
           {
             "name": "id",
@@ -63,7 +63,7 @@
       },
       "post": {
         "tags": ["Resume Sections"],
-        "operationId": "update",
+        "operationId": "updateSection",
         "parameters": [
           {
             "name": "id",
@@ -86,7 +86,7 @@
     "/sections/{id}/delete": {
       "post": {
         "tags": ["Resume Sections"],
-        "operationId": "delete",
+        "operationId": "deleteSection",
         "parameters": [
           {
             "name": "id",
@@ -101,7 +101,7 @@
     "/section-items": {
       "post": {
         "tags": ["section-item-controller"],
-        "operationId": "create_1",
+        "operationId": "createSectionItem",
         "parameters": [
           {
             "name": "request",
@@ -142,7 +142,7 @@
     "/section-items/{id}": {
       "get": {
         "tags": ["section-item-controller"],
-        "operationId": "get_1",
+        "operationId": "getSectionItem",
         "parameters": [
           {
             "name": "id",
@@ -164,7 +164,7 @@
       },
       "post": {
         "tags": ["section-item-controller"],
-        "operationId": "update_1",
+        "operationId": "updateSectionItem",
         "parameters": [
           {
             "name": "id",
@@ -187,7 +187,7 @@
     "/section-items/{id}/delete": {
       "post": {
         "tags": ["section-item-controller"],
-        "operationId": "delete_1",
+        "operationId": "deleteSectionItem",
         "parameters": [
           {
             "name": "id",
@@ -202,7 +202,7 @@
     "/resumes": {
       "get": {
         "tags": ["Resume"],
-        "operationId": "getAll",
+        "operationId": "getAllResumes",
         "parameters": [
           {
             "name": "page",
@@ -238,7 +238,7 @@
       },
       "post": {
         "tags": ["Resume"],
-        "operationId": "create_2",
+        "operationId": "createResume",
         "requestBody": {
           "content": {
             "application/json": {
@@ -262,7 +262,7 @@
     "/resumes/{id}": {
       "get": {
         "tags": ["Resume"],
-        "operationId": "get_2",
+        "operationId": "getResume",
         "parameters": [
           {
             "name": "id",
@@ -286,7 +286,7 @@
       },
       "post": {
         "tags": ["Resume"],
-        "operationId": "update_2",
+        "operationId": "updateResume",
         "parameters": [
           {
             "name": "id",
@@ -309,7 +309,7 @@
     "/resumes/{id}/uploadPicture": {
       "post": {
         "tags": ["Resume"],
-        "operationId": "uploadPicture",
+        "operationId": "uploadResumePicture",
         "parameters": [
           {
             "name": "id",
@@ -337,7 +337,7 @@
     "/resumes/{id}/delete": {
       "post": {
         "tags": ["Resume"],
-        "operationId": "delete_2",
+        "operationId": "deleteResume",
         "parameters": [
           {
             "name": "id",
@@ -352,14 +352,14 @@
     "/resumes/deleteAll": {
       "post": {
         "tags": ["Resume"],
-        "operationId": "postMethodName",
+        "operationId": "deleteAllResumes",
         "responses": { "200": { "description": "OK" } }
       }
     },
     "/layouts": {
       "post": {
         "tags": ["Layout"],
-        "operationId": "create_3",
+        "operationId": "createLayout",
         "requestBody": {
           "content": {
             "application/json": {
@@ -383,7 +383,7 @@
     "/layouts/{id}": {
       "get": {
         "tags": ["Layout"],
-        "operationId": "get_3",
+        "operationId": "getLayout",
         "parameters": [
           {
             "name": "id",
@@ -405,7 +405,7 @@
       },
       "post": {
         "tags": ["Layout"],
-        "operationId": "update_3",
+        "operationId": "updateLayout",
         "parameters": [
           {
             "name": "id",
@@ -428,7 +428,7 @@
     "/layouts/{id}/delete": {
       "post": {
         "tags": ["Layout"],
-        "operationId": "delete_3",
+        "operationId": "deleteLayout",
         "parameters": [
           {
             "name": "id",
@@ -443,7 +443,7 @@
     "/latexmethods": {
       "post": {
         "tags": ["LatexMethod"],
-        "operationId": "create_4",
+        "operationId": "createLatexMethod",
         "requestBody": {
           "content": {
             "application/json": {
@@ -467,7 +467,7 @@
     "/latexmethods/{id}": {
       "get": {
         "tags": ["LatexMethod"],
-        "operationId": "get_4",
+        "operationId": "getLatexMethod",
         "parameters": [
           {
             "name": "id",
@@ -489,7 +489,7 @@
       },
       "post": {
         "tags": ["LatexMethod"],
-        "operationId": "update_4",
+        "operationId": "updateLatexMethod",
         "parameters": [
           {
             "name": "id",
@@ -512,7 +512,7 @@
     "/latexmethods/{id}/delete": {
       "post": {
         "tags": ["LatexMethod"],
-        "operationId": "delete_4",
+        "operationId": "deleteLatexMethod",
         "parameters": [
           {
             "name": "id",
@@ -527,7 +527,7 @@
     "/columnsections": {
       "post": {
         "tags": ["ColumnSection"],
-        "operationId": "create_5",
+        "operationId": "createColumnSection",
         "requestBody": {
           "content": {
             "application/json": {
@@ -551,7 +551,7 @@
     "/columnsections/{id}": {
       "get": {
         "tags": ["ColumnSection"],
-        "operationId": "get_5",
+        "operationId": "getColumnSection",
         "parameters": [
           {
             "name": "id",
@@ -575,7 +575,7 @@
       },
       "post": {
         "tags": ["ColumnSection"],
-        "operationId": "update_5",
+        "operationId": "updateColumnSection",
         "parameters": [
           {
             "name": "id",
@@ -598,7 +598,91 @@
     "/columnsections/{id}/delete": {
       "post": {
         "tags": ["ColumnSection"],
-        "operationId": "delete_5",
+        "operationId": "deleteColumnSection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/columns": {
+      "post": {
+        "tags": ["Column"],
+        "operationId": "createColumn",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ColumnRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "type": "integer", "format": "int64" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/columns/{id}": {
+      "get": {
+        "tags": ["Column"],
+        "operationId": "getColumn",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ColumnResponse" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Column"],
+        "operationId": "updateColumn",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ColumnRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/columns/{id}/delete": {
+      "post": {
+        "tags": ["Column"],
+        "operationId": "deleteColumn",
         "parameters": [
           {
             "name": "id",

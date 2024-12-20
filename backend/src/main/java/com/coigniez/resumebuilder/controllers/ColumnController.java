@@ -13,6 +13,7 @@ import com.coigniez.resumebuilder.domain.column.ColumnResponse;
 import com.coigniez.resumebuilder.interfaces.CrudController;
 import com.coigniez.resumebuilder.services.ColumnService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class ColumnController implements CrudController<ColumnRequest, ColumnRes
     private final ColumnService columnService;
 
     @Override
+    @Operation(operationId = "createColumn")
     public ResponseEntity<Long> create(@Valid ColumnRequest request, Authentication user) {
         long id = columnService.create(request);
         URI location = ServletUriComponentsBuilder
@@ -37,12 +39,14 @@ public class ColumnController implements CrudController<ColumnRequest, ColumnRes
     }
 
     @Override
+    @Operation(operationId = "getColumn")
     public ResponseEntity<ColumnResponse> get(Long id, Authentication user) {
         ColumnResponse column = columnService.get(id);
         return ResponseEntity.ok(column);
     }
 
     @Override
+    @Operation(operationId = "updateColumn")
     public ResponseEntity<Void> update(Long id, @Valid ColumnRequest request, Authentication user) {
         request.setId(id);
         columnService.update(request);
@@ -50,6 +54,7 @@ public class ColumnController implements CrudController<ColumnRequest, ColumnRes
     }
 
     @Override
+    @Operation(operationId = "deleteColumn")
     public ResponseEntity<Void> delete(Long id, Authentication user) {
         columnService.delete(id);
         return ResponseEntity.noContent().build();

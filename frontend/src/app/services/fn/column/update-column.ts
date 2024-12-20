@@ -6,15 +6,18 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { ColumnRequest } from '../../models/column-request';
 
-export interface Delete$Params {
+export interface UpdateColumn$Params {
   id: number;
+      body: ColumnRequest
 }
 
-export function delete$(http: HttpClient, rootUrl: string, params: Delete$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, delete$.PATH, 'post');
+export function updateColumn(http: HttpClient, rootUrl: string, params: UpdateColumn$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, updateColumn.PATH, 'post');
   if (params) {
     rb.path('id', params.id, {});
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -27,4 +30,4 @@ export function delete$(http: HttpClient, rootUrl: string, params: Delete$Params
   );
 }
 
-delete$.PATH = '/sections/{id}/delete';
+updateColumn.PATH = '/columns/{id}';

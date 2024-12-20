@@ -6,16 +6,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { ColumnSectionRequest } from '../../models/column-section-request';
+import { SectionResponse } from '../../models/section-response';
 
-export interface Create5$Params {
-      body: ColumnSectionRequest
+export interface GetSection$Params {
+  id: number;
 }
 
-export function create5(http: HttpClient, rootUrl: string, params: Create5$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
-  const rb = new RequestBuilder(rootUrl, create5.PATH, 'post');
+export function getSection(http: HttpClient, rootUrl: string, params: GetSection$Params, context?: HttpContext): Observable<StrictHttpResponse<SectionResponse>> {
+  const rb = new RequestBuilder(rootUrl, getSection.PATH, 'get');
   if (params) {
-    rb.body(params.body, 'application/json');
+    rb.path('id', params.id, {});
   }
 
   return http.request(
@@ -23,9 +23,9 @@ export function create5(http: HttpClient, rootUrl: string, params: Create5$Param
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: parseFloat(String((r as HttpResponse<any>).body)) }) as StrictHttpResponse<number>;
+      return r as StrictHttpResponse<SectionResponse>;
     })
   );
 }
 
-create5.PATH = '/columnsections';
+getSection.PATH = '/sections/{id}';

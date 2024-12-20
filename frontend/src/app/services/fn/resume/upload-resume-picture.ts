@@ -6,18 +6,19 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { SectionRequest } from '../../models/section-request';
 
-export interface Update$Params {
+export interface UploadResumePicture$Params {
   id: number;
-      body: SectionRequest
+      body?: {
+'file': Blob;
+}
 }
 
-export function update(http: HttpClient, rootUrl: string, params: Update$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, update.PATH, 'post');
+export function uploadResumePicture(http: HttpClient, rootUrl: string, params: UploadResumePicture$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, uploadResumePicture.PATH, 'post');
   if (params) {
     rb.path('id', params.id, {});
-    rb.body(params.body, 'application/json');
+    rb.body(params.body, 'multipart/form-data');
   }
 
   return http.request(
@@ -30,4 +31,4 @@ export function update(http: HttpClient, rootUrl: string, params: Update$Params,
   );
 }
 
-update.PATH = '/sections/{id}';
+uploadResumePicture.PATH = '/resumes/{id}/uploadPicture';

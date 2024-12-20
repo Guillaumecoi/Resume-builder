@@ -9,6 +9,7 @@ import com.coigniez.resumebuilder.domain.section.SectionResponse;
 import com.coigniez.resumebuilder.interfaces.CrudController;
 import com.coigniez.resumebuilder.services.SectionService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class SectionController implements CrudController<SectionRequest, Section
     private final SectionService sectionService;
 
     @Override
+    @Operation(operationId = "createSection")
     public ResponseEntity<Long> create(@Valid @RequestBody SectionRequest request, Authentication user) {
         Long id = sectionService.create(request);
         URI location = ServletUriComponentsBuilder
@@ -42,12 +44,14 @@ public class SectionController implements CrudController<SectionRequest, Section
     }
 
     @Override
+    @Operation(operationId = "getSection")
     public ResponseEntity<SectionResponse> get(@PathVariable Long id, Authentication user) {
         SectionResponse section = sectionService.get(id);
         return ResponseEntity.ok(section);
     }
 
     @Override
+    @Operation(operationId = "updateSection")
     public ResponseEntity<Void> update(@PathVariable Long id, @Valid @RequestBody SectionRequest request, Authentication user) {
         request.setId(id);
         sectionService.update(request);
@@ -55,6 +59,7 @@ public class SectionController implements CrudController<SectionRequest, Section
     }
 
     @Override
+    @Operation(operationId = "deleteSection")
     public ResponseEntity<Void> delete(@PathVariable Long id, Authentication user) {
         sectionService.delete(id);
         return ResponseEntity.noContent().build();

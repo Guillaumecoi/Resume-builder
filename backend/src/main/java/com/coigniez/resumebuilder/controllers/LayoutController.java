@@ -23,6 +23,7 @@ import com.coigniez.resumebuilder.interfaces.CrudController;
 import com.coigniez.resumebuilder.services.LatexMethodService;
 import com.coigniez.resumebuilder.services.LayoutService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class LayoutController implements CrudController<LayoutRequest, LayoutRes
     private final LatexMethodService latexMethodService;
 
     @Override
+    @Operation(operationId = "createLayout")
     public ResponseEntity<Long> create(@Valid LayoutRequest request, Authentication user) {
         Long id = layoutService.create(request);
         URI location = ServletUriComponentsBuilder
@@ -49,12 +51,14 @@ public class LayoutController implements CrudController<LayoutRequest, LayoutRes
     }
 
     @Override
+    @Operation(operationId = "getLayout")
     public ResponseEntity<LayoutResponse> get(Long id, Authentication user) {
         LayoutResponse layout = layoutService.get(id);
         return ResponseEntity.ok(layout);
     }
 
     @Override
+    @Operation(operationId = "updateLayout")
     public ResponseEntity<Void> update(Long id, @Valid LayoutRequest request, Authentication user) {
         request.setId(id);
         layoutService.update(request);
@@ -62,6 +66,7 @@ public class LayoutController implements CrudController<LayoutRequest, LayoutRes
     }
 
     @Override
+    @Operation(operationId = "deleteLayout")
     public ResponseEntity<Void> delete(Long id, Authentication user) {
         layoutService.delete(id);
         return ResponseEntity.noContent().build();

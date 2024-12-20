@@ -6,14 +6,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { LayoutResponse } from '../../models/layout-response';
+import { ColumnResponse } from '../../models/column-response';
 
-export interface Get3$Params {
+export interface GetColumn$Params {
   id: number;
 }
 
-export function get3(http: HttpClient, rootUrl: string, params: Get3$Params, context?: HttpContext): Observable<StrictHttpResponse<LayoutResponse>> {
-  const rb = new RequestBuilder(rootUrl, get3.PATH, 'get');
+export function getColumn(http: HttpClient, rootUrl: string, params: GetColumn$Params, context?: HttpContext): Observable<StrictHttpResponse<ColumnResponse>> {
+  const rb = new RequestBuilder(rootUrl, getColumn.PATH, 'get');
   if (params) {
     rb.path('id', params.id, {});
   }
@@ -23,9 +23,9 @@ export function get3(http: HttpClient, rootUrl: string, params: Get3$Params, con
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<LayoutResponse>;
+      return r as StrictHttpResponse<ColumnResponse>;
     })
   );
 }
 
-get3.PATH = '/layouts/{id}';
+getColumn.PATH = '/columns/{id}';

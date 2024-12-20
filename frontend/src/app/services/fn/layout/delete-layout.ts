@@ -6,18 +6,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { LatexMethodRequest } from '../../models/latex-method-request';
 
-export interface Update4$Params {
+export interface DeleteLayout$Params {
   id: number;
-      body: LatexMethodRequest
 }
 
-export function update4(http: HttpClient, rootUrl: string, params: Update4$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, update4.PATH, 'post');
+export function deleteLayout(http: HttpClient, rootUrl: string, params: DeleteLayout$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, deleteLayout.PATH, 'post');
   if (params) {
     rb.path('id', params.id, {});
-    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -30,4 +27,4 @@ export function update4(http: HttpClient, rootUrl: string, params: Update4$Param
   );
 }
 
-update4.PATH = '/latexmethods/{id}';
+deleteLayout.PATH = '/layouts/{id}/delete';

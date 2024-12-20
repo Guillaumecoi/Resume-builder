@@ -6,19 +6,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { ColumnSectionRequest } from '../../models/column-section-request';
 
-export interface Create1$FormData$Params {
-  request: string;
-      body: {
-'file': Blob;
-}
+export interface CreateColumnSection$Params {
+      body: ColumnSectionRequest
 }
 
-export function create1$FormData(http: HttpClient, rootUrl: string, params: Create1$FormData$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
-  const rb = new RequestBuilder(rootUrl, create1$FormData.PATH, 'post');
+export function createColumnSection(http: HttpClient, rootUrl: string, params: CreateColumnSection$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
+  const rb = new RequestBuilder(rootUrl, createColumnSection.PATH, 'post');
   if (params) {
-    rb.query('request', params.request, {});
-    rb.body(params.body, 'multipart/form-data');
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -31,4 +28,4 @@ export function create1$FormData(http: HttpClient, rootUrl: string, params: Crea
   );
 }
 
-create1$FormData.PATH = '/section-items';
+createColumnSection.PATH = '/columnsections';

@@ -6,15 +6,18 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { ResumeRequest } from '../../models/resume-request';
 
-export interface Delete4$Params {
+export interface UpdateResume$Params {
   id: number;
+      body: ResumeRequest
 }
 
-export function delete4(http: HttpClient, rootUrl: string, params: Delete4$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, delete4.PATH, 'post');
+export function updateResume(http: HttpClient, rootUrl: string, params: UpdateResume$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, updateResume.PATH, 'post');
   if (params) {
     rb.path('id', params.id, {});
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -27,4 +30,4 @@ export function delete4(http: HttpClient, rootUrl: string, params: Delete4$Param
   );
 }
 
-delete4.PATH = '/latexmethods/{id}/delete';
+updateResume.PATH = '/resumes/{id}';

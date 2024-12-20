@@ -6,16 +6,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { LatexMethodResponse } from '../../models/latex-method-response';
+import { ColumnRequest } from '../../models/column-request';
 
-export interface Get4$Params {
-  id: number;
+export interface CreateColumn$Params {
+      body: ColumnRequest
 }
 
-export function get4(http: HttpClient, rootUrl: string, params: Get4$Params, context?: HttpContext): Observable<StrictHttpResponse<LatexMethodResponse>> {
-  const rb = new RequestBuilder(rootUrl, get4.PATH, 'get');
+export function createColumn(http: HttpClient, rootUrl: string, params: CreateColumn$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
+  const rb = new RequestBuilder(rootUrl, createColumn.PATH, 'post');
   if (params) {
-    rb.path('id', params.id, {});
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -23,9 +23,9 @@ export function get4(http: HttpClient, rootUrl: string, params: Get4$Params, con
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<LatexMethodResponse>;
+      return (r as HttpResponse<any>).clone({ body: parseFloat(String((r as HttpResponse<any>).body)) }) as StrictHttpResponse<number>;
     })
   );
 }
 
-get4.PATH = '/latexmethods/{id}';
+createColumn.PATH = '/columns';

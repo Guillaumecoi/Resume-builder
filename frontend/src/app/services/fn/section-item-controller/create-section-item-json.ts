@@ -8,26 +8,26 @@ import { RequestBuilder } from '../../request-builder';
 
 import { SectionItemRequest } from '../../models/section-item-request';
 
-export interface Update1$Params {
-  id: number;
+export interface CreateSectionItem$Json$Params {
+  request: string;
       body: SectionItemRequest
 }
 
-export function update1(http: HttpClient, rootUrl: string, params: Update1$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, update1.PATH, 'post');
+export function createSectionItem$Json(http: HttpClient, rootUrl: string, params: CreateSectionItem$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
+  const rb = new RequestBuilder(rootUrl, createSectionItem$Json.PATH, 'post');
   if (params) {
-    rb.path('id', params.id, {});
+    rb.query('request', params.request, {});
     rb.body(params.body, 'application/json');
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return (r as HttpResponse<any>).clone({ body: parseFloat(String((r as HttpResponse<any>).body)) }) as StrictHttpResponse<number>;
     })
   );
 }
 
-update1.PATH = '/section-items/{id}';
+createSectionItem$Json.PATH = '/section-items';

@@ -6,15 +6,18 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { SectionRequest } from '../../models/section-request';
 
-export interface Delete2$Params {
+export interface UpdateSection$Params {
   id: number;
+      body: SectionRequest
 }
 
-export function delete2(http: HttpClient, rootUrl: string, params: Delete2$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, delete2.PATH, 'post');
+export function updateSection(http: HttpClient, rootUrl: string, params: UpdateSection$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, updateSection.PATH, 'post');
   if (params) {
     rb.path('id', params.id, {});
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -27,4 +30,4 @@ export function delete2(http: HttpClient, rootUrl: string, params: Delete2$Param
   );
 }
 
-delete2.PATH = '/resumes/{id}/delete';
+updateSection.PATH = '/sections/{id}';

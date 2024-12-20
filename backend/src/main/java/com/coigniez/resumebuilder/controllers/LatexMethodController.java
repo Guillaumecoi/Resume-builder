@@ -13,6 +13,7 @@ import com.coigniez.resumebuilder.domain.latex.LatexMethodResponse;
 import com.coigniez.resumebuilder.interfaces.CrudController;
 import com.coigniez.resumebuilder.services.LatexMethodService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class LatexMethodController implements CrudController<LatexMethodRequest,
     private final LatexMethodService latexMethodService;
     
     @Override
+    @Operation(operationId = "createLatexMethod")
     public ResponseEntity<Long> create(@Valid LatexMethodRequest request, Authentication user) {
         Long id = latexMethodService.create(request);
         URI location = ServletUriComponentsBuilder
@@ -37,12 +39,14 @@ public class LatexMethodController implements CrudController<LatexMethodRequest,
     }
 
     @Override
+    @Operation(operationId = "getLatexMethod")
     public ResponseEntity<LatexMethodResponse> get(Long id, Authentication user) {
         LatexMethodResponse latexMethod = latexMethodService.get(id);
         return ResponseEntity.ok(latexMethod);
     }
 
     @Override
+    @Operation(operationId = "updateLatexMethod")
     public ResponseEntity<Void> update(Long id, @Valid LatexMethodRequest request, Authentication user) {
         request.setId(id);
         latexMethodService.update(request);
@@ -50,6 +54,7 @@ public class LatexMethodController implements CrudController<LatexMethodRequest,
     }
 
     @Override
+    @Operation(operationId = "deleteLatexMethod")
     public ResponseEntity<Void> delete(Long id, Authentication user) {
         latexMethodService.delete(id);
         return ResponseEntity.noContent().build();
