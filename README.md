@@ -1,13 +1,14 @@
 # 🚀 Resume Builder
 
-Transform your professional story into a stunning resume in minutes. Built with modern tech for developers who appreciate clean code and smooth user experience.
+Easily create, manage, and export professional resumes with our user-friendly application. Enjoy secure authentication, reliable cloud storage, and effortless PDF generation.
 
 ## ✨ Key Features
 
-- **Smart Templates**: Create professional resumes that stand out
-- **Cloud-Powered**: Your data, always secure, always available
-- **Responsive**: Perfect on every device
-- **Export Ready**: Download your resume as PDF
+- **Effortless Consistency**: Automatically maintain consistent layout, spacing, and font sizes across your resume
+- **Highly Customizable Templates**: Choose from a variety of templates and easily customize every aspect to fit your unique style
+- **Tech-Friendly Editing**: Advanced editing options for tech-savvy users to fine-tune their resumes
+- **Seamless PDF Generation**: Generate professional-quality PDFs using LaTeX for precise formatting
+- **User-Friendly Interface**: Intuitive design that makes resume creation simple and enjoyable
 
 ## 🛠️ Built With Modern Tech
 
