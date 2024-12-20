@@ -28,11 +28,13 @@ export class KeycloakService {
   async init() {
     const authenticated = await this.keycloak.init({
       onLoad: 'login-required',
+      checkLoginIframe: false, // Optional: Disables iframe checks for performance
     });
 
     if (authenticated) {
       this._profile = (await this.keycloak.loadUserProfile()) as UserProfile;
       this._profile.token = this.keycloak.token || '';
+      this.scheduleTokenRefresh();
     }
   }
 
@@ -41,10 +43,26 @@ export class KeycloakService {
   }
 
   logout() {
-    return this.keycloak.logout({redirectUri: 'http://localhost:4200'});
+    return this.keycloak.logout({ redirectUri: 'http://localhost:4200' });
   }
 
   accountManagement() {
     this.keycloak.accountManagement();
   }
+
+  private scheduleTokenRefresh() {
+    const refreshInterval = (this.keycloak.tokenParsed?.exp || 0) * 1000 - Date.now() - 60000; // 1 minute before expiry
+    if (refreshInterval > 0) {
+      setTimeout(async () => {
+        try {
+          await this.keycloak.updateToken(30); // Refresh if token expires in 30 seconds
+          this.scheduleTokenRefresh();
+        } catch (err) {
+          console.error('Failed to refresh token', err);
+          this.login();
+        }
+      }, refreshInterval);
+    }
+  }
 }
+
