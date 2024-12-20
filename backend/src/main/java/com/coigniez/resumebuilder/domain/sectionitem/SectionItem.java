@@ -33,9 +33,6 @@ public class SectionItem implements BaseEntity {
     @JoinColumn(name = "latex_method_id", referencedColumnName = "id")
     private LatexMethod latexMethod;
 
-    @Enumerated(EnumType.STRING)
-    private SectionItemType type;
-
     private Integer itemOrder;
 
     @Enumerated(EnumType.STRING)
@@ -43,5 +40,5 @@ public class SectionItem implements BaseEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private SectionItemData data;
+    private SectionItemData item;
 }

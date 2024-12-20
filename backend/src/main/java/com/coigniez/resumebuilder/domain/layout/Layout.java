@@ -30,6 +30,7 @@ public class Layout implements BaseEntity {
     @GeneratedValue
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", referencedColumnName = "id")
     private Resume resume;
@@ -43,6 +44,7 @@ public class Layout implements BaseEntity {
     @OneToMany(mappedBy = "layout", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<LatexMethod> latexMethods = new HashSet<>();
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private PageSize pageSize;
     
@@ -53,8 +55,8 @@ public class Layout implements BaseEntity {
     @NotNull @Min(0) @Max(1)
     private Double columnSeparator;
 
-    @Embedded
     @NotNull
+    @Embedded
     private ColorScheme colorScheme;
 
     @NotBlank

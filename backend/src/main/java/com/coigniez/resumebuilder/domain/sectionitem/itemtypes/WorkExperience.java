@@ -1,6 +1,5 @@
 package com.coigniez.resumebuilder.domain.sectionitem.itemtypes;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,15 +25,14 @@ public class WorkExperience implements SectionItemData {
     private String companyName;
     private String period;
     private String description;
-    private String responsibilities;  // Items are seperated by the newline character '\n'
+    private List<String> responsibilities;
 
     @JsonIgnore
     public String getResponsibilitiesAsItems() {
-        if (responsibilities == null || responsibilities.trim().isEmpty()) {
+        if (responsibilities == null) {
             return "";
         }
-        return Arrays.stream(responsibilities.split("\n"))
-                     .filter(r -> !r.trim().isEmpty())
+        return responsibilities.stream()
                      .map(r -> "\\item " + r.trim())
                      .reduce((a, b) -> a + "\n" + b)
                      .orElse("");

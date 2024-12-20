@@ -1,5 +1,6 @@
 package com.coigniez.resumebuilder.domain.resume;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
@@ -7,12 +8,14 @@ import lombok.Data;
 @Builder
 public class ResumeResponse {
 
-    private Long id;
+    @NotNull
+    private long id;
+    @NotNull
     private String title;
-    private String firstName;
-    private String lastName;
     private byte[] picture;
+    @NotNull
     private String createdDate;
+    @NotNull
     private String lastModifiedDate;
 
 }

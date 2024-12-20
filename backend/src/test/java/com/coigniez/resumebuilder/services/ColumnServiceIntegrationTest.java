@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.coigniez.resumebuilder.domain.column.ColumnRequest;
 import com.coigniez.resumebuilder.domain.column.ColumnResponse;
 import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
+import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
 import com.coigniez.resumebuilder.domain.section.SectionRequest;
 
@@ -77,6 +78,9 @@ public class ColumnServiceIntegrationTest {
         ColumnRequest columnRequest = ColumnRequest.builder()
                 .layoutId(layoutId)
                 .columnNumber(1)
+                .backgroundColor(ColorLocation.DARK_BG)
+                .textColor(ColorLocation.LIGHT_TEXT)
+                .borderColor(ColorLocation.ACCENT)
                 .build();
 
         // Act
@@ -95,6 +99,9 @@ public class ColumnServiceIntegrationTest {
         ColumnRequest columnRequest = ColumnRequest.builder()
                 .layoutId(layoutId)
                 .columnNumber(1)
+                .backgroundColor(ColorLocation.DARK_BG)
+                .textColor(ColorLocation.LIGHT_TEXT)
+                .borderColor(ColorLocation.ACCENT)
                 .build();
 
         Long columnId = columnService.create(columnRequest);
@@ -103,6 +110,9 @@ public class ColumnServiceIntegrationTest {
                 .id(columnId)
                 .layoutId(layoutId)
                 .columnNumber(2)
+                .backgroundColor(ColorLocation.DARK_BG)
+                .textColor(ColorLocation.LIGHT_TEXT)
+                .borderColor(ColorLocation.ACCENT)
                 .build();
 
         // Act
@@ -119,6 +129,9 @@ public class ColumnServiceIntegrationTest {
         ColumnRequest columnRequest = ColumnRequest.builder()
                 .layoutId(layoutId)
                 .columnNumber(1)
+                .backgroundColor(ColorLocation.DARK_BG)
+                .textColor(ColorLocation.LIGHT_TEXT)
+                .borderColor(ColorLocation.ACCENT)
                 .build();
 
         Long columnId = columnService.create(columnRequest);
@@ -137,6 +150,9 @@ public class ColumnServiceIntegrationTest {
         ColumnRequest columnRequest = ColumnRequest.builder()
                 .layoutId(layoutId)
                 .columnNumber(1)
+                .backgroundColor(ColorLocation.DARK_BG)
+                .textColor(ColorLocation.LIGHT_TEXT)
+                .borderColor(ColorLocation.ACCENT)
                 .build();
 
         Long columnId = columnService.create(columnRequest);

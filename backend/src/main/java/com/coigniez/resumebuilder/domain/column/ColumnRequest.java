@@ -19,6 +19,7 @@ public class ColumnRequest implements ObjectHasID {
 
     private Long id;
 
+    @NotNull
     private long layoutId;
 
     @Min(1) @Max(2)
@@ -28,8 +29,11 @@ public class ColumnRequest implements ObjectHasID {
     @NotNull
     private List<ColumnSectionRequest> sectionMappings = new ArrayList<>();
 
+    @NotNull
     private ColorLocation backgroundColor;
+    @NotNull
     private ColorLocation textColor;
+    @NotNull
     private ColorLocation borderColor;
 
     @Min(0)

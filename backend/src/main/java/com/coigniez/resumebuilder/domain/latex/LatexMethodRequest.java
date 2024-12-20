@@ -4,6 +4,7 @@ import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
 import com.coigniez.resumebuilder.interfaces.ObjectHasID;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ import lombok.Data;
 public class LatexMethodRequest implements ObjectHasID {
 
     private Long id;
+    @NotNull
     private long layoutId;
 
     @NotBlank

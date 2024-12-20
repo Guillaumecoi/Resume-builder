@@ -20,6 +20,6 @@ public class LatexItemGenerator implements LatexGenerator<SectionItem> {
         if (method == null) {
             return "";
         }
-        return "\\item " + method.generateCommand(item.getData());
+        return "\\item " + method.generateCommand(item.getItem());
     }
 }

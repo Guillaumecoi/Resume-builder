@@ -1,7 +1,7 @@
 package com.coigniez.resumebuilder.domain.sectionitem;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.coigniez.resumebuilder.domain.latex.LatexMethodMapper;
 import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.interfaces.SectionItemData;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -22,9 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest, SectionItemResponse> {
 
-    private final Validator validator;
-    private final ObjectMapper objectMapper;
     private final LatexMethodMapper latexMethodMapper;
+    private final Validator validator;
 
     @Override
     public SectionItem toEntity(SectionItemRequest request) {
@@ -32,14 +30,25 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest
             return null;
         }
 
-        SectionItemType type = SectionItemType.valueOf(request.getType());
+        Set<ConstraintViolation<SectionItemRequest>> violations = validator.validate(request);
+        Set<ConstraintViolation<SectionItemData>> itemViolations = Collections.emptySet();
+
+        if (request.getItem() != null) {
+            itemViolations = validator.validate(request.getItem());
+        }
+
+        if (!violations.isEmpty() || !itemViolations.isEmpty()) {
+            Set<ConstraintViolation<?>> allViolations = new HashSet<>();
+            allViolations.addAll(violations);
+            allViolations.addAll(itemViolations);
+            throw new ConstraintViolationException(allViolations);
+        }
 
         SectionItem sectionItem = SectionItem.builder()
                 .id(request.getId())
-                .type(type) 
                 .itemOrder(request.getItemOrder())
                 .alignment(request.getAlignment())
-                .data(toDataObject(type, request.getData()))
+                .item(request.getItem())
                 .build();
     
         return sectionItem;
@@ -48,46 +57,16 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest
     @Override
     public SectionItemResponse toDto(SectionItem entity) {
         if (entity == null) {
-            log.warn("Null SectionItem entity provided to mapper");
             return null;
         }
-
-        // Convert data object to a map and remove type information
-        @SuppressWarnings("unchecked")
-        Map<String, Object> data = objectMapper.convertValue(entity.getData(), Map.class);
     
         return SectionItemResponse.builder()
             .id(entity.getId())
-            .type(entity.getType().name())
             .itemOrder(entity.getItemOrder())
             .alignment(entity.getAlignment())
             .latexMethod(latexMethodMapper.toDto(entity.getLatexMethod()))
-            .data(data)
+            .item(entity.getItem())
             .build();
-    }
-
-    public SectionItemData toDataObject(SectionItemType type, Map<String, Object> data) {
-        if (type == null || data == null) {
-            return null;
-        }
-
-        // Add @class type information to the data
-        Map<String, Object> dataWithType = new HashMap<>(data);
-        dataWithType.put("@class", type.getDataType().getName());
-
-        Object dataObject = objectMapper.convertValue(dataWithType, type.getDataType());
-    
-        // Validate the deserialized data object
-        validateDataObject(dataObject);
-
-        return (SectionItemData) dataObject;
-    }
-
-    private void validateDataObject(Object dataObject) {
-        Set<ConstraintViolation<Object>> violations = validator.validate(dataObject);
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(violations);
-        }
     }
 
     @Override
@@ -96,9 +75,8 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest
             return;
         }
 
-        entity.setType(SectionItemType.valueOf(request.getType()));
         entity.setItemOrder(request.getItemOrder());
         entity.setAlignment(request.getAlignment());
-        entity.setData(toDataObject(entity.getType(), request.getData()));
+        entity.setItem(request.getItem());
     }
 }

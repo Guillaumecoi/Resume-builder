@@ -1,6 +1,5 @@
 package com.coigniez.resumebuilder.domain.sectionitem.itemtypes;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.coigniez.resumebuilder.interfaces.SectionItemData;
@@ -21,11 +20,11 @@ public class Skillboxes implements SectionItemData {
     public static final int BASE_PARAMETER_COUNT = 1;
     
     @NotBlank
-    private String skills; // Seperated by ','
+    private List<String> skills;
 
     @JsonIgnore
     public List<String> getSectionItemData() {
-        return Arrays.asList(skills);
+        return skills;
     }
 }
 

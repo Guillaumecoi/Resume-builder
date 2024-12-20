@@ -19,16 +19,18 @@ public class ColumnSection implements BaseEntity {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
     private Column column;
 
-    @ManyToOne(fetch = FetchType.EAGER)
     @NotNull
+    @ManyToOne(fetch = FetchType.EAGER)
     private Section section;
 
     @NotNull
     private Integer sectionOrder;
+    @NotNull
     private double itemsep;
+    @NotNull
     private double endsep;
 }

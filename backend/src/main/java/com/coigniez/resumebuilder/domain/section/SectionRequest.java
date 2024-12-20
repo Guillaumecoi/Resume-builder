@@ -6,7 +6,7 @@ import java.util.List;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
 import com.coigniez.resumebuilder.interfaces.ObjectHasID;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import lombok.Builder;
@@ -17,11 +17,10 @@ import lombok.Data;
 public class SectionRequest implements ObjectHasID {
 
     Long id;
+    @NotNull
     long resumeId;
-    @NotNull
-    @NotEmpty
+    @NotBlank
     String title;
-    @NotNull
     @Builder.Default
     Boolean showTitle = true;
     @Builder.Default

@@ -750,27 +750,104 @@
   },
   "components": {
     "schemas": {
+      "Contact": {
+        "required": ["label"],
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/SectionItemData" },
+          {
+            "type": "object",
+            "properties": {
+              "icon": { "type": "string" },
+              "label": { "type": "string" },
+              "link": { "type": "string" }
+            }
+          }
+        ]
+      },
+      "Education": {
+        "required": ["degree", "institution"],
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/SectionItemData" },
+          {
+            "type": "object",
+            "properties": {
+              "degree": { "type": "string" },
+              "institution": { "type": "string" },
+              "period": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        ]
+      },
+      "Picture": {
+        "required": ["path"],
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/SectionItemData" },
+          {
+            "type": "object",
+            "properties": {
+              "path": { "type": "string" },
+              "caption": { "type": "string" },
+              "width": {
+                "maximum": 1.0,
+                "exclusiveMaximum": false,
+                "minimum": 0.05,
+                "exclusiveMinimum": false,
+                "type": "number",
+                "format": "double"
+              },
+              "height": { "type": "number", "format": "double" },
+              "rounded": { "type": "integer", "format": "int32" },
+              "zoom": { "type": "number", "format": "double" },
+              "xoffset": { "type": "number", "format": "double" },
+              "yoffset": { "type": "number", "format": "double" },
+              "shadow": {
+                "maximum": 5,
+                "minimum": 0,
+                "type": "number",
+                "format": "double"
+              }
+            }
+          }
+        ]
+      },
+      "SectionItemData": {
+        "type": "object",
+        "properties": {
+          "sectionItemData": { "type": "array", "items": { "type": "string" } }
+        }
+      },
       "SectionItemRequest": {
-        "required": ["data", "latexMethodId", "type"],
+        "required": ["item", "latexMethodId", "sectionId"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int64" },
           "sectionId": { "type": "integer", "format": "int64" },
           "latexMethodId": { "type": "integer", "format": "int64" },
-          "type": { "type": "string" },
           "itemOrder": { "type": "integer", "format": "int32" },
           "alignment": {
             "type": "string",
             "enum": ["LEFT", "CENTER", "RIGHT", "JUSTIFIED"]
           },
-          "data": {
-            "type": "object",
-            "additionalProperties": { "type": "object" }
+          "item": {
+            "oneOf": [
+              { "$ref": "#/components/schemas/Contact" },
+              { "$ref": "#/components/schemas/Education" },
+              { "$ref": "#/components/schemas/Picture" },
+              { "$ref": "#/components/schemas/Skill" },
+              { "$ref": "#/components/schemas/Skillboxes" },
+              { "$ref": "#/components/schemas/Textbox" },
+              { "$ref": "#/components/schemas/Title" },
+              { "$ref": "#/components/schemas/WorkExperience" }
+            ]
           }
         }
       },
       "SectionRequest": {
-        "required": ["showTitle", "title"],
+        "required": ["resumeId", "title"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int64" },
@@ -782,6 +859,84 @@
             "items": { "$ref": "#/components/schemas/SectionItemRequest" }
           }
         }
+      },
+      "Skill": {
+        "required": ["name"],
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/SectionItemData" },
+          {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "proficiency": {
+                "maximum": 10,
+                "minimum": 1,
+                "type": "integer",
+                "format": "int32"
+              },
+              "description": { "type": "string" }
+            }
+          }
+        ]
+      },
+      "Skillboxes": {
+        "required": ["skills"],
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/SectionItemData" },
+          {
+            "type": "object",
+            "properties": {
+              "skills": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        ]
+      },
+      "Textbox": {
+        "required": ["content"],
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/SectionItemData" },
+          {
+            "type": "object",
+            "properties": { "content": { "type": "string" } }
+          }
+        ]
+      },
+      "Title": {
+        "required": ["title"],
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/SectionItemData" },
+          {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string" },
+              "subtitle": { "type": "string" }
+            }
+          }
+        ]
+      },
+      "WorkExperience": {
+        "required": ["jobTitle"],
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/SectionItemData" },
+          {
+            "type": "object",
+            "properties": {
+              "jobTitle": { "type": "string" },
+              "companyName": { "type": "string" },
+              "period": { "type": "string" },
+              "description": { "type": "string" },
+              "responsibilities": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
+        ]
       },
       "ResumeRequest": {
         "required": ["title"],
@@ -796,6 +951,16 @@
         }
       },
       "ColorScheme": {
+        "required": [
+          "accent",
+          "darkBg",
+          "darkText",
+          "lightBg",
+          "lightText",
+          "name",
+          "primaryColor",
+          "secondaryColor"
+        ],
         "type": "object",
         "properties": {
           "name": { "type": "string" },
@@ -812,7 +977,13 @@
         }
       },
       "ColumnRequest": {
-        "required": ["sectionMappings"],
+        "required": [
+          "backgroundColor",
+          "borderColor",
+          "layoutId",
+          "sectionMappings",
+          "textColor"
+        ],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int64" },
@@ -894,7 +1065,7 @@
         }
       },
       "LatexMethodRequest": {
-        "required": ["method", "name", "type"],
+        "required": ["layoutId", "method", "name", "type"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int64" },
@@ -928,7 +1099,10 @@
         "properties": {
           "id": { "type": "integer", "format": "int64" },
           "resumeId": { "type": "integer", "format": "int64" },
-          "pageSize": { "type": "string", "enum": ["A4", "LETTER"] },
+          "pageSize": {
+            "type": "string",
+            "enum": ["A4", "A5", "LETTER", "B5", "EXECUTIVE"]
+          },
           "columns": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/ColumnRequest" }
@@ -955,6 +1129,7 @@
         }
       },
       "LatexMethodResponse": {
+        "required": ["id", "method", "name", "type"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int64" },
@@ -976,23 +1151,32 @@
         }
       },
       "SectionItemResponse": {
+        "required": ["id", "item", "itemOrder", "latexMethod"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int64" },
           "latexMethod": { "$ref": "#/components/schemas/LatexMethodResponse" },
-          "type": { "type": "string" },
           "itemOrder": { "type": "integer", "format": "int32" },
           "alignment": {
             "type": "string",
             "enum": ["LEFT", "CENTER", "RIGHT", "JUSTIFIED"]
           },
-          "data": {
-            "type": "object",
-            "additionalProperties": { "type": "object" }
+          "item": {
+            "oneOf": [
+              { "$ref": "#/components/schemas/Contact" },
+              { "$ref": "#/components/schemas/Education" },
+              { "$ref": "#/components/schemas/Picture" },
+              { "$ref": "#/components/schemas/Skill" },
+              { "$ref": "#/components/schemas/Skillboxes" },
+              { "$ref": "#/components/schemas/Textbox" },
+              { "$ref": "#/components/schemas/Title" },
+              { "$ref": "#/components/schemas/WorkExperience" }
+            ]
           }
         }
       },
       "SectionResponse": {
+        "required": ["id", "sectionItems", "showTitle", "title"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int64" },
@@ -1020,18 +1204,18 @@
         }
       },
       "ResumeResponse": {
+        "required": ["createdDate", "id", "lastModifiedDate", "title"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int64" },
           "title": { "type": "string" },
-          "firstName": { "type": "string" },
-          "lastName": { "type": "string" },
           "picture": { "type": "string", "format": "byte" },
           "createdDate": { "type": "string" },
           "lastModifiedDate": { "type": "string" }
         }
       },
       "ResumeDetailResponse": {
+        "required": ["createdDate", "id", "lastModifiedDate", "title"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int64" },
@@ -1046,6 +1230,22 @@
         }
       },
       "ColumnResponse": {
+        "required": [
+          "backgroundColor",
+          "borderBottom",
+          "borderColor",
+          "borderLeft",
+          "borderRight",
+          "borderTop",
+          "columnNumber",
+          "id",
+          "paddingBottom",
+          "paddingLeft",
+          "paddingRight",
+          "paddingTop",
+          "sectionMappings",
+          "textColor"
+        ],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int64" },
@@ -1101,6 +1301,7 @@
         }
       },
       "ColumnSectionResponse": {
+        "required": ["endsep", "id", "itemsep", "section", "sectionOrder"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int64" },
@@ -1111,10 +1312,23 @@
         }
       },
       "LayoutResponse": {
+        "required": [
+          "colorScheme",
+          "columnSeparator",
+          "columns",
+          "id",
+          "latexMethods",
+          "numberOfColumns",
+          "pageSize",
+          "sectionTitleMethod"
+        ],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int64" },
-          "pageSize": { "type": "string", "enum": ["A4", "LETTER"] },
+          "pageSize": {
+            "type": "string",
+            "enum": ["A4", "A5", "LETTER", "B5", "EXECUTIVE"]
+          },
           "columns": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/ColumnResponse" }

@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemResponse;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,9 +13,13 @@ import lombok.Data;
 @Builder
 public class SectionResponse {
 
-    private Long id;
+    @NotNull
+    private long id;
+    @NotBlank
     private String title;
+    @NotNull
     private boolean showTitle;
+    @NotNull
     private List<SectionItemResponse> sectionItems;
     
 }

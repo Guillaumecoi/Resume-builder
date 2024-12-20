@@ -13,9 +13,9 @@ public class ColumnSectionRequest implements ObjectHasID {
     private Long id;
 
     @NotNull
-    private Long columnId;
+    private long columnId;
     @NotNull
-    private Long sectionId;
+    private long sectionId;
     private Integer sectionOrder;
     
     @Builder.Default

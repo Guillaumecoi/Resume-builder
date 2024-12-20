@@ -13,7 +13,14 @@ import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
 import com.coigniez.resumebuilder.domain.resume.*;
 import com.coigniez.resumebuilder.domain.section.*;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Contact;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Education;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skillboxes;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Title;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.WorkExperience;
 import com.coigniez.resumebuilder.services.ColumnSectionService;
 import com.coigniez.resumebuilder.services.LayoutService;
 import com.coigniez.resumebuilder.services.ResumeService;
@@ -25,7 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -73,15 +79,14 @@ public class ResumeExampleService {
                 
         SectionItemRequest pictureRequest = SectionItemRequest.builder()
                 .sectionId(sectionId)
-                .type(SectionItemType.PICTURE.name())
-                .data(new HashMap<>() {{
-                        put("caption", "Photo by Ali Mammadli on Unsplash");
-                        put("width", 0.9);
-                        put("height", 1.1);
-                        put("shadow", 2.0);
-                        put("zoom", 1.8);
-                        put("yoffset", -8.0);
-                }})
+                .item(Picture.builder()
+                        .caption("Photo by Ali Mammadli on Unsplash")
+                        .width(0.9)
+                        .height(1.1)
+                        .shadow(2.0)
+                        .zoom(1.8)
+                        .yoffset(-8.0)
+                        .build())
                 .latexMethodId(methodIds.get("pictureitem"))
                 .build();
 
@@ -107,60 +112,54 @@ public class ResumeExampleService {
     private void addContactSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
         List<SectionItemRequest> contactItems = new ArrayList<>();
         contactItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.CONTACT.name())
-                .data(new HashMap<>() {{
-                    put("icon", "\\faMapMarker");
-                    put("label", "Brussels, Belgium");
-                }})
+                .item(Contact.builder()
+                        .icon("\\faMapMarker")
+                        .label("Brussels, Belgium")
+                        .build())
                 .latexMethodId(methodIds.get("contactitem"))
                 .build());
     
         contactItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.CONTACT.name())
-                .data(new HashMap<>() {{
-                    put("icon", "\\faEnvelope");
-                    put("label", "john@email.com");
-                    put("link", "mailto:john@email.com");
-                }})
+                .item(Contact.builder()
+                        .icon("\\faEnvelope")
+                        .label("john@email.com")
+                        .link("mailto:john@email.com")
+                        .build())
                 .latexMethodId(methodIds.get("contactitem"))
                 .build());
 
         contactItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.CONTACT.name())
-                .data(new HashMap<>() {{
-                    put("icon", "\\faPhone");
-                    put("label", "+32 123 456 789");
-                    put("link", "tel:+32123456789");
-                }})
+                .item(Contact.builder()
+                        .icon("\\faPhone")
+                        .label("+32 123 456 789")
+                        .link("tel:+32123456789")
+                        .build())
                 .latexMethodId(methodIds.get("contactitem"))
                 .build());
 
         contactItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.CONTACT.name())
-                .data(new HashMap<>() {{
-                    put("icon", "\\faLinkedin");
-                    put("label", "johndoe");
-                    put("link", "https://linkedin.com/in/johndoe");
-                }})
+                .item(Contact.builder()
+                        .icon("\\faLinkedin")
+                        .label("johndoe")
+                        .link("https://linkedin.com/in/johndoe")
+                        .build())
                 .latexMethodId(methodIds.get("contactitem"))
                 .build());
 
         contactItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.CONTACT.name())
-                .data(new HashMap<>() {{
-                    put("icon", "\\faGithub");
-                    put("label", "johndoe");
-                    put("link", "https://github.com/johndoe");
-                }})
+                .item(Contact.builder()
+                        .icon("\\faGithub")
+                        .label("johndoe")
+                        .link("https://github.com/johndoe")
+                        .build())
                 .latexMethodId(methodIds.get("contactitem"))
                 .build());
 
         contactItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.CONTACT.name())
-                .data(new HashMap<>() {{
-                    put("icon", "\\faCar");
-                    put("label", "Driving License B");
-                }})
+                .item(Contact.builder()
+                        .icon("\\faCar")
+                        .label("Driving License B")
+                        .build())
                 .latexMethodId(methodIds.get("contactitem"))
                 .build());
 
@@ -183,35 +182,32 @@ public class ResumeExampleService {
     private void addEducationSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
         List<SectionItemRequest> educationItems = new ArrayList<>();
         educationItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.EDUCATION.name())
                 .itemOrder(2)
-                .data(new HashMap<>() {{
-                    put("degree", "Bachelor of Science in Computer Science");
-                    put("institution", "Open Universiteit Utrecht");
-                    put("period", "2019 - 2023");
-                }})
+                .item(Education.builder()
+                        .degree("Bachelor of Science in Computer Science")
+                        .institution("Open Universiteit Utrecht")
+                        .period("2019 - 2023")
+                        .build())
                 .latexMethodId(methodIds.get("educationitem"))
                 .build());
 
         educationItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.EDUCATION.name())
                 .itemOrder(1)
-                .data(new HashMap<>() {{
-                    put("degree", "Master of Science in Computer Science");
-                    put("institution", "Open Universiteit Utrecht");
-                    put("period", "2023 -");
-                }})
+                .item(Education.builder()
+                        .degree("Master of Science in Computer Science")
+                        .institution("Open Universiteit Utrecht")
+                        .period("2023 -")
+                        .build())
                 .latexMethodId(methodIds.get("educationitem"))
                 .build());
         
         educationItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.EDUCATION.name())
                 .itemOrder(3)
-                .data(new HashMap<>() {{
-                    put("degree", "Science-Mathematics");
-                    put("institution", "International School of Brussels");
-                    put("period", "2016");
-                }})
+                .item(Education.builder()
+                        .degree("Science-Mathematics")
+                        .institution("International School of Brussels")
+                        .period("2016")
+                        .build())
                 .latexMethodId(methodIds.get("educationitem"))
                 .build());
         
@@ -221,6 +217,7 @@ public class ResumeExampleService {
                 .showTitle(true)
                 .sectionItems(educationItems)
                 .build());
+
         columnSectionService.create(ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(educationId)
@@ -232,15 +229,13 @@ public class ResumeExampleService {
     private void addExperienceSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
         List<SectionItemRequest> experienceItems = new ArrayList<>();
         experienceItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.WORK_EXPERIENCE.name())
-                .itemOrder(1)
-                .data(new HashMap<>() {{
-                    put("jobTitle", "Software Engineer");
-                    put("companyName", "MIVB/STIB");
-                    put("period", "2021 - 2022");
-                    put("description", "Developing software for the public transport company of Brussels");
-                    put("responsibilities","Developing new features for the website\nMaintaining the existing codebase");
-                }})
+                .item(WorkExperience.builder()
+                        .jobTitle("Software Engineer")
+                        .companyName("MIVB/STIB")
+                        .period("2021 - 2022")
+                        .description("Developing software for the public transport company of Brussels")
+                        .responsibilities(List.of("Developing new features for the website", "Maintaining the existing codebase"))
+                        .build())
                 .latexMethodId(methodIds.get("experienceitem"))
                 .build());
             
@@ -258,11 +253,10 @@ public class ResumeExampleService {
 
     private void addTitleSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
         SectionItemRequest title = SectionItemRequest.builder()
-                .type(SectionItemType.TITLE.name())
-                .data(new HashMap<>() {{
-                    put("title", "John Doe");
-                    put("subtitle", "Software Developer");
-                }})
+                .item(Title.builder()
+                        .title("John Doe")
+                        .subtitle("Software Developer")
+                        .build())
                 .latexMethodId(methodIds.get("cvtitle"))
                 .build();
             
@@ -283,14 +277,14 @@ public class ResumeExampleService {
     private void addSummarySection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
         List<SectionItemRequest> summaryItems = new ArrayList<>();
         summaryItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.TEXTBOX.name())
-                .data(new HashMap<>() {{
-                    put("content", """
-                        Passionate software developer with a strong foundation in computer science, currently pursuing MSc at Open Universiteit Utrecht. 
-                        Specializing in Java development with hands-on experience in Spring Boot and web technologies. 
-                        Strong analytical mindset developed through mathematics-focused secondary education.
-                        Eager to apply theoretical knowledge in practical software development challenges.""");
-                }})
+                .item(Textbox.builder()
+                        .content("""
+                            Passionate software developer with a strong foundation in computer science, currently pursuing MSc at Open Universiteit Utrecht. 
+                            Specializing in Java development with hands-on experience in Spring Boot and web technologies. 
+                            Strong analytical mindset developed through mathematics-focused secondary education.
+                            Eager to apply theoretical knowledge in practical software development challenges.
+                        """)
+                        .build())
                 .latexMethodId(methodIds.get("textbox"))
                 .build());
             
@@ -309,45 +303,40 @@ public class ResumeExampleService {
     private void addSkillsSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
         List<SectionItemRequest> skillsItems = new ArrayList<>();
         skillsItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL_BOXES.name())
-                .data(new HashMap<>() {{
-                    put("skills", "Java, Spring Boot, HTML, CSS, JavaScript, SQL, Python, C, C++");
-                }})
+                .item(Skillboxes.builder()
+                        .skills(List.of("Java", "Spring Boot", "HTML", "CSS", "JavaScript", "SQL", "Python", "C", "C++"))
+                        .build())
                 .latexMethodId(methodIds.get("skillboxes"))
                 .build());
 
         skillsItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL.name())
-                .data(new HashMap<>() {{
-                    put("name", "Dutch");
-                }})
+                .item(Skill.builder()
+                        .name("Dutch")
+                        .build())
                 .latexMethodId(methodIds.get("skillitem"))
                 .build());
 
         skillsItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL.name())
-                .data(new HashMap<>() {{
-                    put("name", "French");
-                    put("description", "Intermediate");
-                }})
+                .item(Skill.builder()
+                        .name("French")
+                        .description("Intermediate")
+                        .build())
                 .latexMethodId(methodIds.get("skilltext"))
                 .build());
 
         skillsItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL.name())
-                .data(new HashMap<>() {{
-                    put("name", "English");
-                    put("proficiency", 9);
-                }})
+                .item(Skill.builder()
+                        .name("English")
+                        .proficiency(9)
+                        .build())
                 .latexMethodId(methodIds.get("skillbullets"))
                 .build());
 
         skillsItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL.name())
-                .data(new HashMap<>() {{
-                    put("name", "Japanese");
-                    put("proficiency", 6);
-                }})
+                .item(Skill.builder()
+                        .name("Japanese")
+                        .proficiency(6)
+                        .build())
                 .latexMethodId(methodIds.get("skillbar"))
                 .build());
             
@@ -356,6 +345,7 @@ public class ResumeExampleService {
                 .title("Skills")
                 .sectionItems(skillsItems)
                 .build());
+
         columnSectionService.create(ColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(skillsId)

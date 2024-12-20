@@ -15,6 +15,7 @@ import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRepository;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemResponse;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.file.FileStorageService;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.util.SecurityUtils;
@@ -81,7 +82,7 @@ public class SectionItemService implements ParentEntityService<SectionItemReques
         
         // Save the file to the file storage and add the path to the request
         String path = fileStorageService.saveFile(file, securityUtils.getUserName());
-        request.getData().put("path", path);
+        ((Picture) request.getItem()).setPath(path);
 
         // Create the item
         return create(request);

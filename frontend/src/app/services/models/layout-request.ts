@@ -10,7 +10,7 @@ export interface LayoutRequest {
   id?: number;
   latexMethods: Array<LatexMethodRequest>;
   numberOfColumns: number;
-  pageSize?: 'A4' | 'LETTER';
+  pageSize?: 'A4' | 'A5' | 'LETTER' | 'B5' | 'EXECUTIVE';
   resumeId: number;
   sectionTitleMethod?: string;
 }

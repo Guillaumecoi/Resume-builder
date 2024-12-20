@@ -11,6 +11,7 @@ import com.coigniez.resumebuilder.interfaces.SectionItemData;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter @Setter
@@ -24,12 +25,13 @@ public class LatexMethod implements BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "layout_id", referencedColumnName = "id")
     private Layout layout;
 
     @Builder.Default
-    @OneToMany(mappedBy = "latexMethod", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "latexMethod", fetch = FetchType.LAZY, orphanRemoval = false)
     private List<SectionItem> sectionItems = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
@@ -38,11 +40,14 @@ public class LatexMethod implements BaseEntity {
     @NotBlank
     private String name;
 
-    @Column(columnDefinition = "TEXT")
     @NotBlank
+    @Column(columnDefinition = "TEXT")
     private String method;
 
     public void addSectionItem(SectionItem sectionItem) {
+        if (type.getDataType() != sectionItem.getItem().getClass()) {
+            throw new IllegalArgumentException("SectionItem data type does not match the method type");
+        }
         sectionItems.add(sectionItem);
         sectionItem.setLatexMethod(this);
     }

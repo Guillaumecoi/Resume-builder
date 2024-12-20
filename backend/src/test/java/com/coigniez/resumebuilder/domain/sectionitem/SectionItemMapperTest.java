@@ -6,18 +6,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.validation.annotation.Validated;
 
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.*;
-import com.coigniez.resumebuilder.interfaces.SectionItemData;
 
 import jakarta.validation.ConstraintViolationException;
 
-import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Validated
 class SectionItemMapperTest {
 
     @Autowired
@@ -26,28 +27,23 @@ class SectionItemMapperTest {
     @Test
     void testToDto() {
         // Arrange
-        SectionItemData data = Textbox.builder()
-                .content("This is some example text")
-                .build();
-
-
         SectionItem entity = SectionItem.builder()
                 .id(1L)
-                .type(SectionItemType.TEXTBOX)
                 .itemOrder(1)
-                .data(data)
+                .item(Textbox.builder()
+                    .content("This is some example text")
+                    .build())
                 .build();
 
-        // Ac
+        // Act
         SectionItemResponse dto = mapper.toDto(entity);
 
         // Assert
         assertNotNull(dto);
         assertEquals(entity.getId(), dto.getId());
-        assertEquals(entity.getType().name(), dto.getType());
         assertEquals(entity.getItemOrder(), dto.getItemOrder());
-        assertNotNull(dto.getData());
-        assertEquals("This is some example text", ((Map<String, Object>) dto.getData()).get("content"));
+        assertNotNull(dto.getItem());
+        assertEquals("This is some example text", ((Textbox) dto.getItem()).getContent());
     }
 
     @Test
@@ -63,11 +59,12 @@ class SectionItemMapperTest {
     void testToEntity() {
         // Arrange
         SectionItemRequest request = SectionItemRequest.builder()
-            .type(SectionItemType.TEXTBOX.name())
             .itemOrder(2)
-            .data(new HashMap<>() {{
-                put("content", "This is some example text");
-            }})
+            .sectionId(1)
+            .latexMethodId(1)
+            .item(Textbox.builder()
+                .content("This is some example text")
+                .build())
             .build();
 
         // Act
@@ -75,10 +72,9 @@ class SectionItemMapperTest {
 
         // Assert
         assertNotNull(entity);
-        assertEquals(SectionItemType.TEXTBOX, entity.getType());
         assertEquals(request.getItemOrder(), entity.getItemOrder());
-        assertTrue(entity.getData() instanceof Textbox);
-        assertEquals("This is some example text", ((Textbox) entity.getData()).getContent());
+        assertTrue(entity.getItem() instanceof Textbox);
+        assertEquals("This is some example text", ((Textbox) entity.getItem()).getContent());
 
     }
 
@@ -92,74 +88,87 @@ class SectionItemMapperTest {
     }
 
     @Test
+    void testToEntity_missingRequiredFields() {
+        SectionItemRequest dto = SectionItemRequest.builder()
+                .itemOrder(1)
+                .build();
+    
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(dto));
+    }
+
+    @Test
     void testToEntity_Skill() {
         // Arrange
         SectionItemRequest correctComplete = SectionItemRequest.builder()
-            .type(SectionItemType.SKILL.name())
             .itemOrder(1)
-            .data(new HashMap<>() {{
-                put("name", "Java");
-                put("proficiency", 8);
-            }})
+            .sectionId(1)
+            .latexMethodId(1)
+            .item(Skill.builder()
+                .name("Java")
+                .proficiency(8)
+                .build())
             .build();
 
         SectionItemRequest nullProficiency = SectionItemRequest.builder()
-            .type(SectionItemType.SKILL.name())
             .itemOrder(1)
-            .data(new HashMap<>() {{
-                put("name", "Java");
-            }})
+            .sectionId(1)
+            .latexMethodId(1)
+            .item(Skill.builder()
+                .name("Java")
+                .build())
             .build();
 
         SectionItemRequest nullName = SectionItemRequest.builder()
-            .type(SectionItemType.SKILL.name())
             .itemOrder(1)
-            .data(new HashMap<>() {{
-                put("proficiency", 8);
-            }})
+            .sectionId(1)
+            .latexMethodId(1)
+            .item(Skill.builder()
+                .proficiency(8)
+                .build())
             .build();
 
         SectionItemRequest emptyName = SectionItemRequest.builder()
-            .type(SectionItemType.SKILL.name())
             .itemOrder(1)
-            .data(new HashMap<>() {{
-                put("name", "");
-                put("proficiency", 8);
-            }})
+            .sectionId(1)
+            .latexMethodId(1)
+            .item(Skill.builder()
+                .name("")
+                .proficiency(8)
+                .build())
             .build();
 
         SectionItemRequest lowProficiency = SectionItemRequest.builder()
-            .type(SectionItemType.SKILL.name())
             .itemOrder(1)
-            .data(new HashMap<>() {{
-                put("name", "Java");
-                put("proficiency", 0);
-            }})
+            .sectionId(1)
+            .latexMethodId(1)
+            .item(Skill.builder()
+                .name("Java")
+                .proficiency(0)
+                .build())
             .build();
 
         SectionItemRequest highProficiency = SectionItemRequest.builder()
-            .type(SectionItemType.SKILL.name())
             .itemOrder(1)
-            .data(new HashMap<>() {{
-                put("name", "Java");
-                put("proficiency", 11);
-            }})
+            .sectionId(1)
+            .latexMethodId(1)
+            .item(Skill.builder()
+                .name("Java")
+                .proficiency(11)
+                .build())
             .build();
     
         // Act
         SectionItem entityCorrectComplete = mapper.toEntity(correctComplete);
-    
         SectionItem entityNullProficiency = mapper.toEntity(nullProficiency);
     
         // Assert
         assertNotNull(entityCorrectComplete);
-        assertEquals(SectionItemType.SKILL, entityCorrectComplete.getType());
-        assertEquals("Java", ((Skill) entityCorrectComplete.getData()).getName());
-        assertEquals(8, ((Skill) entityCorrectComplete.getData()).getProficiency());     
+        assertEquals("Java", ((Skill) entityCorrectComplete.getItem()).getName());
+        assertEquals(8, ((Skill) entityCorrectComplete.getItem()).getProficiency());     
         assertNotNull(entityNullProficiency);
-        assertEquals(SectionItemType.SKILL, entityNullProficiency.getType());
-        assertEquals("Java", ((Skill) entityNullProficiency.getData()).getName());
-        assertNull(((Skill) entityNullProficiency.getData()).getProficiency());
+        assertEquals("Java", ((Skill) entityNullProficiency.getItem()).getName());
+        assertNull(((Skill) entityNullProficiency.getItem()).getProficiency());
         
         // Act & Assert
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(nullName));
@@ -170,189 +179,225 @@ class SectionItemMapperTest {
 
     @Test
     void testToEntity_Textbox() {
-        // Arrange
-        Map<String, Object> correctComplete = new HashMap<>();
-        correctComplete.put("content", "This is some example text");
-    
-        Map<String, Object> nullContent = new HashMap<>();
-    
-        Map<String, Object> emptyContent = new HashMap<>();
-        emptyContent.put("content", "");
-    
         // Act
         SectionItem entityCorrectComplete = mapper.toEntity(
                 SectionItemRequest.builder()
-                        .type(SectionItemType.TEXTBOX.name())
                         .itemOrder(1)
-                        .data(correctComplete)
+                        .sectionId(1)
+                        .latexMethodId(1)
+                        .item(Textbox.builder()
+                                .content("This is some example text")
+                                .build())
                         .build());
     
         // Assert
         assertNotNull(entityCorrectComplete);
-        assertEquals(SectionItemType.TEXTBOX, entityCorrectComplete.getType());
-        assertEquals("This is some example text", ((Textbox) entityCorrectComplete.getData()).getContent());
+        assertEquals("This is some example text", ((Textbox) entityCorrectComplete.getItem()).getContent());
     
         // Act & Assert
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
                 SectionItemRequest.builder()
-                        .type(SectionItemType.TEXTBOX.name())
                         .itemOrder(1)
-                        .data(nullContent)
+                        .sectionId(1)
+                        .latexMethodId(1)
+                        .item(Textbox.builder()
+                                .build())
                         .build()));
         
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
                 SectionItemRequest.builder()
-                        .type(SectionItemType.TEXTBOX.name())
                         .itemOrder(1)
-                        .data(emptyContent)
+                        .item(Textbox.builder()
+                                .content("")
+                                .build())
                         .build()));
     }
 
     @Test
     void testToEntity_Education() {
         // Arrange
-        Map<String, Object> correctComplete = new HashMap<>();
-        correctComplete.put("degree", "Bachelor of Science");
-        correctComplete.put("institution", "University of Example");
-        correctComplete.put("period", "2020-2023");
-        correctComplete.put("description", "This is a description");
-    
-        Map<String, Object> nullDegree = new HashMap<>(correctComplete);
-        nullDegree.remove("degree");
-    
-        Map<String, Object> nullInstitution = new HashMap<>(correctComplete);
-        nullInstitution.remove("institution");
-    
-        Map<String, Object> nullDescription = new HashMap<>(correctComplete);
-        nullDescription.remove("description");
-    
-        Map<String, Object> emptyDegree = new HashMap<>(correctComplete);
-        emptyDegree.put("degree", "");
-    
-        Map<String, Object> emptyInstitution = new HashMap<>(correctComplete);
-        emptyInstitution.put("institution", "");
-    
-        Map<String, Object> lateStartDate = new HashMap<>(correctComplete);
-        lateStartDate.put("startDate", LocalDate.of(2024, 1, 1));
-    
+        Education correctComplete = Education.builder()
+            .degree("Bachelor of Science")
+            .institution("University of Example")
+            .period("2020-2023")
+            .description("This is a description")
+            .build();
+        
+        Education nullDegree = Education.builder()
+            .institution("University of Example")
+            .period("2020-2023")
+            .description("This is a description")
+            .build();
+        
+        Education nullInstitution = Education.builder()
+            .degree("Bachelor of Science")
+            .period("2020-2023")
+            .description("This is a description")
+            .build();
+        
+        Education nullDescription = Education.builder()
+            .degree("Bachelor of Science")
+            .institution("University of Example")
+            .period("2020-2023")
+            .build();
+        
+        Education emptyDegree = Education.builder()
+            .degree("")
+            .institution("University of Example")
+            .period("2020-2023")
+            .description("This is a description")
+            .build();
+        
+        Education emptyInstitution = Education.builder()
+            .degree("Bachelor of Science")
+            .institution("")
+            .period("2020-2023")
+            .description("This is a description")
+            .build();
+        
         // Act
         SectionItem entityCorrectComplete = mapper.toEntity(
-                SectionItemRequest.builder()
-                        .type(SectionItemType.EDUCATION.name())
-                        .itemOrder(1)
-                        .data(correctComplete)
-                        .build());
-    
+            SectionItemRequest.builder()
+                .itemOrder(1)
+                .sectionId(1)
+                .latexMethodId(1)
+                .item(correctComplete)
+                .build());
+        
         SectionItem entityNullDescription = mapper.toEntity(
-                SectionItemRequest.builder()
-                        .type(SectionItemType.EDUCATION.name())
-                        .itemOrder(1)
-                        .data(nullDescription)
-                        .build());
+            SectionItemRequest.builder()
+                .itemOrder(1)
+                .sectionId(1)
+                .latexMethodId(1)
+                .item(nullDescription)
+                .build());
     
         // Assert
         assertNotNull(entityCorrectComplete);
-        assertEquals(SectionItemType.EDUCATION, entityCorrectComplete.getType());
-        assertEquals("Bachelor of Science", ((Education) entityCorrectComplete.getData()).getDegree());
-        assertEquals("University of Example", ((Education) entityCorrectComplete.getData()).getInstitution());
-        assertEquals("2020-2023", ((Education) entityCorrectComplete.getData()).getPeriod());
-        assertEquals("This is a description", ((Education) entityCorrectComplete.getData()).getDescription());
+        assertEquals("Bachelor of Science", ((Education) entityCorrectComplete.getItem()).getDegree());
+        assertEquals("University of Example", ((Education) entityCorrectComplete.getItem()).getInstitution());
+        assertEquals("2020-2023", ((Education) entityCorrectComplete.getItem()).getPeriod());
+        assertEquals("This is a description", ((Education) entityCorrectComplete.getItem()).getDescription());
         assertNotNull(entityNullDescription);
     
         // Act & Assert
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
                 SectionItemRequest.builder()
-                        .type(SectionItemType.EDUCATION.name())
                         .itemOrder(1)
-                        .data(nullDegree)
+                        .sectionId(1)
+                        .latexMethodId(1)
+                        .item(nullDegree)
                         .build()));
         
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
                 SectionItemRequest.builder()
-                        .type(SectionItemType.EDUCATION.name())
                         .itemOrder(1)
-                        .data(nullInstitution)
+                        .sectionId(1)
+                        .latexMethodId(1)
+                        .item(nullInstitution)
                         .build()));
         
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
                 SectionItemRequest.builder()
-                        .type(SectionItemType.EDUCATION.name())
                         .itemOrder(1)
-                        .data(emptyDegree)
+                        .sectionId(1)
+                        .latexMethodId(1)
+                        .item(emptyDegree)
+                        .build()));
+
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
+                SectionItemRequest.builder()
+                        .itemOrder(1)
+                        .sectionId(1)
+                        .latexMethodId(1)
+                        .item(emptyInstitution)
                         .build()));
     }
 
     @Test
     void testToEntity_Workexperience() {
         // Arrange
-        Map<String, Object> correctComplete = new HashMap<>();
-        correctComplete.put("jobTitle", "Software Engineer");
-        correctComplete.put("companyName", "Tech Corp");
-        correctComplete.put("period", "2020-2023");
-        correctComplete.put("description", "This is a description");
-        correctComplete.put("responsibilities", "Responsibility 1\nResponsibility 2");
-
-        Map<String, Object> nullJobTitle = new HashMap<>(correctComplete);
-        nullJobTitle.remove("jobTitle");
-
-        Map<String, Object> lateStartDate = new HashMap<>(correctComplete);
-        lateStartDate.put("startDate", LocalDate.of(2024, 1, 1));
-
+        WorkExperience correctComplete = WorkExperience.builder()
+            .jobTitle("Software Engineer")
+            .companyName("Tech Corp")
+            .period("2020-2023")
+            .description("This is a description")
+            .responsibilities(List.of("Responsibility 1", "Responsibility 2"))
+            .build();
+    
+        WorkExperience nullJobTitle = WorkExperience.builder()
+            .companyName("Tech Corp")
+            .period("2020-2023")
+            .description("This is a description")
+            .responsibilities(List.of("Responsibility 1", "Responsibility 2"))
+            .build();
+    
+    
         // Act
         SectionItem entityCorrectComplete = mapper.toEntity(
-                SectionItemRequest.builder()
-                        .type(SectionItemType.WORK_EXPERIENCE.name())
-                        .itemOrder(1)
-                        .data(correctComplete)
-                        .build());
-
+            SectionItemRequest.builder()
+                .itemOrder(1)
+                .sectionId(1)
+                .latexMethodId(1)
+                .item(correctComplete)
+                .build());
+    
         // Assert
         assertNotNull(entityCorrectComplete);
-        assertEquals(SectionItemType.WORK_EXPERIENCE, entityCorrectComplete.getType());
-        assertEquals("Software Engineer", ((WorkExperience) entityCorrectComplete.getData()).getJobTitle());
-        assertEquals("Tech Corp", ((WorkExperience) entityCorrectComplete.getData()).getCompanyName());
-        assertEquals("2020-2023", ((WorkExperience) entityCorrectComplete.getData()).getPeriod());
-        assertEquals("This is a description", ((WorkExperience) entityCorrectComplete.getData()).getDescription());
-        assertEquals("Responsibility 1\nResponsibility 2", ((WorkExperience) entityCorrectComplete.getData()).getResponsibilities());
-        assertEquals("\\item Responsibility 1\n\\item Responsibility 2", ((WorkExperience) entityCorrectComplete.getData()).getResponsibilitiesAsItems());
-
-
+        assertEquals("Software Engineer", ((WorkExperience) entityCorrectComplete.getItem()).getJobTitle());
+        assertEquals("Tech Corp", ((WorkExperience) entityCorrectComplete.getItem()).getCompanyName());
+        assertEquals("2020-2023", ((WorkExperience) entityCorrectComplete.getItem()).getPeriod());
+        assertEquals("This is a description", ((WorkExperience) entityCorrectComplete.getItem()).getDescription());
+        assertEquals(List.of("Responsibility 1", "Responsibility 2"), ((WorkExperience) entityCorrectComplete.getItem()).getResponsibilities());
+        assertEquals("\\item Responsibility 1\n\\item Responsibility 2", ((WorkExperience) entityCorrectComplete.getItem()).getResponsibilitiesAsItems());
+    
         // Act & Assert
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
-                SectionItemRequest.builder()
-                        .type(SectionItemType.WORK_EXPERIENCE.name())
-                        .itemOrder(1)
-                        .data(nullJobTitle)
-                        .build()));
+            SectionItemRequest.builder()
+                .itemOrder(1)
+                .item(nullJobTitle)
+                .build()));
     }
 
     @Test
     void testToEntity_Picture() {
         // Arrange
-        Map<String, Object> data = new HashMap<>();
-        data.put("path", "path/to/image.jpg");
-        data.put("caption", "Test Caption");
-        data.put("width", 0.8);
-        data.put("height", 1.0);
-        data.put("rounded", 50);
-        data.put("zoom", 1.2);
-        data.put("xoffset", 0.5);
-        data.put("yoffset", -0.5);
-        data.put("shadow", 2.0);
+        Picture correctComplete = Picture.builder()
+            .path("path/to/image.jpg")
+            .caption("Test Caption")
+            .width(0.8)
+            .height(1.0)
+            .rounded(50)
+            .zoom(1.2)
+            .xoffset(0.5)
+            .yoffset(-0.5)
+            .shadow(2.0)
+            .build();
     
-        SectionItemRequest request = SectionItemRequest.builder()
-                .type(SectionItemType.PICTURE.name())
-                .itemOrder(1)
-                .data(data)
-                .build();
+        Picture nullPath = Picture.builder()
+            .caption("Test Caption")
+            .width(0.8)
+            .height(1.0)
+            .rounded(50)
+            .zoom(1.2)
+            .xoffset(0.5)
+            .yoffset(-0.5)
+            .shadow(2.0)
+            .build();
     
         // Act
-        SectionItem entity = mapper.toEntity(request);
+        SectionItem entityCorrectComplete = mapper.toEntity(
+            SectionItemRequest.builder()
+                .itemOrder(1)
+                .sectionId(1)
+                .latexMethodId(1)
+                .item(correctComplete)
+                .build());
     
         // Assert
-        assertNotNull(entity);
-        assertTrue(entity.getData() instanceof Picture);
-        Picture picture = (Picture) entity.getData();
+        assertNotNull(entityCorrectComplete);
+        assertTrue(entityCorrectComplete.getItem() instanceof Picture);
+        Picture picture = (Picture) entityCorrectComplete.getItem();
         
         assertEquals("path/to/image.jpg", picture.getPath());
         assertEquals("Test Caption", picture.getCaption());
@@ -363,6 +408,15 @@ class SectionItemMapperTest {
         assertEquals(0.5, picture.getXoffset());
         assertEquals(-0.5, picture.getYoffset());
         assertEquals(2.0, picture.getShadow());
+    
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
+            SectionItemRequest.builder()
+                .itemOrder(1)
+                .sectionId(1)
+                .latexMethodId(1)
+                .item(nullPath)
+                .build()));
     }
 
     @Test
@@ -373,9 +427,12 @@ class SectionItemMapperTest {
 
         SectionItemRequest request = SectionItemRequest.builder()
                 .id(1L)
-                .type(SectionItemType.TEXTBOX.name())
                 .itemOrder(2)
-                .data(data)
+                .sectionId(1)
+                .latexMethodId(1)
+                .item(Textbox.builder()
+                    .content("This is some example text")
+                    .build())
                 .build();
 
         // Act
@@ -385,10 +442,9 @@ class SectionItemMapperTest {
         // Assert
         assertNotNull(dto);
         assertEquals(entity.getId(), dto.getId());
-        assertEquals(entity.getType().name(), dto.getType());
         assertEquals(entity.getItemOrder(), dto.getItemOrder());
-        assertNotNull(dto.getData());
-        assertEquals("This is some example text", ((Map<String, Object>) dto.getData()).get("content"));
+        assertNotNull(dto.getItem());
+        assertEquals("This is some example text", ((Textbox) dto.getItem()).getContent());
     }
 
 }

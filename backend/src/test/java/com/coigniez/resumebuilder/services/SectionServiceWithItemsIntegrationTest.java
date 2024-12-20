@@ -18,16 +18,17 @@ import com.coigniez.resumebuilder.domain.section.SectionRequest;
 import com.coigniez.resumebuilder.domain.section.SectionResponse;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemResponse;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
 
 import jakarta.validation.ConstraintViolationException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -79,21 +80,14 @@ public class SectionServiceWithItemsIntegrationTest {
 
         // Add a textbox item to the section
         sectionItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.TEXTBOX.name())
                 .itemOrder(1)
-                .data(new HashMap<>() {{
-                    put("content", "This is some example text");
-                }})
+                .item(Textbox.builder().content("This is some example text").build())
                 .latexMethodId(methodIds.get("textbox"))
                 .build());
 
         sectionItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL.name())
                 .itemOrder(2)
-                .data(new HashMap<>() {{
-                    put("name", "Java");
-                    put("proficiency", 5);
-                }})
+                .item(Skill.builder().name("Java").proficiency(5).build())
                 .latexMethodId(methodIds.get("skillitem"))
                 .build());
 
@@ -113,10 +107,10 @@ public class SectionServiceWithItemsIntegrationTest {
         assertEquals("Test Section", response.getTitle());
         assertEquals(2, response.getSectionItems().size());
         assertEquals(1, response.getSectionItems().get(0).getItemOrder());
-        assertEquals(SectionItemType.SKILL.name(), response.getSectionItems().get(1).getType());
-        assertEquals("This is some example text", response.getSectionItems().get(0).getData().get("content"));
-        assertEquals("Java", response.getSectionItems().get(1).getData().get("name"));
-        assertEquals(5, response.getSectionItems().get(1).getData().get("proficiency"));
+        assertEquals(Skill.class, response.getSectionItems().get(1).getItem().getClass());
+        assertEquals("This is some example text", ((Textbox) response.getSectionItems().get(0).getItem()).getContent());
+        assertEquals("Java", ((Skill) response.getSectionItems().get(1).getItem()).getName());
+        assertEquals(5, ((Skill) response.getSectionItems().get(1).getItem()).getProficiency());
     }
 
     @Test
@@ -125,19 +119,12 @@ public class SectionServiceWithItemsIntegrationTest {
         List<SectionItemRequest> sectionItems = new ArrayList<>();
 
         sectionItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.TEXTBOX.name())
-                .data(new HashMap<>() {{
-                    put("content", "This is some example text");
-                }})
+                .item(Textbox.builder().content("This is some example text").build())
                 .latexMethodId(methodIds.get("textbox"))
                 .build());
 
         sectionItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL.name())
-                .data(new HashMap<>() {{
-                    put("name", "Java");
-                    put("proficiency", 5);
-                }})
+                .item(Skill.builder().name("Java").proficiency(5).build())
                 .latexMethodId(methodIds.get("skillitem"))
                 .build());
 
@@ -155,21 +142,14 @@ public class SectionServiceWithItemsIntegrationTest {
 
         // Add a new skill item to the section
         updatedSectionItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL.name())
                 .itemOrder(1)
-                .data(new HashMap<>() {{
-                    put("name", "Python");
-                    put("proficiency", 4);
-                }})
+                .item(Skill.builder().name("Python").proficiency(4).build())
                 .latexMethodId(methodIds.get("skillitem"))
                 .build());
         updatedSectionItems.add(SectionItemRequest.builder()
                 .id(initialResponse.getSectionItems().get(0).getId())
-                .type(SectionItemType.TEXTBOX.name())
                 .itemOrder(3)
-                .data(new HashMap<>() {{
-                    put("content", "This is some updated text");
-                }})
+                .item(Textbox.builder().content("This is some updated text").build())
                 .latexMethodId(methodIds.get("textbox"))
                 .build());
 
@@ -183,16 +163,29 @@ public class SectionServiceWithItemsIntegrationTest {
         assertNotNull(sectionId);
         assertEquals("Updated Section", response.getTitle(), "Section title should be updated");
         assertEquals(3, response.getSectionItems().size(), "Section should have 3 items after update");
-        assertEquals(List.of(1,2,3), response.getSectionItems().stream().map(SectionItemResponse::getItemOrder).toList(), "Item order should be updated");
-        assertEquals(SectionItemType.SKILL.name(), response.getSectionItems().get(0).getType(), "First item should be a skill item");
-        assertEquals("Python", response.getSectionItems().get(0).getData().get("name"), "Skill name is Python");
-        assertEquals(4, response.getSectionItems().get(0).getData().get("proficiency"), "Skill proficiency is 4");
-        assertEquals(SectionItemType.SKILL.name(), response.getSectionItems().get(1).getType(), "Second item should be a skill item");
-        assertEquals("Java", response.getSectionItems().get(1).getData().get("name"), "Skill name is Java");
-        assertEquals(5, response.getSectionItems().get(1).getData().get("proficiency"), "Skill proficiency is 5");
-        assertEquals(SectionItemType.TEXTBOX.name(), response.getSectionItems().get(2).getType(), "Third item should be a textbox item");
-        assertEquals(initialResponse.getSectionItems().get(0).getId(), response.getSectionItems().get(2).getId(), "Item ID should not change");
-        assertEquals("This is some updated text", response.getSectionItems().get(2).getData().get("content"), "Textbox content should be updated");
+        assertEquals(List.of(1,2,3), response.getSectionItems().stream()
+            .map(SectionItemResponse::getItemOrder)
+            .toList(), "Item order should be updated");
+        
+        // First skill item
+        SectionItemResponse firstSkill = response.getSectionItems().get(0);
+        assertTrue(firstSkill.getItem() instanceof Skill);
+        Skill skill1 = (Skill) firstSkill.getItem();
+        assertEquals("Python", skill1.getName());
+        assertEquals(4, skill1.getProficiency());
+        
+        // Second skill item
+        SectionItemResponse secondSkill = response.getSectionItems().get(1);
+        assertTrue(secondSkill.getItem() instanceof Skill);
+        Skill skill2 = (Skill) secondSkill.getItem();
+        assertEquals("Java", skill2.getName());
+        assertEquals(5, skill2.getProficiency());
+        
+        // Textbox item
+        SectionItemResponse textbox = response.getSectionItems().get(2);
+        assertTrue(textbox.getItem() instanceof Textbox);
+        assertEquals(initialResponse.getSectionItems().get(0).getId(), textbox.getId());
+        assertEquals("This is some updated text", ((Textbox) textbox.getItem()).getContent());
     }
 
     @Test
@@ -201,12 +194,8 @@ public class SectionServiceWithItemsIntegrationTest {
         List<SectionItemRequest> sectionItems = new ArrayList<>();
 
         sectionItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL.name())
                 .itemOrder(1)
-                .data(new HashMap<>() {{
-                    put("name", "java");
-                    put("proficiency", 11);
-                }})
+                .item(Skill.builder().name("java").proficiency(11).build())
                 .latexMethodId(methodIds.get("skillitem"))
                 .build());
 

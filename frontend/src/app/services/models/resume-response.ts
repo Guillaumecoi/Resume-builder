@@ -1,11 +1,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface ResumeResponse {
-  createdDate?: string;
-  firstName?: string;
-  id?: number;
-  lastModifiedDate?: string;
-  lastName?: string;
+  createdDate: string;
+  id: number;
+  lastModifiedDate: string;
   picture?: string;
-  title?: string;
+  title: string;
 }

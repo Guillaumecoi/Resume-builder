@@ -7,7 +7,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum PageSize {
     A4("a4paper"),
-    LETTER("letterpaper");
+    A5("a5paper"),
+    LETTER("letterpaper"),
+    B5("b5paper"),
+    EXECUTIVE("executivepaper");
 
     private final String latexName;
 }

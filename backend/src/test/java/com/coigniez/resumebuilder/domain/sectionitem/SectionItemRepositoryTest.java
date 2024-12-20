@@ -43,19 +43,19 @@ public class SectionItemRepositoryTest {
         SectionItem item1 = SectionItem.builder()
                 .section(section)
                 .itemOrder(1)
-                .data(Skill.builder().name("Java").build())
+                .item(Skill.builder().name("Java").build())
                 .build();
 
         SectionItem item2 = SectionItem.builder()
                 .section(section)
                 .itemOrder(2)
-                .data(Skill.builder().name("Python").build())
+                .item(Skill.builder().name("Python").build())
                 .build();
 
         SectionItem item3 = SectionItem.builder()
                 .section(section)
                 .itemOrder(3)
-                .data(Skill.builder().name("HTML").build())
+                .item(Skill.builder().name("HTML").build())
                 .build();
 
         sectionItemRepository.saveAll(List.of(item1, item2, item3));
