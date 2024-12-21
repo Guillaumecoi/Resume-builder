@@ -10,8 +10,9 @@ import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionMapper;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionParentType;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionRepository;
-import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionRequest;
-import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionResponse;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResponse;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionRequest;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.section.SectionRepository;
 import com.coigniez.resumebuilder.interfaces.MultiParentEntityService;
@@ -23,7 +24,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
-public class ColumnSectionService implements MultiParentEntityService<ColumnSectionRequest, ColumnSectionResponse, Long, ColumnSectionParentType> {
+public class ColumnSectionService implements MultiParentEntityService<CreateColumnSectionRequest, UpdateColumnSectionRequest, ColumnSectionResponse, Long, ColumnSectionParentType> {
 
     private final ColumnSectionRepository columnSectionRepository;
     private final ColumnRepository columnRepository;
@@ -33,7 +34,7 @@ public class ColumnSectionService implements MultiParentEntityService<ColumnSect
     private final EntityManager entityManager;
     
     @Override
-    public Long create(ColumnSectionRequest request) {
+    public Long create(CreateColumnSectionRequest request) {
         // Check if the user has access to the column and section
         hasAccessColumn(request.getColumnId());
         hasAccessSection(request.getSectionId());
@@ -57,7 +58,6 @@ public class ColumnSectionService implements MultiParentEntityService<ColumnSect
         incrementSectionOrder(request.getColumnId(), newOrder, maxOrder + 1);
 
         // Create the entity from the request
-        request.setId(null);
         request.setSectionOrder(newOrder);
         ColumnSection columnSection = columnSectionMapper.toEntity(request);
 
@@ -81,7 +81,7 @@ public class ColumnSectionService implements MultiParentEntityService<ColumnSect
     }
 
     @Override
-    public void update(ColumnSectionRequest request) {
+    public void update(UpdateColumnSectionRequest request) {
         // Check if the user has access to this columnSection
         hasAccess(request.getId());
 

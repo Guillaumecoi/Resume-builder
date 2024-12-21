@@ -8,13 +8,16 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.column.ColumnMapper;
-import com.coigniez.resumebuilder.domain.column.ColumnRequest;
+import com.coigniez.resumebuilder.domain.column.ColumnRepository;
+import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
+import com.coigniez.resumebuilder.domain.column.dtos.UpdateColumnRequest;
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.layout.Layout;
 import com.coigniez.resumebuilder.domain.layout.LayoutMapper;
 import com.coigniez.resumebuilder.domain.layout.LayoutRepository;
-import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
-import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
+import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
+import com.coigniez.resumebuilder.domain.layout.dtos.UpdateLayoutRequest;
 import com.coigniez.resumebuilder.domain.resume.ResumeRepository;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.latex.generators.LatexDocumentGenerator;
@@ -26,17 +29,19 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
-public class LayoutService implements ParentEntityService<LayoutRequest, LayoutResponse, Long> {
+public class LayoutService implements ParentEntityService<CreateLayoutRequest, UpdateLayoutRequest, LayoutResponse, Long> {
 
     private final LayoutRepository layoutRepository;
     private final ResumeRepository resumeRepository;
+    private final ColumnRepository columnRepository;
+    private final ColumnService columnService;
     private final LayoutMapper layoutMapper;
     private final ColumnMapper columnMapper;
     private final LatexDocumentGenerator latexDocumentGenerator;
     private final SecurityUtils securityUtils;
     
     @Override
-    public Long create(LayoutRequest request) {
+    public Long create(CreateLayoutRequest request) {
         // Check if the connected user has access to the resume
         hasAccessResume(request.getResumeId());
 
@@ -49,7 +54,7 @@ public class LayoutService implements ParentEntityService<LayoutRequest, LayoutR
 
         // Add default columns if none are provided
         if(layout.getColumns().isEmpty()) {
-            List<ColumnRequest> columnRequests = LayoutTemplate.getDefaultColumns(layout.getNumberOfColumns());
+            List<CreateColumnRequest> columnRequests = LayoutTemplate.getDefaultColumns(layout.getNumberOfColumns());
             columnRequests.stream()
                 .map(columnMapper::toEntity)
                 .forEach(layout::addColumn);
@@ -70,14 +75,33 @@ public class LayoutService implements ParentEntityService<LayoutRequest, LayoutR
     }
 
     @Override
-    public void update(LayoutRequest request) {
+    public void update(UpdateLayoutRequest request) {
         // Check if the connected user has access to the layout
         hasAccess(request.getId());
+
+        for (CreateColumnRequest column : request.getCreateColumns()) {
+            column.setLayoutId(request.getId());
+            columnService.create(column);
+        }
+        for (UpdateColumnRequest column : request.getUpdateColumns()) {
+            // Check if the column exists and belongs to the layout
+            if (column.getId() == null) {
+                throw new IllegalArgumentException("Column id is required");
+            }
+            if (columnRepository.findById(column.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Column not found"))
+                    .getLayout().getId() != request.getId()) {
+                throw new IllegalArgumentException("Column does not belong to the layout");
+            }
+            
+            columnService.update(column);
+        }
 
         // UpexistingLayoutdate the entity
         Layout layout = layoutRepository.findById(request.getId())
             .orElseThrow(() -> new EntityNotFoundException("Layout not found"));
         layoutMapper.updateEntity(layout, request);
+        
         // Save the updated entity
         layoutRepository.save(layout);        
     }

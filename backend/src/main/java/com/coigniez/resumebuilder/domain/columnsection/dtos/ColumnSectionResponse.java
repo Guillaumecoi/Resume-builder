@@ -1,6 +1,7 @@
-package com.coigniez.resumebuilder.domain.columnsection;
+package com.coigniez.resumebuilder.domain.columnsection.dtos;
 
-import com.coigniez.resumebuilder.domain.section.SectionResponse;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
+import com.coigniez.resumebuilder.interfaces.Response;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -8,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ColumnSectionResponse {
+public class ColumnSectionResponse implements Response {
 
     @NotNull
     private long id;

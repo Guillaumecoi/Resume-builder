@@ -7,6 +7,9 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.latex.LatexMethodMapper;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResponse;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.UpdateSectionItemRequest;
 import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.interfaces.SectionItemData;
 
@@ -19,18 +22,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @AllArgsConstructor
 @Service
-public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest, SectionItemResponse> {
+public class SectionItemMapper implements Mapper<SectionItem, CreateSectionItemRequest, UpdateSectionItemRequest, SectionItemResponse> {
 
     private final LatexMethodMapper latexMethodMapper;
     private final Validator validator;
 
     @Override
-    public SectionItem toEntity(SectionItemRequest request) {
+    public SectionItem toEntity(CreateSectionItemRequest request) {
         if (request == null) {
             return null;
         }
 
-        Set<ConstraintViolation<SectionItemRequest>> violations = validator.validate(request);
+        Set<ConstraintViolation<CreateSectionItemRequest>> violations = validator.validate(request);
         Set<ConstraintViolation<SectionItemData>> itemViolations = Collections.emptySet();
 
         if (request.getItem() != null) {
@@ -45,7 +48,6 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest
         }
 
         SectionItem sectionItem = SectionItem.builder()
-                .id(request.getId())
                 .itemOrder(request.getItemOrder())
                 .alignment(request.getAlignment())
                 .item(request.getItem())
@@ -70,7 +72,7 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemRequest
     }
 
     @Override
-    public void updateEntity(SectionItem entity, SectionItemRequest request) {
+    public void updateEntity(SectionItem entity, UpdateSectionItemRequest request) {
         if (request == null) {
             return;
         }

@@ -1,9 +1,10 @@
-package com.coigniez.resumebuilder.domain.column;
+package com.coigniez.resumebuilder.domain.column.dtos;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionResponse;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResponse;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
+import com.coigniez.resumebuilder.interfaces.Response;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -11,7 +12,7 @@ import lombok.*;
 
 @Data
 @Builder
-public class ColumnResponse {
+public class ColumnResponse implements Response {
 
     @NotNull
     private long id;

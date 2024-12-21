@@ -2,19 +2,21 @@ package com.coigniez.resumebuilder.domain.latex;
 
 import org.springframework.stereotype.Service;
 
+import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
+import com.coigniez.resumebuilder.domain.latex.dtos.UpdateLatexMethodRequest;
 import com.coigniez.resumebuilder.interfaces.Mapper;
 
 @Service
-public class LatexMethodMapper implements Mapper<LatexMethod, LatexMethodRequest, LatexMethodResponse> {
+public class LatexMethodMapper implements Mapper<LatexMethod, CreateLatexMethodRequest, UpdateLatexMethodRequest, LatexMethodResponse> {
 
     @Override
-    public LatexMethod toEntity(LatexMethodRequest dto) {
+    public LatexMethod toEntity(CreateLatexMethodRequest dto) {
         if(dto == null) {
             return null;
         }
 
         return LatexMethod.builder()
-                .id(dto.getId())
                 .type(dto.getType())
                 .name(dto.getName())
                 .method(dto.getMethod())
@@ -36,7 +38,7 @@ public class LatexMethodMapper implements Mapper<LatexMethod, LatexMethodRequest
     }
 
     @Override
-    public void updateEntity(LatexMethod entity, LatexMethodRequest request) {
+    public void updateEntity(LatexMethod entity, UpdateLatexMethodRequest request) {
        if(request == null) {
            return;
        }

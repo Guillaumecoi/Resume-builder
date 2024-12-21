@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.domain.sectionitem;
+package com.coigniez.resumebuilder.domain.sectionitem.enums;
 
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Contact;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Education;

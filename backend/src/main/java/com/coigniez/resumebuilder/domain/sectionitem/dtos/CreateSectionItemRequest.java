@@ -1,7 +1,7 @@
-package com.coigniez.resumebuilder.domain.sectionitem;
+package com.coigniez.resumebuilder.domain.sectionitem.dtos;
 
 import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
-import com.coigniez.resumebuilder.interfaces.ObjectHasID;
+import com.coigniez.resumebuilder.interfaces.CreateRequest;
 import com.coigniez.resumebuilder.interfaces.SectionItemData;
 
 import jakarta.validation.constraints.NotNull;
@@ -10,16 +10,15 @@ import lombok.Data;
 
 @Data
 @Builder
-public class SectionItemRequest implements ObjectHasID {
+public class CreateSectionItemRequest implements CreateRequest {
 
-    private Long id;
     @NotNull
     private long sectionId;
     @NotNull
     private long latexMethodId;
+
     private Integer itemOrder;
     private AlignmentType alignment;
-
     @NotNull
     private SectionItemData item;
 

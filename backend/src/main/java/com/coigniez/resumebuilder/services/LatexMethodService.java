@@ -8,8 +8,9 @@ import org.springframework.stereotype.Service;
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.latex.LatexMethodMapper;
 import com.coigniez.resumebuilder.domain.latex.LatexMethodRepository;
-import com.coigniez.resumebuilder.domain.latex.LatexMethodRequest;
-import com.coigniez.resumebuilder.domain.latex.LatexMethodResponse;
+import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
+import com.coigniez.resumebuilder.domain.latex.dtos.UpdateLatexMethodRequest;
 import com.coigniez.resumebuilder.domain.layout.LayoutRepository;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.util.SecurityUtils;
@@ -19,7 +20,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
-public class LatexMethodService implements ParentEntityService<LatexMethodRequest, LatexMethodResponse, Long> {
+public class LatexMethodService implements ParentEntityService<CreateLatexMethodRequest, UpdateLatexMethodRequest, LatexMethodResponse, Long> {
 
     private final LayoutRepository layoutRepository;
     private final LatexMethodRepository latexMethodRepository;
@@ -27,12 +28,11 @@ public class LatexMethodService implements ParentEntityService<LatexMethodReques
     private final SecurityUtils securityUtils;
 
     @Override
-    public Long create(LatexMethodRequest request) {
+    public Long create(CreateLatexMethodRequest request) {
         // Check if the user has access to the layout
         hasAccessLayout(request.getLayoutId());
 
         // Create the entity
-        request.setId(null);
         LatexMethod latexMethod = latexMethodMapper.toEntity(request);
         layoutRepository.findById(request.getLayoutId())
                 .orElseThrow(() -> new EntityNotFoundException("Layout not found"))
@@ -54,7 +54,7 @@ public class LatexMethodService implements ParentEntityService<LatexMethodReques
     }
 
     @Override
-    public void update(LatexMethodRequest request) {
+    public void update(UpdateLatexMethodRequest request) {
         // Check if the user has access to the method
         hasAccess(request.getId());
 

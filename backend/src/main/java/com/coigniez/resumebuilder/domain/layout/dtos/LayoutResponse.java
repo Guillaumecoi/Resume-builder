@@ -1,11 +1,12 @@
-package com.coigniez.resumebuilder.domain.layout;
+package com.coigniez.resumebuilder.domain.layout.dtos;
 
 import java.util.List;
 import java.util.Set;
 
-import com.coigniez.resumebuilder.domain.column.ColumnResponse;
-import com.coigniez.resumebuilder.domain.latex.LatexMethodResponse;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnResponse;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
 import com.coigniez.resumebuilder.domain.layout.enums.*;
+import com.coigniez.resumebuilder.interfaces.Response;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -13,7 +14,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class LayoutResponse {
+public class LayoutResponse implements Response {
 
     @NotNull
     private Long id;

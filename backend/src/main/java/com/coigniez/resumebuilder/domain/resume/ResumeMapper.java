@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.coigniez.resumebuilder.domain.resume.dtos.*;
 import com.coigniez.resumebuilder.domain.section.SectionMapper;
 import com.coigniez.resumebuilder.file.FileUtils;
 import com.coigniez.resumebuilder.interfaces.Mapper;
@@ -15,11 +16,11 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
-public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeDetailResponse> {
+public class ResumeMapper implements Mapper<Resume, CreateResumeRequest, UpdateResumeRequest, ResumeDetailResponse> {
 
     private final SectionMapper sectionMapper;
 
-    public Resume toEntity(ResumeRequest request) {
+    public Resume toEntity(CreateResumeRequest request) {
         if (request == null) {
             return null;
         }
@@ -65,7 +66,7 @@ public class ResumeMapper implements Mapper<Resume, ResumeRequest, ResumeDetailR
     }
 
     @Override
-    public void updateEntity(Resume entity, ResumeRequest request) {
+    public void updateEntity(Resume entity, UpdateResumeRequest request) {
         if (request == null) {
             return;
         }

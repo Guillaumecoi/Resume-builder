@@ -13,8 +13,9 @@ import com.coigniez.resumebuilder.domain.section.SectionRepository;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRepository;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemResponse;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResponse;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.UpdateSectionItemRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.file.FileStorageService;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
@@ -26,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class SectionItemService implements ParentEntityService<SectionItemRequest, SectionItemResponse, Long> {
+public class SectionItemService implements ParentEntityService<CreateSectionItemRequest, UpdateSectionItemRequest, SectionItemResponse, Long> {
 
     private final SectionItemRepository sectionItemRepository;
     private final SectionRepository sectionRepository;
@@ -38,7 +39,7 @@ public class SectionItemService implements ParentEntityService<SectionItemReques
     private EntityManager entityManager;
 
     @Override
-    public Long create(SectionItemRequest request) {
+    public Long create(CreateSectionItemRequest request) {
         // Check if the user has access to the section
         hasAccessSection(request.getSectionId());  
 
@@ -56,7 +57,6 @@ public class SectionItemService implements ParentEntityService<SectionItemReques
         incrementItemOrder(section.getId(), newOrder, maxOrder +1);
 
         // Create the entity from the request
-        request.setId(null);
         request.setItemOrder(newOrder);
         SectionItem sectionItem = sectionitemMapper.toEntity(request);
 
@@ -76,7 +76,7 @@ public class SectionItemService implements ParentEntityService<SectionItemReques
      * @param request the section item request for the picture
      * @return the id of the created item
      */
-    public Long createPicture(MultipartFile file, SectionItemRequest request) {
+    public Long createPicture(MultipartFile file, CreateSectionItemRequest request) {
         // Check if the user has access to the section
         hasAccessSection(request.getSectionId());
         
@@ -99,7 +99,7 @@ public class SectionItemService implements ParentEntityService<SectionItemReques
     }
 
     @Override
-    public void update(SectionItemRequest request) {
+    public void update(UpdateSectionItemRequest request) {
         // Check if the user has access to the sectionItem
         hasAccess(request.getId());
 
@@ -129,6 +129,8 @@ public class SectionItemService implements ParentEntityService<SectionItemReques
                 .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
             newLatexMethod.addSectionItem(sectionItem);
         }
+
+        //TODO: Update the section
         
         // save the updated item
         sectionItemRepository.save(sectionItem);

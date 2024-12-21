@@ -5,19 +5,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.coigniez.resumebuilder.domain.column.ColumnRequest;
-import com.coigniez.resumebuilder.domain.latex.LatexMethodRequest;
-import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
+import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
+import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
+import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorScheme;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
+import com.coigniez.resumebuilder.domain.sectionitem.enums.SectionItemType;
 
 public final class LayoutTemplate {
     
     private LayoutTemplate() {} // Prevent instantiation
     
-    public static LayoutRequest getDefaultSingleColumn() {
-        return LayoutRequest.builder()
+    public static CreateLayoutRequest getDefaultSingleColumn() {
+        return CreateLayoutRequest.builder()
             .numberOfColumns(1)
             .columns(getDefaultColumns(1))
             .colorScheme(getExecutiveSuiteColors())
@@ -25,8 +25,8 @@ public final class LayoutTemplate {
             .build();
 }
 
-    public static LayoutRequest getDefaultTwoColumn() {
-        return LayoutRequest.builder()
+    public static CreateLayoutRequest getDefaultTwoColumn() {
+        return CreateLayoutRequest.builder()
             .numberOfColumns(2)
             .columns(getDefaultColumns(2))
             .colorScheme(getExecutiveSuiteColors())
@@ -34,9 +34,9 @@ public final class LayoutTemplate {
             .build();
     }
 
-    public static List<ColumnRequest> getDefaultColumns(int numberOfColumns) {
-        List<ColumnRequest> columns = new ArrayList<>();
-        columns.add(ColumnRequest.builder()
+    public static List<CreateColumnRequest> getDefaultColumns(int numberOfColumns) {
+        List<CreateColumnRequest> columns = new ArrayList<>();
+        columns.add(CreateColumnRequest.builder()
                 .columnNumber(1)
                 .backgroundColor(ColorLocation.DARK_BG)
                 .textColor(ColorLocation.LIGHT_TEXT)
@@ -44,7 +44,7 @@ public final class LayoutTemplate {
                 .build());
         if (numberOfColumns == 2) {
             columns.get(0).setBorderRight(2.4);
-            columns.add(ColumnRequest.builder()
+            columns.add(CreateColumnRequest.builder()
                     .columnNumber(2)
                     .backgroundColor(ColorLocation.LIGHT_BG)
                     .textColor(ColorLocation.DARK_TEXT)
@@ -67,9 +67,9 @@ public final class LayoutTemplate {
                 .build();
     }
 
-    public static Set<LatexMethodRequest> getStandardMethods() {
-        HashSet<LatexMethodRequest> result = new HashSet<>();
-        result.add(LatexMethodRequest.builder()
+    public static Set<CreateLatexMethodRequest> getStandardMethods() {
+        HashSet<CreateLatexMethodRequest> result = new HashSet<>();
+        result.add(CreateLatexMethodRequest.builder()
             .type(SectionItemType.TITLE)
             .name("cvtitle")
             .method("""
@@ -86,7 +86,7 @@ public final class LayoutTemplate {
                 }""".formatted(ColorLocation.ACCENT.toString())
             ).build());
 
-        result.add(LatexMethodRequest.builder()
+        result.add(CreateLatexMethodRequest.builder()
             .type(SectionItemType.CONTACT)
             .name("contactitem")
             .method("""
@@ -101,7 +101,7 @@ public final class LayoutTemplate {
                 }"""
             ).build());
 
-        result.add(LatexMethodRequest.builder()
+        result.add(CreateLatexMethodRequest.builder()
             .type(SectionItemType.EDUCATION)
             .name("educationitem")
             .method("""
@@ -116,7 +116,7 @@ public final class LayoutTemplate {
                 }"""
             ).build());
 
-        result.add(LatexMethodRequest.builder()
+        result.add(CreateLatexMethodRequest.builder()
             .type(SectionItemType.WORK_EXPERIENCE)
             .name("experienceitem")
             .method("""
@@ -136,7 +136,7 @@ public final class LayoutTemplate {
                 }""".formatted(ColorLocation.ACCENT.toString())
             ).build());
 
-        result.add(LatexMethodRequest.builder()
+        result.add(CreateLatexMethodRequest.builder()
             .type(SectionItemType.TEXTBOX)
             .name("textbox")
             .method("""
@@ -146,7 +146,7 @@ public final class LayoutTemplate {
                 }"""
             ).build());
 
-        result.add(LatexMethodRequest.builder()
+        result.add(CreateLatexMethodRequest.builder()
             .type(SectionItemType.SKILL)
             .name("skillitem")
             .method("""
@@ -155,7 +155,7 @@ public final class LayoutTemplate {
                 }"""
             ).build());
         
-        result.add(LatexMethodRequest.builder()
+        result.add(CreateLatexMethodRequest.builder()
             .type(SectionItemType.SKILL)
             .name("skilltext")
             .method("""
@@ -164,7 +164,7 @@ public final class LayoutTemplate {
                 }"""
             ).build());
 
-        result.add(LatexMethodRequest.builder()
+        result.add(CreateLatexMethodRequest.builder()
             .type(SectionItemType.SKILL)
             .name("skillbullets")
             .method("""
@@ -181,7 +181,7 @@ public final class LayoutTemplate {
                 }""".formatted(ColorLocation.ACCENT.toString(), ColorLocation.LIGHT_TEXT.toString())
             ).build());
     
-        result.add(LatexMethodRequest.builder()
+        result.add(CreateLatexMethodRequest.builder()
             .type(SectionItemType.SKILL)
             .name("skillbar")
             .method("""
@@ -194,7 +194,7 @@ public final class LayoutTemplate {
                 }""".formatted(ColorLocation.LIGHT_TEXT.toString(), ColorLocation.ACCENT.toString())
             ).build());
 
-        result.add(LatexMethodRequest.builder()
+        result.add(CreateLatexMethodRequest.builder()
             .type(SectionItemType.SKILL_BOXES)
             .name("skillboxes")
             .method("""
@@ -229,7 +229,7 @@ public final class LayoutTemplate {
                 }""".formatted(ColorLocation.ACCENT.toString(), ColorLocation.LIGHT_TEXT.toString())
             ).build());
 
-        result.add(LatexMethodRequest.builder()
+        result.add(CreateLatexMethodRequest.builder()
             .type(SectionItemType.PICTURE)
             .name("pictureitem")
             .method("""

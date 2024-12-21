@@ -18,12 +18,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.domain.column.ColumnRequest;
-import com.coigniez.resumebuilder.domain.column.ColumnResponse;
-import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnResponse;
+import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
+import com.coigniez.resumebuilder.domain.column.dtos.UpdateColumnRequest;
+import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
-import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
-import com.coigniez.resumebuilder.domain.section.SectionRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -49,33 +50,32 @@ public class ColumnServiceIntegrationTest {
     void setUp() {
         // Create mock users
         testuser = new UsernamePasswordAuthenticationToken(
-                "testuser", 
-                "password", 
-                List.of(new SimpleGrantedAuthority("ROLE_USER"))
-        );
+                "testuser",
+                "password",
+                List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
         otheruser = new UsernamePasswordAuthenticationToken(
-                "otheruser", 
-                "password", 
-                List.of(new SimpleGrantedAuthority("ROLE_USER"))
-        );
+                "otheruser",
+                "password",
+                List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
         // Set the Authentication object in the SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(testuser);
 
-        ResumeRequest resumeRequest = ResumeRequest.builder().title("Software Developer")
-                .sections(List.of(SectionRequest.builder().title("Education").build())).build();
+        CreateResumeRequest resumeRequest = CreateResumeRequest.builder().title("Software Developer")
+                .sections(List.of(CreateSectionRequest.builder().title("Education").build())).build();
 
         Long resumeId = resumeService.create(resumeRequest);
 
-        LayoutRequest layoutRequest = LayoutRequest.builder().resumeId(resumeId).numberOfColumns(1).build();
+        CreateLayoutRequest layoutRequest = CreateLayoutRequest.builder().resumeId(resumeId).numberOfColumns(1)
+                .build();
         layoutId = layoutService.create(layoutRequest);
     }
 
     @Test
     void testCreateAndGetColumn() {
         // Arrange
-        ColumnRequest columnRequest = ColumnRequest.builder()
+        CreateColumnRequest columnRequest = CreateColumnRequest.builder()
                 .layoutId(layoutId)
                 .columnNumber(1)
                 .backgroundColor(ColorLocation.DARK_BG)
@@ -96,7 +96,7 @@ public class ColumnServiceIntegrationTest {
     @Test
     void testUpdateColumn() {
         // Arrange
-        ColumnRequest columnRequest = ColumnRequest.builder()
+        CreateColumnRequest columnRequest = CreateColumnRequest.builder()
                 .layoutId(layoutId)
                 .columnNumber(1)
                 .backgroundColor(ColorLocation.DARK_BG)
@@ -106,13 +106,22 @@ public class ColumnServiceIntegrationTest {
 
         Long columnId = columnService.create(columnRequest);
 
-        ColumnRequest updateRequest = ColumnRequest.builder()
+        UpdateColumnRequest updateRequest = UpdateColumnRequest.builder()
                 .id(columnId)
-                .layoutId(layoutId)
                 .columnNumber(2)
                 .backgroundColor(ColorLocation.DARK_BG)
                 .textColor(ColorLocation.LIGHT_TEXT)
                 .borderColor(ColorLocation.ACCENT)
+                .createSectionMappings(List.of())
+                .updateSectionMappings(List.of())
+                .borderTop(0.0)
+                .borderRight(0.0)
+                .borderBottom(0.0)
+                .borderLeft(0.0)
+                .paddingTop(0.0)
+                .paddingRight(0.0)
+                .paddingBottom(0.0)
+                .paddingLeft(0.0)
                 .build();
 
         // Act
@@ -126,7 +135,7 @@ public class ColumnServiceIntegrationTest {
     @Test
     void testDeleteColumn() {
         // Arrange
-        ColumnRequest columnRequest = ColumnRequest.builder()
+        CreateColumnRequest columnRequest = CreateColumnRequest.builder()
                 .layoutId(layoutId)
                 .columnNumber(1)
                 .backgroundColor(ColorLocation.DARK_BG)
@@ -147,7 +156,7 @@ public class ColumnServiceIntegrationTest {
     @Test
     void testAccessControl() {
         // Arrange
-        ColumnRequest columnRequest = ColumnRequest.builder()
+        CreateColumnRequest columnRequest = CreateColumnRequest.builder()
                 .layoutId(layoutId)
                 .columnNumber(1)
                 .backgroundColor(ColorLocation.DARK_BG)
@@ -164,8 +173,8 @@ public class ColumnServiceIntegrationTest {
                 "Should not be able to create a column for another user's layout");
         assertThrows(AccessDeniedException.class, () -> columnService.get(columnId),
                 "Should not be able to get a column for another user");
-        columnRequest.setId(columnId);
-        assertThrows(AccessDeniedException.class, () -> columnService.update(columnRequest),
+        assertThrows(AccessDeniedException.class,
+                () -> columnService.update(UpdateColumnRequest.builder().id(columnId).build()),
                 "Should not be able to update a column for another user");
         assertThrows(AccessDeniedException.class, () -> columnService.delete(columnId),
                 "Should not be able to delete a column for another user");

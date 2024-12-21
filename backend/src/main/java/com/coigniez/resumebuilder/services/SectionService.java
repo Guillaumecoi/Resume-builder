@@ -10,9 +10,12 @@ import com.coigniez.resumebuilder.domain.resume.ResumeRepository;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.section.SectionMapper;
 import com.coigniez.resumebuilder.domain.section.SectionRepository;
-import com.coigniez.resumebuilder.domain.section.SectionRequest;
-import com.coigniez.resumebuilder.domain.section.SectionResponse;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
+import com.coigniez.resumebuilder.domain.section.dtos.UpdateSectionRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRepository;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.UpdateSectionItemRequest;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
@@ -21,16 +24,18 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class SectionService implements ParentEntityService<SectionRequest, SectionResponse, Long> {
+public class SectionService
+        implements ParentEntityService<CreateSectionRequest, UpdateSectionRequest, SectionResponse, Long> {
 
     private final SectionRepository sectionRepository;
-    private final SectionMapper sectionMapper;
+    private final SectionItemRepository sectionItemRepository;
     private final ResumeRepository resumeRepository;
     private final SectionItemService sectionItemService;
+    private final SectionMapper sectionMapper;
     private final SecurityUtils securityUtils;
 
     @Override
-    public Long create(SectionRequest request) {
+    public Long create(CreateSectionRequest request) {
         // Check if the user has access to the resume
         hasAccessResume(request.getResumeId());
 
@@ -47,7 +52,7 @@ public class SectionService implements ParentEntityService<SectionRequest, Secti
 
         // Create the section items
         if (request.getSectionItems() != null) {
-            for (SectionItemRequest sectionItemRequest : request.getSectionItems()) {
+            for (CreateSectionItemRequest sectionItemRequest : request.getSectionItems()) {
                 sectionItemRequest.setSectionId(sectionId);
                 sectionItemService.create(sectionItemRequest);
             }
@@ -69,18 +74,27 @@ public class SectionService implements ParentEntityService<SectionRequest, Secti
     }
 
     @Override
-    public void update(SectionRequest request) {
+    public void update(UpdateSectionRequest request) {
         // Check if the user has access to the section
         hasAccess(request.getId());
 
-        // Update section items
-        for (SectionItemRequest sectionItemRequest : request.getSectionItems()) {
+        // Create and update section items
+        for (CreateSectionItemRequest sectionItemRequest : request.getCreateSectionItems()) {
+            sectionItemRequest.setSectionId(request.getId());
+            sectionItemService.create(sectionItemRequest);
+        }
+        for (UpdateSectionItemRequest sectionItemRequest : request.getUpdateSectionItems()) {
+            // Check if the section item belongs to the section
             if (sectionItemRequest.getId() == null) {
-                sectionItemRequest.setSectionId(request.getId());
-                sectionItemService.create(sectionItemRequest);
-            } else {
-                sectionItemService.update(sectionItemRequest);
+                throw new IllegalArgumentException("Section item id is required");
             }
+            if (sectionItemRepository.findById(sectionItemRequest.getId())
+                    .orElseThrow(() -> new EntityNotFoundException(""))
+                    .getSection().getId() != request.getId()) {
+                throw new IllegalArgumentException("Section item does not belong to the section");
+            }
+
+            sectionItemService.update(sectionItemRequest);
         }
 
         // retrieve and update the existing entity
@@ -102,7 +116,7 @@ public class SectionService implements ParentEntityService<SectionRequest, Secti
                 .orElseThrow(() -> new EntityNotFoundException(""));
         Resume resume = section.getResume();
         resume.getSections().remove(section);
-        
+
         // Delete the section
         sectionRepository.deleteById(id);
     }
@@ -123,7 +137,7 @@ public class SectionService implements ParentEntityService<SectionRequest, Secti
 
         // Delete the sections
         sectionRepository.deleteAll(sectionRepository.findAllByResumeId(resumeId));
-        
+
     }
 
     /**

@@ -1,8 +1,9 @@
-package com.coigniez.resumebuilder.domain.resume;
+package com.coigniez.resumebuilder.domain.resume.dtos;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.section.SectionResponse;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
+import com.coigniez.resumebuilder.interfaces.Response;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +12,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ResumeDetailResponse {
+public class ResumeDetailResponse implements Response {
 
     @NotNull
     private long id;

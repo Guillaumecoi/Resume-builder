@@ -25,8 +25,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
-import com.coigniez.resumebuilder.domain.section.SectionRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -42,10 +42,10 @@ public class ResumeControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = { "USER" })
     void testCreateAndGetResume() throws Exception {
         // Arrange
-        ResumeRequest createRequest = ResumeRequest.builder().title("Software Engineer")
+        CreateResumeRequest createRequest = CreateResumeRequest.builder().title("Software Engineer")
                         .sections(List.of(
-                                SectionRequest.builder().title("Education").build(),
-                                SectionRequest.builder().title("Experience").build()))
+                                CreateSectionRequest.builder().title("Education").build(),
+                                CreateSectionRequest.builder().title("Experience").build()))
                         .build();
 
         // Act - Create
@@ -68,7 +68,7 @@ public class ResumeControllerIntegrationTest {
     @Test
     void testResumeAccessControl() throws Exception {
         // Create resume as testuser
-        ResumeRequest createRequest = ResumeRequest.builder().title("Software Engineer").build();
+        CreateResumeRequest createRequest = CreateResumeRequest.builder().title("Software Engineer").build();
 
         String createResponse = mockMvc.perform(post("/resumes")
                 .with(user("testuser").roles("USER"))
@@ -95,7 +95,7 @@ public class ResumeControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = { "USER" })
     void testUpdate() throws Exception {
         // Arrange
-        ResumeRequest createRequest = ResumeRequest.builder().title("Software Engineer").build();
+        CreateResumeRequest createRequest = CreateResumeRequest.builder().title("Software Engineer").build();
         String createResponse = mockMvc.perform(post("/resumes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(createRequest)))
@@ -104,7 +104,7 @@ public class ResumeControllerIntegrationTest {
 
         Long resumeId = Long.parseLong(createResponse);
 
-        ResumeRequest updateRequest = ResumeRequest.builder().title("Barista").build();
+        CreateResumeRequest updateRequest = CreateResumeRequest.builder().title("Barista").build();
 
         // Act
         mockMvc.perform(post("/resumes/" + resumeId)
@@ -122,7 +122,7 @@ public class ResumeControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = { "USER" })
     void testUploadPicture() throws Exception {
         // Arrange
-        ResumeRequest createRequest = ResumeRequest.builder().title("Software Engineer").build();
+        CreateResumeRequest createRequest = CreateResumeRequest.builder().title("Software Engineer").build();
         String createResponse = mockMvc.perform(post("/resumes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(createRequest)))
@@ -159,7 +159,7 @@ public class ResumeControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = { "USER" })
     void testUpdatePicture() throws Exception {
         // Arrange
-        ResumeRequest createRequest = ResumeRequest.builder().title("Software Engineer").build();
+        CreateResumeRequest createRequest = CreateResumeRequest.builder().title("Software Engineer").build();
         String createResponse = mockMvc.perform(post("/resumes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(createRequest)))
@@ -208,7 +208,7 @@ public class ResumeControllerIntegrationTest {
                 .andExpect(jsonPath("$.picture").value(Base64.getEncoder().encodeToString(file2.getBytes())));
 
         // Act - update user
-        ResumeRequest updateRequest = ResumeRequest.builder().title("Software Engineer").build();
+        CreateResumeRequest updateRequest = CreateResumeRequest.builder().title("Software Engineer").build();
         mockMvc.perform(post("/resumes/" + resumeId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(updateRequest)))
@@ -224,7 +224,7 @@ public class ResumeControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = { "USER" })
     void testDelete() throws Exception {
         // Arrange
-        ResumeRequest createRequest = ResumeRequest.builder().title("Software Engineer").build();
+        CreateResumeRequest createRequest = CreateResumeRequest.builder().title("Software Engineer").build();
         String createResponse = mockMvc.perform(post("/resumes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(createRequest)))
@@ -246,13 +246,13 @@ public class ResumeControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = { "USER" })
     void testGetAllAndDeleteAll() throws Exception {
         // Arrange
-        ResumeRequest createRequest1 = ResumeRequest.builder().title("Software Engineer").build();
+        CreateResumeRequest createRequest1 = CreateResumeRequest.builder().title("Software Engineer").build();
         mockMvc.perform(post("/resumes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(createRequest1)))
                 .andExpect(status().isCreated());
 
-        ResumeRequest createRequest2 = ResumeRequest.builder().title("Barista").build();
+        CreateResumeRequest createRequest2 = CreateResumeRequest.builder().title("Barista").build();
         mockMvc.perform(post("/resumes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(createRequest2)))

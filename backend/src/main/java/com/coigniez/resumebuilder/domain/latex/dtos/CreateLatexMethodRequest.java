@@ -1,7 +1,7 @@
-package com.coigniez.resumebuilder.domain.latex;
+package com.coigniez.resumebuilder.domain.latex.dtos;
 
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
-import com.coigniez.resumebuilder.interfaces.ObjectHasID;
+import com.coigniez.resumebuilder.domain.sectionitem.enums.SectionItemType;
+import com.coigniez.resumebuilder.interfaces.CreateRequest;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,13 +10,12 @@ import lombok.Data;
 
 @Data
 @Builder
-public class LatexMethodRequest implements ObjectHasID {
+public class CreateLatexMethodRequest implements CreateRequest {
 
-    private Long id;
     @NotNull
     private long layoutId;
 
-    @NotBlank
+    @NotNull
     private SectionItemType type;
     @NotBlank
     private String name;

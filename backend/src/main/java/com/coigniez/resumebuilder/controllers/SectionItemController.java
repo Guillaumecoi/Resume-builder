@@ -6,8 +6,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemResponse;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResponse;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.UpdateSectionItemRequest;
 import com.coigniez.resumebuilder.interfaces.CrudController;
 import com.coigniez.resumebuilder.services.SectionItemService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,20 +30,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 @RequestMapping("section-items")
 @RequiredArgsConstructor
-public class SectionItemController implements CrudController<SectionItemRequest, SectionItemResponse> {
+public class SectionItemController
+        implements CrudController<CreateSectionItemRequest, UpdateSectionItemRequest, SectionItemResponse, Long> {
 
     private final SectionItemService sectionItemService;
     private final ObjectMapper objectMapper;
 
     @Override
     @Operation(operationId = "createSectionItem")
-    public ResponseEntity<Long> create(@Valid SectionItemRequest request, Authentication user) {
+    public ResponseEntity<Long> create(@Valid CreateSectionItemRequest request, Authentication user) {
         Long id = sectionItemService.create(request);
         URI location = ServletUriComponentsBuilder
-            .fromCurrentRequest()
-            .path("/{id}")
-            .buildAndExpand(id)
-            .toUri();
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(id)
+                .toUri();
         return ResponseEntity.created(location).body(id);
     }
 
@@ -55,7 +57,7 @@ public class SectionItemController implements CrudController<SectionItemRequest,
 
     @Override
     @Operation(operationId = "updateSectionItem")
-    public ResponseEntity<Void> update(Long id, @Valid SectionItemRequest request, Authentication user) {
+    public ResponseEntity<Void> update(Long id, UpdateSectionItemRequest request, Authentication user) {
         request.setId(id);
         sectionItemService.update(request);
         return ResponseEntity.ok().build();
@@ -73,8 +75,8 @@ public class SectionItemController implements CrudController<SectionItemRequest,
             @PathVariable Long sectionId,
             @RequestParam("file") MultipartFile file,
             @RequestParam("request") String requestJson) throws JsonMappingException, JsonProcessingException {
-        
-        SectionItemRequest request = objectMapper.readValue(requestJson, SectionItemRequest.class);
+
+        CreateSectionItemRequest request = objectMapper.readValue(requestJson, CreateSectionItemRequest.class);
         request.setSectionId(sectionId);
         return ResponseEntity.ok(sectionItemService.createPicture(file, request));
     }

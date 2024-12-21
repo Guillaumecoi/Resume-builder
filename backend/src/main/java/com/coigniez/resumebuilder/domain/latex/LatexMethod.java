@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import com.coigniez.resumebuilder.domain.layout.Layout;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
+import com.coigniez.resumebuilder.domain.sectionitem.enums.SectionItemType;
 import com.coigniez.resumebuilder.interfaces.BaseEntity;
 import com.coigniez.resumebuilder.interfaces.SectionItemData;
 
@@ -34,6 +34,7 @@ public class LatexMethod implements BaseEntity {
     @OneToMany(mappedBy = "latexMethod", fetch = FetchType.LAZY, orphanRemoval = false)
     private List<SectionItem> sectionItems = new ArrayList<>();
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private SectionItemType type;
 
