@@ -9,7 +9,6 @@ import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
 import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
-import com.coigniez.resumebuilder.domain.layout.enums.ColorScheme;
 import com.coigniez.resumebuilder.domain.sectionitem.enums.SectionItemType;
 
 public final class LayoutTemplate {
@@ -20,7 +19,7 @@ public final class LayoutTemplate {
         return CreateLayoutRequest.builder()
             .numberOfColumns(1)
             .columns(getDefaultColumns(1))
-            .colorScheme(getExecutiveSuiteColors())
+            .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
             .latexMethods(getStandardMethods())
             .build();
 }
@@ -29,7 +28,7 @@ public final class LayoutTemplate {
         return CreateLayoutRequest.builder()
             .numberOfColumns(2)
             .columns(getDefaultColumns(2))
-            .colorScheme(getExecutiveSuiteColors())
+            .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
             .latexMethods(getStandardMethods())
             .build();
     }
@@ -52,19 +51,6 @@ public final class LayoutTemplate {
                     .build());
         }
         return columns;
-    }
-
-    public static ColorScheme getExecutiveSuiteColors() {
-        return ColorScheme.builder()
-                .name("Executive Suite")
-                .primaryColor("#31323C") 
-                .secondaryColor("#dad7d5")      
-                .accent("#613B2E")          
-                .darkBg("#31323C")   
-                .lightBg("#E8E8EA")  
-                .darkText("#31323C")        
-                .lightText("#dad7d5")     
-                .build();
     }
 
     public static Set<CreateLatexMethodRequest> getStandardMethods() {

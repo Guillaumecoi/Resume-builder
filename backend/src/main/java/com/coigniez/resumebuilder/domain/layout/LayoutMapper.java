@@ -18,6 +18,7 @@ import com.coigniez.resumebuilder.domain.layout.dtos.UpdateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
 import com.coigniez.resumebuilder.interfaces.Mapper;
+import com.coigniez.resumebuilder.templates.ColorTemplates;
 import com.coigniez.resumebuilder.templates.LayoutTemplate;
 import com.coigniez.resumebuilder.util.MapperUtils;
 
@@ -34,7 +35,7 @@ public class LayoutMapper implements Mapper<Layout, CreateLayoutRequest, UpdateL
             "pageSize", PageSize.A4,
             "numberOfColumns", 1,
             "columnSeparator", 0.35,
-            "colorScheme", LayoutTemplate.getExecutiveSuiteColors(),
+            "colorScheme", ColorTemplates.EXECUTIVE_SUITE,
             "latexMethods", LayoutTemplate.getStandardMethods(),
             "sectionTitleMethod", """
                     \\newcommand{\\sectiontitle}[1] {

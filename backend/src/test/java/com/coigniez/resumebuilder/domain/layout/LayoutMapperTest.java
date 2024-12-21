@@ -14,6 +14,7 @@ import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.UpdateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
 import com.coigniez.resumebuilder.domain.resume.Resume;
+import com.coigniez.resumebuilder.templates.ColorTemplates;
 import com.coigniez.resumebuilder.templates.LayoutTemplate;
 
 import jakarta.validation.ConstraintViolationException;
@@ -34,7 +35,7 @@ public class LayoutMapperTest {
                 .pageSize(PageSize.A4)
                 .numberOfColumns(1)
                 .columnSeparator(0.35)
-                .colorScheme(LayoutTemplate.getExecutiveSuiteColors())
+                .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
                 .build();
 
         // Act
@@ -57,7 +58,7 @@ public class LayoutMapperTest {
                 .pageSize(PageSize.A4)
                 .numberOfColumns(1)
                 .columnSeparator(0.35)
-                .colorScheme(LayoutTemplate.getExecutiveSuiteColors())
+                .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
                 .build();
 
         // Act
@@ -86,7 +87,7 @@ public class LayoutMapperTest {
         assertEquals(PageSize.A4, entity.getPageSize());
         assertEquals(1, entity.getNumberOfColumns());
         assertEquals(0.35, entity.getColumnSeparator());
-        assertEquals(LayoutTemplate.getExecutiveSuiteColors().getName(), entity.getColorScheme().getName());
+        assertEquals(ColorTemplates.EXECUTIVE_SUITE.getName(), entity.getColorScheme().getName());
     }
 
     @Test
@@ -106,7 +107,7 @@ public class LayoutMapperTest {
                 .pageSize(PageSize.A4)
                 .numberOfColumns(2)
                 .columnSeparator(0.5)
-                .colorScheme(LayoutTemplate.getExecutiveSuiteColors())
+                .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
                 .latexMethods(LayoutTemplate.getStandardMethods())
                 .sectionTitleMethod("sectionTitleMethod")
                 .build();
