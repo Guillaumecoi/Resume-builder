@@ -32,6 +32,8 @@ public class Section implements BaseEntity {
     @NotNull
     private boolean showTitle;
 
+    private String icon;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", referencedColumnName = "id")
     private Resume resume;
@@ -73,4 +75,5 @@ public class Section implements BaseEntity {
         columnSections.forEach(columnSection -> columnSection.setSection(null));
         columnSections.clear();
     }
+
 }

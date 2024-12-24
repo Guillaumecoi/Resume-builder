@@ -1,6 +1,6 @@
 package com.coigniez.resumebuilder.domain.latex.dtos;
 
-import com.coigniez.resumebuilder.domain.sectionitem.enums.SectionItemType;
+import com.coigniez.resumebuilder.domain.latex.HasLatexMethod;
 import com.coigniez.resumebuilder.interfaces.UpdateRequest;
 
 import jakarta.validation.constraints.NotBlank;
@@ -16,7 +16,7 @@ public class UpdateLatexMethodRequest implements UpdateRequest {
     private Long id;
 
     @NotNull
-    private SectionItemType type;
+    private HasLatexMethod type;
     @NotBlank
     private String name;
     @NotBlank

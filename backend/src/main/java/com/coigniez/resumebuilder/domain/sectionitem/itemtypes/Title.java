@@ -18,23 +18,26 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Title implements SectionItemData {
 
-    public static final int BASE_PARAMETER_COUNT = 2;
-
     @NotBlank
     private String title;
     private String subtitle;
-    
-    @JsonIgnore
-    public List<String> getSectionItemData() {
-        return List.of(
-            title, 
-            Optional.ofNullable(subtitle).orElse("")
-        );
-    }
 
-    @JsonIgnore
-    public static int getNumberOfParameters() {
+    public static int getBaseParameterCount() {
         return 2;
     }
-    
+
+    @Override
+    @JsonIgnore
+    public List<String> getData() {
+        List<String> data = List.of(
+                title,
+                Optional.ofNullable(subtitle).orElse(""));
+
+        if (data.size() != getBaseParameterCount()) {
+            throw new IllegalStateException("Title data size does not match base parameter count");
+        }
+
+        return data;
+    }
+
 }

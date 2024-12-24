@@ -1,6 +1,6 @@
 package com.coigniez.resumebuilder.domain.latex.dtos;
 
-import com.coigniez.resumebuilder.domain.sectionitem.enums.SectionItemType;
+import com.coigniez.resumebuilder.domain.latex.HasLatexMethod;
 import com.coigniez.resumebuilder.interfaces.Response;
 
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +14,7 @@ public class LatexMethodResponse implements Response {
     @NotNull
     private long id;
     @NotNull
-    private SectionItemType type;
+    private HasLatexMethod type;
     @NotNull
     private String name;
     @NotNull

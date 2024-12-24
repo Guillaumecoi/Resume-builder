@@ -58,5 +58,6 @@ public class ResumeExampleServiceTest {
         assertTrue(generatedPdf.length > 0);
 
         // Feel free to write the PDF to a file to open and inspect it
+        // Files.write(Paths.get("example.pdf"), generatedPdf);
     }
 }

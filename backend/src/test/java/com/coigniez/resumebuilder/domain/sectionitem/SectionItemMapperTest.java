@@ -317,7 +317,7 @@ class SectionItemMapperTest {
     @Test
     void testToEntity_Workexperience() {
         // Arrange
-        WorkExperience correctComplete = WorkExperience.builder()
+        Experience correctComplete = Experience.builder()
                 .jobTitle("Software Engineer")
                 .companyName("Tech Corp")
                 .period("2020-2023")
@@ -325,7 +325,7 @@ class SectionItemMapperTest {
                 .responsibilities(List.of("Responsibility 1", "Responsibility 2"))
                 .build();
 
-        WorkExperience nullJobTitle = WorkExperience.builder()
+        Experience nullJobTitle = Experience.builder()
                 .companyName("Tech Corp")
                 .period("2020-2023")
                 .description("This is a description")
@@ -343,14 +343,14 @@ class SectionItemMapperTest {
 
         // Assert
         assertNotNull(entityCorrectComplete);
-        assertEquals("Software Engineer", ((WorkExperience) entityCorrectComplete.getItem()).getJobTitle());
-        assertEquals("Tech Corp", ((WorkExperience) entityCorrectComplete.getItem()).getCompanyName());
-        assertEquals("2020-2023", ((WorkExperience) entityCorrectComplete.getItem()).getPeriod());
-        assertEquals("This is a description", ((WorkExperience) entityCorrectComplete.getItem()).getDescription());
+        assertEquals("Software Engineer", ((Experience) entityCorrectComplete.getItem()).getJobTitle());
+        assertEquals("Tech Corp", ((Experience) entityCorrectComplete.getItem()).getCompanyName());
+        assertEquals("2020-2023", ((Experience) entityCorrectComplete.getItem()).getPeriod());
+        assertEquals("This is a description", ((Experience) entityCorrectComplete.getItem()).getDescription());
         assertEquals(List.of("Responsibility 1", "Responsibility 2"),
-                ((WorkExperience) entityCorrectComplete.getItem()).getResponsibilities());
+                ((Experience) entityCorrectComplete.getItem()).getResponsibilities());
         assertEquals("\\item Responsibility 1\n\\item Responsibility 2",
-                ((WorkExperience) entityCorrectComplete.getItem()).getResponsibilitiesAsItems());
+                ((Experience) entityCorrectComplete.getItem()).getResponsibilitiesAsItems());
 
         // Act & Assert
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(

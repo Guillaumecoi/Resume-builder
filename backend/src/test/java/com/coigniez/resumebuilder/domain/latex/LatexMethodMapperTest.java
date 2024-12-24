@@ -11,7 +11,6 @@ import org.springframework.test.context.ActiveProfiles;
 import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
 import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
 import com.coigniez.resumebuilder.domain.latex.dtos.UpdateLatexMethodRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.enums.SectionItemType;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -27,7 +26,7 @@ public class LatexMethodMapperTest {
                 .id(1L)
                 .name("Method1")
                 .method("MethodContent")
-                .type(SectionItemType.TEXTBOX)
+                .type(HasLatexMethod.TEXTBOX)
                 .build();
 
         // Act
@@ -47,7 +46,7 @@ public class LatexMethodMapperTest {
         CreateLatexMethodRequest request = CreateLatexMethodRequest.builder()
                 .name("Method1")
                 .method("MethodContent")
-                .type(SectionItemType.TEXTBOX)
+                .type(HasLatexMethod.TEXTBOX)
                 .build();
 
         // Act
@@ -67,14 +66,14 @@ public class LatexMethodMapperTest {
                 .id(1L)
                 .name("UpdatedMethod")
                 .method("UpdatedContent")
-                .type(SectionItemType.TEXTBOX)
+                .type(HasLatexMethod.TEXTBOX)
                 .build();
 
         LatexMethod entity = LatexMethod.builder()
                 .id(1L)
                 .name("Method1")
                 .method("MethodContent")
-                .type(SectionItemType.TEXTBOX)
+                .type(HasLatexMethod.TEXTBOX)
                 .build();
 
         // Act

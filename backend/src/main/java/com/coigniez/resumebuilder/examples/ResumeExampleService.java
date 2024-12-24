@@ -21,7 +21,7 @@ import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skillboxes;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Title;
-import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.WorkExperience;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Experience;
 import com.coigniez.resumebuilder.services.ColumnSectionService;
 import com.coigniez.resumebuilder.services.LayoutService;
 import com.coigniez.resumebuilder.services.ResumeService;
@@ -230,7 +230,7 @@ public class ResumeExampleService {
     private void addExperienceSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
         List<CreateSectionItemRequest> experienceItems = new ArrayList<>();
         experienceItems.add(CreateSectionItemRequest.builder()
-                .item(WorkExperience.builder()
+                .item(Experience.builder()
                         .jobTitle("Software Engineer")
                         .companyName("MIVB/STIB")
                         .period("2021 - 2022")

@@ -18,12 +18,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.coigniez.resumebuilder.domain.latex.HasLatexMethod;
 import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
 import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
 import com.coigniez.resumebuilder.domain.latex.dtos.UpdateLatexMethodRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.enums.SectionItemType;
 
 import java.util.List;
 
@@ -71,7 +71,7 @@ public class LatexMethodServiceIntegrationTest {
         // Arrange
         CreateLatexMethodRequest request = CreateLatexMethodRequest.builder()
                 .layoutId(layoutId)
-                .type(SectionItemType.TEXTBOX)
+                .type(HasLatexMethod.TEXTBOX)
                 .name("Test Method")
                 .method("Test Content")
                 .build();
@@ -88,7 +88,7 @@ public class LatexMethodServiceIntegrationTest {
         // Arrange
         CreateLatexMethodRequest request = CreateLatexMethodRequest.builder()
                 .layoutId(999L) // Non-existent layout ID
-                .type(SectionItemType.TEXTBOX)
+                .type(HasLatexMethod.TEXTBOX)
                 .name("Test Method")
                 .method("Test Content")
                 .build();
@@ -103,7 +103,7 @@ public class LatexMethodServiceIntegrationTest {
         // Arrange
         CreateLatexMethodRequest request = CreateLatexMethodRequest.builder()
                 .layoutId(layoutId)
-                .type(SectionItemType.TEXTBOX)
+                .type(HasLatexMethod.TEXTBOX)
                 .name("Test Method")
                 .method("Test Content")
                 .build();
@@ -124,7 +124,7 @@ public class LatexMethodServiceIntegrationTest {
         // Arrange
         CreateLatexMethodRequest createRequest = CreateLatexMethodRequest.builder()
                 .layoutId(layoutId)
-                .type(SectionItemType.TEXTBOX)
+                .type(HasLatexMethod.TEXTBOX)
                 .name("Test Method")
                 .method("Test Content")
                 .build();
@@ -133,7 +133,7 @@ public class LatexMethodServiceIntegrationTest {
 
         UpdateLatexMethodRequest updateRequest = UpdateLatexMethodRequest.builder()
                 .id(latexMethodId)
-                .type(SectionItemType.TEXTBOX)
+                .type(HasLatexMethod.TEXTBOX)
                 .name("Updated Method")
                 .method("Updated Content")
                 .build();
@@ -152,7 +152,7 @@ public class LatexMethodServiceIntegrationTest {
         // Arrange
         CreateLatexMethodRequest request = CreateLatexMethodRequest.builder()
                 .layoutId(layoutId)
-                .type(SectionItemType.TEXTBOX)
+                .type(HasLatexMethod.TEXTBOX)
                 .name("Test Method")
                 .method("Test Content")
                 .build();
@@ -172,7 +172,7 @@ public class LatexMethodServiceIntegrationTest {
         // Arrange
         CreateLatexMethodRequest request = CreateLatexMethodRequest.builder()
                 .layoutId(layoutId)
-                .type(SectionItemType.TEXTBOX)
+                .type(HasLatexMethod.TEXTBOX)
                 .name("Test Method")
                 .method("Test Content")
                 .build();

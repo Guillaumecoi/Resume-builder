@@ -5,9 +5,8 @@ import java.util.ArrayList;
 
 import com.coigniez.resumebuilder.domain.layout.Layout;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
-import com.coigniez.resumebuilder.domain.sectionitem.enums.SectionItemType;
 import com.coigniez.resumebuilder.interfaces.BaseEntity;
-import com.coigniez.resumebuilder.interfaces.SectionItemData;
+import com.coigniez.resumebuilder.interfaces.LatexMethodProvider;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -36,7 +35,7 @@ public class LatexMethod implements BaseEntity {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private SectionItemType type;
+    private HasLatexMethod type;
 
     @NotBlank
     private String name;
@@ -61,11 +60,11 @@ public class LatexMethod implements BaseEntity {
     /**
      * Generates the LaTeX command using the provided SectionItemData.
      *
-     * @param item the SectionItemData instance containing parameters
+     * @param provider the SectionItemData instance containing parameters
      * @return the LaTeX command as a string
      */
-    public String generateCommand(SectionItemData item) {
-        List<String> parameters = item.getSectionItemData();
+    public String generateCommand(LatexMethodProvider provider) {
+        List<String> parameters = provider.getData();
 
         // Start with the command name
         StringBuilder command = new StringBuilder("\\" + name);

@@ -16,9 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class WorkExperience implements SectionItemData {
-
-    public static final int BASE_PARAMETER_COUNT = 5;
+public class Experience implements SectionItemData {
 
     @NotBlank
     private String jobTitle;
@@ -33,18 +31,29 @@ public class WorkExperience implements SectionItemData {
             return "";
         }
         return responsibilities.stream()
-                     .map(r -> "\\item " + r.trim())
-                     .reduce((a, b) -> a + "\n" + b)
-                     .orElse("");
+                .map(r -> "\\item " + r.trim())
+                .reduce((a, b) -> a + "\n" + b)
+                .orElse("");
     }
 
+    public static int getBaseParameterCount() {
+        return 5;
+    }
+
+    @Override
     @JsonIgnore
-    public List<String> getSectionItemData() {
-        return List.of(
-            jobTitle, 
-            Optional.ofNullable(companyName).orElse(""),
-            Optional.ofNullable(period).orElse(""),
-            Optional.ofNullable(description).orElse(""),
-            getResponsibilitiesAsItems());
+    public List<String> getData() {
+        List<String> data = List.of(
+                jobTitle,
+                Optional.ofNullable(companyName).orElse(""),
+                Optional.ofNullable(period).orElse(""),
+                Optional.ofNullable(description).orElse(""),
+                getResponsibilitiesAsItems());
+
+        if (data.size() != getBaseParameterCount()) {
+            throw new IllegalStateException("Experience data size does not match base parameter count");
+        }
+
+        return data;
     }
 }

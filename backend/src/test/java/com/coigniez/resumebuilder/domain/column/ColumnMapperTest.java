@@ -26,7 +26,6 @@ public class ColumnMapperTest {
     @Test
     void testToDto() {
         // Arrange
-        // TODO: Add sectionMappings
         Column entity = Column.builder()
                 .id(1L)
                 .columnNumber(1)
@@ -66,7 +65,6 @@ public class ColumnMapperTest {
     @Test
     void testToEntity() {
         // Arrange
-        // TODO: Add sectionMappings
         CreateColumnRequest request = CreateColumnRequest.builder()
                 .layoutId(1L)
                 .columnNumber(1)
@@ -139,7 +137,6 @@ public class ColumnMapperTest {
 
     @Test
     void testUpdateEntity() {
-        // TODO: Add sectionMappings
         // Arrange
         UpdateColumnRequest request = UpdateColumnRequest.builder()
                 .id(1L)

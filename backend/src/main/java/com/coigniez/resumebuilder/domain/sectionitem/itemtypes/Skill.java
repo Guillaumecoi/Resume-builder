@@ -21,21 +21,30 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Skill implements SectionItemData {
 
-    public static final int BASE_PARAMETER_COUNT = 3;
-
     @NotBlank
     private String name;
     @Min(1)
     @Max(10)
-    private Integer proficiency; 
+    private Integer proficiency;
     private String description;
 
-    @JsonIgnore
-    public List<String> getSectionItemData() {
-        return List.of(
-            name, 
-            Objects.toString(proficiency, ""), 
-            Optional.ofNullable(description).orElse("")
-        );
+    public static int getBaseParameterCount() {
+        return 3;
     }
+
+    @Override
+    @JsonIgnore
+    public List<String> getData() {
+        List<String> data = List.of(
+                name,
+                Objects.toString(proficiency, ""),
+                Optional.ofNullable(description).orElse(""));
+
+        if (data.size() != getBaseParameterCount()) {
+            throw new IllegalStateException("Skill data size does not match base parameter count");
+        }
+
+        return data;
+    }
+
 }

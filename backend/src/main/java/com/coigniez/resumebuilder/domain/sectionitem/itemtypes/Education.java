@@ -18,8 +18,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Education implements SectionItemData {
 
-    public static final int BASE_PARAMETER_COUNT = 4;
-
     @NotBlank
     private String degree;
     @NotBlank
@@ -27,14 +25,23 @@ public class Education implements SectionItemData {
     private String period;
     private String description;
 
+    public static int getBaseParameterCount() {
+        return 4;
+    }
+
+    @Override
     @JsonIgnore
-    public List<String> getSectionItemData() {
-        return List.of(
-            Optional.ofNullable(degree).orElse(""),
-            Optional.ofNullable(institution).orElse(""),
-            Optional.ofNullable(period).orElse(""),
-            Optional.ofNullable(description).orElse("")
-        );
+    public List<String> getData() {
+        List<String> data = List.of(
+                degree,
+                institution,
+                Optional.ofNullable(period).orElse(""),
+                Optional.ofNullable(description).orElse(""));
+
+        if (data.size() != getBaseParameterCount()) {
+            throw new IllegalStateException("Education data size does not match base parameter count");
+        }
+
+        return data;
     }
 }
-
