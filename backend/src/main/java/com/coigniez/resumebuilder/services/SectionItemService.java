@@ -62,7 +62,7 @@ public class SectionItemService implements ParentEntityService<CreateSectionItem
 
         // Add the sectionItem to the section and latexMethod
         section.addSectionItem(sectionItem);
-        latexMethod.addSectionItem(sectionItem);
+        sectionItem.setLatexMethod(latexMethod);
             
     
         // Save the item
@@ -122,12 +122,9 @@ public class SectionItemService implements ParentEntityService<CreateSectionItem
 
         // Update the latexMethod
         if (request.getLatexMethodId() != sectionItem.getLatexMethod().getId()) {
-            // Remove the item from the latexMethod
-            sectionItem.getLatexMethod().removeSectionItem(sectionItem);
-            // Add the item to the new latexMethod
             LatexMethod newLatexMethod = latexMethodRepository.findById(request.getLatexMethodId())
                 .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
-            newLatexMethod.addSectionItem(sectionItem);
+            sectionItem.setLatexMethod(newLatexMethod);
         }
 
         //TODO: Update the section

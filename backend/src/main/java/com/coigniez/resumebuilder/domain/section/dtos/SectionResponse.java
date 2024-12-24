@@ -16,8 +16,10 @@ public class SectionResponse implements Response {
 
     @NotNull
     private long id;
+
     @NotBlank
     private String title;
+    private String icon;
     @NotNull
     private boolean showTitle;
 

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
+import com.coigniez.resumebuilder.interfaces.LatexGenerator;
 
 import lombok.AllArgsConstructor;
 
@@ -20,6 +21,7 @@ public class LatexItemGenerator implements LatexGenerator<SectionItem> {
         if (method == null) {
             return "";
         }
-        return "\\item " + method.generateCommand(item.getItem());
+        return "\\item " + LatexMethodGenerator.generateUsage(method.getMethodType(), method.getType(),
+                method.getName(), method.getMethod(), item.getItem().getData());
     }
 }

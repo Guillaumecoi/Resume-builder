@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
+import com.coigniez.resumebuilder.interfaces.LatexGenerator;
+import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplate;
+import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplates;
 import com.coigniez.resumebuilder.util.StringUtils;
 
 import lombok.AllArgsConstructor;
@@ -21,23 +24,19 @@ public class LatexSectionGenerator implements LatexGenerator<ColumnSection> {
 
     public String generate(ColumnSection columnSection) {
         Section section = columnSection.getSection();
-        StringBuilder sectionString = new StringBuilder();
+        LatexMethodTemplate sectionMethod = LatexMethodTemplates.getSectionTemplate();
 
-        String title = section.isShowTitle() ? section.getTitle() : "";
+        // Get the section environment
+        String sectionString = LatexMethodGenerator.generateUsage(sectionMethod.getMethodType(),
+                sectionMethod.getType(), sectionMethod.getMethodName(), sectionMethod.getMethod(), columnSection.getData());
 
-        // Start the section
-        sectionString.append("\\begin{cvsection}{%s}{%.1fpt}{%.1fpt}{%s}\n"
-                .formatted(title, columnSection.getItemsep(), columnSection.getEndsep(), ""));
-
-        // Add the items
+        // Set the items
+        String items = "";
         for (SectionItem item : section.getItems()) {
-            sectionString.append(stringUtils.addTabToEachLine(latexItemGenerator.generate(item), 1) + "\n");
+            items += stringUtils.addTabToEachLine(latexItemGenerator.generate(item), 1) + "\n";
         }
 
-        // End the section
-        sectionString.append("\\end{cvsection}");
-
-        return sectionString.toString();
+        return sectionString.formatted(items);
     }
-    
+
 }

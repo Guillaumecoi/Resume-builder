@@ -22,22 +22,12 @@ public class Title implements SectionItemData {
     private String title;
     private String subtitle;
 
-    public static int getBaseParameterCount() {
-        return 2;
-    }
-
     @Override
     @JsonIgnore
     public List<String> getData() {
-        List<String> data = List.of(
+        return List.of(
                 title,
                 Optional.ofNullable(subtitle).orElse(""));
-
-        if (data.size() != getBaseParameterCount()) {
-            throw new IllegalStateException("Title data size does not match base parameter count");
-        }
-
-        return data;
     }
 
 }

@@ -17,8 +17,8 @@ import lombok.Data;
 public class CreateResumeRequest implements CreateRequest {
 
     @NotBlank
-    String title;
+    private String title;
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    List<CreateSectionRequest> sections;
+    private List<CreateSectionRequest> sections;
 }

@@ -80,8 +80,7 @@ public class LayoutControllerIntegrationTest {
                 .andExpect(jsonPath("$.columns").isArray())
                 .andExpect(jsonPath("$.columnSeparator").value(0.35))
                 .andExpect(jsonPath("$.colorScheme").isMap())
-                .andExpect(jsonPath("$.latexMethods").isArray())
-                .andExpect(jsonPath("$.sectionTitleMethod").isString());
+                .andExpect(jsonPath("$.latexMethods").isArray());
     }
 
     @Test
@@ -100,7 +99,7 @@ public class LayoutControllerIntegrationTest {
         UpdateLayoutRequest updateRequest = UpdateLayoutRequest.builder()
                 .id(layoutId).pageSize(PageSize.A4)
                 .numberOfColumns(1).columnSeparator(0.4).colorScheme(ColorTemplates.EXECUTIVE_SUITE)
-                .latexMethods(LayoutTemplate.getStandardMethods()).sectionTitleMethod("sectionTitleMethod")
+                .latexMethods(LayoutTemplate.getStandardMethods())
                 .CreateColumns(List.of()).updateColumns(List.of())
                 .build();
 

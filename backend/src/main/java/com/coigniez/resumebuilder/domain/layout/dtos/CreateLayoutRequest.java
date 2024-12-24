@@ -32,7 +32,6 @@ public class CreateLayoutRequest implements CreateRequest {
 
     private ColorScheme colorScheme;
     private Set<CreateLatexMethodRequest> latexMethods;
-    private String sectionTitleMethod;
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<CreateColumnRequest> columns;

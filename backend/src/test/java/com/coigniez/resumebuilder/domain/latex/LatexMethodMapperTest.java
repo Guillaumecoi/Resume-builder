@@ -66,7 +66,6 @@ public class LatexMethodMapperTest {
                 .id(1L)
                 .name("UpdatedMethod")
                 .method("UpdatedContent")
-                .type(HasLatexMethod.TEXTBOX)
                 .build();
 
         LatexMethod entity = LatexMethod.builder()
@@ -83,6 +82,5 @@ public class LatexMethodMapperTest {
         assertEquals(1L, entity.getId(), "ID should not be updated");
         assertEquals(request.getName(), entity.getName());
         assertEquals(request.getMethod(), entity.getMethod());
-        assertEquals(request.getType(), entity.getType());
     }
 }

@@ -46,15 +46,11 @@ public class Picture implements SectionItemData {
     @Builder.Default
     @Min(0) @Max(5)
     private double shadow = 0.0;
-
-    public static int getBaseParameterCount() {
-        return 9;
-    }
-
+    
     @Override
     @JsonIgnore
     public List<String> getData() {
-        List<String> data = List.of(
+        return List.of(
             path,
             Optional.ofNullable(caption).orElse(""),
             String.format("%.2f", width),
@@ -65,11 +61,5 @@ public class Picture implements SectionItemData {
             String.format("%.1f", shadow),
             Integer.toString(rounded)
         );
-        
-        if (data.size() != getBaseParameterCount()) {
-            throw new IllegalStateException("Picture data size does not match base parameter count");
-        }
-
-        return data;
     }
 }

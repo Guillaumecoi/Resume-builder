@@ -18,15 +18,15 @@ import lombok.Data;
 public class UpdateResumeRequest implements UpdateRequest {
 
     @NotNull
-    Long id;
+    private Long id;
 
     @NotBlank
-    String title;
+    private String title;
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    List<CreateSectionRequest> createSections;
+    private List<CreateSectionRequest> createSections;
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    List<UpdateSectionRequest> updateSections;
+    private List<UpdateSectionRequest> updateSections;
 
 }

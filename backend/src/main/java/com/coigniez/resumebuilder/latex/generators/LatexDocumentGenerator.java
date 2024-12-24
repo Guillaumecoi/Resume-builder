@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.layout.Layout;
+import com.coigniez.resumebuilder.interfaces.LatexGenerator;
 import com.coigniez.resumebuilder.latex.PdfGenerator;
 import com.coigniez.resumebuilder.util.StringUtils;
 

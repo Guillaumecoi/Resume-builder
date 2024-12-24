@@ -17,27 +17,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Skillboxes implements SectionItemData {
-    
+
     @NotNull
     @NotEmpty
     private List<String> skills;
 
-    public static int getBaseParameterCount() {
-        return 1;
-    }
-
     @Override
     @JsonIgnore
     public List<String> getData() {
-        List<String> data = List.of(
-                skills.toString()
-        );
-
-        if (data.size() != getBaseParameterCount()) {
-            throw new IllegalStateException("Skillboxes data size does not match base parameter count");
-        }
-
-        return data;
+        return List.of(skills.toString());
     }
 }
-

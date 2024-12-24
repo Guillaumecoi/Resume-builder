@@ -109,7 +109,6 @@ public class LayoutMapperTest {
                 .columnSeparator(0.5)
                 .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
                 .latexMethods(LayoutTemplate.getStandardMethods())
-                .sectionTitleMethod("sectionTitleMethod")
                 .build();
 
         Layout entity = Layout.builder()

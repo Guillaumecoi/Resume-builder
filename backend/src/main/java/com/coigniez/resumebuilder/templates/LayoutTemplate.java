@@ -55,6 +55,8 @@ public final class LayoutTemplate {
 
     public static Set<CreateLatexMethodRequest> getStandardMethods() {
         HashSet<CreateLatexMethodRequest> result = new HashSet<>();
+        result.add(LatexMethodTemplates.getSectionTemplate().toCreateLatexMethodRequest());
+        result.add(LatexMethodTemplates.getSectionTitlesTemplates().get("Standard Section Title").toCreateLatexMethodRequest());
         result.add(LatexMethodTemplates.getContactTemplates().get("Standard Contact").toCreateLatexMethodRequest());
         result.add(LatexMethodTemplates.getTitleTemplates().get("Standard Title").toCreateLatexMethodRequest());
         result.add(LatexMethodTemplates.getEducationTemplates().get("Standard Education").toCreateLatexMethodRequest());

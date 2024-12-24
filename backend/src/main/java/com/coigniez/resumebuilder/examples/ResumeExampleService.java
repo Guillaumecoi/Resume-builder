@@ -106,6 +106,7 @@ public class ResumeExampleService {
         columnSectionService.create(CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
+                .latexMethodId(methodIds.get("sectiontitle"))
                 .sectionOrder(sectionOrder)
                 .build());
     }
@@ -174,6 +175,7 @@ public class ResumeExampleService {
         columnSectionService.create(CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(contactId)
+                .latexMethodId(methodIds.get("sectiontitle"))
                 .sectionOrder(sectionOrder)
                 .itemsep(4.0)
                 .build());
@@ -222,6 +224,7 @@ public class ResumeExampleService {
         columnSectionService.create(CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(educationId)
+                .latexMethodId(methodIds.get("sectiontitle"))
                 .sectionOrder(sectionOrder)
                 .build());
 
@@ -248,6 +251,7 @@ public class ResumeExampleService {
         columnSectionService.create(CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(experienceId)
+                .latexMethodId(methodIds.get("sectiontitle"))
                 .sectionOrder(sectionOrder)
                 .build());
     }
@@ -270,6 +274,7 @@ public class ResumeExampleService {
         columnSectionService.create(CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(titleId)
+                .latexMethodId(methodIds.get("sectiontitle"))
                 .sectionOrder(sectionOrder)
                 .endsep(6.0)
                 .build());
@@ -297,6 +302,7 @@ public class ResumeExampleService {
         columnSectionService.create(CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(summaryId)
+                .latexMethodId(methodIds.get("sectiontitle"))
                 .sectionOrder(sectionOrder)
                 .build());
     }
@@ -350,6 +356,7 @@ public class ResumeExampleService {
         columnSectionService.create(CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(skillsId)
+                .latexMethodId(methodIds.get("sectiontitle"))
                 .sectionOrder(sectionOrder)
                 .itemsep(4.0)
                 .build());

@@ -19,20 +19,11 @@ public class Textbox implements SectionItemData {
     @NotBlank
     private String content;
 
-    public static int getBaseParameterCount() {
-        return 1;
-    }
 
     @Override
     @JsonIgnore
     public List<String> getData() {
-        List<String> data = List.of(content);
-
-        if (data.size() != getBaseParameterCount()) {
-            throw new IllegalStateException("Textbox data size does not match base parameter count");
-        }
-
-        return data;
+        return List.of(content);
     }
 
 }

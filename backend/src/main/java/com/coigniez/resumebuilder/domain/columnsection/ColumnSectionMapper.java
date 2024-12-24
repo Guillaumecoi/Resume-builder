@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResponse;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.latex.LatexMethodMapper;
 import com.coigniez.resumebuilder.domain.section.SectionMapper;
 import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.util.MapperUtils;
@@ -17,6 +18,8 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
 
     @Autowired
     private SectionMapper sectionMapper;
+    @Autowired
+    private LatexMethodMapper latexMethodMapper;
 
     private static final Map<String, Object> DEFAULT_VALUES = Map.of(
         "itemsep", 8.0,
@@ -36,6 +39,7 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
             .sectionOrder(request.getSectionOrder())
             .itemsep(request.getItemsep())
             .endsep(request.getEndsep())
+            .alignment(request.getAlignment())
             .build();
     }
 
@@ -47,9 +51,11 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
         return ColumnSectionResponse.builder()
             .id(entity.getId())
             .section(sectionMapper.toDto(entity.getSection()))
+            .latexMethod(latexMethodMapper.toDto(entity.getLatexMethod()))
             .sectionOrder(entity.getSectionOrder())
             .itemsep(entity.getItemsep())
             .endsep(entity.getEndsep())
+            .alignment(entity.getAlignment())
             .build();
     }
 

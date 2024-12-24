@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.coigniez.resumebuilder.domain.latex.HasLatexMethod;
+import com.coigniez.resumebuilder.domain.latex.MethodType;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 
 public class LatexMethodTemplates {
@@ -14,6 +15,7 @@ public class LatexMethodTemplates {
     public static Map<String, LatexMethodTemplate> getTemplates() {
         Map<String, LatexMethodTemplate> templates = new HashMap<>();
 
+        templates.putAll(getSectionTitlesTemplates());
         templates.putAll(getContactTemplates());
         templates.putAll(getTitleTemplates());
         templates.putAll(getEducationTemplates());
@@ -25,12 +27,54 @@ public class LatexMethodTemplates {
         return templates;
     }
 
+    public static LatexMethodTemplate getSectionTemplate() {
+
+        return new LatexMethodTemplate(
+                HasLatexMethod.SECTION,
+                "cvsection",
+                MethodType.ENVIRONMENT,
+                """
+                        {
+                            \\def\\cvsectionvspace{#3}
+                            #1
+                            \\begin{itemize}[left=0pt, itemsep=#2, label={}, topsep=10pt]
+                                }{
+                            \\end{itemize}
+                            \\vspace{\\cvsectionvspace}
+                        }
+                        """,
+                "Standard Section",
+                null);
+    }
+
+    public static Map<String, LatexMethodTemplate> getSectionTitlesTemplates() {
+        Map<String, LatexMethodTemplate> contactTemplates = new HashMap<>();
+
+        contactTemplates.put("Standard Section Title", new LatexMethodTemplate(
+                HasLatexMethod.SECTION_TITLE,
+                "sectiontitle",
+                MethodType.COMMAND,
+                """
+                        {
+                            \\ifthenelse{\\equal{#1}{}}{}{
+                                \\hspace{6pt}\\textbf{\\Large{\\uppercase{#1}}}\\\\[-4pt]
+                                \\textcolor{%s}{\\rule{80pt}{2pt}}
+                            }
+                        }
+                        """.formatted(ColorLocation.ACCENT.toString()),
+                "Standard Section Title",
+                null));
+
+        return contactTemplates;
+    }
+
     public static Map<String, LatexMethodTemplate> getContactTemplates() {
         Map<String, LatexMethodTemplate> contactTemplates = new HashMap<>();
 
         contactTemplates.put("Standard Contact", new LatexMethodTemplate(
                 HasLatexMethod.CONTACT,
                 "contactitem",
+                MethodType.COMMAND,
                 """
                         {
                             \\ifthenelse{\\isempty{#2}}
@@ -53,6 +97,7 @@ public class LatexMethodTemplates {
         titleTemplates.put("Standard Title", new LatexMethodTemplate(
                 HasLatexMethod.TITLE,
                 "cvtitle",
+                MethodType.COMMAND,
                 """
                         {
                             \\begin{minipage}[t]{\\textwidth}
@@ -77,6 +122,7 @@ public class LatexMethodTemplates {
         educationTemplates.put("Standard Education", new LatexMethodTemplate(
                 HasLatexMethod.EDUCATION,
                 "educationitem",
+                MethodType.COMMAND,
                 """
                         {
                             \\textbf{#1} \\newline
@@ -99,6 +145,7 @@ public class LatexMethodTemplates {
         experienceTemplateMap.put("Standard Experience", new LatexMethodTemplate(
                 HasLatexMethod.EXPERIENCE,
                 "experienceitem",
+                MethodType.COMMAND,
                 """
                         {
                             \\textbf{\\large#2} \\\\[4pt]
@@ -126,6 +173,7 @@ public class LatexMethodTemplates {
         skillTemplates.put("Standard Skill", new LatexMethodTemplate(
                 HasLatexMethod.SKILL,
                 "skillitem",
+                MethodType.COMMAND,
                 """
                         {
                             \\textbf{#1}
@@ -136,6 +184,7 @@ public class LatexMethodTemplates {
         skillTemplates.put("Skill Text", new LatexMethodTemplate(
                 HasLatexMethod.SKILL,
                 "skilltext",
+                MethodType.COMMAND,
                 """
                         {
                             \\textbf{#1} \\hfill #2
@@ -146,6 +195,7 @@ public class LatexMethodTemplates {
         skillTemplates.put("Skill Bullets", new LatexMethodTemplate(
                 HasLatexMethod.SKILL,
                 "skillbullets",
+                MethodType.COMMAND,
                 """
                         {
                             \\textbf{#1} \\hfill
@@ -164,6 +214,7 @@ public class LatexMethodTemplates {
         skillTemplates.put("Skill Bar", new LatexMethodTemplate(
                 HasLatexMethod.SKILL,
                 "skillbar",
+                MethodType.COMMAND,
                 """
                         {
                             \\textbf{#1} \\hfill
@@ -184,6 +235,7 @@ public class LatexMethodTemplates {
         skillboxTemplates.put("Standard Skillbox", new LatexMethodTemplate(
                 HasLatexMethod.SKILL_BOXES,
                 "skillboxes",
+                MethodType.COMMAND,
                 """
                         {
                             \\begin{minipage}[t]{\\textwidth}
@@ -226,6 +278,7 @@ public class LatexMethodTemplates {
         textboxTemplates.put("Standard Textbox", new LatexMethodTemplate(
                 HasLatexMethod.TEXTBOX,
                 "textbox",
+                MethodType.COMMAND,
                 """
                         {
                             \\small
@@ -243,6 +296,7 @@ public class LatexMethodTemplates {
         pictureTemplates.put("Standard Picture", new LatexMethodTemplate(
                 HasLatexMethod.PICTURE,
                 "pictureitem",
+                MethodType.COMMAND,
                 """
                         {
                             \\begin{tikzpicture}

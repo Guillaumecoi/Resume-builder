@@ -28,23 +28,13 @@ public class Skill implements SectionItemData {
     private Integer proficiency;
     private String description;
 
-    public static int getBaseParameterCount() {
-        return 3;
-    }
-
     @Override
     @JsonIgnore
     public List<String> getData() {
-        List<String> data = List.of(
+        return List.of(
                 name,
                 Objects.toString(proficiency, ""),
                 Optional.ofNullable(description).orElse(""));
-
-        if (data.size() != getBaseParameterCount()) {
-            throw new IllegalStateException("Skill data size does not match base parameter count");
-        }
-
-        return data;
     }
 
 }

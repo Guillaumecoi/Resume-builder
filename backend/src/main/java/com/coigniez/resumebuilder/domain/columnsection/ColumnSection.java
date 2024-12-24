@@ -4,16 +4,21 @@ import java.util.List;
 import java.util.Optional;
 
 import com.coigniez.resumebuilder.domain.column.Column;
+import com.coigniez.resumebuilder.domain.latex.LatexMethod;
+import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.interfaces.BaseEntity;
 import com.coigniez.resumebuilder.interfaces.LatexMethodProvider;
+import com.coigniez.resumebuilder.latex.generators.LatexMethodGenerator;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Entity
 @Table(name = "column_section")
@@ -25,11 +30,18 @@ public class ColumnSection implements BaseEntity, LatexMethodProvider {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "column_id", referencedColumnName = "id")
     private Column column;
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "section_id", referencedColumnName = "id")
     private Section section;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "latex_method_id", referencedColumnName = "id")
+    private LatexMethod latexMethod;
 
     @NotNull
     private Integer sectionOrder;
@@ -37,24 +49,16 @@ public class ColumnSection implements BaseEntity, LatexMethodProvider {
     private double itemsep;
     @NotNull
     private double endsep;
-
-    public static int getBaseParameterCount() {
-        return 3;
-    }
+    private AlignmentType alignment;
 
     @Override
     public List<String> getData() {
-        List<String> data = List.of(
-            section.isShowTitle() ? section.getTitle() : "",
-            Optional.ofNullable(section.getIcon()).orElse(""),
-            String.valueOf(itemsep),
-            String.valueOf(endsep)
-        );
-
-        if (data.size() != getBaseParameterCount()) {
-            throw new IllegalStateException("ColumnSection data size does not match base parameter count");
-        }
-
-        return data;
+        return List.of(
+                LatexMethodGenerator.generateUsage(latexMethod.getMethodType(), latexMethod.getType(),
+                        latexMethod.getName(), latexMethod.getMethod(),
+                        List.of(section.isShowTitle() ? section.getTitle() : "",
+                                Optional.ofNullable(section.getIcon()).orElse(""))),
+                String.valueOf(itemsep) + "pt",
+                String.valueOf(endsep) + "pt");
     }
 }

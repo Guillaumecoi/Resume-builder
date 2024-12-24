@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import com.coigniez.resumebuilder.domain.column.Column;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.layout.Layout;
+import com.coigniez.resumebuilder.interfaces.LatexGenerator;
 import com.coigniez.resumebuilder.util.StringUtils;
 
 import lombok.AllArgsConstructor;

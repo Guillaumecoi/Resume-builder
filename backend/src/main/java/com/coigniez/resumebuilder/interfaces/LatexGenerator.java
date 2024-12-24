@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.latex.generators;
+package com.coigniez.resumebuilder.interfaces;
 
 /**
  * Interface for generating latex Strings.

@@ -13,6 +13,8 @@ import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionRepository;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResponse;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.latex.LatexMethod;
+import com.coigniez.resumebuilder.domain.latex.LatexMethodRepository;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.section.SectionRepository;
 import com.coigniez.resumebuilder.interfaces.MultiParentEntityService;
@@ -29,6 +31,7 @@ public class ColumnSectionService implements MultiParentEntityService<CreateColu
     private final ColumnSectionRepository columnSectionRepository;
     private final ColumnRepository columnRepository;
     private final SectionRepository sectionRepository;
+    private final LatexMethodRepository latexMethodRepository;
     private final ColumnSectionMapper columnSectionMapper;
     private final SecurityUtils securityUtils;
     private final EntityManager entityManager;
@@ -44,6 +47,8 @@ public class ColumnSectionService implements MultiParentEntityService<CreateColu
                 .orElseThrow(() -> new EntityNotFoundException("Column not found"));
         Section section = sectionRepository.findById(request.getSectionId())
                 .orElseThrow(() -> new EntityNotFoundException("Section not found"));
+        LatexMethod latexMethod = latexMethodRepository.findById(request.getLatexMethodId())
+                .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
 
         // Check if the column and section belong to the same resume
         if(column.getLayout().getResume().getId() != section.getResume().getId()) {
@@ -64,6 +69,7 @@ public class ColumnSectionService implements MultiParentEntityService<CreateColu
         // Add the columnSection to the column and section
         column.addSectionMapping(columnSection);
         section.addColumnSection(columnSection);
+        latexMethod.addColumnSection(columnSection);
         
         // Save the columnSection
         return columnSectionRepository.save(columnSection).getId();
@@ -97,6 +103,11 @@ public class ColumnSectionService implements MultiParentEntityService<CreateColu
                 incrementSectionOrder(columnSection.getColumn().getId(), request.getSectionOrder(), columnSection.getSectionOrder());
             }
         }
+
+        // Update the latexMethod
+        LatexMethod latexMethod = latexMethodRepository.findById(request.getLatexMethodId())
+                .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
+        columnSection.setLatexMethod(latexMethod);
 
         // Update theexistingColumnSection entity
         columnSectionMapper.updateEntity(columnSection, request);

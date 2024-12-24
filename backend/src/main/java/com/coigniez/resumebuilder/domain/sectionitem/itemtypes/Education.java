@@ -25,23 +25,13 @@ public class Education implements SectionItemData {
     private String period;
     private String description;
 
-    public static int getBaseParameterCount() {
-        return 4;
-    }
-
     @Override
     @JsonIgnore
     public List<String> getData() {
-        List<String> data = List.of(
+        return List.of(
                 degree,
                 institution,
                 Optional.ofNullable(period).orElse(""),
                 Optional.ofNullable(description).orElse(""));
-
-        if (data.size() != getBaseParameterCount()) {
-            throw new IllegalStateException("Education data size does not match base parameter count");
-        }
-
-        return data;
     }
 }

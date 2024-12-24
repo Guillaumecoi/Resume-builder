@@ -133,7 +133,6 @@ public class LatexMethodServiceIntegrationTest {
 
         UpdateLatexMethodRequest updateRequest = UpdateLatexMethodRequest.builder()
                 .id(latexMethodId)
-                .type(HasLatexMethod.TEXTBOX)
                 .name("Updated Method")
                 .method("Updated Content")
                 .build();

@@ -12,20 +12,23 @@ import com.coigniez.resumebuilder.interfaces.LatexMethodProvider;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Experience;
 
 public enum HasLatexMethod {
-    SECTION(ColumnSection.class),
-    TITLE(Title.class),
-    EXPERIENCE(Experience.class),
-    TEXTBOX(Textbox.class),
-    SKILL(Skill.class),
-    EDUCATION(Education.class),
-    SKILL_BOXES(Skillboxes.class),
-    PICTURE(Picture.class),
-    CONTACT(Contact.class);
+    SECTION(null, 3),
+    SECTION_TITLE(ColumnSection.class, 2),
+    TITLE(Title.class, 2),
+    EXPERIENCE(Experience.class, 5),
+    TEXTBOX(Textbox.class, 1),
+    SKILL(Skill.class, 3),
+    EDUCATION(Education.class, 4),
+    SKILL_BOXES(Skillboxes.class, 1),
+    PICTURE(Picture.class, 9),
+    CONTACT(Contact.class, 3);
 
     private final Class<? extends LatexMethodProvider> dataType;
+    private final int numberOfParameters;
 
-    HasLatexMethod(Class<? extends LatexMethodProvider> dataType) {
+    HasLatexMethod(Class<? extends LatexMethodProvider> dataType, int numberOfParameters) {
         this.dataType = dataType;
+        this.numberOfParameters = numberOfParameters;
     }
 
     public Class<? extends LatexMethodProvider> getDataType() {
@@ -33,15 +36,7 @@ public enum HasLatexMethod {
     }
 
     public int getNumberOfParameters() {
-        try {
-            int baseParameterCount = (int) dataType.getMethod("getBaseParameterCount").invoke(null);
-            if (baseParameterCount < 0) {
-                throw new IllegalStateException("Base parameter count must be greater than or equal to 0");
-            }
-            return baseParameterCount;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get base parameter count", e);
-        }
+        return numberOfParameters;
     }
 
 }

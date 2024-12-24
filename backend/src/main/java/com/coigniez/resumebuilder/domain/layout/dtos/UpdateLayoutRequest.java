@@ -43,9 +43,6 @@ public class UpdateLayoutRequest implements UpdateRequest {
     @NotNull
     private Set<CreateLatexMethodRequest> latexMethods;
 
-    @NotNull
-    private String sectionTitleMethod;
-
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<CreateColumnRequest> CreateColumns;
 

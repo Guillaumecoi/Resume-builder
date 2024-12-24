@@ -15,7 +15,6 @@ import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
 import com.coigniez.resumebuilder.domain.layout.dtos.UpdateLayoutRequest;
-import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
 import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.templates.ColorTemplates;
@@ -36,13 +35,7 @@ public class LayoutMapper implements Mapper<Layout, CreateLayoutRequest, UpdateL
             "numberOfColumns", 1,
             "columnSeparator", 0.35,
             "colorScheme", ColorTemplates.EXECUTIVE_SUITE,
-            "latexMethods", LayoutTemplate.getStandardMethods(),
-            "sectionTitleMethod", """
-                    \\newcommand{\\sectiontitle}[1] {
-                        \\hspace{6pt}\\textbf{\\Large{\\uppercase{#1}}}\\\\[-4pt]
-                        \\textcolor{%s}{\\rule{80pt}{2pt}}
-                    }
-                    """.formatted(ColorLocation.ACCENT.toString())
+            "latexMethods", LayoutTemplate.getStandardMethods()
     );
 
     @Override
@@ -61,7 +54,6 @@ public class LayoutMapper implements Mapper<Layout, CreateLayoutRequest, UpdateL
                 .numberOfColumns(request.getNumberOfColumns())
                 .columnSeparator(request.getColumnSeparator())
                 .colorScheme(request.getColorScheme())
-                .sectionTitleMethod(request.getSectionTitleMethod())
                 .build();
 
         // Add columns and latex methods to the layout
@@ -104,7 +96,6 @@ public class LayoutMapper implements Mapper<Layout, CreateLayoutRequest, UpdateL
                 .columnSeparator(entity.getColumnSeparator())
                 .colorScheme(entity.getColorScheme())
                 .latexMethods(latexMethodDTOs)
-                .sectionTitleMethod(entity.getSectionTitleMethod())
                 .build();
     }
 
@@ -118,6 +109,5 @@ public class LayoutMapper implements Mapper<Layout, CreateLayoutRequest, UpdateL
         entity.setNumberOfColumns(request.getNumberOfColumns());
         entity.setColumnSeparator(request.getColumnSeparator());
         entity.setColorScheme(request.getColorScheme());
-        entity.setSectionTitleMethod(request.getSectionTitleMethod());
     }
 }

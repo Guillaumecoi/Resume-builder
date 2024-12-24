@@ -30,7 +30,5 @@ public class LayoutResponse implements Response {
     private ColorScheme colorScheme;
     @NotNull
     private Set<LatexMethodResponse> latexMethods;
-    @NotNull
-    private String sectionTitleMethod;
     
 }

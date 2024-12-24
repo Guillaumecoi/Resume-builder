@@ -24,9 +24,8 @@ public class SectionMapper implements Mapper<Section, CreateSectionRequest, Upda
 
     private final SectionItemMapper sectionItemMapper;
 
-     private static final Map<String, Object> DEFAULT_VALUES = Map.of(
-            "showTitle", true
-     );
+    private static final Map<String, Object> DEFAULT_VALUES = Map.of(
+            "showTitle", true);
 
     @Override
     public Section toEntity(CreateSectionRequest request) {
@@ -48,12 +47,12 @@ public class SectionMapper implements Mapper<Section, CreateSectionRequest, Upda
             return null;
         }
 
-        List<SectionItemResponse> sectionItems = entity.getItems() == null 
-            ? List.of()
-            : entity.getItems().stream()
-                .sorted(Comparator.comparing(SectionItem::getItemOrder)) // Sort items by itemOrder
-                .map(sectionItemMapper::toDto)
-                .collect(Collectors.toList());
+        List<SectionItemResponse> sectionItems = entity.getItems() == null
+                ? List.of()
+                : entity.getItems().stream()
+                        .sorted(Comparator.comparing(SectionItem::getItemOrder)) // Sort items by itemOrder
+                        .map(sectionItemMapper::toDto)
+                        .collect(Collectors.toList());
 
         return SectionResponse.builder()
                 .id(entity.getId())

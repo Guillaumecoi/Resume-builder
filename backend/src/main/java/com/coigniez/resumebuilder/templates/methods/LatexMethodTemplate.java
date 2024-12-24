@@ -1,6 +1,7 @@
 package com.coigniez.resumebuilder.templates.methods;
 
 import com.coigniez.resumebuilder.domain.latex.HasLatexMethod;
+import com.coigniez.resumebuilder.domain.latex.MethodType;
 import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
 
 import lombok.AllArgsConstructor;
@@ -15,6 +16,8 @@ public class LatexMethodTemplate {
     private HasLatexMethod type;
     @NonNull
     private String methodName;
+    @NonNull
+    private MethodType methodType;
     @NonNull
     private String method;
     
@@ -31,6 +34,7 @@ public class LatexMethodTemplate {
         return CreateLatexMethodRequest.builder()
             .type(type)
             .name(methodName)
+            .methodType(methodType)
             .method(method)
             .build();
     }

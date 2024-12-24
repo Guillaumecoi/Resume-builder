@@ -1,7 +1,6 @@
 package com.coigniez.resumebuilder.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,7 +28,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
@@ -229,7 +227,8 @@ public class SectionItemServiceIntegrationTest {
         items.sort(Comparator.comparing(SectionItem::getItemOrder)); // Sort by item order for easier comparison
 
         assertEquals(4, items.size(), "There should be 4 items");
-        assertEquals(List.of(1, 2, 3, 4), items.stream().map(SectionItem::getItemOrder).collect(Collectors.toList()),
+        assertEquals(List.of(1, 2, 3, 4),
+                items.stream().map(SectionItem::getItemOrder).collect(Collectors.toList()),
                 "Item orders should be 1, 2, 3, 4");
         assertEquals("First item", ((Textbox) items.get(0).getItem()).getContent(),
                 "First item in the list should be the first item created");
@@ -252,9 +251,6 @@ public class SectionItemServiceIntegrationTest {
                 .build();
         Long sectionItemId = sectionItemService.create(createRequest);
 
-        SectionItem sectionItem = sectionItemRepository.findById(sectionItemId).orElseThrow();
-        LatexMethod oldLatexMethod = sectionItem.getLatexMethod();
-
         // Act
         UpdateSectionItemRequest updateRequest = UpdateSectionItemRequest.builder()
                 .id(sectionItemId)
@@ -267,16 +263,11 @@ public class SectionItemServiceIntegrationTest {
 
         // Assert
         SectionItem updatedSectionItem = sectionItemRepository.findById(sectionItemId).orElseThrow();
-        LatexMethod newLatexMethod = sectionItem.getLatexMethod();
 
         assertEquals(Skill.class, updatedSectionItem.getItem().getClass(), "Item should be a Skill");
         assertEquals("First item", ((Skill) updatedSectionItem.getItem()).getName(), "Item should be updated");
         assertEquals(methodIds.get("skillitem"), updatedSectionItem.getLatexMethod().getId(),
                 "LatexMethod should be updated");
-        assertFalse(oldLatexMethod.getSectionItems().contains(updatedSectionItem),
-                "Old LatexMethod should not contain the updated SectionItem");
-        assertTrue(newLatexMethod.getSectionItems().contains(updatedSectionItem),
-                "New LatexMethod should contain the updated SectionItem");
     }
 
     @Test
@@ -323,7 +314,8 @@ public class SectionItemServiceIntegrationTest {
         items.sort(Comparator.comparing(SectionItem::getItemOrder)); // Sort by item order for easier comparison
 
         assertEquals(3, items.size(), "There should be 3 items");
-        assertEquals(List.of(1, 2, 3), items.stream().map(SectionItem::getItemOrder).collect(Collectors.toList()),
+        assertEquals(List.of(1, 2, 3),
+                items.stream().map(SectionItem::getItemOrder).collect(Collectors.toList()),
                 "Item orders should be 1, 2, 3");
         assertEquals("First item", ((Textbox) items.get(0).getItem()).getContent(),
                 "First item in the list should be the first item created");
@@ -378,7 +370,8 @@ public class SectionItemServiceIntegrationTest {
         items.sort(Comparator.comparing(SectionItem::getItemOrder)); // Sort by item order for easier comparison
 
         assertEquals(4, items.size(), "There should be 4 items");
-        assertEquals(List.of(1, 2, 3, 4), items.stream().map(SectionItem::getItemOrder).collect(Collectors.toList()),
+        assertEquals(List.of(1, 2, 3, 4),
+                items.stream().map(SectionItem::getItemOrder).collect(Collectors.toList()),
                 "Item orders should be 1, 2, 3, 4");
         assertEquals("First item", ((Textbox) items.get(0).getItem()).getContent(),
                 "First item in the list should be the first item created");
@@ -514,13 +507,15 @@ public class SectionItemServiceIntegrationTest {
                 "Should not be able to create a section item for a section that does not belong to the user");
         assertThrows(AccessDeniedException.class, () -> sectionItemService.get(sectionItemId),
                 "Should not be able to get a section item that does not belong to the user");
-        assertThrows(AccessDeniedException.class, () -> sectionItemService.update(UpdateSectionItemRequest.builder()
-                .id(sectionItemId)
-                .sectionId(sectionId)
-                .itemOrder(1)
-                .item(Textbox.builder().content("Updated text").build())
-                .latexMethodId(methodIds.get("textbox"))
-                .build()), "Should not be able to update a section item that does not belong to the user");
+        assertThrows(AccessDeniedException.class,
+                () -> sectionItemService.update(UpdateSectionItemRequest.builder()
+                        .id(sectionItemId)
+                        .sectionId(sectionId)
+                        .itemOrder(1)
+                        .item(Textbox.builder().content("Updated text").build())
+                        .latexMethodId(methodIds.get("textbox"))
+                        .build()),
+                "Should not be able to update a section item that does not belong to the user");
         assertThrows(AccessDeniedException.class, () -> sectionItemService.delete(sectionItemId),
                 "Should not be able to delete a section item that does not belong to the user");
     }

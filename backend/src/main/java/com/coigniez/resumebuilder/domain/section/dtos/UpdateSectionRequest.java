@@ -19,17 +19,18 @@ import lombok.Data;
 public class UpdateSectionRequest implements UpdateRequest {
 
     @NotNull
-    Long id;
+    private Long id;
 
     @NotBlank
-    String title;
+    private String title;
+    private String icon;
     @NotNull
-    Boolean showTitle;
+    private Boolean showTitle;
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    List<CreateSectionItemRequest> createSectionItems;
+    private List<CreateSectionItemRequest> createSectionItems;
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    List<UpdateSectionItemRequest> updateSectionItems;
+    private List<UpdateSectionItemRequest> updateSectionItems;
 
 }

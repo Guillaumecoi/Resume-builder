@@ -36,24 +36,14 @@ public class Experience implements SectionItemData {
                 .orElse("");
     }
 
-    public static int getBaseParameterCount() {
-        return 5;
-    }
-
     @Override
     @JsonIgnore
     public List<String> getData() {
-        List<String> data = List.of(
+        return List.of(
                 jobTitle,
                 Optional.ofNullable(companyName).orElse(""),
                 Optional.ofNullable(period).orElse(""),
                 Optional.ofNullable(description).orElse(""),
                 getResponsibilitiesAsItems());
-
-        if (data.size() != getBaseParameterCount()) {
-            throw new IllegalStateException("Experience data size does not match base parameter count");
-        }
-
-        return data;
     }
 }

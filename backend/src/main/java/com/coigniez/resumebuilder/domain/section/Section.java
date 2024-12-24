@@ -28,11 +28,10 @@ public class Section implements BaseEntity {
 
     @NotBlank
     private String title;
+    private String icon;
 
     @NotNull
     private boolean showTitle;
-
-    private String icon;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", referencedColumnName = "id")

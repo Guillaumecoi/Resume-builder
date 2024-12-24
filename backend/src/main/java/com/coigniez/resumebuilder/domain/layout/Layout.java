@@ -15,7 +15,6 @@ import com.coigniez.resumebuilder.interfaces.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -58,9 +57,6 @@ public class Layout implements BaseEntity {
     @NotNull
     @Embedded
     private ColorScheme colorScheme;
-
-    @NotBlank
-    private String sectionTitleMethod;
 
     public void addColumn(Column column) {
         columns.add(column);
