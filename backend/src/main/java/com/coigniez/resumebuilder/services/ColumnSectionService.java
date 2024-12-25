@@ -26,7 +26,8 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
-public class ColumnSectionService implements MultiParentEntityService<CreateColumnSectionRequest, UpdateColumnSectionRequest, ColumnSectionResponse, Long, ColumnSectionParentType> {
+public class ColumnSectionService implements
+        MultiParentEntityService<CreateColumnSectionRequest, UpdateColumnSectionRequest, ColumnSectionResponse, Long, ColumnSectionParentType> {
 
     private final ColumnSectionRepository columnSectionRepository;
     private final ColumnRepository columnRepository;
@@ -35,7 +36,7 @@ public class ColumnSectionService implements MultiParentEntityService<CreateColu
     private final ColumnSectionMapper columnSectionMapper;
     private final SecurityUtils securityUtils;
     private final EntityManager entityManager;
-    
+
     @Override
     public Long create(CreateColumnSectionRequest request) {
         // Check if the user has access to the column and section
@@ -51,7 +52,7 @@ public class ColumnSectionService implements MultiParentEntityService<CreateColu
                 .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
 
         // Check if the column and section belong to the same resume
-        if(column.getLayout().getResume().getId() != section.getResume().getId()) {
+        if (column.getLayout().getResume().getId() != section.getResume().getId()) {
             throw new IllegalArgumentException("Column and Section must belong to the same resume");
         }
 
@@ -70,7 +71,7 @@ public class ColumnSectionService implements MultiParentEntityService<CreateColu
         column.addSectionMapping(columnSection);
         section.addColumnSection(columnSection);
         latexMethod.addColumnSection(columnSection);
-        
+
         // Save the columnSection
         return columnSectionRepository.save(columnSection).getId();
     }
@@ -94,13 +95,15 @@ public class ColumnSectionService implements MultiParentEntityService<CreateColu
         // Get the existing columnSection entity
         ColumnSection columnSection = columnSectionRepository.findById(request.getId())
                 .orElseThrow(() -> new EntityNotFoundException("ColumnSection not found"));
-        
+
         // Shift the order
         if (!request.getSectionOrder().equals(columnSection.getSectionOrder())) {
             if (request.getSectionOrder() > columnSection.getSectionOrder()) {
-                decrementSectionOrder(columnSection.getColumn().getId(), request.getSectionOrder(), columnSection.getSectionOrder());
+                decrementSectionOrder(columnSection.getColumn().getId(), request.getSectionOrder(),
+                        columnSection.getSectionOrder());
             } else {
-                incrementSectionOrder(columnSection.getColumn().getId(), request.getSectionOrder(), columnSection.getSectionOrder());
+                incrementSectionOrder(columnSection.getColumn().getId(), request.getSectionOrder(),
+                        columnSection.getSectionOrder());
             }
         }
 
@@ -111,7 +114,7 @@ public class ColumnSectionService implements MultiParentEntityService<CreateColu
 
         // Update theexistingColumnSection entity
         columnSectionMapper.updateEntity(columnSection, request);
-        
+
         // Save the updated entity
         columnSectionRepository.save(columnSection);
     }
@@ -126,12 +129,12 @@ public class ColumnSectionService implements MultiParentEntityService<CreateColu
                 .orElseThrow(() -> new EntityNotFoundException("ColumnSection not found"));
 
         // Remove the columnSection from the column and section
-        Column column = columnSection.getColumn();        
+        Column column = columnSection.getColumn();
         Section section = columnSection.getSection();
 
         column.removeSectionMapping(columnSection);
         section.removeColumnSection(columnSection);
-        
+
         // Delete the columnSection
         columnSectionRepository.delete(columnSection);
 
@@ -197,7 +200,8 @@ public class ColumnSectionService implements MultiParentEntityService<CreateColu
 
     /**
      * Shift the order of the columnSections in the column.
-     * All other columnSections with order >= newOrder and < oldOrder will be incremented.
+     * All other columnSections with order >= newOrder and < oldOrder will be
+     * incremented.
      * 
      * @param columnId the id of the column
      * @param newOrder the new order of the columnSection
@@ -210,7 +214,8 @@ public class ColumnSectionService implements MultiParentEntityService<CreateColu
 
     /**
      * Shift the order of the columnSections in the column.
-     * All other columnSections with order > oldOrder and <= newOrder will be decremented.
+     * All other columnSections with order > oldOrder and <= newOrder will be
+     * decremented.
      * 
      * @param columnId the id of the column
      * @param newOrder the new order of the columnSection
@@ -265,5 +270,5 @@ public class ColumnSectionService implements MultiParentEntityService<CreateColu
                 .orElseThrow(() -> new EntityNotFoundException("Section not found"));
         securityUtils.hasAccess(List.of(owner));
     }
-    
+
 }

@@ -27,7 +27,8 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class SectionItemService implements ParentEntityService<CreateSectionItemRequest, UpdateSectionItemRequest, SectionItemResponse, Long> {
+public class SectionItemService
+        implements ParentEntityService<CreateSectionItemRequest, UpdateSectionItemRequest, SectionItemResponse, Long> {
 
     private final SectionItemRepository sectionItemRepository;
     private final SectionRepository sectionRepository;
@@ -41,20 +42,20 @@ public class SectionItemService implements ParentEntityService<CreateSectionItem
     @Override
     public Long create(CreateSectionItemRequest request) {
         // Check if the user has access to the section
-        hasAccessSection(request.getSectionId());  
+        hasAccessSection(request.getSectionId());
 
         // Get the section and latexMethod
         Section section = sectionRepository.findById(request.getSectionId())
                 .orElseThrow(() -> new EntityNotFoundException("Section not found"));
         LatexMethod latexMethod = latexMethodRepository.findById(request.getLatexMethodId())
-            .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
+                .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
 
         // Find the maximum itemOrder in the section
         int maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(section.getId()).orElse(0);
         int newOrder = request.getItemOrder() == null ? maxOrder + 1 : request.getItemOrder();
 
         // Shift the order
-        incrementItemOrder(section.getId(), newOrder, maxOrder +1);
+        incrementItemOrder(section.getId(), newOrder, maxOrder + 1);
 
         // Create the entity from the request
         request.setItemOrder(newOrder);
@@ -63,8 +64,7 @@ public class SectionItemService implements ParentEntityService<CreateSectionItem
         // Add the sectionItem to the section and latexMethod
         section.addSectionItem(sectionItem);
         sectionItem.setLatexMethod(latexMethod);
-            
-    
+
         // Save the item
         return sectionItemRepository.save(sectionItem).getId();
     }
@@ -72,14 +72,14 @@ public class SectionItemService implements ParentEntityService<CreateSectionItem
     /**
      * Create a picture item
      * 
-     * @param file the file that contains the picture
+     * @param file    the file that contains the picture
      * @param request the section item request for the picture
      * @return the id of the created item
      */
     public Long createPicture(MultipartFile file, CreateSectionItemRequest request) {
         // Check if the user has access to the section
         hasAccessSection(request.getSectionId());
-        
+
         // Save the file to the file storage and add the path to the request
         String path = fileStorageService.saveFile(file, securityUtils.getUserName());
         ((Picture) request.getItem()).setPath(path);
@@ -94,8 +94,8 @@ public class SectionItemService implements ParentEntityService<CreateSectionItem
         hasAccess(id);
         // Get the item
         return sectionItemRepository.findById(id)
-            .map(sectionitemMapper::toDto)
-            .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
+                .map(sectionitemMapper::toDto)
+                .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
     }
 
     @Override
@@ -105,9 +105,9 @@ public class SectionItemService implements ParentEntityService<CreateSectionItem
 
         // Get the entity
         SectionItem sectionItem = sectionItemRepository.findById(request.getId())
-            .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
+                .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
         Long sectionId = sectionItem.getSection().getId();
-        
+
         // Shift other items
         if (!sectionItem.getItemOrder().equals(request.getItemOrder())) {
             if (request.getItemOrder() > sectionItem.getItemOrder()) {
@@ -123,12 +123,12 @@ public class SectionItemService implements ParentEntityService<CreateSectionItem
         // Update the latexMethod
         if (request.getLatexMethodId() != sectionItem.getLatexMethod().getId()) {
             LatexMethod newLatexMethod = latexMethodRepository.findById(request.getLatexMethodId())
-                .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
             sectionItem.setLatexMethod(newLatexMethod);
         }
 
-        //TODO: Update the section
-        
+        // TODO: Update the section
+
         // save the updated item
         sectionItemRepository.save(sectionItem);
     }
@@ -140,15 +140,15 @@ public class SectionItemService implements ParentEntityService<CreateSectionItem
 
         // Get the item
         SectionItem sectionItem = sectionItemRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
+                .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
         long sectionId = sectionItem.getSection().getId();
 
         // Remove the item from the section
         sectionItem.getSection().removeSectionItem(sectionItem);
-    
+
         // Delete the item
         sectionItemRepository.deleteById(id);
-        
+
         // Shift other items
         int maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(sectionId).orElse(0);
         decrementItemOrder(sectionId, maxOrder + 1, sectionItem.getItemOrder());
@@ -161,8 +161,8 @@ public class SectionItemService implements ParentEntityService<CreateSectionItem
 
         List<SectionItem> items = sectionItemRepository.findAllBySectionId(id);
         return items.stream()
-            .map(sectionitemMapper::toDto)
-            .toList();
+                .map(sectionitemMapper::toDto)
+                .toList();
     }
 
     @Override
@@ -171,21 +171,21 @@ public class SectionItemService implements ParentEntityService<CreateSectionItem
         hasAccessSection(id);
 
         Section section = sectionRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Section not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Section not found"));
 
         // Remove all items from the section
         section.clearSectionItems();
 
         sectionItemRepository.deleteAllBySectionId(id);
     }
-    
+
     /**
      * Increment the itemOrder for all items in the section starting from startOrder
      * All other items with order >= newOrder and < oldOrder will be incremented
      * 
      * @param sectionId the section id
-     * @param newOrder the new order
-     * @param oldOrder the old order
+     * @param newOrder  the new order
+     * @param oldOrder  the old order
      */
     private void incrementItemOrder(Long sectionId, int newOrder, int oldOrder) {
         sectionItemRepository.incrementItemOrderBetween(sectionId, newOrder, oldOrder);
@@ -197,8 +197,8 @@ public class SectionItemService implements ParentEntityService<CreateSectionItem
      * All other items with order > oldOrder and <= newOrder will be decremented
      * 
      * @param sectionId the section id
-     * @param newOrder the new order
-     * @param oldOrder the old order
+     * @param newOrder  the new order
+     * @param oldOrder  the old order
      */
     private void decrementItemOrder(Long sectionId, int newOrder, int oldOrder) {
         sectionItemRepository.decrementItemOrderBetween(sectionId, newOrder, oldOrder);
@@ -224,7 +224,7 @@ public class SectionItemService implements ParentEntityService<CreateSectionItem
      */
     private void hasAccess(Long id) {
         String owner = sectionItemRepository.findCreatedBy(id)
-            .orElseThrow(() -> new EntityNotFoundException("Accompanying resume is not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Accompanying resume is not found"));
         securityUtils.hasAccess(List.of(owner));
     }
 
@@ -235,7 +235,7 @@ public class SectionItemService implements ParentEntityService<CreateSectionItem
      */
     private void hasAccessSection(Long id) {
         String owner = sectionRepository.findCreatedBy(id)
-            .orElseThrow(() -> new EntityNotFoundException("Accompanying resume is not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Accompanying resume is not found"));
         securityUtils.hasAccess(List.of(owner));
     }
 }
