@@ -17,32 +17,34 @@ public interface SectionItemRepository extends JpaRepository<SectionItem, Long> 
 
     @Modifying
     @Query("""
-        UPDATE SectionItem si 
-        SET si.itemOrder = si.itemOrder + 1 
-        WHERE si.section.id = :sectionId 
-        AND si.itemOrder >= :newOrder 
-        AND si.itemOrder < :oldOrder
-    """)
-    void incrementItemOrderBetween(@Param("sectionId") Long sectionId, @Param("newOrder") int newOrder, @Param("oldOrder") int oldOrder);
+                UPDATE SectionItem si
+                SET si.itemOrder = si.itemOrder + 1
+                WHERE si.section.id = :sectionId
+                AND si.itemOrder >= :newOrder
+                AND si.itemOrder < :oldOrder
+            """)
+    void incrementItemOrderBetween(@Param("sectionId") Long sectionId, @Param("newOrder") int newOrder,
+            @Param("oldOrder") int oldOrder);
 
     @Modifying
     @Query("""
-        UPDATE SectionItem si 
-        SET si.itemOrder = si.itemOrder - 1 
-        WHERE si.section.id = :sectionId 
-        AND si.itemOrder > :oldOrder 
-        AND si.itemOrder <= :newOrder
-    """)
-    void decrementItemOrderBetween(@Param("sectionId") Long sectionId, @Param("newOrder") int newOrder, @Param("oldOrder") int oldOrder);
+                UPDATE SectionItem si
+                SET si.itemOrder = si.itemOrder - 1
+                WHERE si.section.id = :sectionId
+                AND si.itemOrder > :oldOrder
+                AND si.itemOrder <= :newOrder
+            """)
+    void decrementItemOrderBetween(@Param("sectionId") Long sectionId, @Param("newOrder") int newOrder,
+            @Param("oldOrder") int oldOrder);
 
     @Query("SELECT si FROM SectionItem si WHERE si.section.id = :sectionId")
     List<SectionItem> findAllBySectionId(@Param("sectionId") Long sectionId);
-    
+
     @Modifying
     @Query("DELETE FROM SectionItem si WHERE si.section.id = :sectionId")
     void deleteAllBySectionId(Long sectionId);
 
     @Query("SELECT r.createdBy FROM SectionItem si JOIN si.section s JOIN s.resume r WHERE si.id = :id")
     Optional<String> findCreatedBy(Long id);
-    
+
 }

@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.coigniez.resumebuilder.domain.column.Column;
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
+import com.coigniez.resumebuilder.domain.layoutsectionItem.LayoutSectionItem;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.interfaces.BaseEntity;
 import com.coigniez.resumebuilder.interfaces.LatexMethodProvider;
@@ -50,6 +51,23 @@ public class ColumnSection implements BaseEntity, LatexMethodProvider {
     @NotNull
     private double endsep;
     private AlignmentType alignment;
+    @NotNull
+    private boolean hidden;
+    @NotNull
+    private boolean defaultOrder;
+
+    @OneToMany(mappedBy = "columnSection", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<LayoutSectionItem> layoutSectionItems;
+
+    public void addLayoutSectionItem(LayoutSectionItem layoutSectionItem) {
+        layoutSectionItems.add(layoutSectionItem);
+        layoutSectionItem.setColumnSection(this);
+    }
+
+    public void removeLayoutSectionItem(LayoutSectionItem layoutSectionItem) {
+        layoutSectionItems.remove(layoutSectionItem);
+        layoutSectionItem.setColumnSection(null);
+    }
 
     @Override
     public List<String> getData() {

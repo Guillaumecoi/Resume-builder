@@ -1,6 +1,5 @@
 package com.coigniez.resumebuilder.domain.sectionitem.dtos;
 
-import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
 import com.coigniez.resumebuilder.interfaces.SectionItemData;
 import com.coigniez.resumebuilder.interfaces.UpdateRequest;
 
@@ -17,14 +16,11 @@ public class UpdateSectionItemRequest implements UpdateRequest {
 
     @NotNull
     private long sectionId;
-    @NotNull
-    private long latexMethodId;
-
-    @NotNull
-    private Integer itemOrder;
-    private AlignmentType alignment;
 
     @NotNull
     private SectionItemData item;
+
+    @NotNull
+    private Integer itemOrder;
 
 }

@@ -24,6 +24,11 @@ public class ColumnSectionResponse implements Response {
     private AlignmentType alignment;
 
     @NotNull
+    private boolean hidden;
+    @NotNull
+    private boolean defaultOrder;
+
+    @NotNull
     private SectionResponse section;
     @NotNull
     private LatexMethodResponse latexMethod;

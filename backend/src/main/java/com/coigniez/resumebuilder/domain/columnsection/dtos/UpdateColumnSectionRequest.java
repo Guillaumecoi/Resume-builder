@@ -24,4 +24,9 @@ public class UpdateColumnSectionRequest implements UpdateRequest {
     @NotNull
     private Double endsep;
     private AlignmentType alignment;
+
+    @NotNull
+    private boolean hidden;
+    @NotNull
+    private boolean defaultOrder;
 }

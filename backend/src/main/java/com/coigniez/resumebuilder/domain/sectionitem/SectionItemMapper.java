@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import com.coigniez.resumebuilder.domain.latex.LatexMethodMapper;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResponse;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.UpdateSectionItemRequest;
@@ -24,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class SectionItemMapper implements Mapper<SectionItem, CreateSectionItemRequest, UpdateSectionItemRequest, SectionItemResponse> {
 
-    private final LatexMethodMapper latexMethodMapper;
     private final Validator validator;
 
     @Override
@@ -48,9 +46,8 @@ public class SectionItemMapper implements Mapper<SectionItem, CreateSectionItemR
         }
 
         SectionItem sectionItem = SectionItem.builder()
-                .itemOrder(request.getItemOrder())
-                .alignment(request.getAlignment())
                 .item(request.getItem())
+                .itemOrder(request.getItemOrder())
                 .build();
     
         return sectionItem;
@@ -64,10 +61,8 @@ public class SectionItemMapper implements Mapper<SectionItem, CreateSectionItemR
     
         return SectionItemResponse.builder()
             .id(entity.getId())
-            .itemOrder(entity.getItemOrder())
-            .alignment(entity.getAlignment())
-            .latexMethod(latexMethodMapper.toDto(entity.getLatexMethod()))
             .item(entity.getItem())
+            .itemOrder(entity.getItemOrder())
             .build();
     }
 
@@ -77,8 +72,7 @@ public class SectionItemMapper implements Mapper<SectionItem, CreateSectionItemR
             return;
         }
 
-        entity.setItemOrder(request.getItemOrder());
-        entity.setAlignment(request.getAlignment());
         entity.setItem(request.getItem());
+        entity.setItemOrder(request.getItemOrder());
     }
 }

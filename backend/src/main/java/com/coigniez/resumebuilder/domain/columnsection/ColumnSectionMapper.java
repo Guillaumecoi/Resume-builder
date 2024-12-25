@@ -23,7 +23,9 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
 
     private static final Map<String, Object> DEFAULT_VALUES = Map.of(
         "itemsep", 8.0,
-        "endsep", 20.0
+        "endsep", 20.0,
+        "hidden", false,
+        "defaultOrder", true
     );
 
     @Override
@@ -40,6 +42,8 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
             .itemsep(request.getItemsep())
             .endsep(request.getEndsep())
             .alignment(request.getAlignment())
+            .hidden(request.isHidden())
+            .defaultOrder(request.isDefaultOrder())
             .build();
     }
 
@@ -56,6 +60,8 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
             .itemsep(entity.getItemsep())
             .endsep(entity.getEndsep())
             .alignment(entity.getAlignment())
+            .hidden(entity.isHidden())
+            .defaultOrder(entity.isDefaultOrder())
             .build();
     }
 
@@ -68,6 +74,9 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
         entity.setSectionOrder(request.getSectionOrder());
         entity.setItemsep(request.getItemsep());
         entity.setEndsep(request.getEndsep());
+        entity.setAlignment(request.getAlignment());
+        entity.setHidden(request.isHidden());
+        entity.setDefaultOrder(request.isDefaultOrder());
     }
     
 }
