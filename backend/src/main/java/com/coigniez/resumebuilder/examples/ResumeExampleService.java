@@ -107,7 +107,7 @@ public class ResumeExampleService {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(sectionOrder)
+                .itemOrder(sectionOrder)
                 .build());
     }
 
@@ -170,7 +170,7 @@ public class ResumeExampleService {
                 .columnId(columnId)
                 .sectionId(contactId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(sectionOrder)
+                .itemOrder(sectionOrder)
                 .itemsep(4.0)
                 .build());
         }
@@ -216,7 +216,7 @@ public class ResumeExampleService {
                 .columnId(columnId)
                 .sectionId(educationId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(sectionOrder)
+                .itemOrder(sectionOrder)
                 .build());
 
     }
@@ -242,7 +242,7 @@ public class ResumeExampleService {
                 .columnId(columnId)
                 .sectionId(experienceId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(sectionOrder)
+                .itemOrder(sectionOrder)
                 .build());
     }
 
@@ -264,7 +264,7 @@ public class ResumeExampleService {
                 .columnId(columnId)
                 .sectionId(titleId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(sectionOrder)
+                .itemOrder(sectionOrder)
                 .endsep(6.0)
                 .build());
     }
@@ -291,7 +291,7 @@ public class ResumeExampleService {
                 .columnId(columnId)
                 .sectionId(summaryId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(sectionOrder)
+                .itemOrder(sectionOrder)
                 .build());
     }
 
@@ -340,7 +340,7 @@ public class ResumeExampleService {
                 .columnId(columnId)
                 .sectionId(skillsId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(sectionOrder)
+                .itemOrder(sectionOrder)
                 .itemsep(4.0)
                 .build());
     }

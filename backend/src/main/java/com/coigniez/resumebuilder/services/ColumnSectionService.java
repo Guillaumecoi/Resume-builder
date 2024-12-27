@@ -19,9 +19,9 @@ import com.coigniez.resumebuilder.repository.ColumnSectionRepository;
 import com.coigniez.resumebuilder.repository.LatexMethodRepository;
 import com.coigniez.resumebuilder.repository.SectionRepository;
 import com.coigniez.resumebuilder.util.ExceptionUtils;
+import com.coigniez.resumebuilder.util.OrderableRepositoryUtil;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
-import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -35,7 +35,7 @@ public class ColumnSectionService implements
     private final LatexMethodRepository latexMethodRepository;
     private final ColumnSectionMapper columnSectionMapper;
     private final SecurityUtils securityUtils;
-    private final EntityManager entityManager;
+    private OrderableRepositoryUtil orderableRepositoryUtil;
 
     @Override
     public Long create(CreateColumnSectionRequest request) {
@@ -61,14 +61,17 @@ public class ColumnSectionService implements
         }
 
         // Find the maximum sectionOrder in the column
-        int maxOrder = columnSectionRepository.findMaxSectionOrderByColumnId(request.getColumnId()).orElse(0);
-        int newOrder = request.getSectionOrder() == null ? maxOrder + 1 : request.getSectionOrder();
+        int maxOrder = orderableRepositoryUtil.findMaxItemOrderByParentId(ColumnSection.class, Column.class,
+                column.getId());
+
+        int newOrder = request.getItemOrder() == null ? maxOrder + 1 : request.getItemOrder();
 
         // Shift the order
-        incrementSectionOrder(request.getColumnId(), newOrder, maxOrder + 1);
+        orderableRepositoryUtil.updateItemOrder(ColumnSection.class, Column.class, column.getId(),
+                newOrder, maxOrder + 1);
 
         // Create the entity from the request
-        request.setSectionOrder(newOrder);
+        request.setItemOrder(newOrder);
         ColumnSection columnSection = columnSectionMapper.toEntity(request);
 
         // Add the columnSection to the column and section
@@ -101,15 +104,8 @@ public class ColumnSectionService implements
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("ColumnSection", request.getId()));
 
         // Shift the order
-        if (!request.getSectionOrder().equals(columnSection.getSectionOrder())) {
-            if (request.getSectionOrder() > columnSection.getSectionOrder()) {
-                decrementSectionOrder(columnSection.getColumn().getId(), request.getSectionOrder(),
-                        columnSection.getSectionOrder());
-            } else {
-                incrementSectionOrder(columnSection.getColumn().getId(), request.getSectionOrder(),
-                        columnSection.getSectionOrder());
-            }
-        }
+        orderableRepositoryUtil.updateItemOrder(ColumnSection.class, Column.class, columnSection.getColumn().getId(),
+                request.getItemOrder(), columnSection.getItemOrder());
 
         // Update the latexMethod
         LatexMethod latexMethod = latexMethodRepository.findById(request.getLatexMethodId())
@@ -143,8 +139,10 @@ public class ColumnSectionService implements
         columnSectionRepository.delete(columnSection);
 
         // Shift other columnSections
-        int maxOrder = columnSectionRepository.findMaxSectionOrderByColumnId(column.getId()).orElse(0);
-        decrementSectionOrder(column.getId(), maxOrder + 1, columnSection.getSectionOrder());
+        int maxOrder = orderableRepositoryUtil.findMaxItemOrderByParentId(ColumnSection.class, Column.class,
+                column.getId());
+        orderableRepositoryUtil.updateItemOrder(ColumnSection.class, Column.class, column.getId(), 
+                maxOrder + 1, columnSection.getItemOrder());
     }
 
     @Override
@@ -201,45 +199,4 @@ public class ColumnSectionService implements
             throw new UnsupportedOperationException(parentType + " is not supported");
         }
     }
-
-    /**
-     * Shift the order of the columnSections in the column.
-     * All other columnSections with order >= newOrder and < oldOrder will be
-     * incremented.
-     * 
-     * @param columnId the id of the column
-     * @param newOrder the new order of the columnSection
-     * @param oldOrder the old order of the columnSection
-     */
-    private void incrementSectionOrder(long columnId, int newOrder, int oldOrder) {
-        columnSectionRepository.incrementSectionOrderBetween(columnId, newOrder, oldOrder);
-        refreshSectionOrder(columnId);
-    }
-
-    /**
-     * Shift the order of the columnSections in the column.
-     * All other columnSections with order > oldOrder and <= newOrder will be
-     * decremented.
-     * 
-     * @param columnId the id of the column
-     * @param newOrder the new order of the columnSection
-     * @param oldOrder the old order of the columnSection
-     */
-    private void decrementSectionOrder(long columnId, int newOrder, int oldOrder) {
-        columnSectionRepository.decrementSectionOrderBetween(columnId, newOrder, oldOrder);
-        refreshSectionOrder(columnId);
-    }
-
-    /**
-     * Refresh the order of the columnSections in the column.
-     * 
-     * @param columnId the id of the column
-     */
-    private void refreshSectionOrder(long columnId) {
-        List<ColumnSection> columnSections = columnSectionRepository.findAllByColumnId(columnId);
-        for (ColumnSection columnSection : columnSections) {
-            entityManager.refresh(columnSection);
-        }
-    }
-
 }

@@ -18,7 +18,7 @@ public class CreateColumnSectionRequest implements CreateRequest {
     @NotNull
     private long latexMethodId;
 
-    private Integer sectionOrder;
+    private Integer itemOrder;
     private Double itemsep;
     private Double endsep;
     private AlignmentType alignment;

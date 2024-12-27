@@ -45,7 +45,7 @@ public class ColumnSection implements BaseEntity, LatexMethodProvider {
     private LatexMethod latexMethod;
 
     @NotNull
-    private Integer sectionOrder;
+    private Integer itemOrder;
     @NotNull
     private double itemsep;
     @NotNull

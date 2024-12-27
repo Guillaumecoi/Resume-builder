@@ -16,7 +16,7 @@ public class ColumnSectionResponse implements Response {
     @NotNull
     private long id;
     @NotNull
-    private int sectionOrder;
+    private int itemOrder;
     @NotNull
     private double itemsep;
     @NotNull

@@ -100,7 +100,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(1)
+                .itemOrder(1)
                 .build();
 
         // Act
@@ -125,7 +125,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(newSectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(1)
+                .itemOrder(1)
                 .build();
 
         // Act & Assert
@@ -140,21 +140,21 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(-1L) // Non-existent column ID
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(1)
+                .itemOrder(1)
                 .build();
 
         CreateColumnSectionRequest nonExistentSectionRequest = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(-1L) // Non-existent section ID
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(1)
+                .itemOrder(1)
                 .build();
 
         CreateColumnSectionRequest nonExistentMethodRequest = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(-1L) // Non-existent latex method ID
-                .sectionOrder(1)
+                .itemOrder(1)
                 .build();
 
         // Act & Assert
@@ -196,12 +196,12 @@ public class ColumnSectionServiceIntegrationTest {
 
         // Assert
         List<ColumnSection> items = columnSectionRepository.findAllByColumnId(columnId);
-        items.sort(Comparator.comparing(ColumnSection::getSectionOrder)); // Sort by section order for easier
+        items.sort(Comparator.comparing(ColumnSection::getItemOrder)); // Sort by section order for easier
                                                                           // comparison
 
         assertEquals(3, items.size(), "There should be 3 items");
         assertEquals(List.of(1, 2, 3),
-                items.stream().map(ColumnSection::getSectionOrder).collect(Collectors.toList()),
+                items.stream().map(ColumnSection::getItemOrder).collect(Collectors.toList()),
                 "Section orders should be 1, 2, 3");
         assertEquals(id1, items.get(0).getId(), "First item should have ID of id1");
         assertEquals(id2, items.get(1).getId(), "Second item should have ID of id2");
@@ -215,7 +215,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(1)
+                .itemOrder(1)
                 .build();
 
         long id1 = columnSectionService.create(request1);
@@ -224,7 +224,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(2)
+                .itemOrder(2)
                 .build();
 
         long id2 = columnSectionService.create(request2);
@@ -234,7 +234,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(2)
+                .itemOrder(2)
                 .build();
 
         long id3 = columnSectionService.create(request3);
@@ -243,19 +243,19 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(4)
+                .itemOrder(4)
                 .build();
 
         long id4 = columnSectionService.create(request4);
 
         // Assert
         List<ColumnSection> items = columnSectionRepository.findAllByColumnId(columnId);
-        items.sort(Comparator.comparing(ColumnSection::getSectionOrder)); // Sort by section order for easier
+        items.sort(Comparator.comparing(ColumnSection::getItemOrder)); // Sort by section order for easier
                                                                           // comparison
 
         assertEquals(4, items.size(), "There should be 4 items");
         assertEquals(List.of(1, 2, 3, 4),
-                items.stream().map(ColumnSection::getSectionOrder).collect(Collectors.toList()),
+                items.stream().map(ColumnSection::getItemOrder).collect(Collectors.toList()),
                 "Section orders should be 1, 2, 3, 4");
         assertEquals(id1, items.get(0).getId(), "First item should have ID of id1");
         assertEquals(id3, items.get(1).getId(), "Second item should have ID of id3");
@@ -270,7 +270,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(1)
+                .itemOrder(1)
                 .build();
 
         Long columnSectionId = columnSectionService.create(createRequest);
@@ -278,7 +278,7 @@ public class ColumnSectionServiceIntegrationTest {
         UpdateColumnSectionRequest updateRequest = UpdateColumnSectionRequest.builder()
                 .id(columnSectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(2)
+                .itemOrder(2)
                 .endsep(2.0)
                 .itemsep(2.0)
                 .build();
@@ -288,7 +288,7 @@ public class ColumnSectionServiceIntegrationTest {
 
         // Assert
         ColumnSectionResponse updatedColumnSection = columnSectionService.get(columnSectionId);
-        assertEquals(2, updatedColumnSection.getSectionOrder(), "sectionOrder should be updated to 2");
+        assertEquals(2, updatedColumnSection.getItemOrder(), "itemOrder should be updated to 2");
         assertEquals(2.0, updatedColumnSection.getEndsep(), "endsep should be updated to 2.0");
         assertEquals(2.0, updatedColumnSection.getItemsep(), "itemsep should be updated to 2.0");
     }
@@ -297,7 +297,7 @@ public class ColumnSectionServiceIntegrationTest {
     void testUpdate_WithoutId() {
         // Arrange
         UpdateColumnSectionRequest request = UpdateColumnSectionRequest.builder()
-                .sectionOrder(1)
+                .itemOrder(1)
                 .latexMethodId(methodIds.get("sectiontitle"))
                 .build();
 
@@ -314,7 +314,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(1)
+                .itemOrder(1)
                 .build();
 
         long id1 = columnSectionService.create(request1);
@@ -323,7 +323,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(2)
+                .itemOrder(2)
                 .build();
 
         long id2 = columnSectionService.create(request2);
@@ -332,7 +332,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(3)
+                .itemOrder(3)
                 .build();
 
         long id3 = columnSectionService.create(request3);
@@ -341,7 +341,7 @@ public class ColumnSectionServiceIntegrationTest {
         UpdateColumnSectionRequest request4 = UpdateColumnSectionRequest.builder()
                 .id(id3)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(2)
+                .itemOrder(2)
                 .endsep(2.0)
                 .itemsep(2.0)
                 .build();
@@ -351,11 +351,11 @@ public class ColumnSectionServiceIntegrationTest {
         // Assert
         List<ColumnSection> items = columnSectionRepository.findAllByColumnId(columnId);
         // Sort by section order for easier comparison
-        items.sort(Comparator.comparing(ColumnSection::getSectionOrder));
+        items.sort(Comparator.comparing(ColumnSection::getItemOrder));
 
         assertEquals(3, items.size(), "There should be 3 items");
         assertEquals(List.of(1, 2, 3),
-                items.stream().map(ColumnSection::getSectionOrder).collect(Collectors.toList()),
+                items.stream().map(ColumnSection::getItemOrder).collect(Collectors.toList()),
                 "Section orders should be 1, 2, 3");
         assertEquals(id1, items.get(0).getId(), "First item should have ID of id1");
         assertEquals(id3, items.get(1).getId(), "Second item should have ID of id3");
@@ -369,7 +369,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(1)
+                .itemOrder(1)
                 .build();
 
         long id1 = columnSectionService.create(request1);
@@ -378,7 +378,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(2)
+                .itemOrder(2)
                 .build();
 
         long id2 = columnSectionService.create(request2);
@@ -387,7 +387,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(3)
+                .itemOrder(3)
                 .build();
 
         Long id3 = columnSectionService.create(request3);
@@ -396,7 +396,7 @@ public class ColumnSectionServiceIntegrationTest {
         columnSectionService.update(UpdateColumnSectionRequest.builder()
                 .id(id2)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(3)
+                .itemOrder(3)
                 .endsep(2.0)
                 .itemsep(2.0)
                 .build());
@@ -404,12 +404,12 @@ public class ColumnSectionServiceIntegrationTest {
         // Assert
         List<ColumnSection> items = columnSectionRepository.findAllByColumnId(columnId);
         // Sort by section order for easier comparison
-        items.sort(Comparator.comparing(ColumnSection::getSectionOrder));
+        items.sort(Comparator.comparing(ColumnSection::getItemOrder));
 
         assertEquals(3, items.size(), "There should be 3 items");
         assertEquals(List.of(1, 2, 3),
-                items.stream().map(ColumnSection::getSectionOrder).collect(Collectors.toList()),
-                "Section orders should be 1, 2, 3");
+                items.stream().map(ColumnSection::getItemOrder).collect(Collectors.toList()),
+                "Item orders should be 1, 2, 3");
         assertEquals(id1, items.get(0).getId(), "First item should have ID of id1");
         assertEquals(id3, items.get(1).getId(), "Second item should have ID of id3");
         assertEquals(id2, items.get(2).getId(), "Third item should have ID of id2");
@@ -422,7 +422,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(1)
+                .itemOrder(1)
                 .build();
 
         Long columnSectionId = columnSectionService.create(request);
@@ -442,7 +442,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(1)
+                .itemOrder(1)
                 .build();
 
         long id1 = columnSectionService.create(request1);
@@ -451,7 +451,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(2)
+                .itemOrder(2)
                 .build();
 
         long id2 = columnSectionService.create(request2);
@@ -460,7 +460,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(3)
+                .itemOrder(3)
                 .build();
 
         long id3 = columnSectionService.create(request3);
@@ -470,12 +470,12 @@ public class ColumnSectionServiceIntegrationTest {
 
         // Assert
         List<ColumnSection> items = columnSectionRepository.findAllByColumnId(columnId);
-        items.sort(Comparator.comparing(ColumnSection::getSectionOrder)); // Sort by section order for easier
+        items.sort(Comparator.comparing(ColumnSection::getItemOrder)); // Sort by section order for easier
                                                                           // comparison
 
         assertEquals(2, items.size(), "There should be 2 items");
         assertEquals(List.of(1, 2),
-                items.stream().map(ColumnSection::getSectionOrder).collect(Collectors.toList()),
+                items.stream().map(ColumnSection::getItemOrder).collect(Collectors.toList()),
                 "Section orders should be 1, 2");
         assertEquals(id1, items.get(0).getId(), "First item should have ID of id1");
         assertEquals(id3, items.get(1).getId(), "Second item should have ID of id3");
@@ -501,7 +501,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
-                .sectionOrder(1)
+                .itemOrder(1)
                 .build();
 
         Long columnSectionId = columnSectionService.create(request);
@@ -516,7 +516,7 @@ public class ColumnSectionServiceIntegrationTest {
                 "Should throw AccessDeniedException for unauthorized access to get");
         assertThrows(AccessDeniedException.class,
                 () -> columnSectionService.update(UpdateColumnSectionRequest.builder()
-                        .id(columnSectionId).sectionOrder(2).build()),
+                        .id(columnSectionId).itemOrder(2).build()),
                 "Should throw AccessDeniedException for unauthorized access to update");
         assertThrows(AccessDeniedException.class, () -> columnSectionService.delete(columnSectionId),
                 "Should throw AccessDeniedException for unauthorized access to delete");
@@ -529,7 +529,7 @@ public class ColumnSectionServiceIntegrationTest {
                 "Should throw EntityNotFoundException for non-existent column section on get");
         assertThrows(EntityNotFoundException.class,
                 () -> columnSectionService.update(
-                        UpdateColumnSectionRequest.builder().id(999L).sectionOrder(2).build()),
+                        UpdateColumnSectionRequest.builder().id(999L).itemOrder(2).build()),
                 "Should throw EntityNotFoundException for non-existent column section on update");
         assertThrows(EntityNotFoundException.class, () -> columnSectionService.delete(999L),
                 "Should throw EntityNotFoundException for non-existent column section on delete");

@@ -29,8 +29,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
-import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.UpdateSectionItemRequest;
@@ -38,8 +38,8 @@ import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
 import com.coigniez.resumebuilder.repository.SectionItemRepository;
+import com.coigniez.resumebuilder.repository.SectionRepository;
 
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
@@ -53,11 +53,11 @@ public class SectionItemServiceIntegrationTest {
     @Autowired
     private SectionItemRepository sectionItemRepository;
     @Autowired
+    private SectionRepository sectionRepository;
+    @Autowired
     private ResumeService resumeService;
     @Autowired
     private SectionService sectionService;
-    @Autowired
-    private EntityManager entityManager;
 
     private Authentication testuser;
     private Authentication otheruser;
@@ -442,15 +442,12 @@ public class SectionItemServiceIntegrationTest {
         // Act
         sectionItemService.removeAllByParentId(sectionId);
 
-        // Clear the persistence context to force a refresh from DB
-        entityManager.clear();
-
         // Assert
-        SectionResponse section = sectionService.get(sectionId);
+        Section section = sectionRepository.findById(sectionId).orElse(null);
         List<SectionItem> items = sectionItemRepository.findAllBySectionId(sectionId);
 
         assertTrue(items.isEmpty(), "There should be no section items in the section");
-        assertEquals(0, section.getSectionItems().size(), "There should be no section items in the section");
+        assertEquals(0, section.getItems().size(), "There should be no section items in the section");
     }
 
     @Test

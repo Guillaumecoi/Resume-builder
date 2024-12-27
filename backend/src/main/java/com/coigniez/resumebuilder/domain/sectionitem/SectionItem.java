@@ -24,7 +24,7 @@ public class SectionItem implements BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "section_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "section_id", referencedColumnName = "id")
     private Section section;
 
     @JdbcTypeCode(SqlTypes.JSON)

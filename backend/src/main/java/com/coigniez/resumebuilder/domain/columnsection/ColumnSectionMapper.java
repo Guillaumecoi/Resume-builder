@@ -38,7 +38,7 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
         MapperUtils.setDefaultValues(request, DEFAULT_VALUES);
         
         return ColumnSection.builder()
-            .sectionOrder(request.getSectionOrder())
+            .itemOrder(request.getItemOrder())
             .itemsep(request.getItemsep())
             .endsep(request.getEndsep())
             .alignment(request.getAlignment())
@@ -56,7 +56,7 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
             .id(entity.getId())
             .section(sectionMapper.toDto(entity.getSection()))
             .latexMethod(latexMethodMapper.toDto(entity.getLatexMethod()))
-            .sectionOrder(entity.getSectionOrder())
+            .itemOrder(entity.getItemOrder())
             .itemsep(entity.getItemsep())
             .endsep(entity.getEndsep())
             .alignment(entity.getAlignment())
@@ -71,7 +71,7 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
             return;
         }
 
-        entity.setSectionOrder(request.getSectionOrder());
+        entity.setItemOrder(request.getItemOrder());
         entity.setItemsep(request.getItemsep());
         entity.setEndsep(request.getEndsep());
         entity.setAlignment(request.getAlignment());
