@@ -53,6 +53,9 @@ public class ColumnSectionService implements
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("LatexMethod", request.getLatexMethodId()));
 
         // Check if the column and section belong to the same resume
+        if (!column.getLayout().getId().equals(latexMethod.getLayout().getId())) {
+            throw new IllegalArgumentException("The Column and LatexMethod must belong to the same layout");
+        }
         if (column.getLayout().getResume().getId() != section.getResume().getId()) {
             throw new IllegalArgumentException("Column and Section must belong to the same resume");
         }

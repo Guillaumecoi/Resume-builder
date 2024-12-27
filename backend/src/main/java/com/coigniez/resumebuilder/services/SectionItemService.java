@@ -21,7 +21,6 @@ import com.coigniez.resumebuilder.util.ExceptionUtils;
 import com.coigniez.resumebuilder.util.OrderableRepositoryUtil;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -37,9 +36,6 @@ public class SectionItemService
     @Autowired
     private OrderableRepositoryUtil orderableRepositoryUtil;
 
-    @Autowired
-    private EntityManager entityManager;
-
     @Override
     public Long create(CreateSectionItemRequest request) {
         // Check if the user has access to the section
@@ -50,11 +46,13 @@ public class SectionItemService
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", request.getSectionId()));
 
         // Find the maximum itemOrder in the section
-        int maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(section.getId()).orElse(0);
+        int maxOrder = orderableRepositoryUtil
+                .findMaxItemOrderByParentId(SectionItem.class, Section.class, section.getId());
         int newOrder = request.getItemOrder() == null ? maxOrder + 1 : request.getItemOrder();
 
         // Shift the order
-        incrementItemOrder(section.getId(), newOrder, maxOrder + 1);
+        orderableRepositoryUtil.updateItemOrder(SectionItem.class, Section.class, section.getId(),
+                newOrder, maxOrder + 1);
 
         // Create the entity from the request
         request.setItemOrder(newOrder);
@@ -107,13 +105,8 @@ public class SectionItemService
         Long sectionId = sectionItem.getSection().getId();
 
         // Shift other items
-        if (!sectionItem.getItemOrder().equals(request.getItemOrder())) {
-            if (request.getItemOrder() > sectionItem.getItemOrder()) {
-                decrementItemOrder(sectionId, request.getItemOrder(), sectionItem.getItemOrder());
-            } else {
-                incrementItemOrder(sectionId, request.getItemOrder(), sectionItem.getItemOrder());
-            }
-        }
+        orderableRepositoryUtil.updateItemOrder(SectionItem.class, Section.class, sectionId, request.getItemOrder(),
+                sectionItem.getItemOrder());
 
         // Update the entity
         sectionitemMapper.updateEntity(sectionItem, request);
@@ -142,7 +135,8 @@ public class SectionItemService
 
         // Shift other items
         int maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(sectionId).orElse(0);
-        decrementItemOrder(sectionId, maxOrder + 1, sectionItem.getItemOrder());
+        orderableRepositoryUtil.updateItemOrder(SectionItem.class, Section.class, sectionId,
+                maxOrder + 1, sectionItem.getItemOrder());
     }
 
     @Override
@@ -160,49 +154,11 @@ public class SectionItemService
     public void removeAllByParentId(Long id) {
         // Check if the user has access to the section
         securityUtils.hasAccessSection(id);
-        
+
         Section section = sectionRepository.findById(id)
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", id));
-                
+
         section.clearSectionItems();
         sectionItemRepository.deleteAllBySectionId(id);
-    }
-
-    /**
-     * Increment the itemOrder for all items in the section starting from startOrder
-     * All other items with order >= newOrder and < oldOrder will be incremented
-     * 
-     * @param sectionId the section id
-     * @param newOrder  the new order
-     * @param oldOrder  the old order
-     */
-    private void incrementItemOrder(Long sectionId, int newOrder, int oldOrder) {
-        orderableRepositoryUtil.incrementItemOrderBetween(SectionItem.class, Section.class, sectionId, newOrder, oldOrder);
-        refreshSectionItems(sectionId);
-    }
-
-    /**
-     * Decrement the itemOrder for all items in the section starting from startOrder
-     * All other items with order > oldOrder and <= newOrder will be decremented
-     * 
-     * @param sectionId the section id
-     * @param newOrder  the new order
-     * @param oldOrder  the old order
-     */
-    private void decrementItemOrder(Long sectionId, int newOrder, int oldOrder) {
-        orderableRepositoryUtil.decrementItemOrderBetween(SectionItem.class, Section.class, sectionId, newOrder, oldOrder);
-        refreshSectionItems(sectionId);
-    }
-
-    /**
-     * Refresh the section items
-     * 
-     * @param sectionId the section id
-     */
-    private void refreshSectionItems(Long sectionId) {
-        List<SectionItem> items = sectionItemRepository.findAllBySectionId(sectionId);
-        for (SectionItem item : items) {
-            entityManager.refresh(item);
-        }
     }
 }

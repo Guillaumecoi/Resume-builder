@@ -78,12 +78,11 @@ public class LayoutSectionItemService implements
         } else {
             int maxOrder = orderableRepositoryUtil
                     .findMaxItemOrderByParentId(LayoutSectionItem.class, ColumnSection.class,
-                            request.getColumnSectionId())
-                    .orElse(0);
+                            request.getColumnSectionId());
             order = request.getItemOrder() == null ? maxOrder + 1 : request.getItemOrder();
 
             // shift the order of the items
-            orderableRepositoryUtil.incrementItemOrderBetween(LayoutSectionItem.class, ColumnSection.class,
+            orderableRepositoryUtil.updateItemOrder(LayoutSectionItem.class, ColumnSection.class,
                     request.getColumnSectionId(), order, maxOrder + 1);
         }
         // Create the LayoutSectionItem
