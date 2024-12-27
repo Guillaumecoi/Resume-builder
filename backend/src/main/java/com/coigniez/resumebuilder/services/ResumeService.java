@@ -20,9 +20,9 @@ import com.coigniez.resumebuilder.file.FileStorageService;
 import com.coigniez.resumebuilder.interfaces.CrudService;
 import com.coigniez.resumebuilder.repository.ResumeRepository;
 import com.coigniez.resumebuilder.repository.SectionRepository;
+import com.coigniez.resumebuilder.util.ExceptionUtils;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -50,7 +50,7 @@ public class ResumeService
         // Get the resume entity
         return resumeRepository.findById(id)
                 .map(resumeMapper::toDto)
-                .orElseThrow(() -> new EntityNotFoundException("Resume with id " + id + " not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Resume", id));
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ResumeService
                 throw new IllegalArgumentException("Section id must be provided");
             }
             if (sectionRepository.findById(section.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("Section with id " + section.getId() + " not found"))
+                    .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", section.getId()))
                     .getResume().getId() != request.getId()) {
                 throw new IllegalArgumentException("Section does not belong to the resume");
             }
@@ -79,7 +79,7 @@ public class ResumeService
 
         // Update the resume entity
         Resume resume = resumeRepository.findById(request.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Resume with id " + request.getId() + " not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Resume", request.getId()));
         resumeMapper.updateEntity(resume, request);
         // Save the updated entity
         resumeRepository.save(resume);
@@ -132,7 +132,7 @@ public class ResumeService
 
         // Get the resume entity
         Resume resume = resumeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Resume with id " + id + " not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Resume", id));
 
         // Remove the existing picture (if there is one) and save the new one
         removePicture(resume);

@@ -22,9 +22,9 @@ import com.coigniez.resumebuilder.repository.ColumnRepository;
 import com.coigniez.resumebuilder.repository.LayoutRepository;
 import com.coigniez.resumebuilder.repository.ResumeRepository;
 import com.coigniez.resumebuilder.templates.LayoutTemplate;
+import com.coigniez.resumebuilder.util.ExceptionUtils;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -49,7 +49,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
         Layout layout = layoutMapper.toEntity(request);
         // Add the layout to the resume
         resumeRepository.findById(request.getResumeId())
-                .orElseThrow(() -> new EntityNotFoundException("Resume not found"))
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Resume", request.getResumeId()))
                 .addLayout(layout);
 
         // Add default columns if none are provided
@@ -71,7 +71,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
         // Get the layout
         return layoutRepository.findById(id)
                 .map(layoutMapper::toDto)
-                .orElseThrow(() -> new EntityNotFoundException("Layout not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", id));
     }
 
     @Override
@@ -89,7 +89,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
                 throw new IllegalArgumentException("Column id is required");
             }
             if (columnRepository.findById(column.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("Column not found"))
+                    .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", column.getId()))
                     .getLayout().getId() != request.getId()) {
                 throw new IllegalArgumentException("Column does not belong to the layout");
             }
@@ -99,7 +99,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
 
         // UpexistingLayoutdate the entity
         Layout layout = layoutRepository.findById(request.getId())
-            .orElseThrow(() -> new EntityNotFoundException("Layout not found"));
+            .orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", request.getId()));
         layoutMapper.updateEntity(layout, request);
         
         // Save the updated entity
@@ -113,7 +113,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
 
         // Remove the layout from the resume
         Layout layout = layoutRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Layout not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", id));
         layout.getResume().removeLayout(layout);
 
         // Delete the layout
@@ -148,7 +148,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
      * @return the generated PDF file
      */
     public byte[] generateLatexPdf(long id) throws IOException, InterruptedException {
-        Layout layout = layoutRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Layout not found"));
+        Layout layout = layoutRepository.findById(id).orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", id));
         return latexDocumentGenerator.generateFile(layout, layout.getResume().getTitle());
     }
 
@@ -160,7 +160,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
      */
     public Map<String, Long> getLatexMethodsMap(Long id) {
         return layoutRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Layout not found"))
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", id))
                 .getLatexMethods().stream()
                 .collect(Collectors.toMap(LatexMethod::getName, LatexMethod::getId));
     }

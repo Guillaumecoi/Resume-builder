@@ -13,9 +13,9 @@ import com.coigniez.resumebuilder.domain.latex.dtos.UpdateLatexMethodRequest;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.repository.LatexMethodRepository;
 import com.coigniez.resumebuilder.repository.LayoutRepository;
+import com.coigniez.resumebuilder.util.ExceptionUtils;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -35,7 +35,7 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
         // Create the entity
         LatexMethod latexMethod = latexMethodMapper.toEntity(request);
         layoutRepository.findById(request.getLayoutId())
-                .orElseThrow(() -> new EntityNotFoundException("Layout not found"))
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", request.getLayoutId()))
                 .addLatexMethod(latexMethod);
 
         // Save the entity
@@ -50,7 +50,7 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
         // Get the entity
         return latexMethodRepository.findById(id)
                 .map(latexMethodMapper::toDto)
-                .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("LatexMethod", id));
     }
 
     @Override
@@ -60,7 +60,7 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
 
         // Update the entity
         LatexMethod latexMethod = latexMethodRepository.findById(request.getId())
-                .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("LatexMethod", request.getId()));
 
         latexMethodMapper.updateEntity(latexMethod, request);
 
@@ -75,7 +75,7 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
 
         // Remove the method from the layout
         LatexMethod latexMethod = latexMethodRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("LatexMethod", id));
         Optional.ofNullable(latexMethod.getLayout()).ifPresent(layout -> layout.removeLatexMethod(latexMethod));
 
         // Delete the method
@@ -100,7 +100,7 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
 
         // Remove all methods from the layout
         layoutRepository.findById(layoutId)
-                .orElseThrow(() -> new EntityNotFoundException("Layout not found"))
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", layoutId))
                 .clearLatexMethods();
         
         // Delete all methods

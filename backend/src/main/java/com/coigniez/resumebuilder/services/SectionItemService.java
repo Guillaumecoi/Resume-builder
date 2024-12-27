@@ -17,11 +17,11 @@ import com.coigniez.resumebuilder.file.FileStorageService;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.repository.SectionItemRepository;
 import com.coigniez.resumebuilder.repository.SectionRepository;
+import com.coigniez.resumebuilder.util.ExceptionUtils;
 import com.coigniez.resumebuilder.util.OrderableRepositoryUtil;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -47,7 +47,7 @@ public class SectionItemService
 
         // Get the section and latexMethod
         Section section = sectionRepository.findById(request.getSectionId())
-                .orElseThrow(() -> new EntityNotFoundException("Section not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", request.getSectionId()));
 
         // Find the maximum itemOrder in the section
         int maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(section.getId()).orElse(0);
@@ -93,7 +93,7 @@ public class SectionItemService
         // Get the item
         return sectionItemRepository.findById(id)
                 .map(sectionitemMapper::toDto)
-                .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("SectionItem", id));
     }
 
     @Override
@@ -103,7 +103,7 @@ public class SectionItemService
 
         // Get the entity
         SectionItem sectionItem = sectionItemRepository.findById(request.getId())
-                .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("SectionItem", request.getId()));
         Long sectionId = sectionItem.getSection().getId();
 
         // Shift other items
@@ -131,7 +131,7 @@ public class SectionItemService
 
         // Get the item
         SectionItem sectionItem = sectionItemRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("SectionItem not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("SectionItem", id));
         long sectionId = sectionItem.getSection().getId();
 
         // Remove the item from the section
@@ -162,7 +162,7 @@ public class SectionItemService
         securityUtils.hasAccessSection(id);
         
         Section section = sectionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Section not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", id));
                 
         section.clearSectionItems();
         sectionItemRepository.deleteAllBySectionId(id);

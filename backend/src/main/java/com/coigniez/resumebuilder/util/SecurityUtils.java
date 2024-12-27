@@ -20,6 +20,9 @@ import com.coigniez.resumebuilder.repository.SectionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.NonNull;
 
+/**
+ * Utility class for security related operations
+ */
 @Component
 public class SecurityUtils {
 
@@ -62,13 +65,11 @@ public class SecurityUtils {
      * Check if the current user has access to the resource
      * 
      * @param usernames List of usernames that have access to the resource
-     * @throws AccessDeniedException if the current user does not have access
+     * @return true if the current user has access to the resource, false otherwise
      */
-    public void hasAccess(@NonNull List<String> usernames) {
+    public boolean hasAccess(@NonNull List<String> usernames) {
         String currentUsername = getUserName();
-        if (!usernames.contains(currentUsername)) {
-            throw new AccessDeniedException("Access denied");
-        }
+        return usernames.contains(currentUsername);
     }
 
     /**
@@ -82,8 +83,10 @@ public class SecurityUtils {
      */
     public void hasAccessResume(Long resumeId) {
         String owner = resumeRepository.findCreatedBy(resumeId)
-                .orElseThrow(() -> new EntityNotFoundException("Resume with id " + resumeId + " not found"));
-        hasAccess(List.of(owner));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Resume", resumeId));
+        if (!hasAccess(List.of(owner))) {
+            throw ExceptionUtils.accessDenied(owner, "resume", resumeId);
+        }
     }
 
     /**
@@ -97,8 +100,10 @@ public class SecurityUtils {
      */
     public void hasAccessSection(Long sectionId) {
         String owner = sectionRepository.findCreatedBy(sectionId)
-                .orElseThrow(() -> new EntityNotFoundException("Section with id " + sectionId + " not found"));
-        hasAccess(List.of(owner));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", sectionId));
+        if (!hasAccess(List.of(owner))) {
+            throw ExceptionUtils.accessDenied(owner, "section", sectionId);
+        }
     }
 
     /**
@@ -112,8 +117,10 @@ public class SecurityUtils {
      */
     public void hasAccessSectionItem(Long sectionItemId) {
         String owner = sectionItemRepository.findCreatedBy(sectionItemId)
-                .orElseThrow(() -> new EntityNotFoundException("Section item with id " + sectionItemId + " not found"));
-        hasAccess(List.of(owner));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Section item", sectionItemId));
+        if (!hasAccess(List.of(owner))) {
+            throw ExceptionUtils.accessDenied(owner, "section item", sectionItemId);
+        }
     }
 
     /**
@@ -127,8 +134,10 @@ public class SecurityUtils {
      */
     public void hasAccessLayout(Long layoutId) {
         String owner = layoutRepository.findCreatedBy(layoutId)
-                .orElseThrow(() -> new EntityNotFoundException("Layout with id " + layoutId + " not found"));
-        hasAccess(List.of(owner));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", layoutId));
+        if (!hasAccess(List.of(owner))) {
+            throw ExceptionUtils.accessDenied(owner, "layout", layoutId);
+        }
     }
 
     /**
@@ -142,8 +151,10 @@ public class SecurityUtils {
      */
     public void hasAccessLatexMethod(Long latexMethodId) {
         String owner = latexMethodRepository.findCreatedBy(latexMethodId)
-                .orElseThrow(() -> new EntityNotFoundException("Latex method with id " + latexMethodId + " not found"));
-        hasAccess(List.of(owner));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Latex method", latexMethodId));
+        if (!hasAccess(List.of(owner))) {
+            throw ExceptionUtils.accessDenied(owner, "latex method", latexMethodId);
+        }
     }
 
     /**
@@ -157,8 +168,10 @@ public class SecurityUtils {
      */
     public void hasAccessColumn(Long columnId) {
         String owner = columnRepository.findCreatedBy(columnId)
-                .orElseThrow(() -> new EntityNotFoundException("Column with id " + columnId + " not found"));
-        hasAccess(List.of(owner));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", columnId));
+        if (!hasAccess(List.of(owner))) {
+            throw ExceptionUtils.accessDenied(owner, "column", columnId);
+        }
     }
 
     /**
@@ -172,8 +185,10 @@ public class SecurityUtils {
      */
     public void hasAccessColumnSection(Long columnSectionId) {
         String owner = columnSectionRepository.findCreatedBy(columnSectionId)
-                .orElseThrow(() -> new EntityNotFoundException("Column section with id " + columnSectionId + " not found"));
-        hasAccess(List.of(owner));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Column section", columnSectionId));
+        if (!hasAccess(List.of(owner))) {
+            throw ExceptionUtils.accessDenied(owner, "column section", columnSectionId);
+        }
     }
 
     /**
@@ -187,8 +202,10 @@ public class SecurityUtils {
      */
     public void hasAccessLayoutSectionItem(Long layoutSectionItemId) {
         String owner = layoutSectionItemRepository.findCreatedBy(layoutSectionItemId)
-                .orElseThrow(() -> new EntityNotFoundException("Layout section item with id " + layoutSectionItemId + " not found"));
-        hasAccess(List.of(owner));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Layout section item", layoutSectionItemId));
+        if (!hasAccess(List.of(owner))) {
+            throw ExceptionUtils.accessDenied(owner, "layout section item", layoutSectionItemId);
+        }
     }
 
 }

@@ -18,10 +18,10 @@ import com.coigniez.resumebuilder.repository.ColumnRepository;
 import com.coigniez.resumebuilder.repository.ColumnSectionRepository;
 import com.coigniez.resumebuilder.repository.LatexMethodRepository;
 import com.coigniez.resumebuilder.repository.SectionRepository;
+import com.coigniez.resumebuilder.util.ExceptionUtils;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -46,11 +46,11 @@ public class ColumnSectionService implements
 
         // Get the column and section
         Column column = columnRepository.findById(request.getColumnId())
-                .orElseThrow(() -> new EntityNotFoundException("Column not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", request.getColumnId()));
         Section section = sectionRepository.findById(request.getSectionId())
-                .orElseThrow(() -> new EntityNotFoundException("Section not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", request.getSectionId()));
         LatexMethod latexMethod = latexMethodRepository.findById(request.getLatexMethodId())
-                .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("LatexMethod", request.getLatexMethodId()));
 
         // Check if the column and section belong to the same resume
         if (column.getLayout().getResume().getId() != section.getResume().getId()) {
@@ -84,7 +84,7 @@ public class ColumnSectionService implements
 
         // Get the existing columnSection entity
         ColumnSection columnSection = columnSectionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("ColumnSection not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("ColumnSection", id));
         return columnSectionMapper.toDto(columnSection);
     }
 
@@ -95,7 +95,7 @@ public class ColumnSectionService implements
 
         // Get the existing columnSection entity
         ColumnSection columnSection = columnSectionRepository.findById(request.getId())
-                .orElseThrow(() -> new EntityNotFoundException("ColumnSection not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("ColumnSection", request.getId()));
 
         // Shift the order
         if (!request.getSectionOrder().equals(columnSection.getSectionOrder())) {
@@ -110,7 +110,7 @@ public class ColumnSectionService implements
 
         // Update the latexMethod
         LatexMethod latexMethod = latexMethodRepository.findById(request.getLatexMethodId())
-                .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("LatexMethod", request.getLatexMethodId()));
         columnSection.setLatexMethod(latexMethod);
 
         // Update theexistingColumnSection entity
@@ -127,7 +127,7 @@ public class ColumnSectionService implements
 
         // Get the existing columnSection entity
         ColumnSection columnSection = columnSectionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("ColumnSection not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("ColumnSection", id));
 
         // Remove the columnSection from the column and section
         Column column = columnSection.getColumn();
@@ -177,7 +177,7 @@ public class ColumnSectionService implements
 
             // Remove all columnSections from the column
             columnRepository.findById(parentId)
-                    .orElseThrow(() -> new EntityNotFoundException("Column not found"))
+                    .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", parentId))
                     .clearSectionMappings();
 
             // Remove all columnSections in the column
@@ -189,7 +189,7 @@ public class ColumnSectionService implements
 
             // Remove all columnSections from the section
             sectionRepository.findById(parentId)
-                    .orElseThrow(() -> new EntityNotFoundException("Section not found"))
+                    .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", parentId))
                     .clearColumnSections();
 
             // Remove all columnSections in the section

@@ -16,9 +16,9 @@ import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.repository.ColumnRepository;
 import com.coigniez.resumebuilder.repository.ColumnSectionRepository;
 import com.coigniez.resumebuilder.repository.LayoutRepository;
+import com.coigniez.resumebuilder.util.ExceptionUtils;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -41,7 +41,7 @@ public class ColumnService
         // Create the column entity
         Column column = columnMapper.toEntity(request);
         layoutRepository.findById(request.getLayoutId())
-                .orElseThrow(() -> new EntityNotFoundException("Layout not found"))
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", request.getLayoutId()))
                 .addColumn(column);
 
         // Save the column entity
@@ -56,7 +56,7 @@ public class ColumnService
         // Get the column entity
         return columnRepository.findById(id)
                 .map(columnMapper::toDto)
-                .orElseThrow(() -> new EntityNotFoundException("Column not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", id));
     }
 
     @Override
@@ -74,7 +74,7 @@ public class ColumnService
                 throw new IllegalArgumentException("Section id is required");
             }
             if (columnSectionRepository.findById(section.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("ColumnSection not found"))
+                    .orElseThrow(() -> ExceptionUtils.entityNotFound("ColumnSection", section.getId()))
                     .getColumn().getId() != request.getId()) {
                 throw new IllegalArgumentException("Section does not belong to the column");
             }
@@ -84,7 +84,7 @@ public class ColumnService
 
         // Update the entity
         Column column = columnRepository.findById(request.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Column not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", request.getId()));
         columnMapper.updateEntity(column, request);
 
         // Save the updated entity
@@ -99,7 +99,7 @@ public class ColumnService
 
         // Remove the column from the layout
         Column column = columnRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Column not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", id));
         Optional.ofNullable(column.getLayout()).ifPresent(layout -> layout.removeColumn(column));
 
         // Delete the column from the database
@@ -124,7 +124,7 @@ public class ColumnService
 
         // Remove all columns from the layout
         layoutRepository.findById(layoutId)
-                .orElseThrow(() -> new EntityNotFoundException("Layout not found"))
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", layoutId))
                 .clearColumns();
 
         // Delete all columns from the database

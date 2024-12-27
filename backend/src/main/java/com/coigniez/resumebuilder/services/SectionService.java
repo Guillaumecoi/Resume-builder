@@ -16,9 +16,9 @@ import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.repository.ResumeRepository;
 import com.coigniez.resumebuilder.repository.SectionItemRepository;
 import com.coigniez.resumebuilder.repository.SectionRepository;
+import com.coigniez.resumebuilder.util.ExceptionUtils;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -43,7 +43,7 @@ public class SectionService
 
         // Add the section to the resume
         resumeRepository.findById(request.getResumeId())
-                .orElseThrow(() -> new EntityNotFoundException("Resume not found"))
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Resume", request.getResumeId()))
                 .addSection(section);
 
         // Save the section
@@ -69,7 +69,7 @@ public class SectionService
         // Retrieve the section
         return sectionRepository.findByIdWithOrderedItems(id)
                 .map(sectionMapper::toDto)
-                .orElseThrow(() -> new EntityNotFoundException(""));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", id));
     }
 
     @Override
@@ -88,7 +88,7 @@ public class SectionService
                 throw new IllegalArgumentException("Section item id is required");
             }
             if (sectionItemRepository.findById(sectionItemRequest.getId())
-                    .orElseThrow(() -> new EntityNotFoundException(""))
+                    .orElseThrow(() -> ExceptionUtils.entityNotFound("SectionItem", sectionItemRequest.getId()))
                     .getSection().getId() != request.getId()) {
                 throw new IllegalArgumentException("Section item does not belong to the section");
             }
@@ -98,7 +98,7 @@ public class SectionService
 
         // retrieve and update the existing entity
         Section existingSection = sectionRepository.findById(request.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Section not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", request.getId()));
         sectionMapper.updateEntity(existingSection, request);
 
         // Save the updated entity
@@ -112,7 +112,7 @@ public class SectionService
 
         // Remove the section from the resume
         Section section = sectionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(""));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", id));
         Resume resume = section.getResume();
         resume.getSections().remove(section);
 
@@ -131,7 +131,7 @@ public class SectionService
     public void removeAllByParentId(Long resumeId) {
         // Clear the sections from the resume
         resumeRepository.findById(resumeId)
-                .orElseThrow(() -> new EntityNotFoundException("Resume not found"))
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Resume", resumeId))
                 .clearSections();
 
         // Delete the sections
