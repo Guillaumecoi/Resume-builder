@@ -28,18 +28,18 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRepository;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.UpdateSectionItemRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
+import com.coigniez.resumebuilder.repository.SectionItemRepository;
 
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
@@ -57,12 +57,11 @@ public class SectionItemServiceIntegrationTest {
     @Autowired
     private SectionService sectionService;
     @Autowired
-    private LayoutService layoutService;
+    private EntityManager entityManager;
 
     private Authentication testuser;
     private Authentication otheruser;
     private Long sectionId;
-    private Map<String, Long> methodIds;
 
     @BeforeEach
     void setUp() {
@@ -88,13 +87,6 @@ public class SectionItemServiceIntegrationTest {
                 .resumeId(resumeId)
                 .title("Education")
                 .build());
-
-        Long layoutId = layoutService.create(CreateLayoutRequest.builder()
-                .resumeId(resumeId)
-                .numberOfColumns(1)
-                .build());
-
-        methodIds = layoutService.getLatexMethodsMap(layoutId);
     }
 
     @Test
@@ -107,7 +99,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Textbox.builder().content("This is some example text").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         // Act
@@ -119,8 +110,6 @@ public class SectionItemServiceIntegrationTest {
         assertNotNull(sectionItem.getId(), "Section item entity ID should not be null");
         assertNotNull(sectionItem.getItem(), "Section item data should not be null");
         assertEquals(1, sectionItem.getItemOrder(), "Item order should be 1");
-        assertEquals(methodIds.get("textbox"), sectionItem.getLatexMethod().getId(),
-                "LatexMethod ID should be the same as the request");
         assertEquals("This is some example text", ((Textbox) sectionItem.getItem()).getContent(),
                 "Textbox content should be 'This is some example text'");
     }
@@ -134,7 +123,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Picture.builder().build())
-                .latexMethodId(methodIds.get("pictureitem"))
                 .build();
 
         // Act
@@ -159,13 +147,11 @@ public class SectionItemServiceIntegrationTest {
         CreateSectionItemRequest request1 = CreateSectionItemRequest.builder()
                 .sectionId(sectionId)
                 .item(Textbox.builder().content("First item").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         CreateSectionItemRequest request2 = CreateSectionItemRequest.builder()
                 .sectionId(sectionId)
                 .item(Textbox.builder().content("Second item").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         // Act
@@ -191,13 +177,12 @@ public class SectionItemServiceIntegrationTest {
         CreateSectionItemRequest request1 = CreateSectionItemRequest.builder()
                 .sectionId(sectionId)
                 .item(Textbox.builder().content("First item").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         CreateSectionItemRequest request2 = CreateSectionItemRequest.builder()
                 .sectionId(sectionId)
                 .item(Textbox.builder().content("Second item").build())
-                .latexMethodId(methodIds.get("textbox"))
+
                 .build();
 
         sectionItemService.create(request1);
@@ -208,7 +193,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(2)
                 .item(Textbox.builder().content("Third item").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         sectionItemService.create(request3);
@@ -217,7 +201,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(4)
                 .item(Textbox.builder().content("Fourth item").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         sectionItemService.create(request4);
@@ -247,7 +230,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Textbox.builder().content("First item").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
         Long sectionItemId = sectionItemService.create(createRequest);
 
@@ -257,7 +239,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Skill.builder().name("First item").build())
-                .latexMethodId(methodIds.get("skillitem"))
                 .build();
         sectionItemService.update(updateRequest);
 
@@ -266,8 +247,6 @@ public class SectionItemServiceIntegrationTest {
 
         assertEquals(Skill.class, updatedSectionItem.getItem().getClass(), "Item should be a Skill");
         assertEquals("First item", ((Skill) updatedSectionItem.getItem()).getName(), "Item should be updated");
-        assertEquals(methodIds.get("skillitem"), updatedSectionItem.getLatexMethod().getId(),
-                "LatexMethod should be updated");
     }
 
     @Test
@@ -277,7 +256,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Textbox.builder().content("First item").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         sectionItemService.create(request1);
@@ -286,7 +264,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(2)
                 .item(Textbox.builder().content("Second item").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         sectionItemService.create(request2);
@@ -295,7 +272,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(3)
                 .item(Textbox.builder().content("Third item").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         Long itemId3 = sectionItemService.create(request3);
@@ -306,7 +282,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(2)
                 .item(Textbox.builder().content("Updated Third item").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build());
 
         // Assert
@@ -332,7 +307,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Textbox.builder().content("First item").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         sectionItemService.create(request1);
@@ -341,7 +315,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(2)
                 .item(Textbox.builder().content("Second item").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         sectionItemService.create(request2);
@@ -350,7 +323,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(3)
                 .item(Textbox.builder().content("Third item").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         sectionItemService.create(request3);
@@ -360,7 +332,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(2)
                 .item(Textbox.builder().content("Fourth item").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         sectionItemService.create(request4);
@@ -393,7 +364,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Textbox.builder().content("This is some example text").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         Long sectionItemId = sectionItemService.create(request);
@@ -414,7 +384,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Textbox.builder().content("First item").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         sectionItemService.create(request1);
@@ -423,7 +392,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(2)
                 .item(Textbox.builder().content("Second item").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         Long itemId2 = sectionItemService.create(request2);
@@ -432,7 +400,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(3)
                 .item(Textbox.builder().content("Third item").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         sectionItemService.create(request3);
@@ -460,7 +427,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Textbox.builder().content("This is some example text").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         sectionItemService.create(request1);
@@ -469,7 +435,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(2)
                 .item(Textbox.builder().content("This is some example text").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         sectionItemService.create(request2);
@@ -477,11 +442,14 @@ public class SectionItemServiceIntegrationTest {
         // Act
         sectionItemService.removeAllByParentId(sectionId);
 
+        // Clear the persistence context to force a refresh from DB
+        entityManager.clear();
+
         // Assert
         SectionResponse section = sectionService.get(sectionId);
+        List<SectionItem> items = sectionItemRepository.findAllBySectionId(sectionId);
 
-        assertTrue(sectionItemRepository.findAllBySectionId(sectionId).isEmpty(),
-                "There should be no section items in the section");
+        assertTrue(items.isEmpty(), "There should be no section items in the section");
         assertEquals(0, section.getSectionItems().size(), "There should be no section items in the section");
     }
 
@@ -495,7 +463,6 @@ public class SectionItemServiceIntegrationTest {
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Textbox.builder().content("This is some example text").build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build();
 
         Long sectionItemId = sectionItemService.create(request);
@@ -513,7 +480,6 @@ public class SectionItemServiceIntegrationTest {
                         .sectionId(sectionId)
                         .itemOrder(1)
                         .item(Textbox.builder().content("Updated text").build())
-                        .latexMethodId(methodIds.get("textbox"))
                         .build()),
                 "Should not be able to update a section item that does not belong to the user");
         assertThrows(AccessDeniedException.class, () -> sectionItemService.delete(sectionItemId),

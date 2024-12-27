@@ -7,12 +7,12 @@ import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.latex.LatexMethodMapper;
-import com.coigniez.resumebuilder.domain.latex.LatexMethodRepository;
 import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
 import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
 import com.coigniez.resumebuilder.domain.latex.dtos.UpdateLatexMethodRequest;
-import com.coigniez.resumebuilder.domain.layout.LayoutRepository;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
+import com.coigniez.resumebuilder.repository.LatexMethodRepository;
+import com.coigniez.resumebuilder.repository.LayoutRepository;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import jakarta.persistence.EntityNotFoundException;

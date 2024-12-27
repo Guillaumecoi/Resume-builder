@@ -22,7 +22,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.validation.annotation.Validated;
 
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
-import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionRepository;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResponse;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionRequest;
@@ -30,6 +29,7 @@ import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
+import com.coigniez.resumebuilder.repository.ColumnSectionRepository;
 
 import java.util.Comparator;
 import java.util.List;

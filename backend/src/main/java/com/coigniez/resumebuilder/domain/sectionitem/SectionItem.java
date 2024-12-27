@@ -8,7 +8,6 @@ import com.coigniez.resumebuilder.interfaces.BaseEntity;
 import com.coigniez.resumebuilder.interfaces.SectionItemData;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -24,17 +23,14 @@ public class SectionItem implements BaseEntity {
     @GeneratedValue
     private Long id;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "section_id", referencedColumnName = "id")
+    @JoinColumn(name = "section_id", referencedColumnName = "id", nullable = false)
     private Section section;
 
-    @NotNull
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private SectionItemData item;
 
-    @NotNull
     @Column(name = "item_order")
     private Integer itemOrder;
 }

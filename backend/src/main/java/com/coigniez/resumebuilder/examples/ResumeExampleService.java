@@ -52,6 +52,7 @@ public class ResumeExampleService {
         Long layoutId = addLayout(resume.getId());
         LayoutResponse layout = layoutService.get(layoutId);
         Map<String, Long> methodIds = layoutService.getLatexMethodsMap(layoutId);
+        //TODO: Set LayoutSectionItems
         
         addPictureSection(resume.getId(), layout.getColumns().get(0).getId(), 1, methodIds);
         addContactSection(resume.getId(), layout.getColumns().get(0).getId(), 2, methodIds);
@@ -88,7 +89,6 @@ public class ResumeExampleService {
                         .zoom(1.8)
                         .yoffset(-8.0)
                         .build())
-                .latexMethodId(methodIds.get("pictureitem"))
                 .build();
 
         Path resourcePath = Paths.get("src", "main", "resources", "images", "ali-mammadli-unsplash.jpg");
@@ -118,7 +118,6 @@ public class ResumeExampleService {
                         .icon("\\faMapMarker")
                         .label("Brussels, Belgium")
                         .build())
-                .latexMethodId(methodIds.get("contactitem"))
                 .build());
     
         contactItems.add(CreateSectionItemRequest.builder()
@@ -127,7 +126,6 @@ public class ResumeExampleService {
                         .label("john@email.com")
                         .link("mailto:john@email.com")
                         .build())
-                .latexMethodId(methodIds.get("contactitem"))
                 .build());
 
         contactItems.add(CreateSectionItemRequest.builder()
@@ -136,7 +134,6 @@ public class ResumeExampleService {
                         .label("+32 123 456 789")
                         .link("tel:+32123456789")
                         .build())
-                .latexMethodId(methodIds.get("contactitem"))
                 .build());
 
         contactItems.add(CreateSectionItemRequest.builder()
@@ -145,7 +142,6 @@ public class ResumeExampleService {
                         .label("johndoe")
                         .link("https://linkedin.com/in/johndoe")
                         .build())
-                .latexMethodId(methodIds.get("contactitem"))
                 .build());
 
         contactItems.add(CreateSectionItemRequest.builder()
@@ -154,7 +150,6 @@ public class ResumeExampleService {
                         .label("johndoe")
                         .link("https://github.com/johndoe")
                         .build())
-                .latexMethodId(methodIds.get("contactitem"))
                 .build());
 
         contactItems.add(CreateSectionItemRequest.builder()
@@ -162,7 +157,6 @@ public class ResumeExampleService {
                         .icon("\\faCar")
                         .label("Driving License B")
                         .build())
-                .latexMethodId(methodIds.get("contactitem"))
                 .build());
 
         Long contactId = sectionService.create(CreateSectionRequest.builder()
@@ -191,7 +185,6 @@ public class ResumeExampleService {
                         .institution("Open Universiteit Utrecht")
                         .period("2019 - 2023")
                         .build())
-                .latexMethodId(methodIds.get("educationitem"))
                 .build());
 
         educationItems.add(CreateSectionItemRequest.builder()
@@ -201,7 +194,6 @@ public class ResumeExampleService {
                         .institution("Open Universiteit Utrecht")
                         .period("2023 -")
                         .build())
-                .latexMethodId(methodIds.get("educationitem"))
                 .build());
         
         educationItems.add(CreateSectionItemRequest.builder()
@@ -211,7 +203,6 @@ public class ResumeExampleService {
                         .institution("International School of Brussels")
                         .period("2016")
                         .build())
-                .latexMethodId(methodIds.get("educationitem"))
                 .build());
         
         Long educationId = sectionService.create(CreateSectionRequest.builder()
@@ -240,7 +231,6 @@ public class ResumeExampleService {
                         .description("Developing software for the public transport company of Brussels")
                         .responsibilities(List.of("Developing new features for the website", "Maintaining the existing codebase"))
                         .build())
-                .latexMethodId(methodIds.get("experienceitem"))
                 .build());
             
         Long experienceId = sectionService.create(CreateSectionRequest.builder()
@@ -262,7 +252,6 @@ public class ResumeExampleService {
                         .title("John Doe")
                         .subtitle("Software Developer")
                         .build())
-                .latexMethodId(methodIds.get("cvtitle"))
                 .build();
             
         Long titleId = sectionService.create(CreateSectionRequest.builder()
@@ -291,7 +280,6 @@ public class ResumeExampleService {
                             Eager to apply theoretical knowledge in practical software development challenges.
                         """)
                         .build())
-                .latexMethodId(methodIds.get("textbox"))
                 .build());
             
         Long summaryId = sectionService.create(CreateSectionRequest.builder()
@@ -313,14 +301,12 @@ public class ResumeExampleService {
                 .item(Skillboxes.builder()
                         .skills(List.of("Java", "Spring Boot", "HTML", "CSS", "JavaScript", "SQL", "Python", "C", "C++"))
                         .build())
-                .latexMethodId(methodIds.get("skillboxes"))
                 .build());
 
         skillsItems.add(CreateSectionItemRequest.builder()
                 .item(Skill.builder()
                         .name("Dutch")
                         .build())
-                .latexMethodId(methodIds.get("skillitem"))
                 .build());
 
         skillsItems.add(CreateSectionItemRequest.builder()
@@ -328,7 +314,6 @@ public class ResumeExampleService {
                         .name("French")
                         .description("Intermediate")
                         .build())
-                .latexMethodId(methodIds.get("skilltext"))
                 .build());
 
         skillsItems.add(CreateSectionItemRequest.builder()
@@ -336,7 +321,6 @@ public class ResumeExampleService {
                         .name("English")
                         .proficiency(9)
                         .build())
-                .latexMethodId(methodIds.get("skillbullets"))
                 .build());
 
         skillsItems.add(CreateSectionItemRequest.builder()
@@ -344,7 +328,6 @@ public class ResumeExampleService {
                         .name("Japanese")
                         .proficiency(6)
                         .build())
-                .latexMethodId(methodIds.get("skillbar"))
                 .build());
             
         Long skillsId = sectionService.create(CreateSectionRequest.builder()

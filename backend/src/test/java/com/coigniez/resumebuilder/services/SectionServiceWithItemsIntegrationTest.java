@@ -12,7 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
@@ -33,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -44,12 +42,9 @@ public class SectionServiceWithItemsIntegrationTest {
         private SectionService sectionService;
         @Autowired
         private ResumeService resumeService;
-        @Autowired
-        private LayoutService layoutService;
 
         private Authentication testuser;
         private Long resumeId;
-        private Map<String, Long> methodIds;
 
         @BeforeEach
         void setUp() {
@@ -66,12 +61,6 @@ public class SectionServiceWithItemsIntegrationTest {
                                 .sections(List.of(CreateSectionRequest.builder().title("Education").build())).build();
 
                 resumeId = resumeService.create(resumeRequest);
-
-                Long layoutId = layoutService.create(CreateLayoutRequest.builder()
-                                .resumeId(resumeId)
-                                .numberOfColumns(1).build());
-
-                methodIds = layoutService.getLatexMethodsMap(layoutId);
         }
 
         @Test
@@ -83,13 +72,11 @@ public class SectionServiceWithItemsIntegrationTest {
                 sectionItems.add(CreateSectionItemRequest.builder()
                                 .itemOrder(1)
                                 .item(Textbox.builder().content("This is some example text").build())
-                                .latexMethodId(methodIds.get("textbox"))
                                 .build());
 
                 sectionItems.add(CreateSectionItemRequest.builder()
                                 .itemOrder(2)
                                 .item(Skill.builder().name("Java").proficiency(5).build())
-                                .latexMethodId(methodIds.get("skillitem"))
                                 .build());
 
                 CreateSectionRequest request = CreateSectionRequest.builder()
@@ -121,12 +108,10 @@ public class SectionServiceWithItemsIntegrationTest {
 
                 sectionItems.add(CreateSectionItemRequest.builder()
                                 .item(Textbox.builder().content("This is some example text").build())
-                                .latexMethodId(methodIds.get("textbox"))
                                 .build());
 
                 sectionItems.add(CreateSectionItemRequest.builder()
                                 .item(Skill.builder().name("Java").proficiency(5).build())
-                                .latexMethodId(methodIds.get("skillitem"))
                                 .build());
 
                 CreateSectionRequest request = CreateSectionRequest.builder()
@@ -146,13 +131,11 @@ public class SectionServiceWithItemsIntegrationTest {
                 createSectionItems.add(CreateSectionItemRequest.builder()
                                 .itemOrder(1)
                                 .item(Skill.builder().name("Python").proficiency(4).build())
-                                .latexMethodId(methodIds.get("skillitem"))
                                 .build());
                 updateSectionItems.add(UpdateSectionItemRequest.builder()
                                 .id(initialResponse.getSectionItems().get(0).getId())
                                 .itemOrder(3)
                                 .item(Textbox.builder().content("This is some updated text").build())
-                                .latexMethodId(methodIds.get("textbox"))
                                 .build());
 
                 UpdateSectionRequest updatedRequest = UpdateSectionRequest.builder().id(sectionId)
@@ -201,7 +184,6 @@ public class SectionServiceWithItemsIntegrationTest {
                 sectionItems.add(CreateSectionItemRequest.builder()
                                 .itemOrder(1)
                                 .item(Skill.builder().name("java").proficiency(11).build())
-                                .latexMethodId(methodIds.get("skillitem"))
                                 .build());
 
                 CreateSectionRequest request = CreateSectionRequest.builder()

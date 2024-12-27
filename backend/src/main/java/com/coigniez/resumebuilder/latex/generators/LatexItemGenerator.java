@@ -16,12 +16,13 @@ import lombok.AllArgsConstructor;
 public class LatexItemGenerator implements LatexGenerator<SectionItem> {
 
     public String generate(SectionItem item) {
-        LatexMethod method = item.getLatexMethod();
+        LatexMethod method = null; //TODO
 
         if (method == null) {
             return "";
         }
-        return "\\item " + LatexMethodGenerator.generateUsage(method.getMethodType(), method.getType(),
-                method.getName(), method.getMethod(), item.getItem().getData());
+        return ""; //TODO
+        //return "\\item " + LatexMethodGenerator.generateUsage(method.getMethodType(), method.getType(),
+        //        method.getName(), method.getMethod(), item.getItem().getData());
     }
 }

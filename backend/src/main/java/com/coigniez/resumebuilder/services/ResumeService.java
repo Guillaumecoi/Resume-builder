@@ -13,16 +13,16 @@ import org.springframework.web.multipart.MultipartFile;
 import com.coigniez.resumebuilder.domain.common.PageResponse;
 import com.coigniez.resumebuilder.domain.resume.Resume;
 import com.coigniez.resumebuilder.domain.resume.ResumeMapper;
-import com.coigniez.resumebuilder.domain.resume.ResumeRepository;
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeDetailResponse;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResponse;
 import com.coigniez.resumebuilder.domain.resume.dtos.UpdateResumeRequest;
-import com.coigniez.resumebuilder.domain.section.SectionRepository;
 import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
 import com.coigniez.resumebuilder.domain.section.dtos.UpdateSectionRequest;
 import com.coigniez.resumebuilder.file.FileStorageService;
 import com.coigniez.resumebuilder.interfaces.CrudService;
+import com.coigniez.resumebuilder.repository.ResumeRepository;
+import com.coigniez.resumebuilder.repository.SectionRepository;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import jakarta.persistence.EntityNotFoundException;

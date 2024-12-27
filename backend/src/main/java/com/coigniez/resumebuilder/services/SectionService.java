@@ -6,17 +6,17 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.resume.Resume;
-import com.coigniez.resumebuilder.domain.resume.ResumeRepository;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.section.SectionMapper;
-import com.coigniez.resumebuilder.domain.section.SectionRepository;
 import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
 import com.coigniez.resumebuilder.domain.section.dtos.UpdateSectionRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRepository;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.UpdateSectionItemRequest;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
+import com.coigniez.resumebuilder.repository.ResumeRepository;
+import com.coigniez.resumebuilder.repository.SectionItemRepository;
+import com.coigniez.resumebuilder.repository.SectionRepository;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import jakarta.persistence.EntityNotFoundException;

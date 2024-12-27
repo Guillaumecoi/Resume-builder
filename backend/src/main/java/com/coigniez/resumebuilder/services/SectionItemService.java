@@ -6,19 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.coigniez.resumebuilder.domain.latex.LatexMethod;
-import com.coigniez.resumebuilder.domain.latex.LatexMethodRepository;
 import com.coigniez.resumebuilder.domain.section.Section;
-import com.coigniez.resumebuilder.domain.section.SectionRepository;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRepository;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResponse;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.UpdateSectionItemRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.file.FileStorageService;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
+import com.coigniez.resumebuilder.repository.SectionItemRepository;
+import com.coigniez.resumebuilder.repository.SectionRepository;
+import com.coigniez.resumebuilder.util.OrderableRepositoryUtil;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import jakarta.persistence.EntityManager;
@@ -32,10 +31,12 @@ public class SectionItemService
 
     private final SectionItemRepository sectionItemRepository;
     private final SectionRepository sectionRepository;
-    private final LatexMethodRepository latexMethodRepository;
     private final SectionItemMapper sectionitemMapper;
     private final FileStorageService fileStorageService;
     private final SecurityUtils securityUtils;
+    @Autowired
+    private OrderableRepositoryUtil orderableRepositoryUtil;
+
     @Autowired
     private EntityManager entityManager;
 
@@ -47,8 +48,6 @@ public class SectionItemService
         // Get the section and latexMethod
         Section section = sectionRepository.findById(request.getSectionId())
                 .orElseThrow(() -> new EntityNotFoundException("Section not found"));
-        LatexMethod latexMethod = latexMethodRepository.findById(request.getLatexMethodId())
-                .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
 
         // Find the maximum itemOrder in the section
         int maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(section.getId()).orElse(0);
@@ -63,7 +62,6 @@ public class SectionItemService
 
         // Add the sectionItem to the section and latexMethod
         section.addSectionItem(sectionItem);
-        sectionItem.setLatexMethod(latexMethod);
 
         // Save the item
         return sectionItemRepository.save(sectionItem).getId();
@@ -120,13 +118,6 @@ public class SectionItemService
         // Update the entity
         sectionitemMapper.updateEntity(sectionItem, request);
 
-        // Update the latexMethod
-        if (request.getLatexMethodId() != sectionItem.getLatexMethod().getId()) {
-            LatexMethod newLatexMethod = latexMethodRepository.findById(request.getLatexMethodId())
-                    .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
-            sectionItem.setLatexMethod(newLatexMethod);
-        }
-
         // TODO: Update the section
 
         // save the updated item
@@ -167,15 +158,12 @@ public class SectionItemService
 
     @Override
     public void removeAllByParentId(Long id) {
-        // Check if the user has access to the section
         hasAccessSection(id);
-
+        
         Section section = sectionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Section not found"));
-
-        // Remove all items from the section
+                
         section.clearSectionItems();
-
         sectionItemRepository.deleteAllBySectionId(id);
     }
 
@@ -188,7 +176,7 @@ public class SectionItemService
      * @param oldOrder  the old order
      */
     private void incrementItemOrder(Long sectionId, int newOrder, int oldOrder) {
-        sectionItemRepository.incrementItemOrderBetween(sectionId, newOrder, oldOrder);
+        orderableRepositoryUtil.incrementItemOrderBetween(SectionItem.class, Section.class, sectionId, newOrder, oldOrder);
         refreshSectionItems(sectionId);
     }
 
@@ -201,7 +189,7 @@ public class SectionItemService
      * @param oldOrder  the old order
      */
     private void decrementItemOrder(Long sectionId, int newOrder, int oldOrder) {
-        sectionItemRepository.decrementItemOrderBetween(sectionId, newOrder, oldOrder);
+        orderableRepositoryUtil.decrementItemOrderBetween(SectionItem.class, Section.class, sectionId, newOrder, oldOrder);
         refreshSectionItems(sectionId);
     }
 

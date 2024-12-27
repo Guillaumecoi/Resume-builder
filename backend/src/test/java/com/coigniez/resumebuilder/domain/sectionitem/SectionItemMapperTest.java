@@ -61,7 +61,6 @@ class SectionItemMapperTest {
         CreateSectionItemRequest request = CreateSectionItemRequest.builder()
                 .itemOrder(2)
                 .sectionId(1)
-                .latexMethodId(1)
                 .item(Textbox.builder()
                         .content("This is some example text")
                         .build())
@@ -103,7 +102,6 @@ class SectionItemMapperTest {
         CreateSectionItemRequest correctComplete = CreateSectionItemRequest.builder()
                 .itemOrder(1)
                 .sectionId(1)
-                .latexMethodId(1)
                 .item(Skill.builder()
                         .name("Java")
                         .proficiency(8)
@@ -113,7 +111,6 @@ class SectionItemMapperTest {
         CreateSectionItemRequest nullProficiency = CreateSectionItemRequest.builder()
                 .itemOrder(1)
                 .sectionId(1)
-                .latexMethodId(1)
                 .item(Skill.builder()
                         .name("Java")
                         .build())
@@ -122,7 +119,6 @@ class SectionItemMapperTest {
         CreateSectionItemRequest nullName = CreateSectionItemRequest.builder()
                 .itemOrder(1)
                 .sectionId(1)
-                .latexMethodId(1)
                 .item(Skill.builder()
                         .proficiency(8)
                         .build())
@@ -131,7 +127,6 @@ class SectionItemMapperTest {
         CreateSectionItemRequest emptyName = CreateSectionItemRequest.builder()
                 .itemOrder(1)
                 .sectionId(1)
-                .latexMethodId(1)
                 .item(Skill.builder()
                         .name("")
                         .proficiency(8)
@@ -141,7 +136,6 @@ class SectionItemMapperTest {
         CreateSectionItemRequest lowProficiency = CreateSectionItemRequest.builder()
                 .itemOrder(1)
                 .sectionId(1)
-                .latexMethodId(1)
                 .item(Skill.builder()
                         .name("Java")
                         .proficiency(0)
@@ -151,7 +145,6 @@ class SectionItemMapperTest {
         CreateSectionItemRequest highProficiency = CreateSectionItemRequest.builder()
                 .itemOrder(1)
                 .sectionId(1)
-                .latexMethodId(1)
                 .item(Skill.builder()
                         .name("Java")
                         .proficiency(11)
@@ -184,7 +177,6 @@ class SectionItemMapperTest {
                 CreateSectionItemRequest.builder()
                         .itemOrder(1)
                         .sectionId(1)
-                        .latexMethodId(1)
                         .item(Textbox.builder()
                                 .content("This is some example text")
                                 .build())
@@ -199,7 +191,6 @@ class SectionItemMapperTest {
                 CreateSectionItemRequest.builder()
                         .itemOrder(1)
                         .sectionId(1)
-                        .latexMethodId(1)
                         .item(Textbox.builder()
                                 .build())
                         .build()));
@@ -260,7 +251,6 @@ class SectionItemMapperTest {
                 CreateSectionItemRequest.builder()
                         .itemOrder(1)
                         .sectionId(1)
-                        .latexMethodId(1)
                         .item(correctComplete)
                         .build());
 
@@ -268,7 +258,6 @@ class SectionItemMapperTest {
                 CreateSectionItemRequest.builder()
                         .itemOrder(1)
                         .sectionId(1)
-                        .latexMethodId(1)
                         .item(nullDescription)
                         .build());
 
@@ -285,7 +274,6 @@ class SectionItemMapperTest {
                 CreateSectionItemRequest.builder()
                         .itemOrder(1)
                         .sectionId(1)
-                        .latexMethodId(1)
                         .item(nullDegree)
                         .build()));
 
@@ -293,7 +281,6 @@ class SectionItemMapperTest {
                 CreateSectionItemRequest.builder()
                         .itemOrder(1)
                         .sectionId(1)
-                        .latexMethodId(1)
                         .item(nullInstitution)
                         .build()));
 
@@ -301,7 +288,6 @@ class SectionItemMapperTest {
                 CreateSectionItemRequest.builder()
                         .itemOrder(1)
                         .sectionId(1)
-                        .latexMethodId(1)
                         .item(emptyDegree)
                         .build()));
 
@@ -309,7 +295,6 @@ class SectionItemMapperTest {
                 CreateSectionItemRequest.builder()
                         .itemOrder(1)
                         .sectionId(1)
-                        .latexMethodId(1)
                         .item(emptyInstitution)
                         .build()));
     }
@@ -337,7 +322,6 @@ class SectionItemMapperTest {
                 CreateSectionItemRequest.builder()
                         .itemOrder(1)
                         .sectionId(1)
-                        .latexMethodId(1)
                         .item(correctComplete)
                         .build());
 
@@ -391,7 +375,6 @@ class SectionItemMapperTest {
                 CreateSectionItemRequest.builder()
                         .itemOrder(1)
                         .sectionId(1)
-                        .latexMethodId(1)
                         .item(correctComplete)
                         .build());
 
@@ -415,7 +398,6 @@ class SectionItemMapperTest {
                 CreateSectionItemRequest.builder()
                         .itemOrder(1)
                         .sectionId(1)
-                        .latexMethodId(1)
                         .item(nullPath)
                         .build()));
     }
@@ -426,7 +408,6 @@ class SectionItemMapperTest {
         CreateSectionItemRequest request = CreateSectionItemRequest.builder()
                 .itemOrder(2)
                 .sectionId(1)
-                .latexMethodId(1)
                 .item(Textbox.builder()
                         .content("This is some example text")
                         .build())

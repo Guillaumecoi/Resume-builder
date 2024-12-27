@@ -8,19 +8,19 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.column.ColumnMapper;
-import com.coigniez.resumebuilder.domain.column.ColumnRepository;
 import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
 import com.coigniez.resumebuilder.domain.column.dtos.UpdateColumnRequest;
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.layout.Layout;
 import com.coigniez.resumebuilder.domain.layout.LayoutMapper;
-import com.coigniez.resumebuilder.domain.layout.LayoutRepository;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
 import com.coigniez.resumebuilder.domain.layout.dtos.UpdateLayoutRequest;
-import com.coigniez.resumebuilder.domain.resume.ResumeRepository;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.latex.generators.LatexDocumentGenerator;
+import com.coigniez.resumebuilder.repository.ColumnRepository;
+import com.coigniez.resumebuilder.repository.LayoutRepository;
+import com.coigniez.resumebuilder.repository.ResumeRepository;
 import com.coigniez.resumebuilder.templates.LayoutTemplate;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 

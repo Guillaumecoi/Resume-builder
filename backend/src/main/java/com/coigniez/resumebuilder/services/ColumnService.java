@@ -7,15 +7,15 @@ import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.column.Column;
 import com.coigniez.resumebuilder.domain.column.ColumnMapper;
-import com.coigniez.resumebuilder.domain.column.ColumnRepository;
 import com.coigniez.resumebuilder.domain.column.dtos.ColumnResponse;
 import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
 import com.coigniez.resumebuilder.domain.column.dtos.UpdateColumnRequest;
-import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionRepository;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionRequest;
-import com.coigniez.resumebuilder.domain.layout.LayoutRepository;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
+import com.coigniez.resumebuilder.repository.ColumnRepository;
+import com.coigniez.resumebuilder.repository.ColumnSectionRepository;
+import com.coigniez.resumebuilder.repository.LayoutRepository;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import jakarta.persistence.EntityNotFoundException;
