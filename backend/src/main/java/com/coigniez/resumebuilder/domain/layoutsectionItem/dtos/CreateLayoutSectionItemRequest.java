@@ -18,7 +18,7 @@ public class CreateLayoutSectionItemRequest implements CreateRequest {
     @NotNull
     private long latexMethodId;
 
-    private boolean hidden;
+    private Boolean hidden;
     private Integer itemOrder;
     private AlignmentType alignment;
     

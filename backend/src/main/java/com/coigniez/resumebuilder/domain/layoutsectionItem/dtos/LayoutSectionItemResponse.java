@@ -1,6 +1,7 @@
 package com.coigniez.resumebuilder.domain.layoutsectionItem.dtos;
 
 import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
+import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResponse;
 import com.coigniez.resumebuilder.interfaces.Response;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -26,6 +27,6 @@ public class LayoutSectionItemResponse implements Response {
     private boolean hidden;
     @NotNull
     private Integer itemOrder;
-    private String alignment;
+    private AlignmentType alignment;
     
 }

@@ -7,7 +7,6 @@ import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
 import com.coigniez.resumebuilder.interfaces.BaseEntity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -23,22 +22,18 @@ public class LayoutSectionItem implements BaseEntity {
     @GeneratedValue
     private Long id;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "section_item_id", referencedColumnName = "id")
     private SectionItem sectionItem;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "latex_method_id", referencedColumnName = "id")
     private LatexMethod latexMethod;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "column_section_id", referencedColumnName = "id")
     private ColumnSection columnSection;
 
-    @NotNull
     private boolean hidden;
     private Integer itemOrder;
     private AlignmentType alignment;

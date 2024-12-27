@@ -87,11 +87,10 @@ public class ColumnSectionService implements
     public ColumnSectionResponse get(Long id) {
         // Check if the user has access to this columnSection
         securityUtils.hasAccessColumnSection(id);
-
         // Get the existing columnSection entity
-        ColumnSection columnSection = columnSectionRepository.findById(id)
+        return columnSectionRepository.findById(id)
+                .map(columnSectionMapper::toDto)
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("ColumnSection", id));
-        return columnSectionMapper.toDto(columnSection);
     }
 
     @Override

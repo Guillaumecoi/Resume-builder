@@ -1,5 +1,6 @@
 package com.coigniez.resumebuilder.domain.columnsection;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,7 +58,8 @@ public class ColumnSection implements BaseEntity, LatexMethodProvider {
     private boolean defaultOrder;
 
     @OneToMany(mappedBy = "columnSection", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<LayoutSectionItem> layoutSectionItems;
+    @Builder.Default
+    private List<LayoutSectionItem> layoutSectionItems = new ArrayList<>();
 
     public void addLayoutSectionItem(LayoutSectionItem layoutSectionItem) {
         layoutSectionItems.add(layoutSectionItem);

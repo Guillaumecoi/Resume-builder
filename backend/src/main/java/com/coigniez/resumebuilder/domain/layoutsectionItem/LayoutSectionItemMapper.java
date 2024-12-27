@@ -17,7 +17,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
-public class LayoutSectionItemMaper implements Mapper<LayoutSectionItem, CreateLayoutSectionItemRequest, UpdateLayoutSectionItemRequest, LayoutSectionItemResponse> {
+public class LayoutSectionItemMapper implements Mapper<LayoutSectionItem, CreateLayoutSectionItemRequest, UpdateLayoutSectionItemRequest, LayoutSectionItemResponse> {
 
     private final SectionItemMapper sectionItemMapper;
     private final LatexMethodMapper latexMethodMapper;
@@ -34,7 +34,7 @@ public class LayoutSectionItemMaper implements Mapper<LayoutSectionItem, CreateL
         MapperUtils.setDefaultValues(request, DEFAULT_VALUES);
 
         return LayoutSectionItem.builder()
-                .hidden(request.isHidden())
+                .hidden(request.getHidden())
                 .itemOrder(request.getItemOrder())
                 .alignment(request.getAlignment())
                 .build();
@@ -52,7 +52,7 @@ public class LayoutSectionItemMaper implements Mapper<LayoutSectionItem, CreateL
                 .sectionItem(sectionItemMapper.toDto(entity.getSectionItem()))
                 .hidden(entity.isHidden())
                 .itemOrder(entity.getItemOrder())
-                .alignment(entity.getAlignment().name())
+                .alignment(entity.getAlignment())
                 .build();
     }
 
