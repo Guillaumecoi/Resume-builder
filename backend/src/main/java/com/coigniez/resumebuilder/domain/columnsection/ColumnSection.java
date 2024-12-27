@@ -69,6 +69,11 @@ public class ColumnSection implements BaseEntity, LatexMethodProvider {
         layoutSectionItem.setColumnSection(null);
     }
 
+    public void clearLayoutSectionItems() {
+        layoutSectionItems.forEach(layoutSectionItem -> layoutSectionItem.setColumnSection(null));
+        layoutSectionItems.clear();
+    }
+
     @Override
     public List<String> getData() {
         return List.of(

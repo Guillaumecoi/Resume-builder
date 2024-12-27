@@ -3,18 +3,26 @@ package com.coigniez.resumebuilder.util;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;  // Make it a Spring bean
+import org.springframework.stereotype.Component;  
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
-@Component  // Spring will manage this class
+@Component  
 public class OrderableRepositoryUtil {
 
     @Autowired
-    private EntityManager entityManager;  // Instance-level injection (no static)
+    private EntityManager entityManager; 
 
-    // Method to find max item order by parent ID dynamically
+    /**
+     * Method to find the maximum item order by parent id
+     * 
+     * @param <ID>         The type of the parent id
+     * @param entityClass  The entity class
+     * @param parentClass  The parent class
+     * @param parentId     The parent id
+     * @return The maximum item order if found, otherwise empty
+     */
     public <ID> Optional<Integer> findMaxItemOrderByParentId(Class<?> entityClass, Class<?> parentClass, ID parentId) {
         String entityName = entityClass.getSimpleName();
         String parentField = parentClass.getSimpleName().toLowerCase();
