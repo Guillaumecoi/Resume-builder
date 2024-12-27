@@ -39,9 +39,10 @@ public class ColumnSectionService implements
 
     @Override
     public Long create(CreateColumnSectionRequest request) {
-        // Check if the user has access to the column and section
-        hasAccessColumn(request.getColumnId());
-        hasAccessSection(request.getSectionId());
+        // Check if the user has access to the column, section and latexMethod
+        securityUtils.hasAccessColumn(request.getColumnId());
+        securityUtils.hasAccessSection(request.getSectionId());
+        securityUtils.hasAccessLatexMethod(request.getLatexMethodId());
 
         // Get the column and section
         Column column = columnRepository.findById(request.getColumnId())
@@ -79,7 +80,7 @@ public class ColumnSectionService implements
     @Override
     public ColumnSectionResponse get(Long id) {
         // Check if the user has access to this columnSection
-        hasAccess(id);
+        securityUtils.hasAccessColumnSection(id);
 
         // Get the existing columnSection entity
         ColumnSection columnSection = columnSectionRepository.findById(id)
@@ -90,7 +91,7 @@ public class ColumnSectionService implements
     @Override
     public void update(UpdateColumnSectionRequest request) {
         // Check if the user has access to this columnSection
-        hasAccess(request.getId());
+        securityUtils.hasAccessColumnSection(request.getId());
 
         // Get the existing columnSection entity
         ColumnSection columnSection = columnSectionRepository.findById(request.getId())
@@ -122,7 +123,7 @@ public class ColumnSectionService implements
     @Override
     public void delete(Long id) {
         // Check if the user has access to this columnSection
-        hasAccess(id);
+        securityUtils.hasAccessColumnSection(id);
 
         // Get the existing columnSection entity
         ColumnSection columnSection = columnSectionRepository.findById(id)
@@ -147,7 +148,7 @@ public class ColumnSectionService implements
     public List<ColumnSectionResponse> getAllByParentId(ColumnSectionParentType parentType, Long parentId) {
         if (parentType == ColumnSectionParentType.COLUMN) {
             // Check if the user has access to the column
-            hasAccessColumn(parentId);
+            securityUtils.hasAccessColumn(parentId);
 
             // Get all columnSections in the column
             return columnSectionRepository.findAllByColumnId(parentId).stream()
@@ -156,7 +157,7 @@ public class ColumnSectionService implements
 
         } else if (parentType == ColumnSectionParentType.SECTION) {
             // Check if the user has access to the section
-            hasAccessSection(parentId);
+            securityUtils.hasAccessSection(parentId);
 
             // Get all columnSections in the section
             return columnSectionRepository.findAllBySectionId(parentId).stream()
@@ -172,7 +173,7 @@ public class ColumnSectionService implements
     public void removeAllByParentId(ColumnSectionParentType parentType, Long parentId) {
         if (parentType == ColumnSectionParentType.COLUMN) {
             // Check if the user has access to the column
-            hasAccessColumn(parentId);
+            securityUtils.hasAccessColumn(parentId);
 
             // Remove all columnSections from the column
             columnRepository.findById(parentId)
@@ -184,7 +185,7 @@ public class ColumnSectionService implements
 
         } else if (parentType == ColumnSectionParentType.SECTION) {
             // Check if the user has access to the section
-            hasAccessSection(parentId);
+            securityUtils.hasAccessSection(parentId);
 
             // Remove all columnSections from the section
             sectionRepository.findById(parentId)
@@ -236,39 +237,6 @@ public class ColumnSectionService implements
         for (ColumnSection columnSection : columnSections) {
             entityManager.refresh(columnSection);
         }
-    }
-
-    /**
-     * Check if the user has access to the columnSection.
-     * 
-     * @param id the id of the columnSection
-     */
-    private void hasAccess(long id) {
-        String owner = columnSectionRepository.findCreatedBy(id)
-                .orElseThrow(() -> new EntityNotFoundException("ColumnSection not found"));
-        securityUtils.hasAccess(List.of(owner));
-    }
-
-    /**
-     * Check if the user has access to the column.
-     * 
-     * @param id the id of the column
-     */
-    private void hasAccessColumn(long id) {
-        String owner = columnRepository.findCreatedBy(id)
-                .orElseThrow(() -> new EntityNotFoundException("Column not found"));
-        securityUtils.hasAccess(List.of(owner));
-    }
-
-    /**
-     * Check if the user has access to the section.
-     * 
-     * @param id the id of the section
-     */
-    private void hasAccessSection(long id) {
-        String owner = sectionRepository.findCreatedBy(id)
-                .orElseThrow(() -> new EntityNotFoundException("Section not found"));
-        securityUtils.hasAccess(List.of(owner));
     }
 
 }

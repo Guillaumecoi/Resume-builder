@@ -25,14 +25,17 @@ public class LayoutSectionItem implements BaseEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "section_item_id", referencedColumnName = "id")
     private SectionItem sectionItem;
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "latex_method_id", referencedColumnName = "id")
     private LatexMethod latexMethod;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "column_section_id", referencedColumnName = "id")
     private ColumnSection columnSection;
 
     @NotNull

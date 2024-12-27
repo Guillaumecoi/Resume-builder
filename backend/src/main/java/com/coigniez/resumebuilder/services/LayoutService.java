@@ -43,7 +43,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
     @Override
     public Long create(CreateLayoutRequest request) {
         // Check if the connected user has access to the resume
-        hasAccessResume(request.getResumeId());
+        securityUtils.hasAccessResume(request.getResumeId());
 
         // Create the entity
         Layout layout = layoutMapper.toEntity(request);
@@ -67,7 +67,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
     @Override
     public LayoutResponse get(Long id) {
         // Check if the connected user has access to the layout
-        hasAccess(id);
+        securityUtils.hasAccessLayout(id);
         // Get the layout
         return layoutRepository.findById(id)
                 .map(layoutMapper::toDto)
@@ -77,7 +77,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
     @Override
     public void update(UpdateLayoutRequest request) {
         // Check if the connected user has access to the layout
-        hasAccess(request.getId());
+        securityUtils.hasAccessLayout(request.getId());
 
         for (CreateColumnRequest column : request.getCreateColumns()) {
             column.setLayoutId(request.getId());
@@ -109,7 +109,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
     @Override
     public void delete(Long id) {
         // Check if the connected user has access to the layout
-        hasAccess(id);
+        securityUtils.hasAccessLayout(id);
 
         // Remove the layout from the resume
         Layout layout = layoutRepository.findById(id)
@@ -124,7 +124,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
     @Override
     public List<LayoutResponse> getAllByParentId(Long resumetId) {
         // Check if the connected user has access to the resume
-        hasAccessResume(resumetId);
+        securityUtils.hasAccessResume(resumetId);
 
         // Get all layouts for the resume
         return layoutRepository.findAllByResumeId(resumetId).stream()
@@ -135,7 +135,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
     @Override
     public void removeAllByParentId(Long resumetId) {
         // Check if the connected user has access to the resume
-        hasAccessResume(resumetId);
+        securityUtils.hasAccessResume(resumetId);
         
         // Delete all layouts for the resume
         layoutRepository.deleteAll(layoutRepository.findAllByResumeId(resumetId));
@@ -164,27 +164,4 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
                 .getLatexMethods().stream()
                 .collect(Collectors.toMap(LatexMethod::getName, LatexMethod::getId));
     }
-
-    /**
-     * Check if the connected user has access to the layout
-     * 
-     * @param layoutId the layout id
-     */
-    private void hasAccess(Long layoutId) {
-        String owner = layoutRepository.findCreatedBy(layoutId)
-            .orElseThrow(() -> new EntityNotFoundException("Layout not found"));
-        securityUtils.hasAccess(List.of(owner));
-    }
-
-    /**
-     * Check if the connected user has access to the resume
-     * 
-     * @param resumeId the resume id
-     */
-    private void hasAccessResume(Long resumeId) {
-        String owner = resumeRepository.findCreatedBy(resumeId)
-            .orElseThrow(() -> new EntityNotFoundException("Resume not found"));
-        securityUtils.hasAccess(List.of(owner));
-    }
-
 }

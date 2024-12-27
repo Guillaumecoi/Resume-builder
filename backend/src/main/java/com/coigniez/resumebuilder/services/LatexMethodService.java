@@ -30,7 +30,7 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
     @Override
     public Long create(CreateLatexMethodRequest request) {
         // Check if the user has access to the layout
-        hasAccessLayout(request.getLayoutId());
+        securityUtils.hasAccessLayout(request.getLayoutId());
 
         // Create the entity
         LatexMethod latexMethod = latexMethodMapper.toEntity(request);
@@ -45,7 +45,7 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
     @Override
     public LatexMethodResponse get(Long id) {
         // Check if the user has access to the method
-        hasAccess(id);
+        securityUtils.hasAccessLatexMethod(id);
 
         // Get the entity
         return latexMethodRepository.findById(id)
@@ -56,7 +56,7 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
     @Override
     public void update(UpdateLatexMethodRequest request) {
         // Check if the user has access to the method
-        hasAccess(request.getId());
+        securityUtils.hasAccessLatexMethod(request.getId());
 
         // Update the entity
         LatexMethod latexMethod = latexMethodRepository.findById(request.getId())
@@ -71,7 +71,7 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
     @Override
     public void delete(Long id) {
         // Check if the user has access to the method
-        hasAccess(id);
+        securityUtils.hasAccessLatexMethod(id);
 
         // Remove the method from the layout
         LatexMethod latexMethod = latexMethodRepository.findById(id)
@@ -85,7 +85,7 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
     @Override
     public List<LatexMethodResponse> getAllByParentId(Long layoutId) {
         // Check if the user has access to the layout
-        hasAccessLayout(layoutId);
+        securityUtils.hasAccessLayout(layoutId);
 
         // Get all methods for the layout
         return latexMethodRepository.findAllByLayoutId(layoutId).stream()
@@ -96,7 +96,7 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
     @Override
     public void removeAllByParentId(Long layoutId) {
         // Check if the user has access to the layout
-        hasAccessLayout(layoutId);
+        securityUtils.hasAccessLayout(layoutId);
 
         // Remove all methods from the layout
         layoutRepository.findById(layoutId)
@@ -106,27 +106,4 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
         // Delete all methods
         latexMethodRepository.deleteAllByLayoutId(layoutId);
     }
-
-    /**
-     * Check if the user has access to the LatexMethod
-     * 
-     * @param id The id of the LatexMethod
-     */
-    private void hasAccess(long id) {
-        String owner = latexMethodRepository.findCreatedBy(id)
-                .orElseThrow(() -> new EntityNotFoundException("LatexMethod not found"));
-        securityUtils.hasAccess(List.of(owner));
-    }
-
-    /**
-     * Check if the user has access to the Layout
-     * 
-     * @param layoutId The id of the Layout
-     */
-    private void hasAccessLayout(long layoutId) {
-        String owner = layoutRepository.findCreatedBy(layoutId)
-                .orElseThrow(() -> new EntityNotFoundException("Layout not found"));
-        securityUtils.hasAccess(List.of(owner));
-    }
-    
 }

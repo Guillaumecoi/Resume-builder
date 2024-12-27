@@ -36,7 +36,7 @@ public class ColumnService
     @Override
     public Long create(CreateColumnRequest request) {
         // Check if the current user has access to the layout
-        hasAccessLayout(request.getLayoutId());
+        securityUtils.hasAccessLayout(request.getLayoutId());
 
         // Create the column entity
         Column column = columnMapper.toEntity(request);
@@ -51,7 +51,7 @@ public class ColumnService
     @Override
     public ColumnResponse get(Long id) {
         // Check if the current user has access to the column
-        hasAccess(id);
+        securityUtils.hasAccessColumn(id);
 
         // Get the column entity
         return columnRepository.findById(id)
@@ -62,7 +62,7 @@ public class ColumnService
     @Override
     public void update(UpdateColumnRequest request) {
         // Check if the current user has access to the column
-        hasAccess(request.getId());
+        securityUtils.hasAccessColumn(request.getId());
 
         for (CreateColumnSectionRequest section : request.getCreateSectionMappings()) {
             section.setColumnId(request.getId());
@@ -95,7 +95,7 @@ public class ColumnService
     @Override
     public void delete(Long id) {
         // Check if the current user has access to the column
-        hasAccess(id);
+        securityUtils.hasAccessColumn(id);
 
         // Remove the column from the layout
         Column column = columnRepository.findById(id)
@@ -109,7 +109,7 @@ public class ColumnService
     @Override
     public List<ColumnResponse> getAllByParentId(Long layoutId) {
         // Check if the current user has access to the layout
-        hasAccessLayout(layoutId);
+        securityUtils.hasAccessLayout(layoutId);
 
         // Get all columns from the layout
         return columnRepository.findAllByLayoutId(layoutId).stream()
@@ -120,7 +120,7 @@ public class ColumnService
     @Override
     public void removeAllByParentId(Long layoutId) {
         // Check if the current user has access to the layout
-        hasAccessLayout(layoutId);
+        securityUtils.hasAccessLayout(layoutId);
 
         // Remove all columns from the layout
         layoutRepository.findById(layoutId)
@@ -131,25 +131,4 @@ public class ColumnService
         columnRepository.deleteAllByLayoutId(layoutId);
     }
 
-    /**
-     * Check if the current user has access to the column
-     * 
-     * @param id The column id
-     */
-    private void hasAccess(long id) {
-        String owner = columnRepository.findCreatedBy(id)
-                .orElseThrow(() -> new EntityNotFoundException("Column not found"));
-        securityUtils.hasAccess(List.of(owner));
-    }
-
-    /**
-     * Check if the current user has access to the layout
-     * 
-     * @param id The layout id
-     */
-    private void hasAccessLayout(long id) {
-        String owner = layoutRepository.findCreatedBy(id)
-                .orElseThrow(() -> new EntityNotFoundException("Layout not found"));
-        securityUtils.hasAccess(List.of(owner));
-    }
 }

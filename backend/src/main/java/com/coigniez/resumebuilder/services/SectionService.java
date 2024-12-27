@@ -2,7 +2,6 @@ package com.coigniez.resumebuilder.services;
 
 import java.util.List;
 
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.resume.Resume;
@@ -37,7 +36,7 @@ public class SectionService
     @Override
     public Long create(CreateSectionRequest request) {
         // Check if the user has access to the resume
-        hasAccessResume(request.getResumeId());
+        securityUtils.hasAccessResume(request.getResumeId());
 
         // Create the section entity
         Section section = sectionMapper.toEntity(request);
@@ -65,7 +64,7 @@ public class SectionService
     @Override
     public SectionResponse get(Long id) {
         // Check if the user has access to the section
-        hasAccess(id);
+        securityUtils.hasAccessSection(id);
 
         // Retrieve the section
         return sectionRepository.findByIdWithOrderedItems(id)
@@ -76,7 +75,7 @@ public class SectionService
     @Override
     public void update(UpdateSectionRequest request) {
         // Check if the user has access to the section
-        hasAccess(request.getId());
+        securityUtils.hasAccessSection(request.getId());
 
         // Create and update section items
         for (CreateSectionItemRequest sectionItemRequest : request.getCreateSectionItems()) {
@@ -109,7 +108,7 @@ public class SectionService
     @Override
     public void delete(Long id) {
         // Check if the user has access to the section
-        hasAccess(id);
+        securityUtils.hasAccessSection(id);
 
         // Remove the section from the resume
         Section section = sectionRepository.findById(id)
@@ -138,29 +137,5 @@ public class SectionService
         // Delete the sections
         sectionRepository.deleteAll(sectionRepository.findAllByResumeId(resumeId));
 
-    }
-
-    /**
-     * Check if the user has access to the section
-     * 
-     * @param id the section id
-     * @throws AccessDeniedException if the user does not have access
-     */
-    private void hasAccess(Long id) {
-        String owner = sectionRepository.findCreatedBy(id)
-                .orElseThrow(() -> new EntityNotFoundException(""));
-        securityUtils.hasAccess(List.of(owner));
-    }
-
-    /**
-     * Check if the user has access to the resume
-     * 
-     * @param id the resume id
-     * @throws AccessDeniedException if the user does not have access
-     */
-    private void hasAccessResume(Long id) {
-        String owner = resumeRepository.findCreatedBy(id)
-                .orElseThrow(() -> new EntityNotFoundException(""));
-        securityUtils.hasAccess(List.of(owner));
     }
 }

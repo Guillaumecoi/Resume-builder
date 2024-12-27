@@ -1,12 +1,9 @@
 package com.coigniez.resumebuilder.services;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,7 +45,7 @@ public class ResumeService
     @Override
     public ResumeDetailResponse get(Long id) {
         // Check if the connected user has access to the resume
-        hasAccess(id);
+        securityUtils.hasAccessResume(id);
 
         // Get the resume entity
         return resumeRepository.findById(id)
@@ -59,7 +56,7 @@ public class ResumeService
     @Override
     public void update(UpdateResumeRequest request) {
         // Check if the connected user has access to the resume
-        hasAccess(request.getId());
+        securityUtils.hasAccessResume(request.getId());
 
         // Create and update sections
         for (CreateSectionRequest section : request.getCreateSections()) {
@@ -91,7 +88,7 @@ public class ResumeService
     @Override
     public void delete(Long id) {
         // Check if the connected user has access to the resume
-        hasAccess(id);
+        securityUtils.hasAccessResume(id);
 
         // Delete the resume entity and remove the picture
         removePicture(resumeRepository.findById(id).orElseThrow());
@@ -131,7 +128,7 @@ public class ResumeService
      */
     public void uploadPicture(Long id, MultipartFile file) {
         // Check if the connected user has access to the resume
-        hasAccess(id);
+        securityUtils.hasAccessResume(id);
 
         // Get the resume entity
         Resume resume = resumeRepository.findById(id)
@@ -155,20 +152,6 @@ public class ResumeService
 
         // Remove all the resumes
         resumeRepository.deleteAllByCreatedBy(securityUtils.getUserName());
-    }
-
-    /**
-     * Check if the connected user has access to the resume
-     * 
-     * @param id            the id of the resume
-     * @param connectedUser the connected user
-     * @throws AccessDeniedException if the connected user does not have access to
-     *                               the resume
-     */
-    private void hasAccess(Long id) throws AccessDeniedException {
-        String owner = resumeRepository.findCreatedBy(id)
-                .orElseThrow(() -> new EntityNotFoundException("Resume with id " + id + " not found"));
-        securityUtils.hasAccess(List.of(owner));
     }
 
     /**

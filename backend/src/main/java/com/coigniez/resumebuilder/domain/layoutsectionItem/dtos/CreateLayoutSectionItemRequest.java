@@ -12,6 +12,8 @@ import lombok.Data;
 public class CreateLayoutSectionItemRequest implements CreateRequest {
 
     @NotNull
+    private long columnSectionId;
+    @NotNull
     private long sectionItemId;
     @NotNull
     private long latexMethodId;

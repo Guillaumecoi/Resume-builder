@@ -43,7 +43,7 @@ public class SectionItemService
     @Override
     public Long create(CreateSectionItemRequest request) {
         // Check if the user has access to the section
-        hasAccessSection(request.getSectionId());
+        securityUtils.hasAccessSection(request.getSectionId());
 
         // Get the section and latexMethod
         Section section = sectionRepository.findById(request.getSectionId())
@@ -76,7 +76,7 @@ public class SectionItemService
      */
     public Long createPicture(MultipartFile file, CreateSectionItemRequest request) {
         // Check if the user has access to the section
-        hasAccessSection(request.getSectionId());
+        securityUtils.hasAccessSection(request.getSectionId());
 
         // Save the file to the file storage and add the path to the request
         String path = fileStorageService.saveFile(file, securityUtils.getUserName());
@@ -89,7 +89,7 @@ public class SectionItemService
     @Override
     public SectionItemResponse get(Long id) {
         // Check if the user has access to the sectionItem
-        hasAccess(id);
+        securityUtils.hasAccessSectionItem(id);
         // Get the item
         return sectionItemRepository.findById(id)
                 .map(sectionitemMapper::toDto)
@@ -99,7 +99,7 @@ public class SectionItemService
     @Override
     public void update(UpdateSectionItemRequest request) {
         // Check if the user has access to the sectionItem
-        hasAccess(request.getId());
+        securityUtils.hasAccessSectionItem(request.getId());
 
         // Get the entity
         SectionItem sectionItem = sectionItemRepository.findById(request.getId())
@@ -127,7 +127,7 @@ public class SectionItemService
     @Override
     public void delete(Long id) {
         // Check if the user has access to the sectionItem
-        hasAccess(id);
+        securityUtils.hasAccessSectionItem(id);
 
         // Get the item
         SectionItem sectionItem = sectionItemRepository.findById(id)
@@ -148,7 +148,7 @@ public class SectionItemService
     @Override
     public List<SectionItemResponse> getAllByParentId(Long id) {
         // Check if the user has access to the section
-        hasAccessSection(id);
+        securityUtils.hasAccessSection(id);
 
         List<SectionItem> items = sectionItemRepository.findAllBySectionId(id);
         return items.stream()
@@ -158,7 +158,8 @@ public class SectionItemService
 
     @Override
     public void removeAllByParentId(Long id) {
-        hasAccessSection(id);
+        // Check if the user has access to the section
+        securityUtils.hasAccessSection(id);
         
         Section section = sectionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Section not found"));
@@ -203,27 +204,5 @@ public class SectionItemService
         for (SectionItem item : items) {
             entityManager.refresh(item);
         }
-    }
-
-    /**
-     * Check if the user has access to the sectionItem
-     * 
-     * @param id the id of the sectionItem
-     */
-    private void hasAccess(Long id) {
-        String owner = sectionItemRepository.findCreatedBy(id)
-                .orElseThrow(() -> new EntityNotFoundException("Accompanying resume is not found"));
-        securityUtils.hasAccess(List.of(owner));
-    }
-
-    /**
-     * Check if the user has access to the section
-     * 
-     * @param id the id of the section
-     */
-    private void hasAccessSection(Long id) {
-        String owner = sectionRepository.findCreatedBy(id)
-                .orElseThrow(() -> new EntityNotFoundException("Accompanying resume is not found"));
-        securityUtils.hasAccess(List.of(owner));
     }
 }
