@@ -42,8 +42,8 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
             .itemsep(request.getItemsep())
             .endsep(request.getEndsep())
             .alignment(request.getAlignment())
-            .hidden(request.isHidden())
-            .defaultOrder(request.isDefaultOrder())
+            .hidden(request.getHidden())
+            .defaultOrder(request.getDefaultOrder())
             .build();
     }
 

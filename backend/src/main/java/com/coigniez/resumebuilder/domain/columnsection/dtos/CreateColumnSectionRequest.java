@@ -23,7 +23,7 @@ public class CreateColumnSectionRequest implements CreateRequest {
     private Double endsep;
     private AlignmentType alignment;
 
-    private boolean hidden;
-    private boolean defaultOrder;
+    private Boolean hidden;
+    private Boolean defaultOrder;
 
 }
