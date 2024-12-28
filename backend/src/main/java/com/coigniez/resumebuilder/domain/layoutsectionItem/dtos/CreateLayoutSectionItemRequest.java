@@ -15,8 +15,7 @@ public class CreateLayoutSectionItemRequest implements CreateRequest {
     private long columnSectionId;
     @NotNull
     private long sectionItemId;
-    @NotNull
-    private long latexMethodId;
+    private Long latexMethodId;
 
     private Boolean hidden;
     private Integer itemOrder;

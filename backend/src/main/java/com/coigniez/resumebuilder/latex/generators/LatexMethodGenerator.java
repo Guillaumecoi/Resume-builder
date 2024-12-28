@@ -13,8 +13,7 @@ public class LatexMethodGenerator {
      * @param provider the SectionItemData instance containing parameters
      * @return the LaTeX method usage as a string
      */
-    public static String generateUsage(MethodType methodType, HasLatexMethod type, String name, String method,
-            List<String> parameters) {
+    public static String generateUsage(MethodType methodType, HasLatexMethod type, String name, List<String> parameters) {
         if (parameters.size() != type.getNumberOfParameters()) {
             throw new IllegalStateException("Number of parameters does not match the method type");
         }

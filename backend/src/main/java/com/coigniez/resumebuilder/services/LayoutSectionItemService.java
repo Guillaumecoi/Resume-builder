@@ -49,32 +49,30 @@ public class LayoutSectionItemService implements
 
     @Override
     public Long create(CreateLayoutSectionItemRequest request) {
-        // Check if the user has access to the ColumnSection, SectionItem and
-        // LatexMethod
+        // Check if the user has access to the ColumnSection and SectionItem
         securityUtils.hasAccessColumnSection(request.getColumnSectionId());
         securityUtils.hasAccessSectionItem(request.getSectionItemId());
-        securityUtils.hasAccessLatexMethod(request.getLatexMethodId());
-
-        // Get the ColumnSection, SectionItem and LatexMethod
+    
+        // Get the ColumnSection and SectionItem
         ColumnSection columnSection = columnSectionRepository.findById(request.getColumnSectionId())
-                .orElseThrow(() -> ExceptionUtils.entityNotFound("ColumnSection",
-                        request.getColumnSectionId()));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("ColumnSection", request.getColumnSectionId()));
         SectionItem sectionItem = sectionItemRepository.findById(request.getSectionItemId())
-                .orElseThrow(() -> ExceptionUtils.entityNotFound("SectionItem",
-                        request.getSectionItemId()));
-        LatexMethod latexMethod = latexMethodRepository.findById(request.getLatexMethodId())
-                .orElseThrow(() -> ExceptionUtils.entityNotFound("LatexMethod",
-                        request.getLatexMethodId()));
-
-        // Check if the columnSection, sectionItem and latexMethod belong to the same
-        // layout/resume
-        if (!columnSection.getColumn().getLayout().getId().equals(latexMethod.getLayout().getId())) {
-            throw new IllegalArgumentException(
-                    "The ColumnSection and LatexMethod must belong to the same layout");
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("SectionItem", request.getSectionItemId()));
+    
+        // Get the LatexMethod if it exists
+        LatexMethod latexMethod = null;
+        if (request.getLatexMethodId() != null) {
+            securityUtils.hasAccessLatexMethod(request.getLatexMethodId());
+            latexMethod = latexMethodRepository.findById(request.getLatexMethodId())
+                    .orElseThrow(() -> ExceptionUtils.entityNotFound("LatexMethod", request.getLatexMethodId()));
         }
-        if (!latexMethod.getLayout().getResume().getId().equals(sectionItem.getSection().getResume().getId())) {
-            throw new IllegalArgumentException(
-                    "The SectionItem must belong to the same resume as the LatexMethod and ColumnSection");
+    
+        // Check if the columnSection and sectionItem belong to the same layout/resume
+        if (latexMethod != null && !columnSection.getColumn().getLayout().getId().equals(latexMethod.getLayout().getId())) {
+            throw new IllegalArgumentException("The ColumnSection and LatexMethod must belong to the same layout");
+        }
+        if (!columnSection.getColumn().getLayout().getResume().getId().equals(sectionItem.getSection().getResume().getId())) {
+            throw new IllegalArgumentException("The SectionItem must belong to the same resume as the ColumnSection");
         }
 
         Integer order;
@@ -93,7 +91,7 @@ public class LayoutSectionItemService implements
         // Create the LayoutSectionItem
         request.setItemOrder(order);
         LayoutSectionItem layoutSectionItem = layoutSectionItemMaper.toEntity(request);
-        layoutSectionItem.setColumnSection(columnSection);
+        columnSection.addLayoutSectionItem(layoutSectionItem);
         layoutSectionItem.setSectionItem(sectionItem);
         layoutSectionItem.setLatexMethod(latexMethod);
         // Save the LayoutSectionItem

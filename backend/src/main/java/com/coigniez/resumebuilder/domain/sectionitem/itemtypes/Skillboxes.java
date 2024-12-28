@@ -25,6 +25,7 @@ public class Skillboxes implements SectionItemData {
     @Override
     @JsonIgnore
     public List<String> getData() {
-        return List.of(skills.toString());
+        String skillsString = skills.toString();
+        return List.of(skillsString.substring(1, skillsString.length() - 1));
     }
 }

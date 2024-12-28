@@ -187,7 +187,7 @@ public class LatexMethodTemplates {
                 MethodType.COMMAND,
                 """
                         {
-                            \\textbf{#1} \\hfill #2
+                            \\textbf{#1} \\hfill #3
                         }""",
                 "Skill Text",
                 null));

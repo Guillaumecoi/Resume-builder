@@ -1,10 +1,11 @@
 package com.coigniez.resumebuilder.latex.generators;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
-import com.coigniez.resumebuilder.domain.section.Section;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
+import com.coigniez.resumebuilder.domain.layoutsectionItem.LayoutSectionItem;
 import com.coigniez.resumebuilder.interfaces.LatexGenerator;
 import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplate;
 import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplates;
@@ -23,20 +24,34 @@ public class LatexSectionGenerator implements LatexGenerator<ColumnSection> {
     private final LatexItemGenerator latexItemGenerator;
 
     public String generate(ColumnSection columnSection) {
-        Section section = columnSection.getSection();
         LatexMethodTemplate sectionMethod = LatexMethodTemplates.getSectionTemplate();
 
         // Get the section environment
         String sectionString = LatexMethodGenerator.generateUsage(sectionMethod.getMethodType(),
-                sectionMethod.getType(), sectionMethod.getMethodName(), sectionMethod.getMethod(), columnSection.getData());
+                sectionMethod.getType(), sectionMethod.getMethodName(), columnSection.getData());
 
-        // Set the items
-        String items = "";
-        for (SectionItem item : section.getItems()) {
-            items += stringUtils.addTabToEachLine(latexItemGenerator.generate(item), 1) + "\n";
+        // Sort the items
+        List<LayoutSectionItem> items = columnSection.getLayoutSectionItems();
+        if (columnSection.isDefaultOrder()){
+            items.sort((a, b) -> a.getSectionItem().getItemOrder() - b.getSectionItem().getItemOrder());
+        } else {
+            items.sort((a, b) -> a.getItemOrder() - b.getItemOrder());
         }
 
-        return sectionString.formatted(items);
+        // Set the items
+        String itemsString = "";
+        for (LayoutSectionItem item : columnSection.getLayoutSectionItems()) {
+            if (item.isHidden()) {
+                continue;
+            }
+            itemsString += stringUtils.addTabToEachLine(latexItemGenerator.generate(item), 1) + "\n";
+        }
+
+        if (itemsString.isEmpty()) {
+            return "";
+        } else {
+            return sectionString.formatted(itemsString);
+        }
     }
 
 }

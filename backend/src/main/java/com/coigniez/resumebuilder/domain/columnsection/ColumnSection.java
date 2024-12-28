@@ -80,7 +80,7 @@ public class ColumnSection implements BaseEntity, LatexMethodProvider {
     public List<String> getData() {
         return List.of(
                 LatexMethodGenerator.generateUsage(latexMethod.getMethodType(), latexMethod.getType(),
-                        latexMethod.getName(), latexMethod.getMethod(),
+                        latexMethod.getName(),
                         List.of(section.isShowTitle() ? section.getTitle() : "",
                                 Optional.ofNullable(section.getIcon()).orElse(""))),
                 String.valueOf(itemsep) + "pt",

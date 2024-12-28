@@ -1,6 +1,9 @@
 package com.coigniez.resumebuilder.services;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -12,7 +15,9 @@ import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionRespons
 import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionRequest;
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
+import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.CreateLayoutSectionItemRequest;
 import com.coigniez.resumebuilder.domain.section.Section;
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
 import com.coigniez.resumebuilder.interfaces.MultiParentEntityService;
 import com.coigniez.resumebuilder.repository.ColumnRepository;
 import com.coigniez.resumebuilder.repository.ColumnSectionRepository;
@@ -33,6 +38,7 @@ public class ColumnSectionService implements
     private final ColumnRepository columnRepository;
     private final SectionRepository sectionRepository;
     private final LatexMethodRepository latexMethodRepository;
+    private final LayoutSectionItemService layoutSectionItemService;
     private final ColumnSectionMapper columnSectionMapper;
     private final SecurityUtils securityUtils;
     private OrderableRepositoryUtil orderableRepositoryUtil;
@@ -80,7 +86,41 @@ public class ColumnSectionService implements
         latexMethod.addColumnSection(columnSection);
 
         // Save the columnSection
-        return columnSectionRepository.save(columnSection).getId();
+        long id = columnSectionRepository.save(columnSection).getId();
+
+        // Create the default layoutSectionItems
+        columnSection.setId(id);
+        createDefaultLayoutSectionItems(columnSection, section.getItems(), columnSection.getColumn().getLayout().getLatexMethods());
+
+        return id;
+    }
+
+    private void createDefaultLayoutSectionItems(ColumnSection columnSection, List<SectionItem> sectionItems,
+            Set<LatexMethod> layoutMethods) {
+        if (sectionItems.isEmpty()) {
+            return;
+        }
+
+        // Create a map where the key is the type of the latexMethod
+        Map<Class<?>, LatexMethod> latexMethodMap = new HashMap<>();
+        for (LatexMethod latexMethod : layoutMethods) {
+            Class<?> dataType = latexMethod.getType().getDataType();
+            if (latexMethodMap.containsKey(dataType)) {
+                continue; // Only set the first latexMethod found if there are multiple for the same type
+            }
+            latexMethodMap.put(dataType, latexMethod);
+        }
+
+        // Create the layoutSectionItems
+        for (SectionItem sectionItem : sectionItems) {
+            LatexMethod latexMethod = latexMethodMap.get(sectionItem.getItem().getClass());
+            layoutSectionItemService.create(CreateLayoutSectionItemRequest.builder()
+                    .columnSectionId(columnSection.getId())
+                    .sectionItemId(sectionItem.getId())
+                    .latexMethodId(latexMethod == null ? null : latexMethod.getId())
+                    .itemOrder(columnSection.isDefaultOrder() ? null : sectionItem.getItemOrder())
+                    .build());
+        }
     }
 
     @Override

@@ -52,7 +52,6 @@ public class ResumeExampleService {
         Long layoutId = addLayout(resume.getId());
         LayoutResponse layout = layoutService.get(layoutId);
         Map<String, Long> methodIds = layoutService.getLatexMethodsMap(layoutId);
-        //TODO: Set LayoutSectionItems
         
         addPictureSection(resume.getId(), layout.getColumns().get(0).getId(), 1, methodIds);
         addContactSection(resume.getId(), layout.getColumns().get(0).getId(), 2, methodIds);
