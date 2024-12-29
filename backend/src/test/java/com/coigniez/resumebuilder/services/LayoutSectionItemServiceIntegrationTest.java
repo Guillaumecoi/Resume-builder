@@ -14,10 +14,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
 import com.coigniez.resumebuilder.domain.latex.HasLatexMethod;
 import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
+import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.CreateLayoutSectionItemRequest;
 import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemResponse;
 import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.UpdateLayoutSectionItemRequest;
@@ -25,6 +27,8 @@ import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
+import com.coigniez.resumebuilder.templates.color.ColorTemplates;
+import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplates;
 
 import jakarta.transaction.Transactional;
 
@@ -71,6 +75,23 @@ public class LayoutSectionItemServiceIntegrationTest {
         // Create layout
         Long layoutId = layoutService.create(CreateLayoutRequest.builder()
                 .resumeId(resumeId)
+                .numberOfColumns(1)
+                .columns(List.of(
+                        CreateColumnRequest.builder()
+                                .columnNumber(1)
+                                .backgroundColor(ColorLocation.LIGHT_BG)
+                                .textColor(ColorLocation.DARK_TEXT)
+                                .borderColor(ColorLocation.ACCENT)
+                                .borderRight(2.0)
+                                .build(),
+                        CreateColumnRequest.builder()
+                                .columnNumber(2)
+                                .backgroundColor(ColorLocation.LIGHT_BG)
+                                .textColor(ColorLocation.DARK_TEXT)
+                                .borderColor(ColorLocation.ACCENT)
+                                .build()))
+                .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
+                .latexMethods(LatexMethodTemplates.getStandardMethods())
                 .build());
 
         // get column

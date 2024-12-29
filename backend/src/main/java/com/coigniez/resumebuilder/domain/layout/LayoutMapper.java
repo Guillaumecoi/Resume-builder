@@ -17,8 +17,8 @@ import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
 import com.coigniez.resumebuilder.domain.layout.dtos.UpdateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
 import com.coigniez.resumebuilder.interfaces.Mapper;
-import com.coigniez.resumebuilder.templates.ColorTemplates;
-import com.coigniez.resumebuilder.templates.LayoutTemplate;
+import com.coigniez.resumebuilder.templates.color.ColorTemplates;
+import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplates;
 import com.coigniez.resumebuilder.util.MapperUtils;
 
 import lombok.AllArgsConstructor;
@@ -35,7 +35,7 @@ public class LayoutMapper implements Mapper<Layout, CreateLayoutRequest, UpdateL
             "numberOfColumns", 1,
             "columnSeparator", 0.35,
             "colorScheme", ColorTemplates.EXECUTIVE_SUITE,
-            "latexMethods", LayoutTemplate.getStandardMethods()
+            "latexMethods", LatexMethodTemplates.getStandardMethods()
     );
 
     @Override

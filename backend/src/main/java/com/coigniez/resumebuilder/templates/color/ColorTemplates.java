@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.templates;
+package com.coigniez.resumebuilder.templates.color;
 
 import com.coigniez.resumebuilder.domain.layout.enums.ColorScheme;
 

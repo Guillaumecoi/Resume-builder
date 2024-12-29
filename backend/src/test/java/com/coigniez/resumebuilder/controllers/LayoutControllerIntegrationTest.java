@@ -26,8 +26,8 @@ import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.UpdateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
-import com.coigniez.resumebuilder.templates.ColorTemplates;
-import com.coigniez.resumebuilder.templates.LayoutTemplate;
+import com.coigniez.resumebuilder.templates.color.ColorTemplates;
+import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplates;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -99,7 +99,7 @@ public class LayoutControllerIntegrationTest {
         UpdateLayoutRequest updateRequest = UpdateLayoutRequest.builder()
                 .id(layoutId).pageSize(PageSize.A4)
                 .numberOfColumns(1).columnSeparator(0.4).colorScheme(ColorTemplates.EXECUTIVE_SUITE)
-                .latexMethods(LayoutTemplate.getStandardMethods())
+                .latexMethods(LatexMethodTemplates.getStandardMethods())
                 .CreateColumns(List.of()).updateColumns(List.of())
                 .build();
 

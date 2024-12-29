@@ -14,8 +14,8 @@ import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.UpdateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
 import com.coigniez.resumebuilder.domain.resume.Resume;
-import com.coigniez.resumebuilder.templates.ColorTemplates;
-import com.coigniez.resumebuilder.templates.LayoutTemplate;
+import com.coigniez.resumebuilder.templates.color.ColorTemplates;
+import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplates;
 
 import jakarta.validation.ConstraintViolationException;
 
@@ -108,7 +108,7 @@ public class LayoutMapperTest {
                 .numberOfColumns(2)
                 .columnSeparator(0.5)
                 .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
-                .latexMethods(LayoutTemplate.getStandardMethods())
+                .latexMethods(LatexMethodTemplates.getStandardMethods())
                 .build();
 
         Layout entity = Layout.builder()

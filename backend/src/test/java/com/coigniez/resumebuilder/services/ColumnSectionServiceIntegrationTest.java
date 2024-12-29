@@ -21,15 +21,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.validation.annotation.Validated;
 
+import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResponse;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
+import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
 import com.coigniez.resumebuilder.repository.ColumnSectionRepository;
+import com.coigniez.resumebuilder.templates.color.ColorTemplates;
+import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplates;
 
 import java.util.Comparator;
 import java.util.List;
@@ -79,7 +83,26 @@ public class ColumnSectionServiceIntegrationTest {
         Long resumeId = resumeService.create(CreateResumeRequest.builder().title("Software Developer").build());
 
         // Create a layout
-        Long layoutId = layoutService.create(CreateLayoutRequest.builder().resumeId(resumeId).build());
+        Long layoutId = layoutService.create(CreateLayoutRequest.builder()
+                .resumeId(resumeId)
+                .numberOfColumns(1)
+                .columns(List.of(
+                        CreateColumnRequest.builder()
+                                .columnNumber(1)
+                                .backgroundColor(ColorLocation.LIGHT_BG)
+                                .textColor(ColorLocation.DARK_TEXT)
+                                .borderColor(ColorLocation.ACCENT)
+                                .borderRight(2.0)
+                                .build(),
+                        CreateColumnRequest.builder()
+                                .columnNumber(2)
+                                .backgroundColor(ColorLocation.LIGHT_BG)
+                                .textColor(ColorLocation.DARK_TEXT)
+                                .borderColor(ColorLocation.ACCENT)
+                                .build()))
+                .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
+                .latexMethods(LatexMethodTemplates.getStandardMethods())
+                .build());
 
         LayoutResponse layout = layoutService.get(layoutId);
         // Create a column
@@ -197,7 +220,7 @@ public class ColumnSectionServiceIntegrationTest {
         // Assert
         List<ColumnSection> items = columnSectionRepository.findAllByColumnId(columnId);
         items.sort(Comparator.comparing(ColumnSection::getItemOrder)); // Sort by section order for easier
-                                                                          // comparison
+                                                                       // comparison
 
         assertEquals(3, items.size(), "There should be 3 items");
         assertEquals(List.of(1, 2, 3),
@@ -251,7 +274,7 @@ public class ColumnSectionServiceIntegrationTest {
         // Assert
         List<ColumnSection> items = columnSectionRepository.findAllByColumnId(columnId);
         items.sort(Comparator.comparing(ColumnSection::getItemOrder)); // Sort by section order for easier
-                                                                          // comparison
+                                                                       // comparison
 
         assertEquals(4, items.size(), "There should be 4 items");
         assertEquals(List.of(1, 2, 3, 4),
@@ -471,7 +494,7 @@ public class ColumnSectionServiceIntegrationTest {
         // Assert
         List<ColumnSection> items = columnSectionRepository.findAllByColumnId(columnId);
         items.sort(Comparator.comparing(ColumnSection::getItemOrder)); // Sort by section order for easier
-                                                                          // comparison
+                                                                       // comparison
 
         assertEquals(2, items.size(), "There should be 2 items");
         assertEquals(List.of(1, 2),

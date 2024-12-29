@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.coigniez.resumebuilder.domain.column.ColumnMapper;
 import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
 import com.coigniez.resumebuilder.domain.column.dtos.UpdateColumnRequest;
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
@@ -21,7 +20,8 @@ import com.coigniez.resumebuilder.latex.generators.LatexDocumentGenerator;
 import com.coigniez.resumebuilder.repository.ColumnRepository;
 import com.coigniez.resumebuilder.repository.LayoutRepository;
 import com.coigniez.resumebuilder.repository.ResumeRepository;
-import com.coigniez.resumebuilder.templates.LayoutTemplate;
+import com.coigniez.resumebuilder.templates.LayoutTemplates;
+import com.coigniez.resumebuilder.templates.layouts.LayoutTemplate;
 import com.coigniez.resumebuilder.util.ExceptionUtils;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
@@ -36,9 +36,9 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
     private final ColumnRepository columnRepository;
     private final ColumnService columnService;
     private final LayoutMapper layoutMapper;
-    private final ColumnMapper columnMapper;
     private final LatexDocumentGenerator latexDocumentGenerator;
     private final SecurityUtils securityUtils;
+    private final LayoutTemplates layoutTemplates;
     
     @Override
     public Long create(CreateLayoutRequest request) {
@@ -51,14 +51,6 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
         resumeRepository.findById(request.getResumeId())
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("Resume", request.getResumeId()))
                 .addLayout(layout);
-
-        // Add default columns if none are provided
-        if(layout.getColumns().isEmpty()) {
-            List<CreateColumnRequest> columnRequests = LayoutTemplate.getDefaultColumns(layout.getNumberOfColumns());
-            columnRequests.stream()
-                .map(columnMapper::toEntity)
-                .forEach(layout::addColumn);
-        }
 
         // Save the entity
         return layoutRepository.save(layout).getId();
@@ -120,7 +112,6 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
         layoutRepository.deleteById(id);
     }
 
-
     @Override
     public List<LayoutResponse> getAllByParentId(Long resumetId) {
         // Check if the connected user has access to the resume
@@ -163,5 +154,14 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", id))
                 .getLatexMethods().stream()
                 .collect(Collectors.toMap(LatexMethod::getName, LatexMethod::getId));
+    }
+
+    /**
+     * Get all available layout templates
+     * 
+     * @return a list of layout templates
+     */
+    public List<LayoutTemplate> getTemplates() {
+        return layoutTemplates.getAllLayoutTemplates();
     }
 }

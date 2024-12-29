@@ -1,10 +1,13 @@
 package com.coigniez.resumebuilder.templates.methods;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.coigniez.resumebuilder.domain.latex.HasLatexMethod;
 import com.coigniez.resumebuilder.domain.latex.MethodType;
+import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 
 public class LatexMethodTemplates {
@@ -27,8 +30,26 @@ public class LatexMethodTemplates {
         return templates;
     }
 
-    public static LatexMethodTemplate getSectionTemplate() {
+    public static Set<CreateLatexMethodRequest> getStandardMethods() {
+        HashSet<CreateLatexMethodRequest> result = new HashSet<>();
+        result.add(LatexMethodTemplates.getSectionTemplate().toCreateLatexMethodRequest());
+        result.add(LatexMethodTemplates.getSectionTitlesTemplates().get("Standard Section Title").toCreateLatexMethodRequest());
+        result.add(LatexMethodTemplates.getContactTemplates().get("Standard Contact").toCreateLatexMethodRequest());
+        result.add(LatexMethodTemplates.getTitleTemplates().get("Standard Title").toCreateLatexMethodRequest());
+        result.add(LatexMethodTemplates.getEducationTemplates().get("Standard Education").toCreateLatexMethodRequest());
+        result.add(LatexMethodTemplates.getExperienceTemplates().get("Standard Experience").toCreateLatexMethodRequest());
+        result.add(LatexMethodTemplates.getSkillTemplates().get("Standard Skill").toCreateLatexMethodRequest());
+        result.add(LatexMethodTemplates.getSkillTemplates().get("Skill Text").toCreateLatexMethodRequest());
+        result.add(LatexMethodTemplates.getSkillTemplates().get("Skill Bullets").toCreateLatexMethodRequest());
+        result.add(LatexMethodTemplates.getSkillTemplates().get("Skill Bar").toCreateLatexMethodRequest());
+        result.add(LatexMethodTemplates.getSkillboxTemplates().get("Standard Skillbox").toCreateLatexMethodRequest());
+        result.add(LatexMethodTemplates.getTextboxTemplates().get("Standard Textbox").toCreateLatexMethodRequest());
+        result.add(LatexMethodTemplates.getPictureTemplates().get("Standard Picture").toCreateLatexMethodRequest());
 
+        return result;
+    }
+
+    public static LatexMethodTemplate getSectionTemplate() {
         return new LatexMethodTemplate(
                 HasLatexMethod.SECTION,
                 "cvsection",
