@@ -20,7 +20,7 @@ public class CreateColumnSectionRequest implements CreateRequest {
     private long columnId;
     @NotNull
     private long sectionId;
-    private long latexMethodId;
+    private Long latexMethodId;
 
     private Integer itemOrder;
     private Double itemsep;

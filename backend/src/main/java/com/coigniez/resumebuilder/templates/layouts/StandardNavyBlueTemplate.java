@@ -13,7 +13,9 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 
 import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
+import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
@@ -37,7 +39,7 @@ public class StandardNavyBlueTemplate {
     public static final byte[] IMAGE_CONTENT;
 
     static {
-        byte[] content = null;
+        byte[] content = new byte[0];
         try {
             Path resourcePath = Paths.get("src", "main", "resources", "images", "ali-mammadli-unsplash.jpg");
             content = Files.readAllBytes(resourcePath);
@@ -64,15 +66,19 @@ public class StandardNavyBlueTemplate {
         this.columnSectionService = columnSectionService;
     }
 
-    public long generate(String title) throws IOException {
-        long resumeId = createResume(title);
+    long resumeId;
+    long sectionTitleMetghodId;
+
+    public long generate(String title) {
+        resumeId = createResume(title);
         long layoutId = createLayout(resumeId);
         LayoutResponse layout = layoutService.get(layoutId);
         long leftColumnId = layout.getColumns().get(0).getId();
         long rightColumnId = layout.getColumns().get(1).getId();
-        Map<String, Long> methodIds = layoutService.getLatexMethodsMap(layoutId);
+        Map<Class<?>, List<LatexMethodResponse>> methodIds = layoutService.getLatexMethodsMap(layoutId);
+        sectionTitleMetghodId = methodIds.get(ColumnSection.class).get(0).getId();
 
-        addPictureSection(resumeId, leftColumnId, 1, methodIds);
+        addPictureSection(leftColumnId, 1);
 
         return resumeId;
     }
@@ -110,8 +116,7 @@ public class StandardNavyBlueTemplate {
         return layoutService.create(request);
     }
 
-    private void addPictureSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds)
-            throws IOException {
+    private void addPictureSection(Long columnId, int sectionOrder) {
         Long sectionId = sectionService.create(CreateSectionRequest.builder()
                 .resumeId(resumeId)
                 .title("Picture")
@@ -132,7 +137,13 @@ public class StandardNavyBlueTemplate {
 
         //Todo: handle exception
         Path resourcePath = Paths.get("src", "main", "resources", "images", "ali-mammadli-unsplash.jpg");
-        byte[] content = Files.readAllBytes(resourcePath);
+        byte[] content;
+        try {
+                content = Files.readAllBytes(resourcePath);
+        } catch (IOException e) {
+                e.printStackTrace();
+                content = new byte[0];
+        }
 
         MockMultipartFile file = new MockMultipartFile(
                 "file",
@@ -144,7 +155,7 @@ public class StandardNavyBlueTemplate {
         columnSectionService.create(CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
+                .latexMethodId(sectionTitleMetghodId)
                 .itemOrder(sectionOrder)
                 .build());
     }

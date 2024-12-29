@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
 import com.coigniez.resumebuilder.domain.column.dtos.UpdateColumnRequest;
-import com.coigniez.resumebuilder.domain.latex.LatexMethod;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
 import com.coigniez.resumebuilder.domain.layout.Layout;
 import com.coigniez.resumebuilder.domain.layout.LayoutMapper;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
@@ -35,6 +35,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
     private final ResumeRepository resumeRepository;
     private final ColumnRepository columnRepository;
     private final ColumnService columnService;
+    private final LatexMethodService latexService;
     private final LayoutMapper layoutMapper;
     private final LatexDocumentGenerator latexDocumentGenerator;
     private final SecurityUtils securityUtils;
@@ -142,19 +143,17 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
         Layout layout = layoutRepository.findById(id).orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", id));
         return latexDocumentGenerator.generateFile(layout, layout.getResume().getTitle());
     }
-
+    
     /**
-     * Get the latex methods of a layout
+     * Get all latex methods for a layout
      * 
-     * @param id the layout id
-     * @return a map of latex methods with their name as key and id as value
+     * @param id layout id to get the latex methods from
+     * @return a map of latex methods grouped by class
      */
-    public Map<String, Long> getLatexMethodsMap(Long id) {
-        return layoutRepository.findById(id)
-                .orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", id))
-                .getLatexMethods().stream()
-                .collect(Collectors.toMap(LatexMethod::getName, LatexMethod::getId));
+    public Map<Class<?>, List<LatexMethodResponse>> getLatexMethodsMap(Long id) {
+        return latexService.getLatexMethodsMap(id);
     }
+
 
     /**
      * Get all available layout templates

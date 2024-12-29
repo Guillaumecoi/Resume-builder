@@ -1,7 +1,10 @@
 package com.coigniez.resumebuilder.services;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -105,5 +108,22 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
         
         // Delete all methods
         latexMethodRepository.deleteAllByLayoutId(layoutId);
+    }
+
+    /**
+     * Get all latex methods for a layout
+     * 
+     * @param id layout id to get the latex methods from
+     * @return a map of latex methods grouped by class
+     */
+    public Map<Class<?>, List<LatexMethodResponse>> getLatexMethodsMap(Long id) {
+        return latexMethodRepository.findAllByLayoutId(id).stream()
+                .map(latexMethodMapper::toDto)
+                .filter(latexMethod -> latexMethod.getType() != null && latexMethod.getType().getDataType() != null) // TODO: Handle Section?
+                .collect(Collectors.groupingBy(
+                    latexMethod -> latexMethod.getType().getDataType(),
+                    HashMap::new,
+                    Collectors.toList()
+                ));
     }
 }

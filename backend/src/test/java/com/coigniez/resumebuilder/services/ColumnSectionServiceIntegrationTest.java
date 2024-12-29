@@ -37,7 +37,6 @@ import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplates;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @SpringBootTest
@@ -61,7 +60,6 @@ public class ColumnSectionServiceIntegrationTest {
     private Authentication otheruser;
     private Long columnId;
     private Long sectionId;
-    private Map<String, Long> methodIds;
 
     @BeforeEach
     void setUp() {
@@ -111,9 +109,6 @@ public class ColumnSectionServiceIntegrationTest {
         // Create a section
         sectionId = sectionService
                 .create(CreateSectionRequest.builder().resumeId(resumeId).title("Education").build());
-
-        // Get the latex method IDs for the layout
-        methodIds = layoutService.getLatexMethodsMap(layoutId);
     }
 
     @Test
@@ -122,7 +117,6 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest request = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(1)
                 .build();
 
@@ -147,7 +141,6 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest request = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(newSectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(1)
                 .build();
 
@@ -162,14 +155,12 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest nonExistentColumnRequest = CreateColumnSectionRequest.builder()
                 .columnId(-1L) // Non-existent column ID
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(1)
                 .build();
 
         CreateColumnSectionRequest nonExistentSectionRequest = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(-1L) // Non-existent section ID
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(1)
                 .build();
 
@@ -197,19 +188,16 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest request1 = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .build();
 
         CreateColumnSectionRequest request2 = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .build();
 
         CreateColumnSectionRequest request3 = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .build();
 
         // Act
@@ -237,7 +225,6 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest request1 = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(1)
                 .build();
 
@@ -246,7 +233,6 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest request2 = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(2)
                 .build();
 
@@ -256,7 +242,6 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest request3 = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(2)
                 .build();
 
@@ -265,7 +250,6 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest request4 = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(4)
                 .build();
 
@@ -292,15 +276,15 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest createRequest = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(1)
                 .build();
 
         Long columnSectionId = columnSectionService.create(createRequest);
+        ColumnSectionResponse columnSection = columnSectionService.get(columnSectionId);
 
         UpdateColumnSectionRequest updateRequest = UpdateColumnSectionRequest.builder()
                 .id(columnSectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
+                .latexMethodId(columnSection.getLatexMethod().getId())
                 .itemOrder(2)
                 .endsep(2.0)
                 .itemsep(2.0)
@@ -321,7 +305,6 @@ public class ColumnSectionServiceIntegrationTest {
         // Arrange
         UpdateColumnSectionRequest request = UpdateColumnSectionRequest.builder()
                 .itemOrder(1)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .build();
 
         // Act & Assert
@@ -336,7 +319,6 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest request1 = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(1)
                 .build();
 
@@ -345,7 +327,6 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest request2 = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(2)
                 .build();
 
@@ -354,16 +335,16 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest request3 = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(3)
                 .build();
 
         long id3 = columnSectionService.create(request3);
+        ColumnSectionResponse columnSection = columnSectionService.get(id3);
 
         // Act
         UpdateColumnSectionRequest request4 = UpdateColumnSectionRequest.builder()
                 .id(id3)
-                .latexMethodId(methodIds.get("sectiontitle"))
+                .latexMethodId(columnSection.getLatexMethod().getId())
                 .itemOrder(2)
                 .endsep(2.0)
                 .itemsep(2.0)
@@ -391,7 +372,6 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest request1 = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(1)
                 .build();
 
@@ -400,16 +380,15 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest request2 = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(2)
                 .build();
 
         long id2 = columnSectionService.create(request2);
+        ColumnSectionResponse columnSection = columnSectionService.get(id2);
 
         CreateColumnSectionRequest request3 = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(3)
                 .build();
 
@@ -418,7 +397,7 @@ public class ColumnSectionServiceIntegrationTest {
         // Act
         columnSectionService.update(UpdateColumnSectionRequest.builder()
                 .id(id2)
-                .latexMethodId(methodIds.get("sectiontitle"))
+                .latexMethodId(columnSection.getLatexMethod().getId())
                 .itemOrder(3)
                 .endsep(2.0)
                 .itemsep(2.0)
@@ -444,7 +423,6 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest request = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(1)
                 .build();
 
@@ -464,7 +442,6 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest request1 = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(1)
                 .build();
 
@@ -473,7 +450,6 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest request2 = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(2)
                 .build();
 
@@ -482,7 +458,6 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest request3 = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(3)
                 .build();
 
@@ -523,7 +498,6 @@ public class ColumnSectionServiceIntegrationTest {
         CreateColumnSectionRequest request = CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(methodIds.get("sectiontitle"))
                 .itemOrder(1)
                 .build();
 
