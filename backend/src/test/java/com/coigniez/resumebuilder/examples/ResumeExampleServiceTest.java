@@ -16,7 +16,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
 import com.coigniez.resumebuilder.services.LayoutService;
 
 import jakarta.transaction.Transactional;
@@ -58,5 +58,6 @@ public class ResumeExampleServiceTest {
         assertTrue(generatedPdf.length > 0);
 
         // Feel free to write the PDF to a file to open and inspect it
+        // Files.write(Paths.get("example.pdf"), generatedPdf);
     }
 }

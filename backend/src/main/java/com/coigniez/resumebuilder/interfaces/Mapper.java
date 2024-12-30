@@ -1,30 +1,41 @@
 package com.coigniez.resumebuilder.interfaces;
 
-public interface Mapper<Entity, Request, Response> {
+import org.springframework.validation.annotation.Validated;
+
+import jakarta.validation.Valid;
+
+/**
+ * Interface for mapping between entities and request/response objects.
+ * 
+ * @param <Entity>   the entity type
+ * @param <CreateReq> the create request type
+ * @param <UpdateReq> the update request type
+ * @param <Resp>      the response type
+ */
+@Validated
+public interface Mapper<Entity, CreateReq extends CreateRequest, UpdateReq extends UpdateRequest, Resp extends Response> {
 
     /**
-     * Convert a request to an entity
+     * Convert a create request object to an entity.
      * 
-     * @param request the request to convert
+     * @param request the create request object
      * @return the entity
      */
-    Entity toEntity(Request request);
+    Entity toEntity(@Valid CreateReq request);
 
     /**
-     * Convert an entity to a response
+     * Convert an entity to a response object.
      * 
-     * @param entity the entity to convert
-     * @return the response
+     * @param entity the entity
+     * @return the response object
      */
-    Response toDto(Entity entity);
+    Resp toDto(Entity entity);
 
     /**
-     * Update an entity with a request
-     * This method makes sure that only the fields that are allowed to be updated are updated
+     * Update an entity with values from an update request object.
      * 
      * @param entity the entity to update
-     * @param request the request to update with
+     * @param request the update request object with updated values
      */
-    void updateEntity(Entity entity, Request request);
-
+    void updateEntity(Entity entity, @Valid UpdateReq request);
 }

@@ -1,4 +1,5 @@
 package com.coigniez.resumebuilder.services;
+
 import jakarta.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,11 +18,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coigniez.resumebuilder.domain.common.PageResponse;
-import com.coigniez.resumebuilder.domain.resume.ResumeDetailResponse;
-import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
-import com.coigniez.resumebuilder.domain.resume.ResumeResponse;
-import com.coigniez.resumebuilder.domain.section.SectionRequest;
-import com.coigniez.resumebuilder.domain.section.SectionResponse;
+import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeDetailResponse;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResponse;
+import com.coigniez.resumebuilder.domain.resume.dtos.UpdateResumeRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -52,30 +54,27 @@ public class ResumeServiceIntegrationTest {
     void setUp() {
         // Create mock users
         testuser = new UsernamePasswordAuthenticationToken(
-                "testuser", 
-                "password", 
-                List.of(new SimpleGrantedAuthority("ROLE_USER"))
-        );
+                "testuser",
+                "password",
+                List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
         otheruser = new UsernamePasswordAuthenticationToken(
-                "otheruser", 
-                "password", 
-                List.of(new SimpleGrantedAuthority("ROLE_USER"))
-        );
+                "otheruser",
+                "password",
+                List.of(new SimpleGrantedAuthority("ROLE_USER")));
         // Set the Authentication object in the SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(testuser);
     }
-    
+
     @Test
     void testCreateAndGet() {
         // Arrange
-        ResumeRequest resumeRequest = ResumeRequest.builder()
+        CreateResumeRequest resumeRequest = CreateResumeRequest.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                    SectionRequest.builder().title("Education").build(),
-                    SectionRequest.builder().title("Experience").build()))
+                        CreateSectionRequest.builder().title("Education").build(),
+                        CreateSectionRequest.builder().title("Experience").build()))
                 .build();
-
 
         // Act
         Long resumeId = resumeService.create(resumeRequest);
@@ -87,20 +86,21 @@ public class ResumeServiceIntegrationTest {
         assertEquals("Software Engineer", resume.getTitle(), "Title should be Software Engineer");
         assertNotNull(resume.getCreatedDate(), "Created date should not be null");
         assertNotNull(resume.getLastModifiedDate(), "Last modified date should not be null");
-        assertEquals(resume.getCreatedDate(), resume.getLastModifiedDate(), "Created date and last modified date should be the same");
+        assertEquals(resume.getCreatedDate(), resume.getLastModifiedDate(),
+                "Created date and last modified date should be the same");
         assertEquals(resume.getSections().size(), 2, "There should be 2 sections");
         assertThat(resume.getSections().stream().map(SectionResponse::getTitle))
-            .containsExactlyInAnyOrder("Education", "Experience");
+                .containsExactlyInAnyOrder("Education", "Experience");
     }
 
     @Test
     void testUploadPicture() throws IOException {
         // Arrange
-        ResumeRequest resumeRequest = ResumeRequest.builder()
+        CreateResumeRequest resumeRequest = CreateResumeRequest.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                    SectionRequest.builder().title("Education").build(),
-                    SectionRequest.builder().title("Experience").build()))
+                        CreateSectionRequest.builder().title("Education").build(),
+                        CreateSectionRequest.builder().title("Experience").build()))
                 .build();
 
         Long resumeId = resumeService.create(resumeRequest);
@@ -112,7 +112,8 @@ public class ResumeServiceIntegrationTest {
 
         // Assert
         assertNotNull(resume.getPicture(), "Picture path should not be null after upload");
-        assertArrayEquals(pictureFile.getBytes(), resume.getPicture(), "Picture content should be the same as the uploaded file");
+        assertArrayEquals(pictureFile.getBytes(), resume.getPicture(),
+                "Picture content should be the same as the uploaded file");
         assertEquals("Software Engineer", resume.getTitle(), "Title should not be changed");
         assertEquals(2, resume.getSections().size(), "Sections should not be changed");
     }
@@ -120,11 +121,11 @@ public class ResumeServiceIntegrationTest {
     @Test
     void updateDoesNotRemovePicture() throws IOException {
         // Arrange
-        ResumeRequest resumeRequest = ResumeRequest.builder()
+        CreateResumeRequest resumeRequest = CreateResumeRequest.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                    SectionRequest.builder().title("Education").build(),
-                    SectionRequest.builder().title("Experience").build()))
+                        CreateSectionRequest.builder().title("Education").build(),
+                        CreateSectionRequest.builder().title("Experience").build()))
                 .build();
 
         Long resumeId = resumeService.create(resumeRequest);
@@ -132,32 +133,34 @@ public class ResumeServiceIntegrationTest {
 
         // Act
         resumeService.uploadPicture(resumeId, pictureFile);
-        resumeService.update(ResumeRequest.builder().id(resumeId).title("updated").build());
+        resumeService.update(UpdateResumeRequest.builder().id(resumeId).title("updated")
+                .createSections(List.of()).updateSections(List.of()).build());
         ResumeDetailResponse resume = resumeService.get(resumeId);
 
         // Assert
         assertNotNull(resume.getPicture(), "Picture path should not be null after update");
-        assertArrayEquals(pictureFile.getBytes(), resume.getPicture(), "Picture content should be the same as the uploaded file");
+        assertArrayEquals(pictureFile.getBytes(), resume.getPicture(),
+                "Picture content should be the same as the uploaded file");
         assertEquals("updated", resume.getTitle(), "Title should be updated");
     }
 
     @Test
     void testUpdate() {
         // Arrange
-        ResumeRequest resumeRequest = ResumeRequest.builder()
+        CreateResumeRequest resumeRequest = CreateResumeRequest.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                    SectionRequest.builder().title("Education").build(),
-                    SectionRequest.builder().title("Experience").build()))
+                        CreateSectionRequest.builder().title("Education").build(),
+                        CreateSectionRequest.builder().title("Experience").build()))
                 .build();
 
         Long resumeId = resumeService.create(resumeRequest);
 
-        ResumeRequest updatedResumeRequest = ResumeRequest.builder()
+        UpdateResumeRequest updatedResumeRequest = UpdateResumeRequest.builder()
                 .id(resumeId)
                 .title("Barista")
-                .sections(List.of(
-                    SectionRequest.builder().title("CoffeeLover").build()))
+                .createSections(List.of(CreateSectionRequest.builder().title("CoffeeLover").build()))
+                .updateSections(List.of())
                 .build();
         // Act
         resumeService.update(updatedResumeRequest);
@@ -167,19 +170,20 @@ public class ResumeServiceIntegrationTest {
         assertNotNull(updatedResume, "Resume should not be null after update");
         assertEquals("Barista", updatedResume.getTitle(), "Title should be updated");
         assertEquals(3, updatedResume.getSections().size(), "There should be 3 sections");
-        assertEquals(Set.of("Education", "Experience", "CoffeeLover"), 
-            updatedResume.getSections().stream().map(SectionResponse::getTitle).collect(Collectors.toSet()),
-            "The section should be added without removing the other sections");
+        assertEquals(Set.of("Education", "Experience", "CoffeeLover"),
+                updatedResume.getSections().stream().map(SectionResponse::getTitle)
+                        .collect(Collectors.toSet()),
+                "The section should be added without removing the other sections");
     }
 
     @Test
     void testDelete() {
         // Arrange
-        ResumeRequest resumeRequest = ResumeRequest.builder()
+        CreateResumeRequest resumeRequest = CreateResumeRequest.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                    SectionRequest.builder().title("Education").build(),
-                    SectionRequest.builder().title("Experience").build()))
+                        CreateSectionRequest.builder().title("Education").build(),
+                        CreateSectionRequest.builder().title("Experience").build()))
                 .build();
 
         Long resumeId = resumeService.create(resumeRequest);
@@ -188,33 +192,40 @@ public class ResumeServiceIntegrationTest {
         resumeService.delete(resumeId);
 
         // Assert
-        assertThrows(EntityNotFoundException.class, () -> { resumeService.get(resumeId); }, "Resume should not be found after deletion");
+        assertThrows(EntityNotFoundException.class, () -> {
+            resumeService.get(resumeId);
+        }, "Resume should not be found after deletion");
 
     }
 
     @Test
     void testAuthentications() {
         // Arrange
-        ResumeRequest resumeRequest = ResumeRequest.builder()
+        CreateResumeRequest resumeRequest = CreateResumeRequest.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                    SectionRequest.builder().title("Education").build(),
-                    SectionRequest.builder().title("Experience").build()))
+                        CreateSectionRequest.builder().title("Education").build(),
+                        CreateSectionRequest.builder().title("Experience").build()))
                 .build();
 
         Long resumeId = resumeService.create(resumeRequest);
-        
+
         // Set it to otheruser
         SecurityContextHolder.getContext().setAuthentication(otheruser);
 
         // Act & Assert
-        resumeRequest.setId(resumeId);
-        assertThrows(AccessDeniedException.class, () -> { resumeService.get(resumeId); }, 
-            "Should throw AccessDeniedException when trying to get resume of other user");
-        assertThrows(AccessDeniedException.class, () -> { resumeService.update(resumeRequest); }, 
-            "Should throw AccessDeniedException when trying to update resume of other user");
-        assertThrows(AccessDeniedException.class, () -> { resumeService.delete(resumeId); }, 
-        "Should throw AccessDeniedException when trying to delete resume of other user");
+        assertThrows(AccessDeniedException.class, () -> {
+            resumeService.get(resumeId);
+        },
+                "Should throw AccessDeniedException when trying to get resume of other user");
+        assertThrows(AccessDeniedException.class, () -> {
+            resumeService.update(UpdateResumeRequest.builder().id(resumeId).build());
+        },
+                "Should throw AccessDeniedException when trying to update resume of other user");
+        assertThrows(AccessDeniedException.class, () -> {
+            resumeService.delete(resumeId);
+        },
+                "Should throw AccessDeniedException when trying to delete resume of other user");
     }
 
     @Test
@@ -223,28 +234,34 @@ public class ResumeServiceIntegrationTest {
         Long resumeId = -1L;
 
         // Act & Assert
-        assertThrows(EntityNotFoundException.class, () -> { resumeService.get(resumeId); }, 
-            "Should throw EntityNotFoundException when resume is not found");
-        assertThrows(EntityNotFoundException.class, () -> { resumeService.update(ResumeRequest.builder().id(resumeId).title("updated").build()); },
-            "Should throw EntityNotFoundException when trying to update non-existing resume");
-        assertThrows(EntityNotFoundException.class, () -> { resumeService.delete(resumeId); },
-            "Should throw EntityNotFoundException when trying to delete non-existing resume");
+        assertThrows(EntityNotFoundException.class, () -> {
+            resumeService.get(resumeId);
+        },
+                "Should throw EntityNotFoundException when resume is not found");
+        assertThrows(EntityNotFoundException.class, () -> {
+            resumeService.update(UpdateResumeRequest.builder().id(resumeId).title("updated").build());
+        },
+                "Should throw EntityNotFoundException when trying to update non-existing resume");
+        assertThrows(EntityNotFoundException.class, () -> {
+            resumeService.delete(resumeId);
+        },
+                "Should throw EntityNotFoundException when trying to delete non-existing resume");
     }
 
     @Test
     void testGetAll() {
         // Arrange
-        ResumeRequest resumeRequest1 = ResumeRequest.builder()
+        CreateResumeRequest resumeRequest1 = CreateResumeRequest.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                    SectionRequest.builder().title("Education").build(),
-                    SectionRequest.builder().title("Experience").build()))
+                        CreateSectionRequest.builder().title("Education").build(),
+                        CreateSectionRequest.builder().title("Experience").build()))
                 .build();
-        ResumeRequest resumeRequest2 = ResumeRequest.builder()
+        CreateResumeRequest resumeRequest2 = CreateResumeRequest.builder()
                 .title("Barista")
                 .sections(List.of(
-                    SectionRequest.builder().title("Education").build(),
-                    SectionRequest.builder().title("Experience").build()))
+                        CreateSectionRequest.builder().title("Education").build(),
+                        CreateSectionRequest.builder().title("Experience").build()))
                 .build();
         // Act
         Long resumeId1 = resumeService.create(resumeRequest1);
@@ -255,10 +272,13 @@ public class ResumeServiceIntegrationTest {
         assertNotNull(resumes, "Resumes should not be null");
         assertEquals(2, resumes.getContent().size(), "There should be 2 resumes");
         // Check the order
-        assertEquals(resumeId2, resumes.getContent().get(0).getId(), "Barista was added last so should be first");
-        assertEquals(resumeId1, resumes.getContent().get(1).getId(), "Software Engineer was added first so should be last");
+        assertEquals(resumeId2, resumes.getContent().get(0).getId(),
+                "Barista was added last so should be first");
+        assertEquals(resumeId1, resumes.getContent().get(1).getId(),
+                "Software Engineer was added first so should be last");
         // Check if resumes are correct
-        assertEquals("Software Engineer", resumes.getContent().get(1).getTitle(), "Title should be Software Engineer");
+        assertEquals("Software Engineer", resumes.getContent().get(1).getTitle(),
+                "Title should be Software Engineer");
         assertEquals("Barista", resumes.getContent().get(0).getTitle(), "Title should be Barista");
         // Check the pageresponse
         assertEquals(0, resumes.getNumber(), "Page number should be 0");
@@ -270,17 +290,17 @@ public class ResumeServiceIntegrationTest {
     @Test
     void testDeleteAll() {
         // Arrange
-        ResumeRequest resumeRequest1 = ResumeRequest.builder()
+        CreateResumeRequest resumeRequest1 = CreateResumeRequest.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                    SectionRequest.builder().title("Education").build(),
-                    SectionRequest.builder().title("Experience").build()))
+                        CreateSectionRequest.builder().title("Education").build(),
+                        CreateSectionRequest.builder().title("Experience").build()))
                 .build();
-        ResumeRequest resumeRequest2 = ResumeRequest.builder()
+        CreateResumeRequest resumeRequest2 = CreateResumeRequest.builder()
                 .title("Barista")
                 .sections(List.of(
-                    SectionRequest.builder().title("Education").build(),
-                    SectionRequest.builder().title("Experience").build()))
+                        CreateSectionRequest.builder().title("Education").build(),
+                        CreateSectionRequest.builder().title("Experience").build()))
                 .build();
 
         // Act
@@ -289,8 +309,12 @@ public class ResumeServiceIntegrationTest {
         resumeService.deleteAll();
 
         // Assert
-        assertThrows(EntityNotFoundException.class, () -> { resumeService.get(resumeId1); }, "Resume 1 should not be found after deletion");
-        assertThrows(EntityNotFoundException.class, () -> { resumeService.get(resumeId2); }, "Resume 2 should not be found after deletion");
+        assertThrows(EntityNotFoundException.class, () -> {
+            resumeService.get(resumeId1);
+        }, "Resume 1 should not be found after deletion");
+        assertThrows(EntityNotFoundException.class, () -> {
+            resumeService.get(resumeId2);
+        }, "Resume 2 should not be found after deletion");
 
     }
 

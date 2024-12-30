@@ -19,6 +19,7 @@ import com.coigniez.resumebuilder.interfaces.Creatable;
 import com.coigniez.resumebuilder.interfaces.TimeTrackable;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Getter
@@ -36,6 +37,7 @@ public class Resume implements BaseEntity, TimeTrackable, Creatable {
     @GeneratedValue
     private Long id;
 
+    @NotBlank
     private String title;
     private String picture;
 

@@ -1,88 +1,45 @@
 # Model of the resume structure
+Here is a complete overview of the domain. All information about the resume is stored in the classes: Resume, Section, and SectionItem.
+
+A resume can have multiple layouts, which define where, how, and which information is displayed. This can be handy for managing multiple versions of a resume depending on the application, while allowing changes to be reflected across all versions.
 
 ```mermaid
 erDiagram
-    User {
-        string username
-        string email
-        string password
-    }
-    Resume {
-        string title
-        string first_name
-        string last_name
-        Image image
-        datetime created_at
-        datetime updated_at
-    }
-    About {
-        string title
-        string description
-    }
-    Section {
-        string title
-        string type
-    }
-    SectionItem {
-    }
-
     User ||--o{ Resume : ""
     Resume ||--o{ Section : ""
-    Resume ||--|| PersonalDetails : ""
-    Resume ||--|| About : ""
     Section ||--o{ SectionItem : ""
+    Resume ||--o{ Layout : ""
+    Layout ||--o{ Column : ""
+    Layout ||--o{ LatexMethod : ""
+    Column ||--o{ ColumnSection : ""
+    Section ||--o{ ColumnSection : ""
+    LatexMethod ||--o{ ColumnSection : ""
+    SectionItem ||--o{ LayoutSectionItem : ""
+    LatexMethod ||--o{ LayoutSectionItem : ""
+    ColumnSection ||--o{ LayoutSectionItem : ""
 ```
 
-## SectionItems
+## Resume structure
+It is here where the information of the resume is stored
 ```mermaid
 erDiagram
-    
-    ContactItem {
-        String fontawesome
-        String content    
-    }
+Resume{
+    String title
+}
 
-    EducationItem {
-        string institution
-        string degree
-        string field_of_study
-        date start_date
-        date end_date
-        string grade
-    }
+Section {
+    String title
+    String icon
+    boolean showTitle
+}
 
-    ExperienceItem {
-        string company
-        string position
-        date start_date
-        date end_date
-        string description
-    }
+SectionItem {
+    SectionItemData item
+    Integer itemOrder
+}
 
-    SkillItem {
-        string skill_name
-        string proficiency_level
-    }
-
-    ProjectItem {
-        string project_name
-        string description
-        string technologies_used
-        string link
-    }
-
-    CertificationItem {
-        string certification_name
-        string issuing_organization
-        date issue_date
-        date expiration_date
-    }
-
-    LanguageItem {
-        string language_name
-        string proficiency_level
-        string certification
-    }
+Resume ||--o{ Section : ""
+Section ||--o{ SectionItem : ""
 ```
 
 

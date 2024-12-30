@@ -3,8 +3,8 @@
 import { SectionItemRequest } from '../models/section-item-request';
 export interface SectionRequest {
   id?: number;
-  resumeId?: number;
+  resumeId: number;
   sectionItems?: Array<SectionItemRequest>;
-  showTitle: boolean;
+  showTitle?: boolean;
   title: string;
 }

@@ -11,6 +11,7 @@ import com.coigniez.resumebuilder.interfaces.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter @Setter
@@ -25,8 +26,9 @@ public class Column implements BaseEntity {
     private Long id;
     
     @Min(1) @Max(2)
-    private Integer columnNumber;
+    private int columnNumber;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "layout_id", referencedColumnName = "id")
     private Layout layout;
@@ -36,8 +38,11 @@ public class Column implements BaseEntity {
     @Builder.Default
     private List<ColumnSection> sectionMappings = new ArrayList<>();
     
+    @NotNull
     private ColorLocation backgroundColor;
+    @NotNull
     private ColorLocation textColor;
+    @NotNull
     private ColorLocation borderColor;
     
     @Min(0)

@@ -15,9 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeDetailResponse;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResponse;
 import com.coigniez.resumebuilder.domain.section.Section;
-import com.coigniez.resumebuilder.domain.section.SectionRequest;
-import com.coigniez.resumebuilder.domain.section.SectionResponse;
+import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -29,10 +32,10 @@ public class ResumeMapperTest {
     @Test
     void testToEntity() {
         // Arrange
-        ResumeRequest dto = ResumeRequest.builder().title("Software Engineer")
+        CreateResumeRequest dto = CreateResumeRequest.builder().title("Software Engineer")
                 .sections(List.of(
-                    SectionRequest.builder().title("Education").build(),
-                    SectionRequest.builder().title("Experience").build()))
+                    CreateSectionRequest.builder().title("Education").build(),
+                    CreateSectionRequest.builder().title("Experience").build()))
                 .build();
 
         // Act

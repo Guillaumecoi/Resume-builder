@@ -7,13 +7,21 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 
-import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionRequest;
-import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
-import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
-import com.coigniez.resumebuilder.domain.resume.*;
-import com.coigniez.resumebuilder.domain.section.*;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
+import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeDetailResponse;
+import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Contact;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Education;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skillboxes;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Title;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Experience;
 import com.coigniez.resumebuilder.services.ColumnSectionService;
 import com.coigniez.resumebuilder.services.LayoutService;
 import com.coigniez.resumebuilder.services.ResumeService;
@@ -25,7 +33,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +51,7 @@ public class ResumeExampleService {
         ResumeDetailResponse resume = createBaseResume(title);
         Long layoutId = addLayout(resume.getId());
         LayoutResponse layout = layoutService.get(layoutId);
-        Map<String, Long> methodIds = layoutService.getLatexMethodsMap(layoutId);
+        Map<String, Long> methodIds = null;
         
         addPictureSection(resume.getId(), layout.getColumns().get(0).getId(), 1, methodIds);
         addContactSection(resume.getId(), layout.getColumns().get(0).getId(), 2, methodIds);
@@ -58,31 +65,29 @@ public class ResumeExampleService {
     }
 
     private ResumeDetailResponse createBaseResume(String title) {
-        ResumeRequest resumeRequest = ResumeRequest.builder().title(title).build();
+        CreateResumeRequest resumeRequest = CreateResumeRequest.builder().title(title).build();
         
         Long resumeId = resumeService.create(resumeRequest);
         return resumeService.get(resumeId);
     }
 
     private void addPictureSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) throws IOException {
-        Long sectionId = sectionService.create(SectionRequest.builder()
+        Long sectionId = sectionService.create(CreateSectionRequest.builder()
                 .resumeId(resumeId)
                 .title("Picture")
                 .showTitle(false)
                 .build());
                 
-        SectionItemRequest pictureRequest = SectionItemRequest.builder()
+        CreateSectionItemRequest pictureRequest = CreateSectionItemRequest.builder()
                 .sectionId(sectionId)
-                .type(SectionItemType.PICTURE.name())
-                .data(new HashMap<>() {{
-                        put("caption", "Photo by Ali Mammadli on Unsplash");
-                        put("width", 0.9);
-                        put("height", 1.1);
-                        put("shadow", 2.0);
-                        put("zoom", 1.8);
-                        put("yoffset", -8.0);
-                }})
-                .latexMethodId(methodIds.get("pictureitem"))
+                .item(Picture.builder()
+                        .caption("Photo by Ali Mammadli on Unsplash")
+                        .width(0.9)
+                        .height(1.1)
+                        .shadow(2.0)
+                        .zoom(1.8)
+                        .yoffset(-8.0)
+                        .build())
                 .build();
 
         Path resourcePath = Paths.get("src", "main", "resources", "images", "ali-mammadli-unsplash.jpg");
@@ -97,275 +102,250 @@ public class ResumeExampleService {
                 
         sectionItemService.createPicture(file, pictureRequest);
         
-        columnSectionService.create(ColumnSectionRequest.builder()
+        columnSectionService.create(CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .sectionOrder(sectionOrder)
+                .latexMethodId(methodIds.get("sectiontitle"))
+                .itemOrder(sectionOrder)
                 .build());
     }
 
     private void addContactSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
-        List<SectionItemRequest> contactItems = new ArrayList<>();
-        contactItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.CONTACT.name())
-                .data(new HashMap<>() {{
-                    put("icon", "\\faMapMarker");
-                    put("label", "Brussels, Belgium");
-                }})
-                .latexMethodId(methodIds.get("contactitem"))
+        List<CreateSectionItemRequest> contactItems = new ArrayList<>();
+        contactItems.add(CreateSectionItemRequest.builder()
+                .item(Contact.builder()
+                        .icon("\\faMapMarker")
+                        .label("Brussels, Belgium")
+                        .build())
                 .build());
     
-        contactItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.CONTACT.name())
-                .data(new HashMap<>() {{
-                    put("icon", "\\faEnvelope");
-                    put("label", "john@email.com");
-                    put("link", "mailto:john@email.com");
-                }})
-                .latexMethodId(methodIds.get("contactitem"))
+        contactItems.add(CreateSectionItemRequest.builder()
+                .item(Contact.builder()
+                        .icon("\\faEnvelope")
+                        .label("john@email.com")
+                        .link("mailto:john@email.com")
+                        .build())
                 .build());
 
-        contactItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.CONTACT.name())
-                .data(new HashMap<>() {{
-                    put("icon", "\\faPhone");
-                    put("label", "+32 123 456 789");
-                    put("link", "tel:+32123456789");
-                }})
-                .latexMethodId(methodIds.get("contactitem"))
+        contactItems.add(CreateSectionItemRequest.builder()
+                .item(Contact.builder()
+                        .icon("\\faPhone")
+                        .label("+32 123 456 789")
+                        .link("tel:+32123456789")
+                        .build())
                 .build());
 
-        contactItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.CONTACT.name())
-                .data(new HashMap<>() {{
-                    put("icon", "\\faLinkedin");
-                    put("label", "johndoe");
-                    put("link", "https://linkedin.com/in/johndoe");
-                }})
-                .latexMethodId(methodIds.get("contactitem"))
+        contactItems.add(CreateSectionItemRequest.builder()
+                .item(Contact.builder()
+                        .icon("\\faLinkedin")
+                        .label("johndoe")
+                        .link("https://linkedin.com/in/johndoe")
+                        .build())
                 .build());
 
-        contactItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.CONTACT.name())
-                .data(new HashMap<>() {{
-                    put("icon", "\\faGithub");
-                    put("label", "johndoe");
-                    put("link", "https://github.com/johndoe");
-                }})
-                .latexMethodId(methodIds.get("contactitem"))
+        contactItems.add(CreateSectionItemRequest.builder()
+                .item(Contact.builder()
+                        .icon("\\faGithub")
+                        .label("johndoe")
+                        .link("https://github.com/johndoe")
+                        .build())
                 .build());
 
-        contactItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.CONTACT.name())
-                .data(new HashMap<>() {{
-                    put("icon", "\\faCar");
-                    put("label", "Driving License B");
-                }})
-                .latexMethodId(methodIds.get("contactitem"))
+        contactItems.add(CreateSectionItemRequest.builder()
+                .item(Contact.builder()
+                        .icon("\\faCar")
+                        .label("Driving License B")
+                        .build())
                 .build());
 
-        Long contactId = sectionService.create(SectionRequest.builder()
+        Long contactId = sectionService.create(CreateSectionRequest.builder()
                 .resumeId(resumeId)
                 .title("Contact")
                 .showTitle(true)
                 .sectionItems(contactItems)
                 .build());
 
-        columnSectionService.create(ColumnSectionRequest.builder()
+        columnSectionService.create(CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(contactId)
-                .sectionOrder(sectionOrder)
+                .latexMethodId(methodIds.get("sectiontitle"))
+                .itemOrder(sectionOrder)
                 .itemsep(4.0)
                 .build());
         }
 
 
     private void addEducationSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
-        List<SectionItemRequest> educationItems = new ArrayList<>();
-        educationItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.EDUCATION.name())
+        List<CreateSectionItemRequest> educationItems = new ArrayList<>();
+        educationItems.add(CreateSectionItemRequest.builder()
                 .itemOrder(2)
-                .data(new HashMap<>() {{
-                    put("degree", "Bachelor of Science in Computer Science");
-                    put("institution", "Open Universiteit Utrecht");
-                    put("period", "2019 - 2023");
-                }})
-                .latexMethodId(methodIds.get("educationitem"))
+                .item(Education.builder()
+                        .degree("Bachelor of Science in Computer Science")
+                        .institution("Open Universiteit Utrecht")
+                        .period("2019 - 2023")
+                        .build())
                 .build());
 
-        educationItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.EDUCATION.name())
+        educationItems.add(CreateSectionItemRequest.builder()
                 .itemOrder(1)
-                .data(new HashMap<>() {{
-                    put("degree", "Master of Science in Computer Science");
-                    put("institution", "Open Universiteit Utrecht");
-                    put("period", "2023 -");
-                }})
-                .latexMethodId(methodIds.get("educationitem"))
+                .item(Education.builder()
+                        .degree("Master of Science in Computer Science")
+                        .institution("Open Universiteit Utrecht")
+                        .period("2023 -")
+                        .build())
                 .build());
         
-        educationItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.EDUCATION.name())
+        educationItems.add(CreateSectionItemRequest.builder()
                 .itemOrder(3)
-                .data(new HashMap<>() {{
-                    put("degree", "Science-Mathematics");
-                    put("institution", "International School of Brussels");
-                    put("period", "2016");
-                }})
-                .latexMethodId(methodIds.get("educationitem"))
+                .item(Education.builder()
+                        .degree("Science-Mathematics")
+                        .institution("International School of Brussels")
+                        .period("2016")
+                        .build())
                 .build());
         
-        Long educationId = sectionService.create(SectionRequest.builder()
+        Long educationId = sectionService.create(CreateSectionRequest.builder()
                 .resumeId(resumeId)
                 .title("Education")
                 .showTitle(true)
                 .sectionItems(educationItems)
                 .build());
-        columnSectionService.create(ColumnSectionRequest.builder()
+
+        columnSectionService.create(CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(educationId)
-                .sectionOrder(sectionOrder)
+                .latexMethodId(methodIds.get("sectiontitle"))
+                .itemOrder(sectionOrder)
                 .build());
 
     }
 
     private void addExperienceSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
-        List<SectionItemRequest> experienceItems = new ArrayList<>();
-        experienceItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.WORK_EXPERIENCE.name())
-                .itemOrder(1)
-                .data(new HashMap<>() {{
-                    put("jobTitle", "Software Engineer");
-                    put("companyName", "MIVB/STIB");
-                    put("period", "2021 - 2022");
-                    put("description", "Developing software for the public transport company of Brussels");
-                    put("responsibilities","Developing new features for the website\nMaintaining the existing codebase");
-                }})
-                .latexMethodId(methodIds.get("experienceitem"))
+        List<CreateSectionItemRequest> experienceItems = new ArrayList<>();
+        experienceItems.add(CreateSectionItemRequest.builder()
+                .item(Experience.builder()
+                        .jobTitle("Software Engineer")
+                        .companyName("MIVB/STIB")
+                        .period("2021 - 2022")
+                        .description("Developing software for the public transport company of Brussels")
+                        .responsibilities(List.of("Developing new features for the website", "Maintaining the existing codebase"))
+                        .build())
                 .build());
             
-        Long experienceId = sectionService.create(SectionRequest.builder()
+        Long experienceId = sectionService.create(CreateSectionRequest.builder()
             .resumeId(resumeId)
             .title("Experience")
             .sectionItems(experienceItems)
             .build());
-        columnSectionService.create(ColumnSectionRequest.builder()
+        columnSectionService.create(CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(experienceId)
-                .sectionOrder(sectionOrder)
+                .latexMethodId(methodIds.get("sectiontitle"))
+                .itemOrder(sectionOrder)
                 .build());
     }
 
     private void addTitleSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
-        SectionItemRequest title = SectionItemRequest.builder()
-                .type(SectionItemType.TITLE.name())
-                .data(new HashMap<>() {{
-                    put("title", "John Doe");
-                    put("subtitle", "Software Developer");
-                }})
-                .latexMethodId(methodIds.get("cvtitle"))
+        CreateSectionItemRequest title = CreateSectionItemRequest.builder()
+                .item(Title.builder()
+                        .title("John Doe")
+                        .subtitle("Software Developer")
+                        .build())
                 .build();
             
-        Long titleId = sectionService.create(SectionRequest.builder()
+        Long titleId = sectionService.create(CreateSectionRequest.builder()
                 .resumeId(resumeId)
                 .title("Title")
                 .showTitle(false)
                 .sectionItems(List.of(title))
                 .build());
-        columnSectionService.create(ColumnSectionRequest.builder()
+        columnSectionService.create(CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(titleId)
-                .sectionOrder(sectionOrder)
-                .endsep(6)
+                .latexMethodId(methodIds.get("sectiontitle"))
+                .itemOrder(sectionOrder)
+                .endsep(6.0)
                 .build());
     }
 
     private void addSummarySection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
-        List<SectionItemRequest> summaryItems = new ArrayList<>();
-        summaryItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.TEXTBOX.name())
-                .data(new HashMap<>() {{
-                    put("content", """
-                        Passionate software developer with a strong foundation in computer science, currently pursuing MSc at Open Universiteit Utrecht. 
-                        Specializing in Java development with hands-on experience in Spring Boot and web technologies. 
-                        Strong analytical mindset developed through mathematics-focused secondary education.
-                        Eager to apply theoretical knowledge in practical software development challenges.""");
-                }})
-                .latexMethodId(methodIds.get("textbox"))
+        List<CreateSectionItemRequest> summaryItems = new ArrayList<>();
+        summaryItems.add(CreateSectionItemRequest.builder()
+                .item(Textbox.builder()
+                        .content("""
+                            Passionate software developer with a strong foundation in computer science, currently pursuing MSc at Open Universiteit Utrecht. 
+                            Specializing in Java development with hands-on experience in Spring Boot and web technologies. 
+                            Strong analytical mindset developed through mathematics-focused secondary education.
+                            Eager to apply theoretical knowledge in practical software development challenges.
+                        """)
+                        .build())
                 .build());
             
-        Long summaryId = sectionService.create(SectionRequest.builder()
+        Long summaryId = sectionService.create(CreateSectionRequest.builder()
                 .resumeId(resumeId)
                 .title("About me")
                 .sectionItems(summaryItems)
                 .build());
-        columnSectionService.create(ColumnSectionRequest.builder()
+        columnSectionService.create(CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(summaryId)
-                .sectionOrder(sectionOrder)
+                .latexMethodId(methodIds.get("sectiontitle"))
+                .itemOrder(sectionOrder)
                 .build());
     }
 
     private void addSkillsSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
-        List<SectionItemRequest> skillsItems = new ArrayList<>();
-        skillsItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL_BOXES.name())
-                .data(new HashMap<>() {{
-                    put("skills", "Java, Spring Boot, HTML, CSS, JavaScript, SQL, Python, C, C++");
-                }})
-                .latexMethodId(methodIds.get("skillboxes"))
+        List<CreateSectionItemRequest> skillsItems = new ArrayList<>();
+        skillsItems.add(CreateSectionItemRequest.builder()
+                .item(Skillboxes.builder()
+                        .skills(List.of("Java", "Spring Boot", "HTML", "CSS", "JavaScript", "SQL", "Python", "C", "C++"))
+                        .build())
                 .build());
 
-        skillsItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL.name())
-                .data(new HashMap<>() {{
-                    put("name", "Dutch");
-                }})
-                .latexMethodId(methodIds.get("skillitem"))
+        skillsItems.add(CreateSectionItemRequest.builder()
+                .item(Skill.builder()
+                        .name("Dutch")
+                        .build())
                 .build());
 
-        skillsItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL.name())
-                .data(new HashMap<>() {{
-                    put("name", "French");
-                    put("description", "Intermediate");
-                }})
-                .latexMethodId(methodIds.get("skilltext"))
+        skillsItems.add(CreateSectionItemRequest.builder()
+                .item(Skill.builder()
+                        .name("French")
+                        .description("Intermediate")
+                        .build())
                 .build());
 
-        skillsItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL.name())
-                .data(new HashMap<>() {{
-                    put("name", "English");
-                    put("proficiency", 9);
-                }})
-                .latexMethodId(methodIds.get("skillbullets"))
+        skillsItems.add(CreateSectionItemRequest.builder()
+                .item(Skill.builder()
+                        .name("English")
+                        .proficiency(9)
+                        .build())
                 .build());
 
-        skillsItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL.name())
-                .data(new HashMap<>() {{
-                    put("name", "Japanese");
-                    put("proficiency", 6);
-                }})
-                .latexMethodId(methodIds.get("skillbar"))
+        skillsItems.add(CreateSectionItemRequest.builder()
+                .item(Skill.builder()
+                        .name("Japanese")
+                        .proficiency(6)
+                        .build())
                 .build());
             
-        Long skillsId = sectionService.create(SectionRequest.builder()
+        Long skillsId = sectionService.create(CreateSectionRequest.builder()
                 .resumeId(resumeId)
                 .title("Skills")
                 .sectionItems(skillsItems)
                 .build());
-        columnSectionService.create(ColumnSectionRequest.builder()
+
+        columnSectionService.create(CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(skillsId)
-                .sectionOrder(sectionOrder)
+                .latexMethodId(methodIds.get("sectiontitle"))
+                .itemOrder(sectionOrder)
                 .itemsep(4.0)
                 .build());
     }
 
     private Long addLayout(Long resumeId) {
-        LayoutRequest layoutRequest = LayoutRequest.builder()
+        CreateLayoutRequest layoutRequest = CreateLayoutRequest.builder()
                 .resumeId(resumeId)
                 .numberOfColumns(2)
                 .build();

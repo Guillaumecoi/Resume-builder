@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 4200
 
 # Start dev server with hot reload
-CMD ["npm", "run", "start", "--", "--host", "0.0.0.0", "--poll=2000", "--hmr"]
+CMD ["npm", "run", "start", "--", "--host", "0.0.0.0"]

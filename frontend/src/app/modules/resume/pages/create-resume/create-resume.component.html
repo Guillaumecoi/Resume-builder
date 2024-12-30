@@ -1,0 +1,33 @@
+<div class="bg-base-100 text-base-content">
+  <app-navbar></app-navbar>
+
+  <div class="container mx-auto p-6 shadow-md bg-base-200 rounded my-6">
+    <h1 class="text-2xl font-bold underline underline-offset-8">Create New Resume</h1>
+    <div class="p-6 gap-6" >
+      <div class="pb-6">
+        <label class="w-full max-w-xs" for="title">
+          <div class="label pb-1">
+            <span class="label-text">Resume Name</span>
+          </div>
+          <input
+            id="title"
+            type="text"
+            [(ngModel)]="resume.title"
+            placeholder="Type here..."
+            class="input input-bordered w-full"
+          />
+        </label>
+
+      </div>
+
+      <div class="flex items-center justify-between">
+        <button
+          class="btn btn-primary"
+          (click)="createResume()"
+        >
+          Create
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

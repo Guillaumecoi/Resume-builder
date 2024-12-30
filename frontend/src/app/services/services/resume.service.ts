@@ -9,22 +9,22 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { create2 } from '../fn/resume/create-2';
-import { Create2$Params } from '../fn/resume/create-2';
-import { delete2 } from '../fn/resume/delete-2';
-import { Delete2$Params } from '../fn/resume/delete-2';
-import { get2 } from '../fn/resume/get-2';
-import { Get2$Params } from '../fn/resume/get-2';
-import { getAll } from '../fn/resume/get-all';
-import { GetAll$Params } from '../fn/resume/get-all';
+import { createResume } from '../fn/resume/create-resume';
+import { CreateResume$Params } from '../fn/resume/create-resume';
+import { deleteAllResumes } from '../fn/resume/delete-all-resumes';
+import { DeleteAllResumes$Params } from '../fn/resume/delete-all-resumes';
+import { deleteResume } from '../fn/resume/delete-resume';
+import { DeleteResume$Params } from '../fn/resume/delete-resume';
+import { getAllResumes } from '../fn/resume/get-all-resumes';
+import { GetAllResumes$Params } from '../fn/resume/get-all-resumes';
+import { getResume } from '../fn/resume/get-resume';
+import { GetResume$Params } from '../fn/resume/get-resume';
 import { PageResponseResumeResponse } from '../models/page-response-resume-response';
-import { postMethodName } from '../fn/resume/post-method-name';
-import { PostMethodName$Params } from '../fn/resume/post-method-name';
 import { ResumeDetailResponse } from '../models/resume-detail-response';
-import { update2 } from '../fn/resume/update-2';
-import { Update2$Params } from '../fn/resume/update-2';
-import { uploadPicture } from '../fn/resume/upload-picture';
-import { UploadPicture$Params } from '../fn/resume/upload-picture';
+import { updateResume } from '../fn/resume/update-resume';
+import { UpdateResume$Params } from '../fn/resume/update-resume';
+import { uploadResumePicture } from '../fn/resume/upload-resume-picture';
+import { UploadResumePicture$Params } from '../fn/resume/upload-resume-picture';
 
 @Injectable({ providedIn: 'root' })
 export class ResumeService extends BaseService {
@@ -32,177 +32,177 @@ export class ResumeService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `getAll()` */
-  static readonly GetAllPath = '/resumes';
+  /** Path part for operation `getAllResumes()` */
+  static readonly GetAllResumesPath = '/resumes';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getAll()` instead.
+   * To access only the response body, use `getAllResumes()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll$Response(params?: GetAll$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseResumeResponse>> {
-    return getAll(this.http, this.rootUrl, params, context);
+  getAllResumes$Response(params?: GetAllResumes$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseResumeResponse>> {
+    return getAllResumes(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getAll$Response()` instead.
+   * To access the full response (for headers, for example), `getAllResumes$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll(params?: GetAll$Params, context?: HttpContext): Observable<PageResponseResumeResponse> {
-    return this.getAll$Response(params, context).pipe(
+  getAllResumes(params?: GetAllResumes$Params, context?: HttpContext): Observable<PageResponseResumeResponse> {
+    return this.getAllResumes$Response(params, context).pipe(
       map((r: StrictHttpResponse<PageResponseResumeResponse>): PageResponseResumeResponse => r.body)
     );
   }
 
-  /** Path part for operation `create2()` */
-  static readonly Create2Path = '/resumes';
+  /** Path part for operation `createResume()` */
+  static readonly CreateResumePath = '/resumes';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `create2()` instead.
+   * To access only the response body, use `createResume()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create2$Response(params: Create2$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
-    return create2(this.http, this.rootUrl, params, context);
+  createResume$Response(params: CreateResume$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
+    return createResume(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `create2$Response()` instead.
+   * To access the full response (for headers, for example), `createResume$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create2(params: Create2$Params, context?: HttpContext): Observable<number> {
-    return this.create2$Response(params, context).pipe(
+  createResume(params: CreateResume$Params, context?: HttpContext): Observable<number> {
+    return this.createResume$Response(params, context).pipe(
       map((r: StrictHttpResponse<number>): number => r.body)
     );
   }
 
-  /** Path part for operation `get2()` */
-  static readonly Get2Path = '/resumes/{id}';
+  /** Path part for operation `getResume()` */
+  static readonly GetResumePath = '/resumes/{id}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `get2()` instead.
+   * To access only the response body, use `getResume()` instead.
    *
    * This method doesn't expect any request body.
    */
-  get2$Response(params: Get2$Params, context?: HttpContext): Observable<StrictHttpResponse<ResumeDetailResponse>> {
-    return get2(this.http, this.rootUrl, params, context);
+  getResume$Response(params: GetResume$Params, context?: HttpContext): Observable<StrictHttpResponse<ResumeDetailResponse>> {
+    return getResume(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `get2$Response()` instead.
+   * To access the full response (for headers, for example), `getResume$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  get2(params: Get2$Params, context?: HttpContext): Observable<ResumeDetailResponse> {
-    return this.get2$Response(params, context).pipe(
+  getResume(params: GetResume$Params, context?: HttpContext): Observable<ResumeDetailResponse> {
+    return this.getResume$Response(params, context).pipe(
       map((r: StrictHttpResponse<ResumeDetailResponse>): ResumeDetailResponse => r.body)
     );
   }
 
-  /** Path part for operation `update2()` */
-  static readonly Update2Path = '/resumes/{id}';
+  /** Path part for operation `updateResume()` */
+  static readonly UpdateResumePath = '/resumes/{id}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `update2()` instead.
+   * To access only the response body, use `updateResume()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  update2$Response(params: Update2$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return update2(this.http, this.rootUrl, params, context);
+  updateResume$Response(params: UpdateResume$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return updateResume(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `update2$Response()` instead.
+   * To access the full response (for headers, for example), `updateResume$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  update2(params: Update2$Params, context?: HttpContext): Observable<void> {
-    return this.update2$Response(params, context).pipe(
+  updateResume(params: UpdateResume$Params, context?: HttpContext): Observable<void> {
+    return this.updateResume$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 
-  /** Path part for operation `uploadPicture()` */
-  static readonly UploadPicturePath = '/resumes/{id}/uploadPicture';
+  /** Path part for operation `uploadResumePicture()` */
+  static readonly UploadResumePicturePath = '/resumes/{id}/uploadPicture';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `uploadPicture()` instead.
+   * To access only the response body, use `uploadResumePicture()` instead.
    *
    * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
    */
-  uploadPicture$Response(params: UploadPicture$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return uploadPicture(this.http, this.rootUrl, params, context);
+  uploadResumePicture$Response(params: UploadResumePicture$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return uploadResumePicture(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `uploadPicture$Response()` instead.
+   * To access the full response (for headers, for example), `uploadResumePicture$Response()` instead.
    *
    * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
    */
-  uploadPicture(params: UploadPicture$Params, context?: HttpContext): Observable<void> {
-    return this.uploadPicture$Response(params, context).pipe(
+  uploadResumePicture(params: UploadResumePicture$Params, context?: HttpContext): Observable<void> {
+    return this.uploadResumePicture$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 
-  /** Path part for operation `delete2()` */
-  static readonly Delete2Path = '/resumes/{id}/delete';
+  /** Path part for operation `deleteResume()` */
+  static readonly DeleteResumePath = '/resumes/{id}/delete';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `delete2()` instead.
+   * To access only the response body, use `deleteResume()` instead.
    *
    * This method doesn't expect any request body.
    */
-  delete2$Response(params: Delete2$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return delete2(this.http, this.rootUrl, params, context);
+  deleteResume$Response(params: DeleteResume$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return deleteResume(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `delete2$Response()` instead.
+   * To access the full response (for headers, for example), `deleteResume$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  delete2(params: Delete2$Params, context?: HttpContext): Observable<void> {
-    return this.delete2$Response(params, context).pipe(
+  deleteResume(params: DeleteResume$Params, context?: HttpContext): Observable<void> {
+    return this.deleteResume$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 
-  /** Path part for operation `postMethodName()` */
-  static readonly PostMethodNamePath = '/resumes/deleteAll';
+  /** Path part for operation `deleteAllResumes()` */
+  static readonly DeleteAllResumesPath = '/resumes/deleteAll';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `postMethodName()` instead.
+   * To access only the response body, use `deleteAllResumes()` instead.
    *
    * This method doesn't expect any request body.
    */
-  postMethodName$Response(params?: PostMethodName$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return postMethodName(this.http, this.rootUrl, params, context);
+  deleteAllResumes$Response(params?: DeleteAllResumes$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return deleteAllResumes(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `postMethodName$Response()` instead.
+   * To access the full response (for headers, for example), `deleteAllResumes$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  postMethodName(params?: PostMethodName$Params, context?: HttpContext): Observable<void> {
-    return this.postMethodName$Response(params, context).pipe(
+  deleteAllResumes(params?: DeleteAllResumes$Params, context?: HttpContext): Observable<void> {
+    return this.deleteAllResumes$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }

@@ -12,212 +12,188 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
-import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
-import com.coigniez.resumebuilder.domain.section.SectionRequest;
-import com.coigniez.resumebuilder.domain.section.SectionResponse;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemResponse;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemType;
+import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
+import com.coigniez.resumebuilder.domain.section.dtos.UpdateSectionRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResponse;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.UpdateSectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
 
 import jakarta.validation.ConstraintViolationException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
 public class SectionServiceWithItemsIntegrationTest {
 
-    @Autowired
-    private SectionService sectionService;
-    @Autowired
-    private ResumeService resumeService;
-    @Autowired
-    private LayoutService layoutService;
+        @Autowired
+        private SectionService sectionService;
+        @Autowired
+        private ResumeService resumeService;
 
-    private Authentication testuser;
-    private Long resumeId;
-    private Map<String, Long> methodIds;
+        private Authentication testuser;
+        private Long resumeId;
 
-    @BeforeEach
-    void setUp() {
-        // Create mock users
-        testuser = new UsernamePasswordAuthenticationToken(
-                "testuser", 
-                "password", 
-                List.of(new SimpleGrantedAuthority("ROLE_USER"))
-        );
+        @BeforeEach
+        void setUp() {
+                // Create mock users
+                testuser = new UsernamePasswordAuthenticationToken(
+                                "testuser",
+                                "password",
+                                List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
-        // Set the Authentication object in the SecurityContextHolder
-        SecurityContextHolder.getContext().setAuthentication(testuser);
+                // Set the Authentication object in the SecurityContextHolder
+                SecurityContextHolder.getContext().setAuthentication(testuser);
 
-        ResumeRequest resumeRequest = ResumeRequest.builder().title("Software Developer")
-                .sections(List.of(SectionRequest.builder().title("Education").build())).build();
+                CreateResumeRequest resumeRequest = CreateResumeRequest.builder().title("Software Developer")
+                                .sections(List.of(CreateSectionRequest.builder().title("Education").build())).build();
 
-        resumeId = resumeService.create(resumeRequest);
+                resumeId = resumeService.create(resumeRequest);
+        }
 
-        Long layoutId = layoutService.create(LayoutRequest.builder()
-                .resumeId(resumeId)
-                .numberOfColumns(1).build());
+        @Test
+        void testCreateAndGet() {
+                // Arrange
+                List<CreateSectionItemRequest> sectionItems = new ArrayList<>();
 
-        methodIds = layoutService.getLatexMethodsMap(layoutId);
-    }
+                // Add a textbox item to the section
+                sectionItems.add(CreateSectionItemRequest.builder()
+                                .itemOrder(1)
+                                .item(Textbox.builder().content("This is some example text").build())
+                                .build());
 
-    @Test
-    void testCreateAndGet() {
-        // Arrange
-        List<SectionItemRequest> sectionItems = new ArrayList<>();
+                sectionItems.add(CreateSectionItemRequest.builder()
+                                .itemOrder(2)
+                                .item(Skill.builder().name("Java").proficiency(5).build())
+                                .build());
 
-        // Add a textbox item to the section
-        sectionItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.TEXTBOX.name())
-                .itemOrder(1)
-                .data(new HashMap<>() {{
-                    put("content", "This is some example text");
-                }})
-                .latexMethodId(methodIds.get("textbox"))
-                .build());
+                CreateSectionRequest request = CreateSectionRequest.builder()
+                                .resumeId(resumeId)
+                                .title("Test Section")
+                                .sectionItems(sectionItems)
+                                .build();
 
-        sectionItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL.name())
-                .itemOrder(2)
-                .data(new HashMap<>() {{
-                    put("name", "Java");
-                    put("proficiency", 5);
-                }})
-                .latexMethodId(methodIds.get("skillitem"))
-                .build());
+                // Act
+                Long sectionId = sectionService.create(request);
+                SectionResponse response = sectionService.get(sectionId);
 
-        SectionRequest request = SectionRequest.builder()
-                .resumeId(resumeId)
-                .title("Test Section")
-                .sectionItems(sectionItems)
-                .build();
+                // Assert
+                assertNotNull(sectionId);
+                assertEquals("Test Section", response.getTitle());
+                assertEquals(2, response.getSectionItems().size());
+                assertEquals(1, response.getSectionItems().get(0).getItemOrder());
+                assertEquals(Skill.class, response.getSectionItems().get(1).getItem().getClass());
+                assertEquals("This is some example text",
+                                ((Textbox) response.getSectionItems().get(0).getItem()).getContent());
+                assertEquals("Java", ((Skill) response.getSectionItems().get(1).getItem()).getName());
+                assertEquals(5, ((Skill) response.getSectionItems().get(1).getItem()).getProficiency());
+        }
 
+        @Test
+        void testUpdate() {
+                // Arrange
+                List<CreateSectionItemRequest> sectionItems = new ArrayList<>();
 
-        // Act
-        Long sectionId = sectionService.create(request);
-        SectionResponse response = sectionService.get(sectionId);
+                sectionItems.add(CreateSectionItemRequest.builder()
+                                .item(Textbox.builder().content("This is some example text").build())
+                                .build());
 
-        // Assert
-        assertNotNull(sectionId);
-        assertEquals("Test Section", response.getTitle());
-        assertEquals(2, response.getSectionItems().size());
-        assertEquals(1, response.getSectionItems().get(0).getItemOrder());
-        assertEquals(SectionItemType.SKILL.name(), response.getSectionItems().get(1).getType());
-        assertEquals("This is some example text", response.getSectionItems().get(0).getData().get("content"));
-        assertEquals("Java", response.getSectionItems().get(1).getData().get("name"));
-        assertEquals(5, response.getSectionItems().get(1).getData().get("proficiency"));
-    }
+                sectionItems.add(CreateSectionItemRequest.builder()
+                                .item(Skill.builder().name("Java").proficiency(5).build())
+                                .build());
 
-    @Test
-    void testUpdate() {
-        // Arrange
-        List<SectionItemRequest> sectionItems = new ArrayList<>();
+                CreateSectionRequest request = CreateSectionRequest.builder()
+                                .resumeId(resumeId)
+                                .title("Test Section")
+                                .sectionItems(sectionItems)
+                                .build();
 
-        sectionItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.TEXTBOX.name())
-                .data(new HashMap<>() {{
-                    put("content", "This is some example text");
-                }})
-                .latexMethodId(methodIds.get("textbox"))
-                .build());
+                Long sectionId = sectionService.create(request);
+                SectionResponse initialResponse = sectionService.get(sectionId);
 
-        sectionItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL.name())
-                .data(new HashMap<>() {{
-                    put("name", "Java");
-                    put("proficiency", 5);
-                }})
-                .latexMethodId(methodIds.get("skillitem"))
-                .build());
+                // Update the section
+                List<CreateSectionItemRequest> createSectionItems = new ArrayList<>();
+                List<UpdateSectionItemRequest> updateSectionItems = new ArrayList<>();
 
-        SectionRequest request = SectionRequest.builder()
-                .resumeId(resumeId)
-                .title("Test Section")
-                .sectionItems(sectionItems)
-                .build();
+                // Add a new skill item to the section
+                createSectionItems.add(CreateSectionItemRequest.builder()
+                                .itemOrder(1)
+                                .item(Skill.builder().name("Python").proficiency(4).build())
+                                .build());
+                updateSectionItems.add(UpdateSectionItemRequest.builder()
+                                .id(initialResponse.getSectionItems().get(0).getId())
+                                .itemOrder(3)
+                                .item(Textbox.builder().content("This is some updated text").build())
+                                .build());
 
-        Long sectionId = sectionService.create(request);
-        SectionResponse initialResponse = sectionService.get(sectionId);
+                UpdateSectionRequest updatedRequest = UpdateSectionRequest.builder().id(sectionId)
+                                .title("Updated Section").showTitle(false)
+                                .createSectionItems(createSectionItems).updateSectionItems(updateSectionItems).build();
 
-        // Update the section
-        List<SectionItemRequest> updatedSectionItems = new ArrayList<>();
+                // Act
+                sectionService.update(updatedRequest);
+                SectionResponse response = sectionService.get(sectionId);
 
-        // Add a new skill item to the section
-        updatedSectionItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL.name())
-                .itemOrder(1)
-                .data(new HashMap<>() {{
-                    put("name", "Python");
-                    put("proficiency", 4);
-                }})
-                .latexMethodId(methodIds.get("skillitem"))
-                .build());
-        updatedSectionItems.add(SectionItemRequest.builder()
-                .id(initialResponse.getSectionItems().get(0).getId())
-                .type(SectionItemType.TEXTBOX.name())
-                .itemOrder(3)
-                .data(new HashMap<>() {{
-                    put("content", "This is some updated text");
-                }})
-                .latexMethodId(methodIds.get("textbox"))
-                .build());
+                // Assert
+                assertNotNull(sectionId);
+                assertEquals("Updated Section", response.getTitle(), "Section title should be updated");
+                assertFalse(response.isShowTitle(), "Show title should be updated");
+                assertEquals(3, response.getSectionItems().size(), "Section should have 3 items after update");
+                assertEquals(List.of(1, 2, 3), response.getSectionItems().stream()
+                                .map(SectionItemResponse::getItemOrder)
+                                .toList(), "Item order should be updated");
 
-        SectionRequest updatedRequest = SectionRequest.builder().id(sectionId).title("Updated Section").sectionItems(updatedSectionItems).build();
+                // First skill item
+                SectionItemResponse firstSkill = response.getSectionItems().get(0);
+                assertTrue(firstSkill.getItem() instanceof Skill);
+                Skill skill1 = (Skill) firstSkill.getItem();
+                assertEquals("Python", skill1.getName());
+                assertEquals(4, skill1.getProficiency());
 
-        // Act
-        sectionService.update(updatedRequest);
-        SectionResponse response = sectionService.get(sectionId);
+                // Second skill item
+                SectionItemResponse secondSkill = response.getSectionItems().get(1);
+                assertTrue(secondSkill.getItem() instanceof Skill);
+                Skill skill2 = (Skill) secondSkill.getItem();
+                assertEquals("Java", skill2.getName());
+                assertEquals(5, skill2.getProficiency());
 
-        // Assert
-        assertNotNull(sectionId);
-        assertEquals("Updated Section", response.getTitle(), "Section title should be updated");
-        assertEquals(3, response.getSectionItems().size(), "Section should have 3 items after update");
-        assertEquals(List.of(1,2,3), response.getSectionItems().stream().map(SectionItemResponse::getItemOrder).toList(), "Item order should be updated");
-        assertEquals(SectionItemType.SKILL.name(), response.getSectionItems().get(0).getType(), "First item should be a skill item");
-        assertEquals("Python", response.getSectionItems().get(0).getData().get("name"), "Skill name is Python");
-        assertEquals(4, response.getSectionItems().get(0).getData().get("proficiency"), "Skill proficiency is 4");
-        assertEquals(SectionItemType.SKILL.name(), response.getSectionItems().get(1).getType(), "Second item should be a skill item");
-        assertEquals("Java", response.getSectionItems().get(1).getData().get("name"), "Skill name is Java");
-        assertEquals(5, response.getSectionItems().get(1).getData().get("proficiency"), "Skill proficiency is 5");
-        assertEquals(SectionItemType.TEXTBOX.name(), response.getSectionItems().get(2).getType(), "Third item should be a textbox item");
-        assertEquals(initialResponse.getSectionItems().get(0).getId(), response.getSectionItems().get(2).getId(), "Item ID should not change");
-        assertEquals("This is some updated text", response.getSectionItems().get(2).getData().get("content"), "Textbox content should be updated");
-    }
+                // Textbox item
+                SectionItemResponse textbox = response.getSectionItems().get(2);
+                assertTrue(textbox.getItem() instanceof Textbox);
+                assertEquals(initialResponse.getSectionItems().get(0).getId(), textbox.getId());
+                assertEquals("This is some updated text", ((Textbox) textbox.getItem()).getContent());
+        }
 
-    @Test
-    void testValidation() {
-        // Arrange
-        List<SectionItemRequest> sectionItems = new ArrayList<>();
+        @Test
+        void testValidation() {
+                // Arrange
+                List<CreateSectionItemRequest> sectionItems = new ArrayList<>();
 
-        sectionItems.add(SectionItemRequest.builder()
-                .type(SectionItemType.SKILL.name())
-                .itemOrder(1)
-                .data(new HashMap<>() {{
-                    put("name", "java");
-                    put("proficiency", 11);
-                }})
-                .latexMethodId(methodIds.get("skillitem"))
-                .build());
+                sectionItems.add(CreateSectionItemRequest.builder()
+                                .itemOrder(1)
+                                .item(Skill.builder().name("java").proficiency(11).build())
+                                .build());
 
-        SectionRequest request = SectionRequest.builder()
-                .resumeId(resumeId)
-                .title("Test Section")
-                .sectionItems(sectionItems)
-                .build();
+                CreateSectionRequest request = CreateSectionRequest.builder()
+                                .resumeId(resumeId)
+                                .title("Test Section")
+                                .sectionItems(sectionItems)
+                                .build();
 
-        // Act & Assert
-        assertThrows(ConstraintViolationException.class, () -> sectionService.create(request),
-                "Validation should fail when skill proficiency is greater than 10");
-    }
+                // Act & Assert
+                assertThrows(ConstraintViolationException.class, () -> sectionService.create(request),
+                                "Validation should fail when skill proficiency is greater than 10");
+        }
 }

@@ -1,49 +1,72 @@
 package com.coigniez.resumebuilder.domain.column;
 
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnResponse;
+import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
+import com.coigniez.resumebuilder.domain.column.dtos.UpdateColumnRequest;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionMapper;
-import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionResponse;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResponse;
 import com.coigniez.resumebuilder.interfaces.Mapper;
+import com.coigniez.resumebuilder.util.MapperUtils;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
 @Service
-public class ColumnMapper implements Mapper<Column, ColumnRequest, ColumnResponse> {
+public class ColumnMapper implements Mapper<Column, CreateColumnRequest, UpdateColumnRequest, ColumnResponse> {
 
     private final ColumnSectionMapper columnSectionMapper;
+
+    private static final Map<String, Object> DEFAULT_VALUES = Map.of(
+        "columnNumber", 1,
+        "paddingLeft", 10.0,
+        "paddingRight", 10.0,
+        "paddingTop", 20.0,
+        "paddingBottom", 20.0,
+        "borderLeft", 0.0,
+        "borderRight", 0.0,
+        "borderTop", 0.0,
+        "borderBottom", 0.0
+    );
     
     @Override
-    public Column toEntity(ColumnRequest dto) {
-        if (dto == null) {
+    public Column toEntity(@Valid CreateColumnRequest request) {
+        if (request == null) {
             return null;
         }
 
+        // Set default values
+        MapperUtils.setDefaultValues(request, DEFAULT_VALUES);
+
+        // Convert section mappings
         List<ColumnSection> sectionMappings = new ArrayList<>();
-        if (dto.getSectionMappings() != null) {
-            dto.getSectionMappings().forEach(section -> sectionMappings.add(columnSectionMapper.toEntity(section)));
+        if (request.getSectionMappings() == null) {
+            request.setSectionMappings(new ArrayList<>());
         }
+        request.getSectionMappings()
+                .forEach(section -> sectionMappings.add(columnSectionMapper.toEntity(section)));
 
         return Column.builder()
-                .id(dto.getId())
-                .columnNumber(dto.getColumnNumber())
+                .columnNumber(request.getColumnNumber())
                 .sectionMappings(sectionMappings)
-                .backgroundColor(dto.getBackgroundColor())
-                .textColor(dto.getTextColor())
-                .borderColor(dto.getBorderColor())
-                .paddingLeft(dto.getPaddingLeft())
-                .paddingRight(dto.getPaddingRight())
-                .paddingTop(dto.getPaddingTop())
-                .paddingBottom(dto.getPaddingBottom())
-                .borderLeft(dto.getBorderLeft())
-                .borderRight(dto.getBorderRight())
-                .borderTop(dto.getBorderTop())
-                .borderBottom(dto.getBorderBottom())
+                .backgroundColor(request.getBackgroundColor())
+                .textColor(request.getTextColor())
+                .borderColor(request.getBorderColor())
+                .paddingLeft(request.getPaddingLeft())
+                .paddingRight(request.getPaddingRight())
+                .paddingTop(request.getPaddingTop())
+                .paddingBottom(request.getPaddingBottom())
+                .borderLeft(request.getBorderLeft())
+                .borderRight(request.getBorderRight())
+                .borderTop(request.getBorderTop())
+                .borderBottom(request.getBorderBottom())
                 .build();
     }
 
@@ -77,7 +100,7 @@ public class ColumnMapper implements Mapper<Column, ColumnRequest, ColumnRespons
     }
 
     @Override
-    public void updateEntity(Column entity, ColumnRequest request) {
+    public void updateEntity(Column entity, UpdateColumnRequest request) {
         if (request == null) {
             return;
         }

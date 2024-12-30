@@ -16,13 +16,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Textbox implements SectionItemData {
 
-    public static final int BASE_PARAMETER_COUNT = 1;
-
     @NotBlank
     private String content;
 
+
+    @Override
     @JsonIgnore
-    public List<String> getSectionItemData() {
+    public List<String> getData() {
         return List.of(content);
     }
 

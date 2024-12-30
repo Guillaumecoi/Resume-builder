@@ -18,12 +18,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.domain.layout.LayoutRequest;
-import com.coigniez.resumebuilder.domain.layout.LayoutResponse;
-import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
+import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
+import com.coigniez.resumebuilder.domain.layout.dtos.UpdateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
-import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
-import com.coigniez.resumebuilder.domain.section.SectionRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -46,22 +46,20 @@ public class LayoutServiceIntegrationTest {
     void setUp() {
         // Create mock users
         testuser = new UsernamePasswordAuthenticationToken(
-                "testuser", 
-                "password", 
-                List.of(new SimpleGrantedAuthority("ROLE_USER"))
-        );
+                "testuser",
+                "password",
+                List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
         otheruser = new UsernamePasswordAuthenticationToken(
-                "otheruser", 
-                "password", 
-                List.of(new SimpleGrantedAuthority("ROLE_USER"))
-        );
+                "otheruser",
+                "password",
+                List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
         // Set the Authentication object in the SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(testuser);
 
-        ResumeRequest resumeRequest = ResumeRequest.builder().title("Software Developer")
-                .sections(List.of(SectionRequest.builder().title("Education").build())).build();
+        CreateResumeRequest resumeRequest = CreateResumeRequest.builder().title("Software Developer")
+                .sections(List.of(CreateSectionRequest.builder().title("Education").build())).build();
 
         resumeId = resumeService.create(resumeRequest);
     }
@@ -69,7 +67,7 @@ public class LayoutServiceIntegrationTest {
     @Test
     void testCreateAndGetOneColumn() {
         // Arrange
-        LayoutRequest layoutDTO = LayoutRequest.builder().resumeId(resumeId).build();
+        CreateLayoutRequest layoutDTO = CreateLayoutRequest.builder().resumeId(resumeId).build();
 
         // Act
         Long layoutId = layoutService.create(layoutDTO);
@@ -81,25 +79,16 @@ public class LayoutServiceIntegrationTest {
         assertEquals(layoutId, createdLayout.getId(), "Layout ID should match");
         assertEquals(PageSize.A4, createdLayout.getPageSize(), "Page size should be A4");
         assertEquals(1, createdLayout.getNumberOfColumns(), "Number of columns should be 1");
-        assertEquals(1, createdLayout.getColumns().size(), "Number of columns should be 1");
         assertEquals(0.35, createdLayout.getColumnSeparator(), "Column separator should be 0.35");
-        assertEquals("Executive Suite", createdLayout.getColorScheme().getName(), "Color scheme should be Executive Suite");
-        assertNotNull(createdLayout.getSectionTitleMethod(), "Section title method should not be null");
+        assertEquals("Executive Suite", createdLayout.getColorScheme().getName(),
+                "Color scheme should be Executive Suite");
         assertNotNull(createdLayout.getLatexMethods(), "Latex methods should not be null");
-
-        assertEquals(1, createdLayout.getColumns().get(0).getColumnNumber(), "Column number should be 1");
-        assertEquals(ColorLocation.DARK_BG, createdLayout.getColumns().get(0).getBackgroundColor(), "Background color should be DARK_BG");
-        assertEquals(ColorLocation.LIGHT_TEXT, createdLayout.getColumns().get(0).getTextColor(), "Text color should be LIGHT_TEXT");
-        assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingLeft(), "Padding left should be 10.0");
-        assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingRight(), "Padding right should be 10.0");
-        assertEquals(20.0, createdLayout.getColumns().get(0).getPaddingTop(), "Padding top should be 20.0");
-        assertEquals(20.0, createdLayout.getColumns().get(0).getPaddingBottom(), "Padding bottom should be 20.0");
     }
 
     @Test
     void testCreateAndGetTwoColumns() {
         // Arrange
-        LayoutRequest layoutRequest = LayoutRequest.builder()
+        CreateLayoutRequest layoutRequest = CreateLayoutRequest.builder()
                 .resumeId(resumeId)
                 .numberOfColumns(2)
                 .build();
@@ -114,33 +103,17 @@ public class LayoutServiceIntegrationTest {
         assertEquals(layoutId, createdLayout.getId(), "Layout ID should match");
         assertEquals(PageSize.A4, createdLayout.getPageSize(), "Page size should be A4");
         assertEquals(2, createdLayout.getNumberOfColumns(), "Number of columns should be 2");
-        assertEquals(2, createdLayout.getColumns().size(), "Number of columns should be 2");
         assertEquals(0.35, createdLayout.getColumnSeparator(), "Column separator should be 0.35");
-        assertEquals("Executive Suite", createdLayout.getColorScheme().getName(), "Color scheme should be Executive Suite");
+        assertEquals("Executive Suite", createdLayout.getColorScheme().getName(),
+                "Color scheme should be Executive Suite");
         assertNotNull(createdLayout.getLatexMethods(), "Latex methods should not be null");
         assertNotNull(createdLayout.getLatexMethods(), "Latex methods should not be null");
-
-        assertEquals(1, createdLayout.getColumns().get(0).getColumnNumber(), "Column number should be 1");
-        assertEquals(ColorLocation.DARK_BG, createdLayout.getColumns().get(0).getBackgroundColor(), "Background color should be DARK_BG");
-        assertEquals(ColorLocation.LIGHT_TEXT, createdLayout.getColumns().get(0).getTextColor(), "Text color should be LIGHT_TEXT");
-        assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingLeft(), "Padding left should be 10.0");
-        assertEquals(10.0, createdLayout.getColumns().get(0).getPaddingRight(), "Padding right should be 10.0");
-        assertEquals(20.0, createdLayout.getColumns().get(0).getPaddingTop(), "Padding top should be 20.0");
-        assertEquals(20.0, createdLayout.getColumns().get(0).getPaddingBottom(), "Padding bottom should be 20.0");
-
-        assertEquals(2, createdLayout.getColumns().get(1).getColumnNumber(), "Column number should be 2");
-        assertEquals(ColorLocation.LIGHT_BG, createdLayout.getColumns().get(1).getBackgroundColor(), "Background color should be LIGHT_BG");
-        assertEquals(ColorLocation.DARK_TEXT, createdLayout.getColumns().get(1).getTextColor(), "Text color should be DARK_TEXT");
-        assertEquals(10.0, createdLayout.getColumns().get(1).getPaddingLeft(), "Padding left should be 10.0");
-        assertEquals(10.0, createdLayout.getColumns().get(1).getPaddingRight(), "Padding right should be 10.0");
-        assertEquals(20.0, createdLayout.getColumns().get(1).getPaddingTop(), "Padding top should be 20.0");
-        assertEquals(20.0, createdLayout.getColumns().get(1).getPaddingBottom(), "Padding bottom should be 20.0");
     }
 
     @Test
     void testAccessControl() {
         // Arrange
-        LayoutRequest layoutRequest = LayoutRequest.builder()
+        CreateLayoutRequest layoutRequest = CreateLayoutRequest.builder()
                 .resumeId(resumeId)
                 .numberOfColumns(1)
                 .build();
@@ -154,8 +127,8 @@ public class LayoutServiceIntegrationTest {
                 "User should not be able to create a layout for an others resume");
         assertThrows(AccessDeniedException.class, () -> layoutService.get(layoutId),
                 "User should not be able to get a layout for an others resume");
-        layoutRequest.setId(layoutId);
-        assertThrows(AccessDeniedException.class, () -> layoutService.update(layoutRequest),
+        assertThrows(AccessDeniedException.class,
+                () -> layoutService.update(UpdateLayoutRequest.builder().id(layoutId).build()),
                 "User should not be able to update a layout for an others resume");
         assertThrows(AccessDeniedException.class, () -> layoutService.delete(layoutId),
                 "User should not be able to delete a layout for an others resume");
@@ -166,7 +139,8 @@ public class LayoutServiceIntegrationTest {
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () -> layoutService.get(-1L),
                 "Should throw EntityNotFoundException when layout is not found");
-        assertThrows(EntityNotFoundException.class, () -> layoutService.update(LayoutRequest.builder().id(-1L).build()),
+        assertThrows(EntityNotFoundException.class,
+                () -> layoutService.update(UpdateLayoutRequest.builder().id(-1L).build()),
                 "Should throw EntityNotFoundException when layout is not found");
         assertThrows(EntityNotFoundException.class, () -> layoutService.delete(-1L),
                 "Should throw EntityNotFoundException when layout is not found");
@@ -175,6 +149,5 @@ public class LayoutServiceIntegrationTest {
         assertThrows(EntityNotFoundException.class, () -> layoutService.getLatexMethodsMap(-1L),
                 "Should throw EntityNotFoundException when layout is not found");
     }
-
 
 }

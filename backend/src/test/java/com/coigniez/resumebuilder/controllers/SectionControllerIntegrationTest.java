@@ -20,8 +20,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
-import com.coigniez.resumebuilder.domain.section.SectionRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.UpdateSectionRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -39,8 +40,8 @@ public class SectionControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = "USER")
     void setUp() throws Exception {
         // Arrange
-        ResumeRequest createRequest = ResumeRequest.builder().title("Software Developer").build();        
-    
+        CreateResumeRequest createRequest = CreateResumeRequest.builder().title("Software Developer").build();
+
         // Act - Create
         String createResponse = mockMvc.perform(post("/resumes")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -54,74 +55,74 @@ public class SectionControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = "USER")
     void testCreateSection() throws Exception {
         // Arrange
-        SectionRequest request = SectionRequest.builder().resumeId(resumeId).title("Education").build();
+        CreateSectionRequest request = CreateSectionRequest.builder().resumeId(resumeId).title("Education").build();
 
         // Act
         String createResponse = mockMvc.perform(post("/sections")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(new ObjectMapper().writeValueAsString(request)))
-            .andExpect(status().isCreated())
-            .andReturn().getResponse().getContentAsString();
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
 
         Long sectionId = Long.parseLong(createResponse);
 
         // Assert
         mockMvc.perform(get("/sections/" + sectionId))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.title").value("Education"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Education"));
     }
 
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
     void testCreateSectionNoAccess() throws Exception {
         // Arrange
-        SectionRequest request = SectionRequest.builder().resumeId(resumeId).title("Education").build();
+        CreateSectionRequest request = CreateSectionRequest.builder().resumeId(resumeId).title("Education").build();
 
         String createResponse = mockMvc.perform(post("/sections")
-            .with(user("testuser").roles("USER"))
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(new ObjectMapper().writeValueAsString(request)))
-            .andExpect(status().isCreated())
-            .andReturn().getResponse().getContentAsString();
+                .with(user("testuser").roles("USER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
 
         Long sectionId = Long.parseLong(createResponse);
 
         // Act & Assert
         mockMvc.perform(get("/sections/" + sectionId)
-            .with(user("otheruser").roles("USER")))
-            .andExpect(status().isNotFound());
+                .with(user("otheruser").roles("USER")))
+                .andExpect(status().isNotFound());
 
         mockMvc.perform(get("/sections/" + sectionId)
-            .with(user("testuser").roles("USER")))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.title").value("Education"));
+                .with(user("testuser").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Education"));
     }
 
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
     void testCreateAndGetResumeWithSections() throws Exception {
         // Arrange
-        SectionRequest section1 = SectionRequest.builder().resumeId(resumeId).title("Education").build();
-        SectionRequest section2 = SectionRequest.builder().resumeId(resumeId).title("Experience").build();
+        CreateSectionRequest section1 = CreateSectionRequest.builder().resumeId(resumeId).title("Education").build();
+        CreateSectionRequest section2 = CreateSectionRequest.builder().resumeId(resumeId).title("Experience").build();
 
         // Act
-        ResumeRequest createRequest = ResumeRequest.builder()
-            .title("Barista")
-            .sections(List.of(section1, section2))
-            .build();
+        CreateResumeRequest createRequest = CreateResumeRequest.builder()
+                .title("Barista")
+                .sections(List.of(section1, section2))
+                .build();
 
         String createResponse = mockMvc.perform(post("/resumes")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(new ObjectMapper().writeValueAsString(createRequest)))
-            .andExpect(status().isCreated())
-            .andReturn().getResponse().getContentAsString();
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(createRequest)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
 
         Long newResumeId = Long.parseLong(createResponse);
 
         // Assert
         mockMvc.perform(get("/resumes/" + newResumeId))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.sections[*].title")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sections[*].title")
                         .value(org.hamcrest.Matchers.containsInAnyOrder("Education", "Experience")));
     }
 
@@ -129,78 +130,79 @@ public class SectionControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = "USER")
     void testUpdateSection() throws Exception {
         // Arrange
-        SectionRequest request = SectionRequest.builder().resumeId(resumeId).title("Education").build();
+        CreateSectionRequest request = CreateSectionRequest.builder().resumeId(resumeId).title("Education").build();
 
         String createResponse = mockMvc.perform(post("/sections")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(new ObjectMapper().writeValueAsString(request)))
-            .andExpect(status().isCreated())
-            .andReturn().getResponse().getContentAsString();
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
 
         Long sectionId = Long.parseLong(createResponse);
 
         // Act
-        SectionRequest updateRequest = SectionRequest.builder().resumeId(resumeId).title("Experience").build();
+        UpdateSectionRequest updateRequest = UpdateSectionRequest.builder().id(sectionId).title("Experience")
+                .showTitle(true).createSectionItems(List.of()).updateSectionItems(List.of()).build();
 
         mockMvc.perform(post("/sections/" + sectionId)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(new ObjectMapper().writeValueAsString(updateRequest)))
-            .andExpect(status().isOk());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(updateRequest)))
+                .andExpect(status().isOk());
 
         // Assert
         mockMvc.perform(get("/sections/" + sectionId))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.title").value("Experience"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Experience"));
     }
 
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
     void testDeleteSection() throws Exception {
         // Arrange
-        SectionRequest request = SectionRequest.builder().resumeId(resumeId).title("Education").build();
+        CreateSectionRequest request = CreateSectionRequest.builder().resumeId(resumeId).title("Education").build();
 
         String createResponse = mockMvc.perform(post("/sections")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(new ObjectMapper().writeValueAsString(request)))
-            .andExpect(status().isCreated())
-            .andReturn().getResponse().getContentAsString();
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
 
         Long sectionId = Long.parseLong(createResponse);
 
         // Act
         mockMvc.perform(post("/sections/" + sectionId + "/delete"))
-            .andExpect(status().isNoContent());
+                .andExpect(status().isNoContent());
 
         // Assert
         mockMvc.perform(get("/sections/" + sectionId))
-            .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
     void testUpdateResumeDoesNotChangeSection() throws Exception {
         // Arrange
-        SectionRequest request = SectionRequest.builder().resumeId(resumeId).title("Education").build();
+        CreateSectionRequest request = CreateSectionRequest.builder().resumeId(resumeId).title("Education").build();
 
         String createResponse = mockMvc.perform(post("/sections")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(new ObjectMapper().writeValueAsString(request)))
-            .andExpect(status().isCreated())
-            .andReturn().getResponse().getContentAsString();
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
 
         Long sectionId = Long.parseLong(createResponse);
 
         // Act
-        ResumeRequest updateRequest = ResumeRequest.builder().title("Barista").build();
+        CreateResumeRequest updateRequest = CreateResumeRequest.builder().title("Barista").build();
 
         mockMvc.perform(post("/resumes/" + resumeId)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(new ObjectMapper().writeValueAsString(updateRequest)))
-            .andExpect(status().isOk());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(updateRequest)))
+                .andExpect(status().isOk());
 
         // Assert
         mockMvc.perform(get("/sections/" + sectionId))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.title").value("Education"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Education"));
     }
 }

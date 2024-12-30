@@ -2,31 +2,40 @@ package com.coigniez.resumebuilder.domain.section;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
+import com.coigniez.resumebuilder.domain.section.dtos.UpdateSectionRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
-import com.coigniez.resumebuilder.domain.sectionitem.SectionItemResponse;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResponse;
 import com.coigniez.resumebuilder.interfaces.Mapper;
+import com.coigniez.resumebuilder.util.MapperUtils;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
-public class SectionMapper implements Mapper<Section, SectionRequest, SectionResponse> {
+public class SectionMapper implements Mapper<Section, CreateSectionRequest, UpdateSectionRequest, SectionResponse> {
 
     private final SectionItemMapper sectionItemMapper;
 
+    private static final Map<String, Object> DEFAULT_VALUES = Map.of(
+            "showTitle", true);
+
     @Override
-    public Section toEntity(SectionRequest request) {
+    public Section toEntity(CreateSectionRequest request) {
         if (request == null) {
             return null;
         }
 
+        MapperUtils.setDefaultValues(request, DEFAULT_VALUES);
+
         return Section.builder()
-                .id(request.getId())
                 .title(request.getTitle())
                 .showTitle(request.getShowTitle())
                 .build();
@@ -38,12 +47,12 @@ public class SectionMapper implements Mapper<Section, SectionRequest, SectionRes
             return null;
         }
 
-        List<SectionItemResponse> sectionItems = entity.getItems() == null 
-            ? List.of()
-            : entity.getItems().stream()
-                .sorted(Comparator.comparing(SectionItem::getItemOrder)) // Sort items by itemOrder
-                .map(sectionItemMapper::toDto)
-                .collect(Collectors.toList());
+        List<SectionItemResponse> sectionItems = entity.getItems() == null
+                ? List.of()
+                : entity.getItems().stream()
+                        .sorted(Comparator.comparing(SectionItem::getItemOrder)) // Sort items by itemOrder
+                        .map(sectionItemMapper::toDto)
+                        .collect(Collectors.toList());
 
         return SectionResponse.builder()
                 .id(entity.getId())
@@ -54,7 +63,7 @@ public class SectionMapper implements Mapper<Section, SectionRequest, SectionRes
     }
 
     @Override
-    public void updateEntity(Section entity, SectionRequest request) {
+    public void updateEntity(Section entity, UpdateSectionRequest request) {
         if (request == null) {
             return;
         }

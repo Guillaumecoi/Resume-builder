@@ -7,37 +7,43 @@ import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.column.Column;
 import com.coigniez.resumebuilder.domain.column.ColumnMapper;
-import com.coigniez.resumebuilder.domain.column.ColumnRepository;
-import com.coigniez.resumebuilder.domain.column.ColumnRequest;
-import com.coigniez.resumebuilder.domain.column.ColumnResponse;
-import com.coigniez.resumebuilder.domain.layout.LayoutRepository;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnResponse;
+import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
+import com.coigniez.resumebuilder.domain.column.dtos.UpdateColumnRequest;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionRequest;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
+import com.coigniez.resumebuilder.repository.ColumnRepository;
+import com.coigniez.resumebuilder.repository.ColumnSectionRepository;
+import com.coigniez.resumebuilder.repository.LayoutRepository;
+import com.coigniez.resumebuilder.util.ExceptionUtils;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
-public class ColumnService implements ParentEntityService<ColumnRequest, ColumnResponse, Long> {
+public class ColumnService
+        implements ParentEntityService<CreateColumnRequest, UpdateColumnRequest, ColumnResponse, Long> {
 
     private final ColumnRepository columnRepository;
     private final LayoutRepository layoutRepository;
+    private final ColumnSectionRepository columnSectionRepository;
+    private final ColumnSectionService columnSectionService;
     private final ColumnMapper columnMapper;
     private final SecurityUtils securityUtils;
 
     @Override
-    public Long create(ColumnRequest request) {
+    public Long create(CreateColumnRequest request) {
         // Check if the current user has access to the layout
-        hasAccessLayout(request.getLayoutId());
+        securityUtils.hasAccessLayout(request.getLayoutId());
 
         // Create the column entity
-        request.setId(null);
         Column column = columnMapper.toEntity(request);
         layoutRepository.findById(request.getLayoutId())
-                .orElseThrow(() -> new EntityNotFoundException("Layout not found"))
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", request.getLayoutId()))
                 .addColumn(column);
-        
+
         // Save the column entity
         return columnRepository.save(column).getId();
     }
@@ -45,39 +51,57 @@ public class ColumnService implements ParentEntityService<ColumnRequest, ColumnR
     @Override
     public ColumnResponse get(Long id) {
         // Check if the current user has access to the column
-        hasAccess(id);
+        securityUtils.hasAccessColumn(id);
 
         // Get the column entity
         return columnRepository.findById(id)
                 .map(columnMapper::toDto)
-                .orElseThrow(() -> new EntityNotFoundException("Column not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", id));
     }
 
     @Override
-    public void update(ColumnRequest request) {
+    public void update(UpdateColumnRequest request) {
         // Check if the current user has access to the column
-        hasAccess(request.getId());
+        securityUtils.hasAccessColumn(request.getId());
+
+        for (CreateColumnSectionRequest section : request.getCreateSectionMappings()) {
+            section.setColumnId(request.getId());
+            columnSectionService.create(section);
+        }
+        for (UpdateColumnSectionRequest section : request.getUpdateSectionMappings()) {
+            // Check if the section belongs to the column
+            if (section.getId() == null) {
+                throw new IllegalArgumentException("Section id is required");
+            }
+            if (columnSectionRepository.findById(section.getId())
+                    .orElseThrow(() -> ExceptionUtils.entityNotFound("ColumnSection", section.getId()))
+                    .getColumn().getId() != request.getId()) {
+                throw new IllegalArgumentException("Section does not belong to the column");
+            }
+
+            columnSectionService.update(section);
+        }
 
         // Update the entity
         Column column = columnRepository.findById(request.getId())
-            .orElseThrow(() -> new EntityNotFoundException("Column not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", request.getId()));
         columnMapper.updateEntity(column, request);
 
         // Save the updated entity
         columnRepository.save(column);
-        
+
     }
 
     @Override
     public void delete(Long id) {
         // Check if the current user has access to the column
-        hasAccess(id);
+        securityUtils.hasAccessColumn(id);
 
         // Remove the column from the layout
         Column column = columnRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Column not found"));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", id));
         Optional.ofNullable(column.getLayout()).ifPresent(layout -> layout.removeColumn(column));
-        
+
         // Delete the column from the database
         columnRepository.deleteById(id);
     }
@@ -85,7 +109,7 @@ public class ColumnService implements ParentEntityService<ColumnRequest, ColumnR
     @Override
     public List<ColumnResponse> getAllByParentId(Long layoutId) {
         // Check if the current user has access to the layout
-        hasAccessLayout(layoutId);
+        securityUtils.hasAccessLayout(layoutId);
 
         // Get all columns from the layout
         return columnRepository.findAllByLayoutId(layoutId).stream()
@@ -96,36 +120,15 @@ public class ColumnService implements ParentEntityService<ColumnRequest, ColumnR
     @Override
     public void removeAllByParentId(Long layoutId) {
         // Check if the current user has access to the layout
-        hasAccessLayout(layoutId);
+        securityUtils.hasAccessLayout(layoutId);
 
         // Remove all columns from the layout
         layoutRepository.findById(layoutId)
-            .orElseThrow(() -> new EntityNotFoundException("Layout not found"))
-            .clearColumns();
-        
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", layoutId))
+                .clearColumns();
+
         // Delete all columns from the database
         columnRepository.deleteAllByLayoutId(layoutId);
     }
 
-    /**
-     * Check if the current user has access to the column
-     * 
-     * @param id The column id
-     */
-    private void hasAccess(long id) {
-        String owner = columnRepository.findCreatedBy(id)
-            .orElseThrow(() -> new EntityNotFoundException("Column not found"));
-        securityUtils.hasAccess(List.of(owner));
-    }
-
-    /**
-     * Check if the current user has access to the layout
-     * 
-     * @param id The layout id
-     */
-    private void hasAccessLayout(long id) {
-        String owner = layoutRepository.findCreatedBy(id)
-            .orElseThrow(() -> new EntityNotFoundException("Layout not found"));
-        securityUtils.hasAccess(List.of(owner));
-    }
 }

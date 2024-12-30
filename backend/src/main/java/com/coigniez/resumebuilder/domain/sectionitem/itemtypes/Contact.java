@@ -18,19 +18,18 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Contact implements SectionItemData {
 
-    public static final int BASE_PARAMETER_COUNT = 3;
-
-    public String icon;
     @NotBlank
     public String label;
+    public String icon;
     public String link;
 
+
+    @Override
     @JsonIgnore
-    public List<String> getSectionItemData() {
+    public List<String> getData() {
         return List.of(
-            Optional.ofNullable(icon).orElse(""),
-            Optional.ofNullable(label).orElse(""),
-            Optional.ofNullable(link).orElse("")
-        );
+                Optional.ofNullable(label).orElse(""),
+                Optional.ofNullable(icon).orElse(""),
+                Optional.ofNullable(link).orElse(""));
     }
 }

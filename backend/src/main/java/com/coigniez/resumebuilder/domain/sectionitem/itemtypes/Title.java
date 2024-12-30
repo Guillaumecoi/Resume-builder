@@ -18,23 +18,16 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Title implements SectionItemData {
 
-    public static final int BASE_PARAMETER_COUNT = 2;
-
     @NotBlank
     private String title;
     private String subtitle;
-    
+
+    @Override
     @JsonIgnore
-    public List<String> getSectionItemData() {
+    public List<String> getData() {
         return List.of(
-            title, 
-            Optional.ofNullable(subtitle).orElse("")
-        );
+                title,
+                Optional.ofNullable(subtitle).orElse(""));
     }
 
-    @JsonIgnore
-    public static int getNumberOfParameters() {
-        return 2;
-    }
-    
 }

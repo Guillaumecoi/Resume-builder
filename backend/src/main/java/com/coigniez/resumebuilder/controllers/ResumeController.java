@@ -7,12 +7,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.coigniez.resumebuilder.domain.common.PageResponse;
-import com.coigniez.resumebuilder.domain.resume.ResumeDetailResponse;
-import com.coigniez.resumebuilder.domain.resume.ResumeRequest;
-import com.coigniez.resumebuilder.domain.resume.ResumeResponse;
+import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeDetailResponse;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResponse;
+import com.coigniez.resumebuilder.domain.resume.dtos.UpdateResumeRequest;
 import com.coigniez.resumebuilder.interfaces.CrudController;
 import com.coigniez.resumebuilder.services.ResumeService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,42 +34,52 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequestMapping("resumes")
 @RequiredArgsConstructor
 @Tag(name = "Resume")
-public class ResumeController implements CrudController<ResumeRequest, ResumeDetailResponse> {
+public class ResumeController
+        implements CrudController<CreateResumeRequest, UpdateResumeRequest, ResumeDetailResponse, Long> {
 
     private final ResumeService resumeService;
 
+    @Override
     @PostMapping
-    public ResponseEntity<Long> create(@Valid @RequestBody ResumeRequest request, Authentication user) {
+    @Operation(operationId = "createResume")
+    public ResponseEntity<Long> create(@Valid @RequestBody CreateResumeRequest request, Authentication user) {
         Long id = resumeService.create(request);
         URI location = ServletUriComponentsBuilder
-            .fromCurrentRequest()
-            .path("/{id}")
-            .buildAndExpand(id)
-            .toUri();
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(id)
+                .toUri();
         return ResponseEntity.created(location).body(id);
     }
 
+    @Override
     @GetMapping("/{id}")
+    @Operation(operationId = "getResume")
     public ResponseEntity<ResumeDetailResponse> get(@PathVariable Long id, Authentication user) {
         ResumeDetailResponse resume = resumeService.get(id);
         return ResponseEntity.ok(resume);
     }
 
+    @Override
     @PostMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id, @Valid @RequestBody ResumeRequest request, Authentication user) {
+    @Operation(operationId = "updateResume")
+    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody UpdateResumeRequest request,
+            Authentication user) {
         request.setId(id);
         resumeService.update(request);
         return ResponseEntity.ok().build();
     }
 
+    @Override
     @PostMapping("/{id}/delete")
+    @Operation(operationId = "deleteResume")
     public ResponseEntity<Void> delete(@PathVariable Long id, Authentication user) {
         resumeService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping
-    public ResponseEntity<PageResponse<ResumeResponse>> getAll(
+    public ResponseEntity<PageResponse<ResumeResponse>> getAllResumes(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
             @RequestParam(name = "order", defaultValue = "lastModifiedDate", required = false) String order,
@@ -76,7 +88,7 @@ public class ResumeController implements CrudController<ResumeRequest, ResumeDet
     }
 
     @PostMapping(value = "/{id}/uploadPicture", consumes = "multipart/form-data")
-    public ResponseEntity<Void> uploadPicture(
+    public ResponseEntity<Void> uploadResumePicture(
             @PathVariable Long id,
             @RequestParam("file") MultipartFile file,
             Authentication connectedUser) {
@@ -85,7 +97,7 @@ public class ResumeController implements CrudController<ResumeRequest, ResumeDet
     }
 
     @PostMapping("/deleteAll")
-    public ResponseEntity<Void> postMethodName(Authentication user) {
+    public ResponseEntity<Void> deleteAllResumes(Authentication user) {
         resumeService.deleteAll();
         return ResponseEntity.noContent().build();
     }

@@ -3,8 +3,6 @@ package com.coigniez.resumebuilder.domain.sectionitem;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import com.coigniez.resumebuilder.domain.latex.LatexMethod;
-import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.interfaces.BaseEntity;
 import com.coigniez.resumebuilder.interfaces.SectionItemData;
@@ -29,19 +27,10 @@ public class SectionItem implements BaseEntity {
     @JoinColumn(name = "section_id", referencedColumnName = "id")
     private Section section;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "latex_method_id", referencedColumnName = "id")
-    private LatexMethod latexMethod;
-
-    @Enumerated(EnumType.STRING)
-    private SectionItemType type;
-
-    private Integer itemOrder;
-
-    @Enumerated(EnumType.STRING)
-    private AlignmentType alignment;
-
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private SectionItemData data;
+    private SectionItemData item;
+
+    @Column(name = "item_order")
+    private Integer itemOrder;
 }

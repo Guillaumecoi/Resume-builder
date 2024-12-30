@@ -18,8 +18,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Education implements SectionItemData {
 
-    public static final int BASE_PARAMETER_COUNT = 4;
-
     @NotBlank
     private String degree;
     @NotBlank
@@ -27,14 +25,13 @@ public class Education implements SectionItemData {
     private String period;
     private String description;
 
+    @Override
     @JsonIgnore
-    public List<String> getSectionItemData() {
+    public List<String> getData() {
         return List.of(
-            Optional.ofNullable(degree).orElse(""),
-            Optional.ofNullable(institution).orElse(""),
-            Optional.ofNullable(period).orElse(""),
-            Optional.ofNullable(description).orElse("")
-        );
+                degree,
+                institution,
+                Optional.ofNullable(period).orElse(""),
+                Optional.ofNullable(description).orElse(""));
     }
 }
-

@@ -1,29 +1,44 @@
 package com.coigniez.resumebuilder.domain.latex;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 
+import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
+import com.coigniez.resumebuilder.domain.latex.dtos.UpdateLatexMethodRequest;
 import com.coigniez.resumebuilder.interfaces.Mapper;
+import com.coigniez.resumebuilder.util.MapperUtils;
 
 @Service
-public class LatexMethodMapper implements Mapper<LatexMethod, LatexMethodRequest, LatexMethodResponse> {
+public class LatexMethodMapper
+        implements Mapper<LatexMethod, CreateLatexMethodRequest, UpdateLatexMethodRequest, LatexMethodResponse> {
+
+    private static final Map<String, Object> DEFAULT_VALUES = Map.of(
+            "methodType", MethodType.COMMAND);
 
     @Override
-    public LatexMethod toEntity(LatexMethodRequest dto) {
-        if(dto == null) {
+    public LatexMethod toEntity(CreateLatexMethodRequest request) {
+        if (request == null) {
             return null;
         }
 
+        // Set default values
+        MapperUtils.setDefaultValues(request, DEFAULT_VALUES);
+
         return LatexMethod.builder()
-                .id(dto.getId())
-                .type(dto.getType())
-                .name(dto.getName())
-                .method(dto.getMethod())
+                .type(request.getType())
+                .name(request.getName())
+                .methodType(request.getMethodType())
+                .method(request.getMethod())
+                .columnSections(new ArrayList<>())
                 .build();
     }
 
     @Override
     public LatexMethodResponse toDto(LatexMethod entity) {
-        if(entity == null) {
+        if (entity == null) {
             return null;
         }
 
@@ -31,18 +46,19 @@ public class LatexMethodMapper implements Mapper<LatexMethod, LatexMethodRequest
                 .id(entity.getId())
                 .type(entity.getType())
                 .name(entity.getName())
+                .methodType(entity.getMethodType())
                 .method(entity.getMethod())
                 .build();
     }
 
     @Override
-    public void updateEntity(LatexMethod entity, LatexMethodRequest request) {
-       if(request == null) {
-           return;
-       }
+    public void updateEntity(LatexMethod entity, UpdateLatexMethodRequest request) {
+        if (request == null) {
+            return;
+        }
 
         entity.setName(request.getName());
         entity.setMethod(request.getMethod());
     }
-    
+
 }

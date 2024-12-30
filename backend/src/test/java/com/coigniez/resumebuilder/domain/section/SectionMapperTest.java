@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
+
 @SpringBootTest
 @ActiveProfiles("test")
 public class SectionMapperTest {
@@ -33,7 +36,7 @@ public class SectionMapperTest {
     @Test
     void testToEntity() {
         // Arrange
-        SectionRequest dto = SectionRequest.builder()
+        CreateSectionRequest dto = CreateSectionRequest.builder()
             .title("Education")
             .build();
 

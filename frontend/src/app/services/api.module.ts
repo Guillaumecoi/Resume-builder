@@ -10,6 +10,7 @@ import { ResumeService } from './services/resume.service';
 import { LayoutService } from './services/layout.service';
 import { LatexMethodService } from './services/latex-method.service';
 import { ColumnSectionService } from './services/column-section.service';
+import { ColumnService } from './services/column.service';
 
 /**
  * Module that provides all services and configuration.
@@ -25,6 +26,7 @@ import { ColumnSectionService } from './services/column-section.service';
     LayoutService,
     LatexMethodService,
     ColumnSectionService,
+    ColumnService,
     ApiConfiguration
   ],
 })

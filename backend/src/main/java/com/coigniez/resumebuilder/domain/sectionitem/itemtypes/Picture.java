@@ -22,8 +22,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Picture implements SectionItemData {
 
-    public static final int BASE_PARAMETER_COUNT = 9;
-
     @NotBlank
     private String path;  
     private String caption;
@@ -48,19 +46,20 @@ public class Picture implements SectionItemData {
     @Builder.Default
     @Min(0) @Max(5)
     private double shadow = 0.0;
-
+    
+    @Override
     @JsonIgnore
-    public List<String> getSectionItemData() {
-            return List.of(
-                path,
-                Optional.ofNullable(caption).orElse(""),
-                String.format("%.2f", width),
-                String.format("%.2f", height), 
-                String.format("%.1f", zoom),
-                String.format("%.1f", xoffset),
-                String.format("%.1f", yoffset),
-                String.format("%.1f", shadow),
-                Integer.toString(rounded)
-            );
+    public List<String> getData() {
+        return List.of(
+            path,
+            Optional.ofNullable(caption).orElse(""),
+            String.format("%.2f", width),
+            String.format("%.2f", height), 
+            String.format("%.1f", zoom),
+            String.format("%.1f", xoffset),
+            String.format("%.1f", yoffset),
+            String.format("%.1f", shadow),
+            Integer.toString(rounded)
+        );
     }
 }

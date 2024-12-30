@@ -28,6 +28,7 @@ public class Section implements BaseEntity {
 
     @NotBlank
     private String title;
+    private String icon;
 
     @NotNull
     private boolean showTitle;
@@ -40,7 +41,7 @@ public class Section implements BaseEntity {
     @Builder.Default
     private List<SectionItem> items = new ArrayList<>();
 
-    @OneToMany(mappedBy = "section", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "section", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<ColumnSection> columnSections = new ArrayList<>();
 
@@ -55,8 +56,9 @@ public class Section implements BaseEntity {
     }
 
     public void clearSectionItems() {
-        items.forEach(item -> item.setSection(null));
-        items.clear();
+        for (SectionItem item : new ArrayList<>(items)) {
+            removeSectionItem(item);
+        }
     }
 
     public void addColumnSection(ColumnSection columnSection) {
@@ -73,4 +75,5 @@ public class Section implements BaseEntity {
         columnSections.forEach(columnSection -> columnSection.setSection(null));
         columnSections.clear();
     }
+
 }

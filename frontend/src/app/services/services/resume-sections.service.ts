@@ -9,15 +9,15 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { create } from '../fn/resume-sections/create';
-import { Create$Params } from '../fn/resume-sections/create';
-import { delete$ } from '../fn/resume-sections/delete';
-import { Delete$Params } from '../fn/resume-sections/delete';
-import { get } from '../fn/resume-sections/get';
-import { Get$Params } from '../fn/resume-sections/get';
+import { createSection } from '../fn/resume-sections/create-section';
+import { CreateSection$Params } from '../fn/resume-sections/create-section';
+import { deleteSection } from '../fn/resume-sections/delete-section';
+import { DeleteSection$Params } from '../fn/resume-sections/delete-section';
+import { getSection } from '../fn/resume-sections/get-section';
+import { GetSection$Params } from '../fn/resume-sections/get-section';
 import { SectionResponse } from '../models/section-response';
-import { update } from '../fn/resume-sections/update';
-import { Update$Params } from '../fn/resume-sections/update';
+import { updateSection } from '../fn/resume-sections/update-section';
+import { UpdateSection$Params } from '../fn/resume-sections/update-section';
 
 @Injectable({ providedIn: 'root' })
 export class ResumeSectionsService extends BaseService {
@@ -25,102 +25,102 @@ export class ResumeSectionsService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `create()` */
-  static readonly CreatePath = '/sections';
+  /** Path part for operation `createSection()` */
+  static readonly CreateSectionPath = '/sections';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `create()` instead.
+   * To access only the response body, use `createSection()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create$Response(params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
-    return create(this.http, this.rootUrl, params, context);
+  createSection$Response(params: CreateSection$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
+    return createSection(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `create$Response()` instead.
+   * To access the full response (for headers, for example), `createSection$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create(params: Create$Params, context?: HttpContext): Observable<number> {
-    return this.create$Response(params, context).pipe(
+  createSection(params: CreateSection$Params, context?: HttpContext): Observable<number> {
+    return this.createSection$Response(params, context).pipe(
       map((r: StrictHttpResponse<number>): number => r.body)
     );
   }
 
-  /** Path part for operation `get()` */
-  static readonly GetPath = '/sections/{id}';
+  /** Path part for operation `getSection()` */
+  static readonly GetSectionPath = '/sections/{id}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `get()` instead.
+   * To access only the response body, use `getSection()` instead.
    *
    * This method doesn't expect any request body.
    */
-  get$Response(params: Get$Params, context?: HttpContext): Observable<StrictHttpResponse<SectionResponse>> {
-    return get(this.http, this.rootUrl, params, context);
+  getSection$Response(params: GetSection$Params, context?: HttpContext): Observable<StrictHttpResponse<SectionResponse>> {
+    return getSection(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `get$Response()` instead.
+   * To access the full response (for headers, for example), `getSection$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  get(params: Get$Params, context?: HttpContext): Observable<SectionResponse> {
-    return this.get$Response(params, context).pipe(
+  getSection(params: GetSection$Params, context?: HttpContext): Observable<SectionResponse> {
+    return this.getSection$Response(params, context).pipe(
       map((r: StrictHttpResponse<SectionResponse>): SectionResponse => r.body)
     );
   }
 
-  /** Path part for operation `update()` */
-  static readonly UpdatePath = '/sections/{id}';
+  /** Path part for operation `updateSection()` */
+  static readonly UpdateSectionPath = '/sections/{id}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `update()` instead.
+   * To access only the response body, use `updateSection()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  update$Response(params: Update$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return update(this.http, this.rootUrl, params, context);
+  updateSection$Response(params: UpdateSection$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return updateSection(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `update$Response()` instead.
+   * To access the full response (for headers, for example), `updateSection$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  update(params: Update$Params, context?: HttpContext): Observable<void> {
-    return this.update$Response(params, context).pipe(
+  updateSection(params: UpdateSection$Params, context?: HttpContext): Observable<void> {
+    return this.updateSection$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 
-  /** Path part for operation `delete()` */
-  static readonly DeletePath = '/sections/{id}/delete';
+  /** Path part for operation `deleteSection()` */
+  static readonly DeleteSectionPath = '/sections/{id}/delete';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `delete()` instead.
+   * To access only the response body, use `deleteSection()` instead.
    *
    * This method doesn't expect any request body.
    */
-  delete$Response(params: Delete$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return delete$(this.http, this.rootUrl, params, context);
+  deleteSection$Response(params: DeleteSection$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return deleteSection(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `delete$Response()` instead.
+   * To access the full response (for headers, for example), `deleteSection$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  delete(params: Delete$Params, context?: HttpContext): Observable<void> {
-    return this.delete$Response(params, context).pipe(
+  deleteSection(params: DeleteSection$Params, context?: HttpContext): Observable<void> {
+    return this.deleteSection$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }

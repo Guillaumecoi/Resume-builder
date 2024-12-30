@@ -21,21 +21,20 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Skill implements SectionItemData {
 
-    public static final int BASE_PARAMETER_COUNT = 3;
-
     @NotBlank
     private String name;
     @Min(1)
     @Max(10)
-    private Integer proficiency; 
+    private Integer proficiency;
     private String description;
 
+    @Override
     @JsonIgnore
-    public List<String> getSectionItemData() {
+    public List<String> getData() {
         return List.of(
-            name, 
-            Objects.toString(proficiency, ""), 
-            Optional.ofNullable(description).orElse("")
-        );
+                name,
+                Objects.toString(proficiency, ""),
+                Optional.ofNullable(description).orElse(""));
     }
+
 }
