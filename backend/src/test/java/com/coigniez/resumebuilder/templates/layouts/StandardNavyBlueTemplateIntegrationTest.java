@@ -2,6 +2,9 @@ package com.coigniez.resumebuilder.templates.layouts;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,8 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.domain.resume.dtos.ResumeDetailResponse;
-import com.coigniez.resumebuilder.services.ResumeService;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
+import com.coigniez.resumebuilder.services.LayoutService;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -26,7 +29,7 @@ public class StandardNavyBlueTemplateIntegrationTest {
     @Autowired
     private StandardNavyBlueTemplate standardNavyBlueTemplate;
     @Autowired
-    private ResumeService resumeService;
+    private LayoutService layoutService;
 
     private Authentication testuser;
 
@@ -44,19 +47,25 @@ public class StandardNavyBlueTemplateIntegrationTest {
     }
     
     @Test
-    void testGenerate() {
+    void testGenerate() throws IOException, InterruptedException {
         // Arrange
         String title = "test title";
         
         // Act
-        long result = standardNavyBlueTemplate.generate(title);
+        long layoutId = standardNavyBlueTemplate.generate(title);
+        LayoutResponse layout = layoutService.get(layoutId);
+        byte[] generatedPdf = layoutService.generateLatexPdf(layoutId);
+
 
 
         // Assert
-        ResumeDetailResponse resume = resumeService.get(result);
+        assertNotNull(layoutId);
+        assertNotNull(layout);
+        assertNotNull(generatedPdf);
+        assertTrue(generatedPdf.length > 0);
 
-
-        assertNotNull(resume);
+        // Feel free to write the PDF to a file to open and inspect it
+        Files.write(Paths.get("test.pdf"), generatedPdf);
 
     }
 }

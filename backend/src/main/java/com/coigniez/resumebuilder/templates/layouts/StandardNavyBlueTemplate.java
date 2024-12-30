@@ -23,6 +23,7 @@ import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Title;
 import com.coigniez.resumebuilder.services.ColumnSectionService;
 import com.coigniez.resumebuilder.services.LayoutService;
 import com.coigniez.resumebuilder.services.ResumeService;
@@ -67,7 +68,7 @@ public class StandardNavyBlueTemplate {
     }
 
     long resumeId;
-    long sectionTitleMetghodId;
+    long sectionTitleMethodId;
 
     public long generate(String title) {
         resumeId = createResume(title);
@@ -76,11 +77,15 @@ public class StandardNavyBlueTemplate {
         long leftColumnId = layout.getColumns().get(0).getId();
         long rightColumnId = layout.getColumns().get(1).getId();
         Map<Class<?>, List<LatexMethodResponse>> methodIds = layoutService.getLatexMethodsMap(layoutId);
-        sectionTitleMetghodId = methodIds.get(ColumnSection.class).get(0).getId();
+        sectionTitleMethodId = methodIds.get(ColumnSection.class).get(0).getId();
 
+        // Left Column Sections
         addPictureSection(leftColumnId, 1);
 
-        return resumeId;
+        // Right Column Sections
+        addTitleSection(rightColumnId, 1);
+
+        return layoutId;
     }
 
     private long createResume(String title) {
@@ -94,14 +99,14 @@ public class StandardNavyBlueTemplate {
     private long createLayout(long resumeId) {
         CreateLayoutRequest request = CreateLayoutRequest.builder()
                 .resumeId(resumeId)
-                .numberOfColumns(1)
+                .numberOfColumns(2)
                 .columns(List.of(
                         CreateColumnRequest.builder()
                                 .columnNumber(1)
-                                .backgroundColor(ColorLocation.LIGHT_BG)
-                                .textColor(ColorLocation.DARK_TEXT)
+                                .backgroundColor(ColorLocation.DARK_BG)
+                                .textColor(ColorLocation.LIGHT_TEXT)
                                 .borderColor(ColorLocation.ACCENT)
-                                .borderRight(2.0)
+                                .borderRight(2.5)
                                 .build(),
                         CreateColumnRequest.builder()
                                 .columnNumber(2)
@@ -155,8 +160,31 @@ public class StandardNavyBlueTemplate {
         columnSectionService.create(CreateColumnSectionRequest.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
-                .latexMethodId(sectionTitleMetghodId)
+                .latexMethodId(sectionTitleMethodId)
                 .itemOrder(sectionOrder)
+                .build());
+    }
+
+    private void addTitleSection(Long columnId, int sectionOrder) {
+        CreateSectionItemRequest title = CreateSectionItemRequest.builder()
+                .item(Title.builder()
+                        .title("John Doe")
+                        .subtitle("Software Developer")
+                        .build())
+                .build();
+            
+        Long titleId = sectionService.create(CreateSectionRequest.builder()
+                .resumeId(resumeId)
+                .title("Title")
+                .showTitle(false)
+                .sectionItems(List.of(title))
+                .build());
+        columnSectionService.create(CreateColumnSectionRequest.builder()
+                .columnId(columnId)
+                .sectionId(titleId)
+                .latexMethodId(sectionTitleMethodId)
+                .itemOrder(sectionOrder)
+                .endsep(6.0)
                 .build());
     }
 
