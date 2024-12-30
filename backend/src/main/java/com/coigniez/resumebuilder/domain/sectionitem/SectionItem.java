@@ -23,14 +23,13 @@ public class SectionItem implements BaseEntity {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "subsection_id", referencedColumnName = "id")
-    private SubSection section;
+    private Integer itemOrder;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private SectionItemData item;
 
-    @Column(name = "item_order")
-    private Integer itemOrder;
+    @ManyToOne
+    @JoinColumn(name = "subsection_id", referencedColumnName = "id")
+    private SubSection section;
 }

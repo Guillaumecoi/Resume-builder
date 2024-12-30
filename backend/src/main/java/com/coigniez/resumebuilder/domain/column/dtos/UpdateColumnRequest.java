@@ -1,13 +1,7 @@
 package com.coigniez.resumebuilder.domain.column.dtos;
 
-import java.util.List;
-
-import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.interfaces.UpdateRequest;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -58,11 +52,4 @@ public class UpdateColumnRequest implements UpdateRequest {
     @NotNull
     @Min(0)
     private Double borderBottom;
-
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
-    private List<CreateColumnSectionRequest> createSectionMappings;
-
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
-    private List<UpdateColumnSectionRequest> updateSectionMappings;
-
 }

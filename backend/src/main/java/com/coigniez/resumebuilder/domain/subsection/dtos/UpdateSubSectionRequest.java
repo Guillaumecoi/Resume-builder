@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.domain.section.dtos;
+package com.coigniez.resumebuilder.domain.subsection.dtos;
 
 import com.coigniez.resumebuilder.interfaces.UpdateRequest;
 
@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UpdateSectionRequest implements UpdateRequest {
+public class UpdateSubSectionRequest implements UpdateRequest {
 
     @NotNull
     private Long id;
@@ -20,5 +20,4 @@ public class UpdateSectionRequest implements UpdateRequest {
     private String icon;
     @NotNull
     private Boolean showTitle;
-
 }

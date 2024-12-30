@@ -207,12 +207,12 @@ public class ColumnSectionServiceIntegrationTest {
 
         // Assert
         List<ColumnSection> items = columnSectionRepository.findAllByColumnId(columnId);
-        items.sort(Comparator.comparing(ColumnSection::getItemOrder)); // Sort by section order for easier
+        items.sort(Comparator.comparing(ColumnSection::getSectionOrder)); // Sort by section order for easier
                                                                        // comparison
 
         assertEquals(3, items.size(), "There should be 3 items");
         assertEquals(List.of(1, 2, 3),
-                items.stream().map(ColumnSection::getItemOrder).collect(Collectors.toList()),
+                items.stream().map(ColumnSection::getSectionOrder).collect(Collectors.toList()),
                 "Section orders should be 1, 2, 3");
         assertEquals(id1, items.get(0).getId(), "First item should have ID of id1");
         assertEquals(id2, items.get(1).getId(), "Second item should have ID of id2");
@@ -257,12 +257,12 @@ public class ColumnSectionServiceIntegrationTest {
 
         // Assert
         List<ColumnSection> items = columnSectionRepository.findAllByColumnId(columnId);
-        items.sort(Comparator.comparing(ColumnSection::getItemOrder)); // Sort by section order for easier
+        items.sort(Comparator.comparing(ColumnSection::getSectionOrder)); // Sort by section order for easier
                                                                        // comparison
 
         assertEquals(4, items.size(), "There should be 4 items");
         assertEquals(List.of(1, 2, 3, 4),
-                items.stream().map(ColumnSection::getItemOrder).collect(Collectors.toList()),
+                items.stream().map(ColumnSection::getSectionOrder).collect(Collectors.toList()),
                 "Section orders should be 1, 2, 3, 4");
         assertEquals(id1, items.get(0).getId(), "First item should have ID of id1");
         assertEquals(id3, items.get(1).getId(), "Second item should have ID of id3");
@@ -295,7 +295,7 @@ public class ColumnSectionServiceIntegrationTest {
 
         // Assert
         ColumnSectionResponse updatedColumnSection = columnSectionService.get(columnSectionId);
-        assertEquals(2, updatedColumnSection.getItemOrder(), "itemOrder should be updated to 2");
+        assertEquals(2, updatedColumnSection.getSectionOrder(), "itemOrder should be updated to 2");
         assertEquals(2.0, updatedColumnSection.getEndsep(), "endsep should be updated to 2.0");
         assertEquals(2.0, updatedColumnSection.getItemsep(), "itemsep should be updated to 2.0");
     }
@@ -355,11 +355,11 @@ public class ColumnSectionServiceIntegrationTest {
         // Assert
         List<ColumnSection> items = columnSectionRepository.findAllByColumnId(columnId);
         // Sort by section order for easier comparison
-        items.sort(Comparator.comparing(ColumnSection::getItemOrder));
+        items.sort(Comparator.comparing(ColumnSection::getSectionOrder));
 
         assertEquals(3, items.size(), "There should be 3 items");
         assertEquals(List.of(1, 2, 3),
-                items.stream().map(ColumnSection::getItemOrder).collect(Collectors.toList()),
+                items.stream().map(ColumnSection::getSectionOrder).collect(Collectors.toList()),
                 "Section orders should be 1, 2, 3");
         assertEquals(id1, items.get(0).getId(), "First item should have ID of id1");
         assertEquals(id3, items.get(1).getId(), "Second item should have ID of id3");
@@ -406,11 +406,11 @@ public class ColumnSectionServiceIntegrationTest {
         // Assert
         List<ColumnSection> items = columnSectionRepository.findAllByColumnId(columnId);
         // Sort by section order for easier comparison
-        items.sort(Comparator.comparing(ColumnSection::getItemOrder));
+        items.sort(Comparator.comparing(ColumnSection::getSectionOrder));
 
         assertEquals(3, items.size(), "There should be 3 items");
         assertEquals(List.of(1, 2, 3),
-                items.stream().map(ColumnSection::getItemOrder).collect(Collectors.toList()),
+                items.stream().map(ColumnSection::getSectionOrder).collect(Collectors.toList()),
                 "Item orders should be 1, 2, 3");
         assertEquals(id1, items.get(0).getId(), "First item should have ID of id1");
         assertEquals(id3, items.get(1).getId(), "Second item should have ID of id3");
@@ -468,12 +468,12 @@ public class ColumnSectionServiceIntegrationTest {
 
         // Assert
         List<ColumnSection> items = columnSectionRepository.findAllByColumnId(columnId);
-        items.sort(Comparator.comparing(ColumnSection::getItemOrder)); // Sort by section order for easier
+        items.sort(Comparator.comparing(ColumnSection::getSectionOrder)); // Sort by section order for easier
                                                                        // comparison
 
         assertEquals(2, items.size(), "There should be 2 items");
         assertEquals(List.of(1, 2),
-                items.stream().map(ColumnSection::getItemOrder).collect(Collectors.toList()),
+                items.stream().map(ColumnSection::getSectionOrder).collect(Collectors.toList()),
                 "Section orders should be 1, 2");
         assertEquals(id1, items.get(0).getId(), "First item should have ID of id1");
         assertEquals(id3, items.get(1).getId(), "Second item should have ID of id3");

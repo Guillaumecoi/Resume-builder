@@ -15,7 +15,7 @@ public class UpdateColumnSectionRequest implements UpdateRequest {
     private Long id;
 
     @NotNull
-    private Integer itemOrder;
+    private Integer sectionOrder;
     @NotNull
     private long latexMethodId;
 
@@ -27,6 +27,4 @@ public class UpdateColumnSectionRequest implements UpdateRequest {
 
     @NotNull
     private boolean hidden;
-    @NotNull
-    private boolean defaultOrder;
 }

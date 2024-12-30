@@ -12,7 +12,7 @@ import lombok.Data;
 public class CreateSectionItemRequest implements CreateRequest {
 
     @NotNull
-    private long sectionId;
+    private long subSectionId;
 
     @NotNull
     private SectionItemData item;

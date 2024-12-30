@@ -80,14 +80,14 @@ public class ColumnSectionService implements
         int maxOrder = orderableRepositoryUtil.findMaxItemOrderByParentId(ColumnSection.class, Column.class,
                 column.getId());
     
-        int newOrder = request.getItemOrder() == null ? maxOrder + 1 : request.getItemOrder();
+        int newOrder = request.getSectionOrder() == null ? maxOrder + 1 : request.getSectionOrder();
     
         // Shift the order
         orderableRepositoryUtil.updateItemOrder(ColumnSection.class, Column.class, column.getId(),
                 newOrder, maxOrder + 1);
     
         // Create the entity from the request
-        request.setItemOrder(newOrder);
+        request.setSectionOrder(newOrder);
         ColumnSection columnSection = columnSectionMapper.toEntity(request);
     
         // Add the columnSection to the column and section
@@ -128,7 +128,7 @@ public class ColumnSectionService implements
 
         // Shift the order
         orderableRepositoryUtil.updateItemOrder(ColumnSection.class, Column.class, columnSection.getColumn().getId(),
-                request.getItemOrder(), columnSection.getItemOrder());
+                request.getSectionOrder(), columnSection.getSectionOrder());
 
         // Update the latexMethod
         LatexMethod latexMethod = latexMethodRepository.findById(request.getLatexMethodId())
@@ -165,7 +165,7 @@ public class ColumnSectionService implements
         int maxOrder = orderableRepositoryUtil.findMaxItemOrderByParentId(ColumnSection.class, Column.class,
                 column.getId());
         orderableRepositoryUtil.updateItemOrder(ColumnSection.class, Column.class, column.getId(),
-                maxOrder + 1, columnSection.getItemOrder());
+                maxOrder + 1, columnSection.getSectionOrder());
     }
 
     @Override

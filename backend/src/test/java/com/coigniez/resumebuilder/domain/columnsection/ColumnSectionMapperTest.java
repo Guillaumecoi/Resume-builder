@@ -35,7 +35,7 @@ public class ColumnSectionMapperTest {
         // Assert
         assertNotNull(dto);
         assertEquals(entity.getId(), dto.getId());
-        assertEquals(entity.getItemOrder(), dto.getItemOrder());
+        assertEquals(entity.getSectionOrder(), dto.getSectionOrder());
         assertEquals(entity.getItemsep(), dto.getItemsep());
         assertEquals(entity.getEndsep(), dto.getEndsep());
     }
@@ -54,7 +54,7 @@ public class ColumnSectionMapperTest {
 
         // Assert
         assertNotNull(entity);
-        assertEquals(request.getItemOrder(), entity.getItemOrder());
+        assertEquals(request.getSectionOrder(), entity.getSectionOrder());
         assertEquals(request.getItemsep(), entity.getItemsep());
         assertEquals(request.getEndsep(), entity.getEndsep());
     }
@@ -71,7 +71,7 @@ public class ColumnSectionMapperTest {
 
         // Assert
         assertNotNull(entity);
-        assertEquals(1, entity.getItemOrder());
+        assertEquals(1, entity.getSectionOrder());
         assertEquals(8.0, entity.getItemsep());
         assertEquals(20.0, entity.getEndsep());
     }
@@ -98,7 +98,7 @@ public class ColumnSectionMapperTest {
 
         // Assert
         assertEquals(1L, entity.getId(), "ID should not be updated");
-        assertEquals(2, entity.getItemOrder(), "Section order should be updated");
+        assertEquals(2, entity.getSectionOrder(), "Section order should be updated");
         assertEquals(request.getItemsep(), entity.getItemsep());
         assertEquals(request.getEndsep(), entity.getEndsep());
     }

@@ -10,7 +10,6 @@ import com.coigniez.resumebuilder.interfaces.LatexMethodProvider;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,6 +22,8 @@ public class LayoutSectionRow implements BaseEntity, LatexMethodProvider {
     @Id
     @GeneratedValue
     private Long id;
+
+    private int rowOrder;
 
     @OneToOne
     private ColumnSection columnSection;

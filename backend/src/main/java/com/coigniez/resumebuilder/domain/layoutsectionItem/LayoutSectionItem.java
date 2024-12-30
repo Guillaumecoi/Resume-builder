@@ -22,6 +22,10 @@ public class LayoutSectionItem implements BaseEntity {
     @GeneratedValue
     private Long id;
 
+    private boolean hidden;
+    private Integer itemOrder;
+    private AlignmentType alignment;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "section_item_id", referencedColumnName = "id")
     private SectionItem sectionItem;
@@ -34,8 +38,4 @@ public class LayoutSectionItem implements BaseEntity {
     @JoinColumn(name = "layout_subsection_id", referencedColumnName = "id")
     private LayoutSubSection layoutSubSection;
 
-    private boolean hidden;
-    private Integer itemOrder;
-    private AlignmentType alignment;
-    
 }

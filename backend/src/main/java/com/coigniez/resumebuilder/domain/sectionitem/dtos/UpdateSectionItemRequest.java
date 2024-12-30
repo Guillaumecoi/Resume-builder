@@ -15,7 +15,7 @@ public class UpdateSectionItemRequest implements UpdateRequest {
     private Long id;
 
     @NotNull
-    private long sectionId;
+    private long subSectionId;
 
     @NotNull
     private SectionItemData item;

@@ -21,8 +21,7 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
     private static final Map<String, Object> DEFAULT_VALUES = Map.of(
         "itemsep", 8.0,
         "endsep", 20.0,
-        "hidden", false,
-        "defaultOrder", true
+        "hidden", false
     );
 
     @Override
@@ -35,12 +34,11 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
         MapperUtils.setDefaultValues(request, DEFAULT_VALUES);
         
         return ColumnSection.builder()
-            .itemOrder(request.getItemOrder())
+            .sectionOrder(request.getSectionOrder())
             .itemsep(request.getItemsep())
             .endsep(request.getEndsep())
             .alignment(request.getAlignment())
             .hidden(request.getHidden())
-            .defaultOrder(request.getDefaultOrder())
             .build();
     }
 
@@ -54,12 +52,11 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
         return ColumnSectionResponse.builder()
             .id(entity.getId())
             .latexMethod(latexMethodMapper.toDto(entity.getLatexMethod()))
-            .itemOrder(entity.getItemOrder())
+            .sectionOrder(entity.getSectionOrder())
             .itemsep(entity.getItemsep())
             .endsep(entity.getEndsep())
             .alignment(entity.getAlignment())
             .hidden(entity.isHidden())
-            .defaultOrder(entity.isDefaultOrder())
             .build();
     }
 
@@ -69,12 +66,11 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
             return;
         }
 
-        entity.setItemOrder(request.getItemOrder());
+        entity.setSectionOrder(request.getSectionOrder());
         entity.setItemsep(request.getItemsep());
         entity.setEndsep(request.getEndsep());
         entity.setAlignment(request.getAlignment());
         entity.setHidden(request.isHidden());
-        entity.setDefaultOrder(request.isDefaultOrder());
     }
     
 }

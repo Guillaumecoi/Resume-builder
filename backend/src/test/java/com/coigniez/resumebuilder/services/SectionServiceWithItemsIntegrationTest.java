@@ -93,7 +93,7 @@ public class SectionServiceWithItemsIntegrationTest {
                 assertNotNull(sectionId);
                 assertEquals("Test Section", response.getTitle());
                 assertEquals(2, response.getSectionItems().size());
-                assertEquals(1, response.getSectionItems().get(0).getItemOrder());
+                assertEquals(1, response.getSectionItems().get(0).getSectionOrder());
                 assertEquals(Skill.class, response.getSectionItems().get(1).getItem().getClass());
                 assertEquals("This is some example text",
                                 ((Textbox) response.getSectionItems().get(0).getItem()).getContent());

@@ -13,10 +13,11 @@ import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemReque
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResponse;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.UpdateSectionItemRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
+import com.coigniez.resumebuilder.domain.subsection.SubSection;
 import com.coigniez.resumebuilder.file.FileStorageService;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.repository.SectionItemRepository;
-import com.coigniez.resumebuilder.repository.SectionRepository;
+import com.coigniez.resumebuilder.repository.SubSectionRepository;
 import com.coigniez.resumebuilder.util.ExceptionUtils;
 import com.coigniez.resumebuilder.util.OrderableRepositoryUtil;
 import com.coigniez.resumebuilder.util.SecurityUtils;
@@ -29,7 +30,7 @@ public class SectionItemService
         implements ParentEntityService<CreateSectionItemRequest, UpdateSectionItemRequest, SectionItemResponse, Long> {
 
     private final SectionItemRepository sectionItemRepository;
-    private final SectionRepository sectionRepository;
+    private final SubSectionRepository subSectionRepository;
     private final SectionItemMapper sectionitemMapper;
     private final FileStorageService fileStorageService;
     private final SecurityUtils securityUtils;
@@ -39,11 +40,11 @@ public class SectionItemService
     @Override
     public Long create(CreateSectionItemRequest request) {
         // Check if the user has access to the section
-        securityUtils.hasAccessSection(request.getSectionId());
+        securityUtils.hasAccessSubSection(request.getSubSectionId());
 
         // Get the section and latexMethod
-        Section section = sectionRepository.findById(request.getSectionId())
-                .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", request.getSectionId()));
+        SubSection section = subSectionRepository.findById(request.getSubSectionId())
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("SubSection", request.getSubSectionId()));
 
         // Find the maximum itemOrder in the section
         int maxOrder = orderableRepositoryUtil
@@ -74,7 +75,7 @@ public class SectionItemService
      */
     public Long createPicture(MultipartFile file, CreateSectionItemRequest request) {
         // Check if the user has access to the section
-        securityUtils.hasAccessSection(request.getSectionId());
+        securityUtils.hasAccessSection(request.getSubSectionId());
 
         // Save the file to the file storage and add the path to the request
         String path = fileStorageService.saveFile(file, securityUtils.getUserName());
@@ -153,10 +154,10 @@ public class SectionItemService
     @Override
     public void removeAllByParentId(Long id) {
         // Check if the user has access to the section
-        securityUtils.hasAccessSection(id);
+        securityUtils.hasAccessSubSection(id);
 
-        Section section = sectionRepository.findById(id)
-                .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", id));
+        SubSection section = subSectionRepository.findById(id)
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("SubSection", id));
 
         section.clearSectionItems();
         sectionItemRepository.deleteAllBySectionId(id);

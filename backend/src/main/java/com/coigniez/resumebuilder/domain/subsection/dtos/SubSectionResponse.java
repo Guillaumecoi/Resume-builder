@@ -1,8 +1,8 @@
-package com.coigniez.resumebuilder.domain.section.dtos;
+package com.coigniez.resumebuilder.domain.subsection.dtos;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.subsection.dtos.SubSectionResponse;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResponse;
 import com.coigniez.resumebuilder.interfaces.Response;
 
 import jakarta.validation.constraints.NotBlank;
@@ -12,7 +12,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class SectionResponse implements Response {
+public class SubSectionResponse implements Response {
 
     @NotNull
     private long id;
@@ -24,6 +24,6 @@ public class SectionResponse implements Response {
     private boolean showTitle;
 
     @NotNull
-    private List<SubSectionResponse> subSections;
+    private List<SectionItemResponse> sectionItems;
     
 }

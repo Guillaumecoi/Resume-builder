@@ -24,7 +24,7 @@ public interface SectionItemRepository extends JpaRepository<SectionItem, Long> 
     @Query("DELETE FROM SectionItem si WHERE si.section.id = :sectionId")
     void deleteAllBySectionId(Long sectionId);
 
-    @Query("SELECT r.createdBy FROM SectionItem si JOIN si.section s JOIN s.resume r WHERE si.id = :id")
+    @Query("SELECT r.createdBy FROM SectionItem si JOIN si.subSection ss JOIN ss.section s JOIN s.resume r WHERE si.id = :id")
     Optional<String> findCreatedBy(Long id);
 
 }

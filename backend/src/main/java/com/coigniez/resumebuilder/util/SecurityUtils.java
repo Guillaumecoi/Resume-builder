@@ -16,6 +16,7 @@ import com.coigniez.resumebuilder.repository.LayoutSectionItemRepository;
 import com.coigniez.resumebuilder.repository.ResumeRepository;
 import com.coigniez.resumebuilder.repository.SectionItemRepository;
 import com.coigniez.resumebuilder.repository.SectionRepository;
+import com.coigniez.resumebuilder.repository.SubSectionRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.NonNull;
@@ -30,6 +31,8 @@ public class SecurityUtils {
     private ResumeRepository resumeRepository;
     @Autowired
     private SectionRepository sectionRepository;
+    @Autowired
+    private SubSectionRepository subSectionRepository;
     @Autowired
     private SectionItemRepository sectionItemRepository;
     @Autowired
@@ -103,6 +106,23 @@ public class SecurityUtils {
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", sectionId));
         if (!hasAccess(List.of(owner))) {
             throw ExceptionUtils.accessDenied(owner, "section", sectionId);
+        }
+    }
+
+    /**
+     * Check if the connected user has access to the sub section
+     * 
+     * @param id            the id of the sub section
+     * @param connectedUser the connected user
+     * @throws AccessDeniedException   if the connected user does not have access to
+     *                                 the sub section
+     * @throws EntityNotFoundException if the sub section does not exist
+     */
+    public void hasAccessSubSection(Long subSectionId) {
+        String owner = subSectionRepository.findCreatedBy(subSectionId)
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Sub section", subSectionId));
+        if (!hasAccess(List.of(owner))) {
+            throw ExceptionUtils.accessDenied(owner, "sub section", subSectionId);
         }
     }
 

@@ -27,12 +27,11 @@ public class ColumnSection implements BaseEntity, LatexMethodProvider {
     @GeneratedValue
     private Long id;
 
-    private Integer itemOrder;
+    private Integer sectionOrder;
     private double itemsep;
     private double endsep;
     private AlignmentType alignment;
     private boolean hidden;
-    private boolean defaultOrder;
 
     @ManyToOne
     @JoinColumn(name = "column_id", referencedColumnName = "id")
@@ -66,10 +65,10 @@ public class ColumnSection implements BaseEntity, LatexMethodProvider {
 
     @Override
     public List<String> getData() {
+        LatexMethod titleMethod = layoutSection.getLatexMethod();
         return List.of(
-                LatexMethodGenerator.generateUsage(latexMethod.getMethodType(), latexMethod.getType(),
-                        latexMethod.getName(),
-                        layoutSection.getData()),
+                LatexMethodGenerator.generateUsage(titleMethod.getMethodType(), titleMethod.getType(),
+                        titleMethod.getName(), layoutSection.getData()),
                 String.valueOf(itemsep) + "pt",
                 String.valueOf(endsep) + "pt");
     }
