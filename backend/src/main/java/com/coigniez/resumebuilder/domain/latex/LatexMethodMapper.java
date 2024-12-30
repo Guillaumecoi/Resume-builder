@@ -1,6 +1,5 @@
 package com.coigniez.resumebuilder.domain.latex;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -32,7 +31,6 @@ public class LatexMethodMapper
                 .name(request.getName())
                 .methodType(request.getMethodType())
                 .method(request.getMethod())
-                .columnSections(new ArrayList<>())
                 .build();
     }
 

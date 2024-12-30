@@ -1,6 +1,5 @@
 package com.coigniez.resumebuilder.domain.column;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
@@ -9,9 +8,6 @@ import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.interfaces.BaseEntity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter @Setter
@@ -25,42 +21,27 @@ public class Column implements BaseEntity {
     @GeneratedValue
     private Long id;
     
-    @Min(1) @Max(2)
     private int columnNumber;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "layout_id", referencedColumnName = "id")
     private Layout layout;
     
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("position ASC")
-    @Builder.Default
-    private List<ColumnSection> sectionMappings = new ArrayList<>();
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ColumnSection> sectionMappings;
     
-    @NotNull
     private ColorLocation backgroundColor;
-    @NotNull
     private ColorLocation textColor;
-    @NotNull
     private ColorLocation borderColor;
     
-    @Min(0)
     private double paddingLeft;
-    @Min(0) 
     private double paddingRight;
-    @Min(0)
     private double paddingTop;
-    @Min(0)
     private double paddingBottom;
 
-    @Min(0)
     private double borderLeft;
-    @Min(0)
     private double borderRight;
-    @Min(0)
     private double borderTop;
-    @Min(0)
     private double borderBottom;
 
     public void addSectionMapping(ColumnSection sectionMapping) {

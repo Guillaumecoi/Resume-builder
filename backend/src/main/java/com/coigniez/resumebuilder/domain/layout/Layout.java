@@ -1,9 +1,7 @@
 package com.coigniez.resumebuilder.domain.layout;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Set;
-import java.util.HashSet;
 
 import com.coigniez.resumebuilder.domain.column.Column;
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
@@ -13,9 +11,6 @@ import com.coigniez.resumebuilder.domain.resume.Resume;
 import com.coigniez.resumebuilder.interfaces.BaseEntity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter @Setter
@@ -29,34 +24,23 @@ public class Layout implements BaseEntity {
     @GeneratedValue
     private Long id;
 
-    @NotNull
+    @Enumerated(EnumType.STRING)
+    private PageSize pageSize;
+    private Integer numberOfColumns;
+    private Double columnSeparator;
+    @Embedded
+    private ColorScheme colorScheme;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", referencedColumnName = "id")
     private Resume resume;
 
-    @Builder.Default
     @OneToMany(mappedBy = "layout", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("columnNumber ASC")
-    private List<Column> columns = new ArrayList<>();
+    private List<Column> columns;
 
-    @Builder.Default
     @OneToMany(mappedBy = "layout", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<LatexMethod> latexMethods = new HashSet<>();
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private PageSize pageSize;
-    
-
-    @NotNull @Min(1) @Max(2)
-    private Integer numberOfColumns;
-    
-    @NotNull @Min(0) @Max(1)
-    private Double columnSeparator;
-
-    @NotNull
-    @Embedded
-    private ColorScheme colorScheme;
+    private Set<LatexMethod> latexMethods;
 
     public void addColumn(Column column) {
         columns.add(column);

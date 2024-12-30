@@ -23,10 +23,9 @@ erDiagram
     Footer ||--o{ Column : ""
     Column ||--o{ ColumnSection : ""
     ColumnSection ||--|| LayoutSection : ""
-    ColumnSection ||--|| LayoutSectionRow : ""
+    ColumnSection ||--o{ LayoutSectionRow : ""
     LayoutSectionRow ||--o{ LayoutSubSection : ""
     LayoutSubSection ||--o{ LayoutSectionItem : ""
-    
 ```
 
 

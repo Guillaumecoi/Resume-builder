@@ -9,15 +9,12 @@ import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionRespons
 import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionRequest;
 import com.coigniez.resumebuilder.domain.latex.LatexMethodMapper;
-import com.coigniez.resumebuilder.domain.section.SectionMapper;
 import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.util.MapperUtils;
 
 @Service
 public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSectionRequest, UpdateColumnSectionRequest, ColumnSectionResponse> {
 
-    @Autowired
-    private SectionMapper sectionMapper;
     @Autowired
     private LatexMethodMapper latexMethodMapper;
 
@@ -52,9 +49,10 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
         if(entity == null) {
             return null;
         }
+
+        // Todo layoutSection
         return ColumnSectionResponse.builder()
             .id(entity.getId())
-            .section(sectionMapper.toDto(entity.getSection()))
             .latexMethod(latexMethodMapper.toDto(entity.getLatexMethod()))
             .itemOrder(entity.getItemOrder())
             .itemsep(entity.getItemsep())

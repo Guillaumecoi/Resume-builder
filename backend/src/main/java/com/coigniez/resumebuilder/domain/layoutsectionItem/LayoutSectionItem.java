@@ -1,8 +1,8 @@
 package com.coigniez.resumebuilder.domain.layoutsectionItem;
 
-import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
+import com.coigniez.resumebuilder.domain.layoutsubsection.LayoutSubSection;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
 import com.coigniez.resumebuilder.interfaces.BaseEntity;
 
@@ -22,7 +22,7 @@ public class LayoutSectionItem implements BaseEntity {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "section_item_id", referencedColumnName = "id")
     private SectionItem sectionItem;
 
@@ -30,9 +30,9 @@ public class LayoutSectionItem implements BaseEntity {
     @JoinColumn(name = "latex_method_id", referencedColumnName = "id")
     private LatexMethod latexMethod;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "column_section_id", referencedColumnName = "id")
-    private ColumnSection columnSection;
+    @ManyToOne
+    @JoinColumn(name = "layout_subsection_id", referencedColumnName = "id")
+    private LayoutSubSection layoutSubSection;
 
     private boolean hidden;
     private Integer itemOrder;

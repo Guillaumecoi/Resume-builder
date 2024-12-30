@@ -1,8 +1,6 @@
 package com.coigniez.resumebuilder.domain.resume;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,7 +17,6 @@ import com.coigniez.resumebuilder.interfaces.Creatable;
 import com.coigniez.resumebuilder.interfaces.TimeTrackable;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Getter
@@ -37,7 +34,6 @@ public class Resume implements BaseEntity, TimeTrackable, Creatable {
     @GeneratedValue
     private Long id;
 
-    @NotBlank
     private String title;
     private String picture;
 
@@ -53,13 +49,11 @@ public class Resume implements BaseEntity, TimeTrackable, Creatable {
     @Column
     private LocalDateTime lastModifiedDate;
 
-    @OneToMany(mappedBy = "resume", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
-    @Builder.Default
-    private Set<Section> sections = new HashSet<>();
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Section> sections;
 
-    @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
-    @Builder.Default
-    private List<Layout> layouts = new ArrayList<>();
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Layout> layouts;
 
     public void addSection(Section section) {
         sections.add(section);

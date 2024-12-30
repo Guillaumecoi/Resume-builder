@@ -3,7 +3,7 @@ package com.coigniez.resumebuilder.domain.sectionitem;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import com.coigniez.resumebuilder.domain.section.Section;
+import com.coigniez.resumebuilder.domain.subsection.SubSection;
 import com.coigniez.resumebuilder.interfaces.BaseEntity;
 import com.coigniez.resumebuilder.interfaces.SectionItemData;
 
@@ -23,9 +23,9 @@ public class SectionItem implements BaseEntity {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "section_id", referencedColumnName = "id")
-    private Section section;
+    @ManyToOne
+    @JoinColumn(name = "subsection_id", referencedColumnName = "id")
+    private SubSection section;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
