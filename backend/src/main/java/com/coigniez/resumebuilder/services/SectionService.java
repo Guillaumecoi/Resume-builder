@@ -49,13 +49,7 @@ public class SectionService
         // Save the section
         Long sectionId = sectionRepository.save(section).getId();
 
-        // Create the section items
-        if (request.getSectionItems() != null) {
-            for (CreateSectionItemRequest sectionItemRequest : request.getSectionItems()) {
-                sectionItemRequest.setSectionId(sectionId);
-                sectionItemService.create(sectionItemRequest);
-            }
-        }
+        //TODO: Create the subSections
 
         // Return the section id
         return sectionId;
@@ -76,25 +70,6 @@ public class SectionService
     public void update(UpdateSectionRequest request) {
         // Check if the user has access to the section
         securityUtils.hasAccessSection(request.getId());
-
-        // Create and update section items
-        for (CreateSectionItemRequest sectionItemRequest : request.getCreateSectionItems()) {
-            sectionItemRequest.setSectionId(request.getId());
-            sectionItemService.create(sectionItemRequest);
-        }
-        for (UpdateSectionItemRequest sectionItemRequest : request.getUpdateSectionItems()) {
-            // Check if the section item belongs to the section
-            if (sectionItemRequest.getId() == null) {
-                throw new IllegalArgumentException("Section item id is required");
-            }
-            if (sectionItemRepository.findById(sectionItemRequest.getId())
-                    .orElseThrow(() -> ExceptionUtils.entityNotFound("SectionItem", sectionItemRequest.getId()))
-                    .getSection().getId() != request.getId()) {
-                throw new IllegalArgumentException("Section item does not belong to the section");
-            }
-
-            sectionItemService.update(sectionItemRequest);
-        }
 
         // retrieve and update the existing entity
         Section existingSection = sectionRepository.findById(request.getId())

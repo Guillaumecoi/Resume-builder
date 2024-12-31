@@ -10,9 +10,6 @@ import com.coigniez.resumebuilder.domain.section.dtos.UpdateSectionRequest;
 import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.util.MapperUtils;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 @Service
 public class SectionMapper implements Mapper<Section, CreateSectionRequest, UpdateSectionRequest, SectionResponse> {
 
@@ -29,6 +26,7 @@ public class SectionMapper implements Mapper<Section, CreateSectionRequest, Upda
 
         return Section.builder()
                 .title(request.getTitle())
+                .icon(request.getIcon())
                 .showTitle(request.getShowTitle())
                 .build();
     }

@@ -27,7 +27,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class SectionItemService
-        implements ParentEntityService<CreateSectionItemRequest, UpdateSectionItemRequest, SectionItemResponse, Long> {
+        implements
+        ParentEntityService<CreateSectionItemRequest, UpdateSectionItemRequest, SectionItemResponse, Long> {
 
     private final SectionItemRepository sectionItemRepository;
     private final SubSectionRepository subSectionRepository;
@@ -44,16 +45,18 @@ public class SectionItemService
 
         // Get the section and latexMethod
         SubSection section = subSectionRepository.findById(request.getSubSectionId())
-                .orElseThrow(() -> ExceptionUtils.entityNotFound("SubSection", request.getSubSectionId()));
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("SubSection",
+                        request.getSubSectionId()));
 
         // Find the maximum itemOrder in the section
         int maxOrder = orderableRepositoryUtil
-                .findMaxItemOrderByParentId(SectionItem.class, Section.class, section.getId());
+                .findMaxItemOrderByParentId(SectionItem.class, Section.class, section.getId(),
+                        "itemOrder");
         int newOrder = request.getItemOrder() == null ? maxOrder + 1 : request.getItemOrder();
 
         // Shift the order
         orderableRepositoryUtil.updateItemOrder(SectionItem.class, Section.class, section.getId(),
-                newOrder, maxOrder + 1);
+                "itemOrder", newOrder, maxOrder + 1);
 
         // Create the entity from the request
         request.setItemOrder(newOrder);
@@ -106,8 +109,8 @@ public class SectionItemService
         Long sectionId = sectionItem.getSection().getId();
 
         // Shift other items
-        orderableRepositoryUtil.updateItemOrder(SectionItem.class, Section.class, sectionId, request.getItemOrder(),
-                sectionItem.getItemOrder());
+        orderableRepositoryUtil.updateItemOrder(SectionItem.class, Section.class, sectionId,
+                "itemOrder", request.getItemOrder(), sectionItem.getItemOrder());
 
         // Update the entity
         sectionitemMapper.updateEntity(sectionItem, request);
@@ -137,7 +140,7 @@ public class SectionItemService
         // Shift other items
         int maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(sectionId).orElse(0);
         orderableRepositoryUtil.updateItemOrder(SectionItem.class, Section.class, sectionId,
-                maxOrder + 1, sectionItem.getItemOrder());
+                "itemOrder", maxOrder + 1, sectionItem.getItemOrder());
     }
 
     @Override

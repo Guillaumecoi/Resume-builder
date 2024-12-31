@@ -26,9 +26,10 @@ public class OrderableRepositoryUtil {
      * @param parentId    The parent id
      * @return The maximum item order if found, otherwise 0
      */
-    public <ID> int findMaxItemOrderByParentId(Class<?> entityClass, Class<?> parentClass, ID parentId) {
-        String query = "SELECT MAX(e.itemOrder) FROM " + getEntityName(entityClass) + " e WHERE e."
-                + getParentName(parentClass) + ".id = :parentId";
+    public <ID> int findMaxItemOrderByParentId(Class<?> entityClass, Class<?> parentClass, ID parentId,
+            String orderName) {
+        String query = "SELECT MAX(e.%s) FROM %s e WHERE e.%s.id = :parentId"
+                .formatted(orderName, getEntityName(entityClass), getParentName(parentClass));
 
         List<Integer> resultList = entityManager.createQuery(query, Integer.class)
                 .setParameter("parentId", parentId)
@@ -47,30 +48,30 @@ public class OrderableRepositoryUtil {
      * @param newOrder    The new order
      * @param oldOrder    The old order
      */
-    public <ID> void updateItemOrder(Class<?> entityClass, Class<?> parentClass, ID parentId, int newOrder,
-            int oldOrder) {
+    public <ID> void updateItemOrder(Class<?> entityClass, Class<?> parentClass, ID parentId,
+            String orderName, int newOrder, int oldOrder) {
         // Update the item order of the other items
         if (newOrder == oldOrder) {
             return;
         } else if (newOrder < oldOrder) {
-            incrementItemOrderBetween(entityClass, parentClass, parentId, newOrder, oldOrder);
+            incrementItemOrderBetween(entityClass, parentClass, parentId, orderName, newOrder, oldOrder);
         } else {
-            decrementItemOrderBetween(entityClass, parentClass, parentId, newOrder, oldOrder);
+            decrementItemOrderBetween(entityClass, parentClass, parentId, orderName, newOrder, oldOrder);
         }
 
         // Refresh the entities to get the updated item order
         refreshEntityItems(parentRepositoryUtil.findAllByParentId(entityClass, parentClass, parentId));
     }
 
-    private <ID> void incrementItemOrderBetween(Class<?> entityClass, Class<?> parentClass, ID parentId, int newOrder,
-            int oldOrder) {
+    private <ID> void incrementItemOrderBetween(Class<?> entityClass, Class<?> parentClass, ID parentId,
+            String orderName, int newOrder, int oldOrder) {
         String query = """
                 UPDATE %s e
                 SET e.itemOrder = e.itemOrder + 1
                 WHERE e.%s.id = :parentId
                 AND e.itemOrder >= :newOrder
                 AND e.itemOrder < :oldOrder
-                """.formatted(getEntityName(entityClass), getParentName(parentClass));
+                """.replace("itemOrder", orderName).formatted(getEntityName(entityClass), getParentName(parentClass));
 
         entityManager.createQuery(query)
                 .setParameter("parentId", parentId)
@@ -79,15 +80,15 @@ public class OrderableRepositoryUtil {
                 .executeUpdate();
     }
 
-    private <ID> void decrementItemOrderBetween(Class<?> entityClass, Class<?> parentClass, ID parentId, int newOrder,
-            int oldOrder) {
+    private <ID> void decrementItemOrderBetween(Class<?> entityClass, Class<?> parentClass, ID parentId,
+            String orderName, int newOrder, int oldOrder) {
         String query = """
                 UPDATE %s e
                 SET e.itemOrder = e.itemOrder - 1
                 WHERE e.%s.id = :parentId
                 AND e.itemOrder > :oldOrder
                 AND e.itemOrder <= :newOrder
-                """.formatted(getEntityName(entityClass), getParentName(parentClass));
+                """.replace("itemOrder", orderName).formatted(getEntityName(entityClass), getParentName(parentClass));
 
         entityManager.createQuery(query)
                 .setParameter("parentId", parentId)

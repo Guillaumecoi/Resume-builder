@@ -14,6 +14,8 @@ public class UpdateSubSectionRequest implements UpdateRequest {
 
     @NotNull
     private Long id;
+    @NotNull
+    private Long sectionId;
 
     @NotBlank
     private String title;
