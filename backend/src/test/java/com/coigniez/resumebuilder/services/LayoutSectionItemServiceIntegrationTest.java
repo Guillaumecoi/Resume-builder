@@ -23,7 +23,7 @@ import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.CreateLayoutSectionItemRequest;
 import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemResponse;
 import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.UpdateLayoutSectionItemRequest;
-import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
@@ -68,7 +68,7 @@ public class LayoutSectionItemServiceIntegrationTest {
         SecurityContextHolder.getContext().setAuthentication(testuser);
 
         // Create resume
-        Long resumeId = resumeService.create(CreateResumeRequest.builder()
+        Long resumeId = resumeService.create(ResumeCreateReq.builder()
                 .title("Test Resume")
                 .build());
 

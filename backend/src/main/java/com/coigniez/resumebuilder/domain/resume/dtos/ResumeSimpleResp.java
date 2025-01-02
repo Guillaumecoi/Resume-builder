@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ResumeResponse implements Response {
+public class ResumeSimpleResp implements Response {
 
     @NotNull
     private long id;

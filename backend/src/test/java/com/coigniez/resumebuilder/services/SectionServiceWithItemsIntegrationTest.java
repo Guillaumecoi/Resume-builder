@@ -12,7 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionResp;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionUpdateReq;
@@ -57,7 +57,7 @@ public class SectionServiceWithItemsIntegrationTest {
                 // Set the Authentication object in the SecurityContextHolder
                 SecurityContextHolder.getContext().setAuthentication(testuser);
 
-                CreateResumeRequest resumeRequest = CreateResumeRequest.builder().title("Software Developer")
+                ResumeCreateReq resumeRequest = ResumeCreateReq.builder().title("Software Developer")
                                 .sections(List.of(SectionCreateReq.builder().title("Education").build())).build();
 
                 resumeId = resumeService.create(resumeRequest);

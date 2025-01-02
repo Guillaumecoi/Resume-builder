@@ -19,7 +19,7 @@ import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
-import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
@@ -89,7 +89,7 @@ public class StandardNavyBlueTemplate {
     }
 
     private long createResume(String title) {
-        CreateResumeRequest request = CreateResumeRequest.builder()
+        ResumeCreateReq request = ResumeCreateReq.builder()
                 .title(title)
                 .build();
         return resumeService.create(request);

@@ -7,10 +7,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.coigniez.resumebuilder.domain.common.PageResponse;
-import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
-import com.coigniez.resumebuilder.domain.resume.dtos.ResumeDetailResponse;
-import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResponse;
-import com.coigniez.resumebuilder.domain.resume.dtos.UpdateResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResp;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeSimpleResp;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeUpdateReq;
 import com.coigniez.resumebuilder.interfaces.CrudController;
 import com.coigniez.resumebuilder.services.ResumeService;
 
@@ -35,14 +35,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequiredArgsConstructor
 @Tag(name = "Resume")
 public class ResumeController
-        implements CrudController<CreateResumeRequest, UpdateResumeRequest, ResumeDetailResponse, Long> {
+        implements CrudController<ResumeCreateReq, ResumeUpdateReq, ResumeResp, Long> {
 
     private final ResumeService resumeService;
 
     @Override
     @PostMapping
     @Operation(operationId = "createResume")
-    public ResponseEntity<Long> create(@Valid @RequestBody CreateResumeRequest request, Authentication user) {
+    public ResponseEntity<Long> create(@Valid @RequestBody ResumeCreateReq request, Authentication user) {
         Long id = resumeService.create(request);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -55,15 +55,15 @@ public class ResumeController
     @Override
     @GetMapping("/{id}")
     @Operation(operationId = "getResume")
-    public ResponseEntity<ResumeDetailResponse> get(@PathVariable Long id, Authentication user) {
-        ResumeDetailResponse resume = resumeService.get(id);
+    public ResponseEntity<ResumeResp> get(@PathVariable Long id, Authentication user) {
+        ResumeResp resume = resumeService.get(id);
         return ResponseEntity.ok(resume);
     }
 
     @Override
     @PostMapping("/{id}")
     @Operation(operationId = "updateResume")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody UpdateResumeRequest request,
+    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody ResumeUpdateReq request,
             Authentication user) {
         request.setId(id);
         resumeService.update(request);
@@ -79,7 +79,7 @@ public class ResumeController
     }
 
     @GetMapping
-    public ResponseEntity<PageResponse<ResumeResponse>> getAllResumes(
+    public ResponseEntity<PageResponse<ResumeSimpleResp>> getAllResumes(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
             @RequestParam(name = "order", defaultValue = "lastModifiedDate", required = false) String order,

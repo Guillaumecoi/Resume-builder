@@ -20,7 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionUpdateReq;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +40,7 @@ public class SectionControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = "USER")
     void setUp() throws Exception {
         // Arrange
-        CreateResumeRequest createRequest = CreateResumeRequest.builder().title("Software Developer").build();
+        ResumeCreateReq createRequest = ResumeCreateReq.builder().title("Software Developer").build();
 
         // Act - Create
         String createResponse = mockMvc.perform(post("/resumes")
@@ -106,7 +106,7 @@ public class SectionControllerIntegrationTest {
         SectionCreateReq section2 = SectionCreateReq.builder().resumeId(resumeId).title("Experience").build();
 
         // Act
-        CreateResumeRequest createRequest = CreateResumeRequest.builder()
+        ResumeCreateReq createRequest = ResumeCreateReq.builder()
                 .title("Barista")
                 .sections(List.of(section1, section2))
                 .build();
@@ -193,7 +193,7 @@ public class SectionControllerIntegrationTest {
         Long sectionId = Long.parseLong(createResponse);
 
         // Act
-        CreateResumeRequest updateRequest = CreateResumeRequest.builder().title("Barista").build();
+        ResumeCreateReq updateRequest = ResumeCreateReq.builder().title("Barista").build();
 
         mockMvc.perform(post("/resumes/" + resumeId)
                 .contentType(MediaType.APPLICATION_JSON)

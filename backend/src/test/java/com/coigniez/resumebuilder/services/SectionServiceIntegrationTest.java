@@ -15,8 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
-import com.coigniez.resumebuilder.domain.resume.dtos.ResumeDetailResponse;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResp;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionResp;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionUpdateReq;
@@ -59,7 +59,7 @@ public class SectionServiceIntegrationTest {
         // Set the Authentication object in the SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(testuser);
 
-        CreateResumeRequest resumeRequest = CreateResumeRequest.builder().title("Software Developer")
+        ResumeCreateReq resumeRequest = ResumeCreateReq.builder().title("Software Developer")
                 .sections(List.of(SectionCreateReq.builder().title("Education").build())).build();
 
         resumeId = resumeService.create(resumeRequest);
@@ -79,7 +79,7 @@ public class SectionServiceIntegrationTest {
         // Assert
         assertNotNull(sectionId, "The sectionId should not be null after creation");
         SectionResp response = sectionService.get(sectionId);
-        ResumeDetailResponse resume = resumeService.get(resumeId);
+        ResumeResp resume = resumeService.get(resumeId);
 
         assertNotNull(response, "The section should not be null after creation");
         assertEquals(sectionId, response.getId(), "Section id is not correct");

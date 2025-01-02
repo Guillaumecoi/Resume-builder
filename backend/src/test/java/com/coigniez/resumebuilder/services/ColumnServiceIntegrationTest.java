@@ -23,7 +23,7 @@ import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
 import com.coigniez.resumebuilder.domain.column.dtos.UpdateColumnRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
-import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -62,7 +62,7 @@ public class ColumnServiceIntegrationTest {
         // Set the Authentication object in the SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(testuser);
 
-        CreateResumeRequest resumeRequest = CreateResumeRequest.builder().title("Software Developer")
+        ResumeCreateReq resumeRequest = ResumeCreateReq.builder().title("Software Developer")
                 .sections(List.of(SectionCreateReq.builder().title("Education").build())).build();
 
         Long resumeId = resumeService.create(resumeRequest);

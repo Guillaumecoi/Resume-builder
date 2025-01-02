@@ -23,7 +23,7 @@ import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
 import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
 import com.coigniez.resumebuilder.domain.latex.dtos.UpdateLatexMethodRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
-import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 
 import java.util.List;
 
@@ -60,7 +60,7 @@ public class LatexMethodServiceIntegrationTest {
         SecurityContextHolder.getContext().setAuthentication(testuser);
 
         // Create a resume
-        Long resumeId = resumeService.create(CreateResumeRequest.builder().title("Software Developer").build());
+        Long resumeId = resumeService.create(ResumeCreateReq.builder().title("Software Developer").build());
 
         // Create a layout
         layoutId = layoutService.create(CreateLayoutRequest.builder().resumeId(resumeId).build());

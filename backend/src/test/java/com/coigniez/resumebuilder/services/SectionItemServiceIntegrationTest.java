@@ -28,7 +28,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
@@ -79,7 +79,7 @@ public class SectionItemServiceIntegrationTest {
         // Set the Authentication object in the SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(testuser);
 
-        CreateResumeRequest resumeRequest = CreateResumeRequest.builder().title("Software Developer").build();
+        ResumeCreateReq resumeRequest = ResumeCreateReq.builder().title("Software Developer").build();
 
         Long resumeId = resumeService.create(resumeRequest);
 

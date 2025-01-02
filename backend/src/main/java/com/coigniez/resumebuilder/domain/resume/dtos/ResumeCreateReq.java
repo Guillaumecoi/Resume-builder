@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.domain.resume.dtos;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionSimpleCreateReq;
 import com.coigniez.resumebuilder.interfaces.CreateRequest;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
@@ -14,11 +14,11 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CreateResumeRequest implements CreateRequest {
+public class ResumeCreateReq implements CreateRequest {
 
     @NotBlank
     private String title;
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    private List<SectionCreateReq> sections;
+    private List<SectionSimpleCreateReq> sections;
 }

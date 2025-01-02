@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UpdateResumeRequest implements UpdateRequest {
+public class ResumeUpdateReq implements UpdateRequest {
 
     @NotNull
     private Long id;

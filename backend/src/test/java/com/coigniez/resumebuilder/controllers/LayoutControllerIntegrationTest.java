@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.UpdateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
-import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 import com.coigniez.resumebuilder.templates.color.ColorTemplates;
 import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplates;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +45,7 @@ public class LayoutControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = "USER")
     void setUp() throws Exception {
         // Arrange
-        CreateResumeRequest createRequest = CreateResumeRequest.builder().title("Software Developer").build();
+        ResumeCreateReq createRequest = ResumeCreateReq.builder().title("Software Developer").build();
 
         // Act - Create
         String createResponse = mockMvc.perform(post("/resumes")

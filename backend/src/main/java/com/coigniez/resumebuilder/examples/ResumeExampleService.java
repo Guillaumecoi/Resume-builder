@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
-import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
-import com.coigniez.resumebuilder.domain.resume.dtos.ResumeDetailResponse;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResp;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Contact;
@@ -48,7 +48,7 @@ public class ResumeExampleService {
     private final ColumnSectionService columnSectionService;
 
     public List<Object> createExampleResume(String title) throws IOException {
-        ResumeDetailResponse resume = createBaseResume(title);
+        ResumeResp resume = createBaseResume(title);
         Long layoutId = addLayout(resume.getId());
         LayoutResponse layout = layoutService.get(layoutId);
         Map<String, Long> methodIds = null;
@@ -64,8 +64,8 @@ public class ResumeExampleService {
         return List.of(resumeService.get(resume.getId()), layoutService.get(layoutId));
     }
 
-    private ResumeDetailResponse createBaseResume(String title) {
-        CreateResumeRequest resumeRequest = CreateResumeRequest.builder().title(title).build();
+    private ResumeResp createBaseResume(String title) {
+        ResumeCreateReq resumeRequest = ResumeCreateReq.builder().title(title).build();
         
         Long resumeId = resumeService.create(resumeRequest);
         return resumeService.get(resumeId);

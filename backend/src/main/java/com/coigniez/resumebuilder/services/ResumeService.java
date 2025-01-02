@@ -10,10 +10,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.coigniez.resumebuilder.domain.common.PageResponse;
 import com.coigniez.resumebuilder.domain.resume.Resume;
 import com.coigniez.resumebuilder.domain.resume.ResumeMapper;
-import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
-import com.coigniez.resumebuilder.domain.resume.dtos.ResumeDetailResponse;
-import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResponse;
-import com.coigniez.resumebuilder.domain.resume.dtos.UpdateResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResp;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeSimpleResp;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeUpdateReq;
 import com.coigniez.resumebuilder.file.FileStorageService;
 import com.coigniez.resumebuilder.interfaces.CrudService;
 import com.coigniez.resumebuilder.repository.ResumeRepository;
@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ResumeService
-        implements CrudService<CreateResumeRequest, UpdateResumeRequest, ResumeDetailResponse, Long> {
+        implements CrudService<ResumeCreateReq, ResumeUpdateReq, ResumeResp, Long> {
 
     private final ResumeRepository resumeRepository;
     private final ResumeMapper resumeMapper;
@@ -33,12 +33,12 @@ public class ResumeService
     private final SecurityUtils securityUtils;
 
     @Override
-    public Long create(CreateResumeRequest request) {
+    public Long create(ResumeCreateReq request) {
         return resumeRepository.save(resumeMapper.toEntity(request)).getId();
     }
 
     @Override
-    public ResumeDetailResponse get(Long id) {
+    public ResumeResp get(Long id) {
         // Check if the connected user has access to the resume
         securityUtils.hasAccessResume(id);
 
@@ -49,7 +49,7 @@ public class ResumeService
     }
 
     @Override
-    public void update(UpdateResumeRequest request) {
+    public void update(ResumeUpdateReq request) {
         // Check if the connected user has access to the resume
         securityUtils.hasAccessResume(request.getId());
 
@@ -79,7 +79,7 @@ public class ResumeService
      * @param order on what field to order the resumes
      * @return the page of resumes
      */
-    public PageResponse<ResumeResponse> getAll(int page, int size, String order) {
+    public PageResponse<ResumeSimpleResp> getAll(int page, int size, String order) {
         // Get the page of resumes
         // TODO: Make order an enum and implement ascending/descending
         Pageable pageable = PageRequest.of(page, size, Sort.by(order).descending());

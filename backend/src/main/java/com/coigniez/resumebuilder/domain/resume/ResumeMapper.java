@@ -1,8 +1,5 @@
 package com.coigniez.resumebuilder.domain.resume;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -16,48 +13,42 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
-public class ResumeMapper implements Mapper<Resume, CreateResumeRequest, UpdateResumeRequest, ResumeDetailResponse> {
+public class ResumeMapper implements Mapper<Resume, ResumeCreateReq, ResumeUpdateReq, ResumeResp> {
 
     private final SectionMapper sectionMapper;
 
-    public Resume toEntity(CreateResumeRequest request) {
+    public Resume toEntity(ResumeCreateReq request) {
         if (request == null) {
             return null;
         }
 
         return Resume.builder()
                 .title(request.getTitle())
-                .sections(Optional.ofNullable(request.getSections())
-                        .orElse(Collections.emptyList())
-                        .stream()
-                        .map(sectionMapper::toEntity)
-                        .collect(Collectors.toCollection(HashSet::new)))
+                .sections(request.getSections().stream().map(sectionMapper::toEntity).collect(Collectors.toSet()))
                 .build();
     }
 
-    public ResumeDetailResponse toDto(Resume entity) {
+    public ResumeResp toDto(Resume entity) {
         if (entity == null) {
             return null;
         }
     
-        return ResumeDetailResponse.builder()
+        return ResumeResp.builder()
             .id(entity.getId())
             .title(entity.getTitle())
             .picture(FileUtils.readFileFromLocation(entity.getPicture()))
             .createdDate(entity.getCreatedDate().toString())
             .lastModifiedDate(entity.getLastModifiedDate().toString())
-            .sections(Optional.ofNullable(entity.getSections())
-                .orElse(Collections.emptySet())
-                .stream().map(sectionMapper::toDto).toList())
+            .sections(entity.getSections().stream().map(sectionMapper::toDto).collect(Collectors.toList()))
             .build();
     }
 
-    public ResumeResponse toSimpleDto(Resume entity) {
+    public ResumeSimpleResp toSimpleDto(Resume entity) {
         if (entity == null) {
             return null;
         }
 
-        return ResumeResponse.builder()
+        return ResumeSimpleResp.builder()
             .id(entity.getId())
             .title(entity.getTitle())
             .createdDate(entity.getCreatedDate().toString())
@@ -66,7 +57,7 @@ public class ResumeMapper implements Mapper<Resume, CreateResumeRequest, UpdateR
     }
 
     @Override
-    public void updateEntity(Resume entity, UpdateResumeRequest request) {
+    public void updateEntity(Resume entity, ResumeUpdateReq request) {
         if (request == null) {
             return;
         }

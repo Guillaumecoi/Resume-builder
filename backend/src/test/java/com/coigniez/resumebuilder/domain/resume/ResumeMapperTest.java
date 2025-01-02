@@ -15,9 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
-import com.coigniez.resumebuilder.domain.resume.dtos.ResumeDetailResponse;
-import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResponse;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResp;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeSimpleResp;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionResp;
@@ -32,7 +32,7 @@ public class ResumeMapperTest {
     @Test
     void testToEntity() {
         // Arrange
-        CreateResumeRequest dto = CreateResumeRequest.builder().title("Software Engineer")
+        ResumeCreateReq dto = ResumeCreateReq.builder().title("Software Engineer")
                 .sections(List.of(
                     SectionCreateReq.builder().title("Education").build(),
                     SectionCreateReq.builder().title("Experience").build()))
@@ -74,7 +74,7 @@ public class ResumeMapperTest {
             .build();
     
         // Act
-        ResumeDetailResponse dto = mapper.toDto(entity);
+        ResumeResp dto = mapper.toDto(entity);
     
         // Assert
         assertEquals(1L, dto.getId());
@@ -102,7 +102,7 @@ public class ResumeMapperTest {
             .build();
 
         // Act
-        ResumeDetailResponse dto = mapper.toDto(entity);
+        ResumeResp dto = mapper.toDto(entity);
 
         // Assert
         assertEquals(1L, dto.getId());
@@ -123,7 +123,7 @@ public class ResumeMapperTest {
             .build();
 
         // Act
-        ResumeResponse dto = mapper.toSimpleDto(entity);
+        ResumeSimpleResp dto = mapper.toSimpleDto(entity);
 
         // Assert
         assertEquals(1L, dto.getId());

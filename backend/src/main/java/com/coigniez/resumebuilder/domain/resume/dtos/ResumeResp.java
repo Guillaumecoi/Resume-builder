@@ -12,7 +12,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ResumeDetailResponse implements Response {
+public class ResumeResp implements Response {
 
     @NotNull
     private long id;
@@ -23,7 +23,7 @@ public class ResumeDetailResponse implements Response {
     private String createdDate;
     @NotNull
     private String lastModifiedDate;
-
+    @NotNull
     private List<SectionResp> sections;
 
 }

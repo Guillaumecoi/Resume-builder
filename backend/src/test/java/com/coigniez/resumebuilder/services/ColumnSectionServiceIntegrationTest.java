@@ -29,7 +29,7 @@ import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionR
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
-import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.coigniez.resumebuilder.repository.ColumnSectionRepository;
 import com.coigniez.resumebuilder.templates.color.ColorTemplates;
@@ -78,7 +78,7 @@ public class ColumnSectionServiceIntegrationTest {
         SecurityContextHolder.getContext().setAuthentication(testuser);
 
         // Create a resume
-        Long resumeId = resumeService.create(CreateResumeRequest.builder().title("Software Developer").build());
+        Long resumeId = resumeService.create(ResumeCreateReq.builder().title("Software Developer").build());
 
         // Create a layout
         Long layoutId = layoutService.create(CreateLayoutRequest.builder()
@@ -132,7 +132,7 @@ public class ColumnSectionServiceIntegrationTest {
         // Arrange
         // Create a new resume
         Long newResumeId = resumeService
-                .create(CreateResumeRequest.builder().title("Software Developer").build());
+                .create(ResumeCreateReq.builder().title("Software Developer").build());
 
         // Create a new section
         Long newSectionId = sectionService.create(
