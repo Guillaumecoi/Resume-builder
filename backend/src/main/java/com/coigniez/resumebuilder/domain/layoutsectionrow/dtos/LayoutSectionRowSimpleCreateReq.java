@@ -7,18 +7,15 @@ import com.coigniez.resumebuilder.interfaces.CreateRequest;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
-public class CreateLayoutSectionRowRequest implements CreateRequest {
+@SuperBuilder
+public class LayoutSectionRowSimpleCreateReq implements CreateRequest {
 
-    @NotNull
-    private long columnSectionId;
     private Long latexMethodId;
-    private Long rowOrder;
+    private Integer rowOrder;
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<LayoutSubSectionSimpleCreateReq> columns;

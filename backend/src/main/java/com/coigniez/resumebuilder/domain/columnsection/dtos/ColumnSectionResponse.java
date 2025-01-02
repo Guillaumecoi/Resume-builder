@@ -5,7 +5,7 @@ import java.util.List;
 import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
 import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
 import com.coigniez.resumebuilder.domain.layoutsection.dtos.LayoutSectionResponse;
-import com.coigniez.resumebuilder.domain.layoutsectionrow.dtos.LayoutSectionRowResponse;
+import com.coigniez.resumebuilder.domain.layoutsectionrow.dtos.LayoutSectionRowResp;
 import com.coigniez.resumebuilder.interfaces.Response;
 
 import jakarta.validation.constraints.NotNull;
@@ -35,5 +35,5 @@ public class ColumnSectionResponse implements Response {
     private LatexMethodResponse latexMethod;
 
     @NotNull
-    private List<LayoutSectionRowResponse> rows;
+    private List<LayoutSectionRowResp> rows;
 }
