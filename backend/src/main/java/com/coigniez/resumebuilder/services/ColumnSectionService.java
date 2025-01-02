@@ -8,16 +8,16 @@ import org.springframework.stereotype.Service;
 import com.coigniez.resumebuilder.domain.column.Column;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionMapper;
-import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionParentType;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResponse;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResp;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionUpdateReq;
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
 import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemCreateReq;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
 import com.coigniez.resumebuilder.interfaces.MultiParentEntityService;
+import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.repository.ColumnRepository;
 import com.coigniez.resumebuilder.repository.ColumnSectionRepository;
 import com.coigniez.resumebuilder.repository.LatexMethodRepository;
@@ -31,7 +31,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Service
 public class ColumnSectionService implements
-        MultiParentEntityService<CreateColumnSectionRequest, UpdateColumnSectionRequest, ColumnSectionResponse, Long, ColumnSectionParentType> {
+        ParentEntityService<ColumnSectionCreateReq, ColumnSectionUpdateReq, ColumnSectionResp, Long> {
 
     private final ColumnSectionRepository columnSectionRepository;
     private final ColumnRepository columnRepository;
@@ -44,7 +44,7 @@ public class ColumnSectionService implements
     private OrderableRepositoryUtil orderableRepositoryUtil;
 
     @Override
-    public Long create(CreateColumnSectionRequest request) {
+    public Long create(ColumnSectionCreateReq request) {
         // Check if the user has access to the column and section
         securityUtils.hasAccessColumn(request.getColumnId());
         securityUtils.hasAccessSection(request.getSectionId());
@@ -108,7 +108,7 @@ public class ColumnSectionService implements
     }
 
     @Override
-    public ColumnSectionResponse get(Long id) {
+    public ColumnSectionResp get(Long id) {
         // Check if the user has access to this columnSection
         securityUtils.hasAccessColumnSection(id);
         // Get the existing columnSection entity
@@ -118,7 +118,7 @@ public class ColumnSectionService implements
     }
 
     @Override
-    public void update(UpdateColumnSectionRequest request) {
+    public void update(ColumnSectionUpdateReq request) {
         // Check if the user has access to this columnSection
         securityUtils.hasAccessColumnSection(request.getId());
 
@@ -169,58 +169,15 @@ public class ColumnSectionService implements
     }
 
     @Override
-    public List<ColumnSectionResponse> getAllByParentId(ColumnSectionParentType parentType, Long parentId) {
-        if (parentType == ColumnSectionParentType.COLUMN) {
-            // Check if the user has access to the column
-            securityUtils.hasAccessColumn(parentId);
-
-            // Get all columnSections in the column
-            return columnSectionRepository.findAllByColumnId(parentId).stream()
-                    .map(columnSectionMapper::toDto)
-                    .toList();
-
-        } else if (parentType == ColumnSectionParentType.SECTION) {
-            // Check if the user has access to the section
-            securityUtils.hasAccessSection(parentId);
-
-            // Get all columnSections in the section
-            return columnSectionRepository.findAllBySectionId(parentId).stream()
-                    .map(columnSectionMapper::toDto)
-                    .toList();
-
-        } else {
-            throw new UnsupportedOperationException(parentType + " is not supported");
-        }
+    public List<ColumnSectionResp> getAllByParentId(Long parentId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAllByParentId'");
     }
 
     @Override
-    public void removeAllByParentId(ColumnSectionParentType parentType, Long parentId) {
-        if (parentType == ColumnSectionParentType.COLUMN) {
-            // Check if the user has access to the column
-            securityUtils.hasAccessColumn(parentId);
-
-            // Remove all columnSections from the column
-            columnRepository.findById(parentId)
-                    .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", parentId))
-                    .clearSectionMappings();
-
-            // Remove all columnSections in the column
-            columnSectionRepository.removeAllByColumnId(parentId);
-
-        } else if (parentType == ColumnSectionParentType.SECTION) {
-            // Check if the user has access to the section
-            securityUtils.hasAccessSection(parentId);
-
-            // Remove all columnSections from the section
-            sectionRepository.findById(parentId)
-                    .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", parentId))
-                    .clearColumnSections();
-
-            // Remove all columnSections in the section
-            columnSectionRepository.removeAllBySectionId(parentId);
-        } else {
-            throw new UnsupportedOperationException(parentType + " is not supported");
-        }
+    public void removeAllByParentId(Long parentId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removeAllByParentId'");
     }
 
     /*

@@ -5,15 +5,15 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResponse;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResp;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionSimpleCreateReq;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionUpdateReq;
 import com.coigniez.resumebuilder.domain.latex.LatexMethodMapper;
 import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.util.MapperUtils;
 
 @Service
-public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSectionRequest, UpdateColumnSectionRequest, ColumnSectionResponse> {
+public class ColumnSectionMapper implements Mapper<ColumnSection, ColumnSectionSimpleCreateReq, ColumnSectionUpdateReq, ColumnSectionResp> {
 
     @Autowired
     private LatexMethodMapper latexMethodMapper;
@@ -25,7 +25,7 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
     );
 
     @Override
-    public ColumnSection toEntity(CreateColumnSectionRequest request) {
+    public ColumnSection toEntity(ColumnSectionSimpleCreateReq request) {
         if(request == null) {
             return null;
         }
@@ -43,13 +43,13 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
     }
 
     @Override
-    public ColumnSectionResponse toDto(ColumnSection entity) {
+    public ColumnSectionResp toDto(ColumnSection entity) {
         if(entity == null) {
             return null;
         }
 
         // Todo layoutSection
-        return ColumnSectionResponse.builder()
+        return ColumnSectionResp.builder()
             .id(entity.getId())
             .latexMethod(latexMethodMapper.toDto(entity.getLatexMethod()))
             .sectionOrder(entity.getSectionOrder())
@@ -61,7 +61,7 @@ public class ColumnSectionMapper implements Mapper<ColumnSection, CreateColumnSe
     }
 
     @Override
-    public void updateEntity(ColumnSection entity, UpdateColumnSectionRequest request) {
+    public void updateEntity(ColumnSection entity, ColumnSectionUpdateReq request) {
         if(request == null) {
             return;
         }

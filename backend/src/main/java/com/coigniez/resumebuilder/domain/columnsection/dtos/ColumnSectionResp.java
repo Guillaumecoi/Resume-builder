@@ -14,7 +14,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ColumnSectionResponse implements Response {
+public class ColumnSectionResp implements Response {
 
     @NotNull
     private long id;

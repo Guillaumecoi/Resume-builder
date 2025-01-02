@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.domain.column.dtos;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.interfaces.CreateRequest;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -50,5 +50,5 @@ public class CreateColumnRequest implements CreateRequest {
     private Double borderBottom;
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    private List<CreateColumnSectionRequest> sectionMappings;
+    private List<ColumnSectionCreateReq> sectionMappings;
 }

@@ -9,16 +9,13 @@ import com.coigniez.resumebuilder.interfaces.CreateRequest;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
-public class CreateColumnSectionRequest implements CreateRequest {
+@SuperBuilder
+public class ColumnSectionSimpleCreateReq implements CreateRequest {
 
-    @NotNull
-    private long columnId;
     private Long latexMethodId;
 
     private Integer sectionOrder;

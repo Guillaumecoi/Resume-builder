@@ -23,9 +23,9 @@ import org.springframework.validation.annotation.Validated;
 
 import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResponse;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResp;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionUpdateReq;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
@@ -114,7 +114,7 @@ public class ColumnSectionServiceIntegrationTest {
     @Test
     void testCreate() {
         // Arrange
-        CreateColumnSectionRequest request = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .itemOrder(1)
@@ -138,7 +138,7 @@ public class ColumnSectionServiceIntegrationTest {
         Long newSectionId = sectionService.create(
                 SectionCreateReq.builder().resumeId(newResumeId).title("Experience").build());
 
-        CreateColumnSectionRequest request = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(newSectionId)
                 .itemOrder(1)
@@ -152,19 +152,19 @@ public class ColumnSectionServiceIntegrationTest {
     @Test
     void testCreate_NonExistentParent() {
         // Arrange
-        CreateColumnSectionRequest nonExistentColumnRequest = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq nonExistentColumnRequest = ColumnSectionCreateReq.builder()
                 .columnId(-1L) // Non-existent column ID
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .build();
 
-        CreateColumnSectionRequest nonExistentSectionRequest = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq nonExistentSectionRequest = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(-1L) // Non-existent section ID
                 .itemOrder(1)
                 .build();
 
-        CreateColumnSectionRequest nonExistentMethodRequest = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq nonExistentMethodRequest = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(-1L) // Non-existent latex method ID
@@ -185,17 +185,17 @@ public class ColumnSectionServiceIntegrationTest {
     @Test
     void testCreate_AutoIncrementSectionOrder() {
         // Arrange
-        CreateColumnSectionRequest request1 = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request1 = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .build();
 
-        CreateColumnSectionRequest request2 = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request2 = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .build();
 
-        CreateColumnSectionRequest request3 = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request3 = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .build();
@@ -222,7 +222,7 @@ public class ColumnSectionServiceIntegrationTest {
     @Test
     void testCreate_IncrementsSectionOrder() {
         // Arrange
-        CreateColumnSectionRequest request1 = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request1 = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .itemOrder(1)
@@ -230,7 +230,7 @@ public class ColumnSectionServiceIntegrationTest {
 
         long id1 = columnSectionService.create(request1);
 
-        CreateColumnSectionRequest request2 = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request2 = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .itemOrder(2)
@@ -239,7 +239,7 @@ public class ColumnSectionServiceIntegrationTest {
         long id2 = columnSectionService.create(request2);
 
         // Act
-        CreateColumnSectionRequest request3 = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request3 = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .itemOrder(2)
@@ -247,7 +247,7 @@ public class ColumnSectionServiceIntegrationTest {
 
         long id3 = columnSectionService.create(request3);
 
-        CreateColumnSectionRequest request4 = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request4 = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .itemOrder(4)
@@ -273,16 +273,16 @@ public class ColumnSectionServiceIntegrationTest {
     @Test
     void testUpdate() {
         // Arrange
-        CreateColumnSectionRequest createRequest = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq createRequest = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .build();
 
         Long columnSectionId = columnSectionService.create(createRequest);
-        ColumnSectionResponse columnSection = columnSectionService.get(columnSectionId);
+        ColumnSectionResp columnSection = columnSectionService.get(columnSectionId);
 
-        UpdateColumnSectionRequest updateRequest = UpdateColumnSectionRequest.builder()
+        ColumnSectionUpdateReq updateRequest = ColumnSectionUpdateReq.builder()
                 .id(columnSectionId)
                 .latexMethodId(columnSection.getLatexMethod().getId())
                 .itemOrder(2)
@@ -294,7 +294,7 @@ public class ColumnSectionServiceIntegrationTest {
         columnSectionService.update(updateRequest);
 
         // Assert
-        ColumnSectionResponse updatedColumnSection = columnSectionService.get(columnSectionId);
+        ColumnSectionResp updatedColumnSection = columnSectionService.get(columnSectionId);
         assertEquals(2, updatedColumnSection.getSectionOrder(), "itemOrder should be updated to 2");
         assertEquals(2.0, updatedColumnSection.getEndsep(), "endsep should be updated to 2.0");
         assertEquals(2.0, updatedColumnSection.getItemsep(), "itemsep should be updated to 2.0");
@@ -303,7 +303,7 @@ public class ColumnSectionServiceIntegrationTest {
     @Test
     void testUpdate_WithoutId() {
         // Arrange
-        UpdateColumnSectionRequest request = UpdateColumnSectionRequest.builder()
+        ColumnSectionUpdateReq request = ColumnSectionUpdateReq.builder()
                 .itemOrder(1)
                 .build();
 
@@ -316,7 +316,7 @@ public class ColumnSectionServiceIntegrationTest {
     @Test
     void testUpdate_IncrementsSectionOrder() {
         // Arrange
-        CreateColumnSectionRequest request1 = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request1 = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .itemOrder(1)
@@ -324,7 +324,7 @@ public class ColumnSectionServiceIntegrationTest {
 
         long id1 = columnSectionService.create(request1);
 
-        CreateColumnSectionRequest request2 = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request2 = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .itemOrder(2)
@@ -332,17 +332,17 @@ public class ColumnSectionServiceIntegrationTest {
 
         long id2 = columnSectionService.create(request2);
 
-        CreateColumnSectionRequest request3 = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request3 = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .itemOrder(3)
                 .build();
 
         long id3 = columnSectionService.create(request3);
-        ColumnSectionResponse columnSection = columnSectionService.get(id3);
+        ColumnSectionResp columnSection = columnSectionService.get(id3);
 
         // Act
-        UpdateColumnSectionRequest request4 = UpdateColumnSectionRequest.builder()
+        ColumnSectionUpdateReq request4 = ColumnSectionUpdateReq.builder()
                 .id(id3)
                 .latexMethodId(columnSection.getLatexMethod().getId())
                 .itemOrder(2)
@@ -369,7 +369,7 @@ public class ColumnSectionServiceIntegrationTest {
     @Test
     void testUpdate_DecrementSectionOrder() {
         // Arrange
-        CreateColumnSectionRequest request1 = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request1 = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .itemOrder(1)
@@ -377,16 +377,16 @@ public class ColumnSectionServiceIntegrationTest {
 
         long id1 = columnSectionService.create(request1);
 
-        CreateColumnSectionRequest request2 = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request2 = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .itemOrder(2)
                 .build();
 
         long id2 = columnSectionService.create(request2);
-        ColumnSectionResponse columnSection = columnSectionService.get(id2);
+        ColumnSectionResp columnSection = columnSectionService.get(id2);
 
-        CreateColumnSectionRequest request3 = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request3 = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .itemOrder(3)
@@ -395,7 +395,7 @@ public class ColumnSectionServiceIntegrationTest {
         Long id3 = columnSectionService.create(request3);
 
         // Act
-        columnSectionService.update(UpdateColumnSectionRequest.builder()
+        columnSectionService.update(ColumnSectionUpdateReq.builder()
                 .id(id2)
                 .latexMethodId(columnSection.getLatexMethod().getId())
                 .itemOrder(3)
@@ -420,7 +420,7 @@ public class ColumnSectionServiceIntegrationTest {
     @Test
     void testDelete() {
         // Arrange
-        CreateColumnSectionRequest request = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .itemOrder(1)
@@ -439,7 +439,7 @@ public class ColumnSectionServiceIntegrationTest {
     @Test
     void testDelete_DecrementSectionOrder() {
         // Arrange
-        CreateColumnSectionRequest request1 = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request1 = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .itemOrder(1)
@@ -447,7 +447,7 @@ public class ColumnSectionServiceIntegrationTest {
 
         long id1 = columnSectionService.create(request1);
 
-        CreateColumnSectionRequest request2 = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request2 = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .itemOrder(2)
@@ -455,7 +455,7 @@ public class ColumnSectionServiceIntegrationTest {
 
         long id2 = columnSectionService.create(request2);
 
-        CreateColumnSectionRequest request3 = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request3 = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .itemOrder(3)
@@ -495,7 +495,7 @@ public class ColumnSectionServiceIntegrationTest {
     @Test
     void testAccessDenied() {
         // Arrange
-        CreateColumnSectionRequest request = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request = ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .itemOrder(1)
@@ -512,7 +512,7 @@ public class ColumnSectionServiceIntegrationTest {
         assertThrows(AccessDeniedException.class, () -> columnSectionService.get(columnSectionId),
                 "Should throw AccessDeniedException for unauthorized access to get");
         assertThrows(AccessDeniedException.class,
-                () -> columnSectionService.update(UpdateColumnSectionRequest.builder()
+                () -> columnSectionService.update(ColumnSectionUpdateReq.builder()
                         .id(columnSectionId).itemOrder(2).build()),
                 "Should throw AccessDeniedException for unauthorized access to update");
         assertThrows(AccessDeniedException.class, () -> columnSectionService.delete(columnSectionId),
@@ -526,7 +526,7 @@ public class ColumnSectionServiceIntegrationTest {
                 "Should throw EntityNotFoundException for non-existent column section on get");
         assertThrows(EntityNotFoundException.class,
                 () -> columnSectionService.update(
-                        UpdateColumnSectionRequest.builder().id(999L).itemOrder(2).build()),
+                        ColumnSectionUpdateReq.builder().id(999L).itemOrder(2).build()),
                 "Should throw EntityNotFoundException for non-existent column section on update");
         assertThrows(EntityNotFoundException.class, () -> columnSectionService.delete(999L),
                 "Should throw EntityNotFoundException for non-existent column section on delete");

@@ -15,7 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
 import com.coigniez.resumebuilder.domain.latex.HasLatexMethod;
 import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
@@ -112,7 +112,7 @@ public class LayoutSectionItemServiceIntegrationTest {
                 .build());
 
         // Create column section
-        columnSectionId = columnSectionService.create(CreateColumnSectionRequest.builder()
+        columnSectionId = columnSectionService.create(ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(latexMethodId)

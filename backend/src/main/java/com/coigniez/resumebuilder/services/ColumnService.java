@@ -10,8 +10,8 @@ import com.coigniez.resumebuilder.domain.column.ColumnMapper;
 import com.coigniez.resumebuilder.domain.column.dtos.ColumnResponse;
 import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
 import com.coigniez.resumebuilder.domain.column.dtos.UpdateColumnRequest;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionUpdateReq;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.repository.ColumnRepository;
 import com.coigniez.resumebuilder.repository.ColumnSectionRepository;
@@ -64,11 +64,11 @@ public class ColumnService
         // Check if the current user has access to the column
         securityUtils.hasAccessColumn(request.getId());
 
-        for (CreateColumnSectionRequest section : request.getCreateSectionMappings()) {
+        for (ColumnSectionCreateReq section : request.getCreateSectionMappings()) {
             section.setColumnId(request.getId());
             columnSectionService.create(section);
         }
-        for (UpdateColumnSectionRequest section : request.getUpdateSectionMappings()) {
+        for (ColumnSectionUpdateReq section : request.getUpdateSectionMappings()) {
             // Check if the section belongs to the column
             if (section.getId() == null) {
                 throw new IllegalArgumentException("Section id is required");

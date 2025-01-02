@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResponse;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResp;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionUpdateReq;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -30,7 +30,7 @@ public class ColumnSectionMapperTest {
                 .build();
 
         // Act
-        ColumnSectionResponse dto = mapper.toDto(entity);
+        ColumnSectionResp dto = mapper.toDto(entity);
 
         // Assert
         assertNotNull(dto);
@@ -43,7 +43,7 @@ public class ColumnSectionMapperTest {
     @Test
     void testToEntity() {
         // Arrange
-        CreateColumnSectionRequest request = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request = ColumnSectionCreateReq.builder()
                 .itemOrder(1)
                 .itemsep(8.0)
                 .endsep(20.0)
@@ -62,7 +62,7 @@ public class ColumnSectionMapperTest {
     @Test
     void testToEntity_DefaultValues() {
         // Arrange
-        CreateColumnSectionRequest request = CreateColumnSectionRequest.builder()
+        ColumnSectionCreateReq request = ColumnSectionCreateReq.builder()
                 .itemOrder(1)
                 .build();
 
@@ -79,7 +79,7 @@ public class ColumnSectionMapperTest {
     @Test
     void testUpdateEntity() {
         // Arrange
-        UpdateColumnSectionRequest request = UpdateColumnSectionRequest.builder()
+        ColumnSectionUpdateReq request = ColumnSectionUpdateReq.builder()
                 .id(2L)
                 .itemOrder(2)
                 .itemsep(10.0)

@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 
-import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
@@ -102,7 +102,7 @@ public class ResumeExampleService {
                 
         sectionItemService.createPicture(file, pictureRequest);
         
-        columnSectionService.create(CreateColumnSectionRequest.builder()
+        columnSectionService.create(ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(methodIds.get("sectiontitle"))
@@ -165,7 +165,7 @@ public class ResumeExampleService {
                 .sectionItems(contactItems)
                 .build());
 
-        columnSectionService.create(CreateColumnSectionRequest.builder()
+        columnSectionService.create(ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(contactId)
                 .latexMethodId(methodIds.get("sectiontitle"))
@@ -211,7 +211,7 @@ public class ResumeExampleService {
                 .sectionItems(educationItems)
                 .build());
 
-        columnSectionService.create(CreateColumnSectionRequest.builder()
+        columnSectionService.create(ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(educationId)
                 .latexMethodId(methodIds.get("sectiontitle"))
@@ -237,7 +237,7 @@ public class ResumeExampleService {
             .title("Experience")
             .sectionItems(experienceItems)
             .build());
-        columnSectionService.create(CreateColumnSectionRequest.builder()
+        columnSectionService.create(ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(experienceId)
                 .latexMethodId(methodIds.get("sectiontitle"))
@@ -259,7 +259,7 @@ public class ResumeExampleService {
                 .showTitle(false)
                 .sectionItems(List.of(title))
                 .build());
-        columnSectionService.create(CreateColumnSectionRequest.builder()
+        columnSectionService.create(ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(titleId)
                 .latexMethodId(methodIds.get("sectiontitle"))
@@ -286,7 +286,7 @@ public class ResumeExampleService {
                 .title("About me")
                 .sectionItems(summaryItems)
                 .build());
-        columnSectionService.create(CreateColumnSectionRequest.builder()
+        columnSectionService.create(ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(summaryId)
                 .latexMethodId(methodIds.get("sectiontitle"))
@@ -335,7 +335,7 @@ public class ResumeExampleService {
                 .sectionItems(skillsItems)
                 .build());
 
-        columnSectionService.create(CreateColumnSectionRequest.builder()
+        columnSectionService.create(ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(skillsId)
                 .latexMethodId(methodIds.get("sectiontitle"))

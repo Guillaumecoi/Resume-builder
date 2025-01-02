@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
 import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
@@ -157,7 +157,7 @@ public class StandardNavyBlueTemplate {
                 content);
         sectionItemService.createPicture(file, pictureRequest);
 
-        columnSectionService.create(CreateColumnSectionRequest.builder()
+        columnSectionService.create(ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(sectionId)
                 .latexMethodId(sectionTitleMethodId)
@@ -179,7 +179,7 @@ public class StandardNavyBlueTemplate {
                 .showTitle(false)
                 .sectionItems(List.of(title))
                 .build());
-        columnSectionService.create(CreateColumnSectionRequest.builder()
+        columnSectionService.create(ColumnSectionCreateReq.builder()
                 .columnId(columnId)
                 .sectionId(titleId)
                 .latexMethodId(sectionTitleMethodId)

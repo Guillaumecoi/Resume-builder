@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UpdateColumnSectionRequest implements UpdateRequest {
+public class ColumnSectionUpdateReq implements UpdateRequest {
 
     @NotNull
     private Long id;

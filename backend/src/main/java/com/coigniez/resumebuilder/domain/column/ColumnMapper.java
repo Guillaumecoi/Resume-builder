@@ -5,7 +5,7 @@ import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
 import com.coigniez.resumebuilder.domain.column.dtos.UpdateColumnRequest;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionMapper;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResponse;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResp;
 import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.util.MapperUtils;
 
@@ -76,7 +76,7 @@ public class ColumnMapper implements Mapper<Column, CreateColumnRequest, UpdateC
             return null;
         }
 
-        List<ColumnSectionResponse> sectionMappings = new ArrayList<>();
+        List<ColumnSectionResp> sectionMappings = new ArrayList<>();
         if (entity.getSectionMappings() != null) {
             entity.getSectionMappings().forEach(section -> sectionMappings.add(columnSectionMapper.toDto(section)));
         }

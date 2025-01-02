@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResponse;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionRequest;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionRequest;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResp;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionUpdateReq;
 import com.coigniez.resumebuilder.interfaces.CrudController;
 import com.coigniez.resumebuilder.services.ColumnSectionService;
 
@@ -24,13 +24,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Tag(name = "ColumnSection")
 public class ColumnSectionController
-        implements CrudController<CreateColumnSectionRequest, UpdateColumnSectionRequest, ColumnSectionResponse, Long> {
+        implements CrudController<ColumnSectionCreateReq, ColumnSectionUpdateReq, ColumnSectionResp, Long> {
 
     private final ColumnSectionService columnSectionService;
 
     @Override
     @Operation(operationId = "createColumnSection")
-    public ResponseEntity<Long> create(@Valid CreateColumnSectionRequest request, Authentication user) {
+    public ResponseEntity<Long> create(@Valid ColumnSectionCreateReq request, Authentication user) {
         Long id = columnSectionService.create(request);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -42,14 +42,14 @@ public class ColumnSectionController
 
     @Override
     @Operation(operationId = "getColumnSection")
-    public ResponseEntity<ColumnSectionResponse> get(Long id, Authentication user) {
-        ColumnSectionResponse columnSection = columnSectionService.get(id);
+    public ResponseEntity<ColumnSectionResp> get(Long id, Authentication user) {
+        ColumnSectionResp columnSection = columnSectionService.get(id);
         return ResponseEntity.ok(columnSection);
     }
 
     @Override
     @Operation(operationId = "updateColumnSection")
-    public ResponseEntity<Void> update(Long id, UpdateColumnSectionRequest request, Authentication user) {
+    public ResponseEntity<Void> update(Long id, ColumnSectionUpdateReq request, Authentication user) {
         request.setId(id);
         columnSectionService.update(request);
         return ResponseEntity.ok().build();
