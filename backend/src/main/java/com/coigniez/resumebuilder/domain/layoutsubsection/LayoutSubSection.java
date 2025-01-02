@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
+import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
 import com.coigniez.resumebuilder.domain.layoutsectionItem.LayoutSectionItem;
 import com.coigniez.resumebuilder.domain.layoutsectionrow.LayoutSectionRow;
 import com.coigniez.resumebuilder.domain.subsection.SubSection;
@@ -25,6 +26,11 @@ public class LayoutSubSection implements BaseEntity, LatexMethodProvider {
     @Id
     @GeneratedValue
     private Long id;
+
+    private Integer sectionOrder;
+    private AlignmentType alignment;
+    private Boolean hidden;
+    private Boolean defaultOrder;
 
     @ManyToOne
     @JoinColumn(name = "layout_sectionrow_id", referencedColumnName = "id")

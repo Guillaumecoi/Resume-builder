@@ -3,7 +3,7 @@ package com.coigniez.resumebuilder.domain.layoutsectionrow.dtos;
 import java.util.List;
 
 import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
-import com.coigniez.resumebuilder.domain.layoutsubsection.dtos.LayoutSubSectionResponse;
+import com.coigniez.resumebuilder.domain.layoutsubsection.dtos.LayoutSubSectionResp;
 import com.coigniez.resumebuilder.interfaces.Response;
 
 import jakarta.validation.constraints.NotNull;
@@ -23,5 +23,5 @@ public class LayoutSectionRowResponse implements Response {
     @NotNull
     private LatexMethodResponse latexMethod;
     @NotNull
-    private List<LayoutSubSectionResponse> subSections;
+    private List<LayoutSubSectionResp> subSections;
 }

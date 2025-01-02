@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.domain.layoutsectionrow.dtos;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.layoutsubsection.dtos.CreateLayoutSubSectionRequest;
+import com.coigniez.resumebuilder.domain.layoutsubsection.dtos.LayoutSubSectionSimpleCreateReq;
 import com.coigniez.resumebuilder.interfaces.CreateRequest;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
@@ -21,5 +21,5 @@ public class CreateLayoutSectionRowRequest implements CreateRequest {
     private Long rowOrder;
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    private List<CreateLayoutSubSectionRequest> columns;
+    private List<LayoutSubSectionSimpleCreateReq> columns;
 }
