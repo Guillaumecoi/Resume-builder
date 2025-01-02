@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
-import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -44,8 +44,8 @@ public class ResumeControllerIntegrationTest {
         // Arrange
         CreateResumeRequest createRequest = CreateResumeRequest.builder().title("Software Engineer")
                         .sections(List.of(
-                                CreateSectionRequest.builder().title("Education").build(),
-                                CreateSectionRequest.builder().title("Experience").build()))
+                                SectionCreateReq.builder().title("Education").build(),
+                                SectionCreateReq.builder().title("Experience").build()))
                         .build();
 
         // Act - Create

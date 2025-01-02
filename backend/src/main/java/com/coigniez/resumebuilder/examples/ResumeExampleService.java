@@ -12,7 +12,7 @@ import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeDetailResponse;
-import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Contact;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Education;
@@ -72,7 +72,7 @@ public class ResumeExampleService {
     }
 
     private void addPictureSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) throws IOException {
-        Long sectionId = sectionService.create(CreateSectionRequest.builder()
+        Long sectionId = sectionService.create(SectionCreateReq.builder()
                 .resumeId(resumeId)
                 .title("Picture")
                 .showTitle(false)
@@ -158,7 +158,7 @@ public class ResumeExampleService {
                         .build())
                 .build());
 
-        Long contactId = sectionService.create(CreateSectionRequest.builder()
+        Long contactId = sectionService.create(SectionCreateReq.builder()
                 .resumeId(resumeId)
                 .title("Contact")
                 .showTitle(true)
@@ -204,7 +204,7 @@ public class ResumeExampleService {
                         .build())
                 .build());
         
-        Long educationId = sectionService.create(CreateSectionRequest.builder()
+        Long educationId = sectionService.create(SectionCreateReq.builder()
                 .resumeId(resumeId)
                 .title("Education")
                 .showTitle(true)
@@ -232,7 +232,7 @@ public class ResumeExampleService {
                         .build())
                 .build());
             
-        Long experienceId = sectionService.create(CreateSectionRequest.builder()
+        Long experienceId = sectionService.create(SectionCreateReq.builder()
             .resumeId(resumeId)
             .title("Experience")
             .sectionItems(experienceItems)
@@ -253,7 +253,7 @@ public class ResumeExampleService {
                         .build())
                 .build();
             
-        Long titleId = sectionService.create(CreateSectionRequest.builder()
+        Long titleId = sectionService.create(SectionCreateReq.builder()
                 .resumeId(resumeId)
                 .title("Title")
                 .showTitle(false)
@@ -281,7 +281,7 @@ public class ResumeExampleService {
                         .build())
                 .build());
             
-        Long summaryId = sectionService.create(CreateSectionRequest.builder()
+        Long summaryId = sectionService.create(SectionCreateReq.builder()
                 .resumeId(resumeId)
                 .title("About me")
                 .sectionItems(summaryItems)
@@ -329,7 +329,7 @@ public class ResumeExampleService {
                         .build())
                 .build());
             
-        Long skillsId = sectionService.create(CreateSectionRequest.builder()
+        Long skillsId = sectionService.create(SectionCreateReq.builder()
                 .resumeId(resumeId)
                 .title("Skills")
                 .sectionItems(skillsItems)

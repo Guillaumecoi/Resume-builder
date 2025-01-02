@@ -8,14 +8,12 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
-public class CreateSectionRequest implements CreateRequest {
-
-    private Long resumeId;    
+@SuperBuilder
+public class SectionSimpleCreateReq implements CreateRequest {  
 
     @NotBlank
     private String title;

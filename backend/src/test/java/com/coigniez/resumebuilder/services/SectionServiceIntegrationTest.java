@@ -17,9 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeDetailResponse;
-import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
-import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
-import com.coigniez.resumebuilder.domain.section.dtos.UpdateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionResp;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionUpdateReq;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -60,7 +60,7 @@ public class SectionServiceIntegrationTest {
         SecurityContextHolder.getContext().setAuthentication(testuser);
 
         CreateResumeRequest resumeRequest = CreateResumeRequest.builder().title("Software Developer")
-                .sections(List.of(CreateSectionRequest.builder().title("Education").build())).build();
+                .sections(List.of(SectionCreateReq.builder().title("Education").build())).build();
 
         resumeId = resumeService.create(resumeRequest);
     }
@@ -68,7 +68,7 @@ public class SectionServiceIntegrationTest {
     @Test
     void testCreateAndGet() {
         // Arrange
-        CreateSectionRequest request = CreateSectionRequest.builder()
+        SectionCreateReq request = SectionCreateReq.builder()
                 .resumeId(resumeId)
                 .title("Test Section")
                 .build();
@@ -78,7 +78,7 @@ public class SectionServiceIntegrationTest {
 
         // Assert
         assertNotNull(sectionId, "The sectionId should not be null after creation");
-        SectionResponse response = sectionService.get(sectionId);
+        SectionResp response = sectionService.get(sectionId);
         ResumeDetailResponse resume = resumeService.get(resumeId);
 
         assertNotNull(response, "The section should not be null after creation");
@@ -87,7 +87,7 @@ public class SectionServiceIntegrationTest {
         assertEquals(2, resume.getSections().size(),
                 "The resume should have 2 sections after creation of the new section");
         assertEquals(Set.of("Education", "Test Section"),
-                resume.getSections().stream().map(SectionResponse::getTitle).collect(Collectors.toSet()),
+                resume.getSections().stream().map(SectionResp::getTitle).collect(Collectors.toSet()),
                 "The resume should have the correct sections after creation of the new section");
 
     }
@@ -95,7 +95,7 @@ public class SectionServiceIntegrationTest {
     @Test
     void testUpdate() {
         // Arrange
-        CreateSectionRequest request = CreateSectionRequest.builder()
+        SectionCreateReq request = SectionCreateReq.builder()
                 .resumeId(resumeId)
                 .title("Test Section")
                 .build();
@@ -103,7 +103,7 @@ public class SectionServiceIntegrationTest {
         Long sectionId = sectionService.create(request);
 
         // Act
-        UpdateSectionRequest updatedRequest = UpdateSectionRequest.builder().id(sectionId).title("Updated Section")
+        SectionUpdateReq updatedRequest = SectionUpdateReq.builder().id(sectionId).title("Updated Section")
                 .createSectionItems(List.of())
                 .updateSectionItems(List.of())
                 .showTitle(false)
@@ -111,7 +111,7 @@ public class SectionServiceIntegrationTest {
         sectionService.update(updatedRequest);
 
         // Assert
-        SectionResponse response = sectionService.get(sectionId);
+        SectionResp response = sectionService.get(sectionId);
 
         assertNotNull(response, "The section should not be null after update");
         assertEquals(sectionId, response.getId(), "Section id should stay the same after update");
@@ -123,7 +123,7 @@ public class SectionServiceIntegrationTest {
     @Test
     void testDelete() {
         // Arrange
-        CreateSectionRequest request = CreateSectionRequest.builder()
+        SectionCreateReq request = SectionCreateReq.builder()
                 .resumeId(resumeId)
                 .title("Test Section")
                 .build();
@@ -143,7 +143,7 @@ public class SectionServiceIntegrationTest {
     @Test
     void testAuthentications() {
         // Arrange
-        CreateSectionRequest request = CreateSectionRequest.builder()
+        SectionCreateReq request = SectionCreateReq.builder()
                 .resumeId(resumeId)
                 .title("Test Section")
                 .build();
@@ -163,7 +163,7 @@ public class SectionServiceIntegrationTest {
         },
                 "Other user should not be able to get a section in another user's resume");
         assertThrows(AccessDeniedException.class, () -> {
-            sectionService.update(UpdateSectionRequest.builder().id(sectionId).build());
+            sectionService.update(SectionUpdateReq.builder().id(sectionId).build());
         },
                 "Other user should not be able to update a section in another user's resume");
         assertThrows(AccessDeniedException.class, () -> {
@@ -182,7 +182,7 @@ public class SectionServiceIntegrationTest {
             sectionService.get(sectionId);
         }, "Section should not be found");
         assertThrows(EntityNotFoundException.class, () -> {
-            sectionService.update(UpdateSectionRequest.builder().id(sectionId).build());
+            sectionService.update(SectionUpdateReq.builder().id(sectionId).build());
         },
                 "Section should not be found");
         assertThrows(EntityNotFoundException.class, () -> {

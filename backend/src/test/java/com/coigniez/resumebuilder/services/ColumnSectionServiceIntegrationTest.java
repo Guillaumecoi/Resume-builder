@@ -30,7 +30,7 @@ import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
-import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.coigniez.resumebuilder.repository.ColumnSectionRepository;
 import com.coigniez.resumebuilder.templates.color.ColorTemplates;
 import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplates;
@@ -108,7 +108,7 @@ public class ColumnSectionServiceIntegrationTest {
 
         // Create a section
         sectionId = sectionService
-                .create(CreateSectionRequest.builder().resumeId(resumeId).title("Education").build());
+                .create(SectionCreateReq.builder().resumeId(resumeId).title("Education").build());
     }
 
     @Test
@@ -136,7 +136,7 @@ public class ColumnSectionServiceIntegrationTest {
 
         // Create a new section
         Long newSectionId = sectionService.create(
-                CreateSectionRequest.builder().resumeId(newResumeId).title("Experience").build());
+                SectionCreateReq.builder().resumeId(newResumeId).title("Experience").build());
 
         CreateColumnSectionRequest request = CreateColumnSectionRequest.builder()
                 .columnId(columnId)

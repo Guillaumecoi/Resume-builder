@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.domain.resume.dtos;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionResp;
 import com.coigniez.resumebuilder.interfaces.Response;
 
 import jakarta.validation.constraints.NotBlank;
@@ -24,6 +24,6 @@ public class ResumeDetailResponse implements Response {
     @NotNull
     private String lastModifiedDate;
 
-    private List<SectionResponse> sections;
+    private List<SectionResp> sections;
 
 }

@@ -22,8 +22,8 @@ import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeDetailResponse;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResponse;
 import com.coigniez.resumebuilder.domain.resume.dtos.UpdateResumeRequest;
-import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
-import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionResp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -72,8 +72,8 @@ public class ResumeServiceIntegrationTest {
         CreateResumeRequest resumeRequest = CreateResumeRequest.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                        CreateSectionRequest.builder().title("Education").build(),
-                        CreateSectionRequest.builder().title("Experience").build()))
+                        SectionCreateReq.builder().title("Education").build(),
+                        SectionCreateReq.builder().title("Experience").build()))
                 .build();
 
         // Act
@@ -89,7 +89,7 @@ public class ResumeServiceIntegrationTest {
         assertEquals(resume.getCreatedDate(), resume.getLastModifiedDate(),
                 "Created date and last modified date should be the same");
         assertEquals(resume.getSections().size(), 2, "There should be 2 sections");
-        assertThat(resume.getSections().stream().map(SectionResponse::getTitle))
+        assertThat(resume.getSections().stream().map(SectionResp::getTitle))
                 .containsExactlyInAnyOrder("Education", "Experience");
     }
 
@@ -99,8 +99,8 @@ public class ResumeServiceIntegrationTest {
         CreateResumeRequest resumeRequest = CreateResumeRequest.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                        CreateSectionRequest.builder().title("Education").build(),
-                        CreateSectionRequest.builder().title("Experience").build()))
+                        SectionCreateReq.builder().title("Education").build(),
+                        SectionCreateReq.builder().title("Experience").build()))
                 .build();
 
         Long resumeId = resumeService.create(resumeRequest);
@@ -124,8 +124,8 @@ public class ResumeServiceIntegrationTest {
         CreateResumeRequest resumeRequest = CreateResumeRequest.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                        CreateSectionRequest.builder().title("Education").build(),
-                        CreateSectionRequest.builder().title("Experience").build()))
+                        SectionCreateReq.builder().title("Education").build(),
+                        SectionCreateReq.builder().title("Experience").build()))
                 .build();
 
         Long resumeId = resumeService.create(resumeRequest);
@@ -150,8 +150,8 @@ public class ResumeServiceIntegrationTest {
         CreateResumeRequest resumeRequest = CreateResumeRequest.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                        CreateSectionRequest.builder().title("Education").build(),
-                        CreateSectionRequest.builder().title("Experience").build()))
+                        SectionCreateReq.builder().title("Education").build(),
+                        SectionCreateReq.builder().title("Experience").build()))
                 .build();
 
         Long resumeId = resumeService.create(resumeRequest);
@@ -159,7 +159,7 @@ public class ResumeServiceIntegrationTest {
         UpdateResumeRequest updatedResumeRequest = UpdateResumeRequest.builder()
                 .id(resumeId)
                 .title("Barista")
-                .createSections(List.of(CreateSectionRequest.builder().title("CoffeeLover").build()))
+                .createSections(List.of(SectionCreateReq.builder().title("CoffeeLover").build()))
                 .updateSections(List.of())
                 .build();
         // Act
@@ -171,7 +171,7 @@ public class ResumeServiceIntegrationTest {
         assertEquals("Barista", updatedResume.getTitle(), "Title should be updated");
         assertEquals(3, updatedResume.getSections().size(), "There should be 3 sections");
         assertEquals(Set.of("Education", "Experience", "CoffeeLover"),
-                updatedResume.getSections().stream().map(SectionResponse::getTitle)
+                updatedResume.getSections().stream().map(SectionResp::getTitle)
                         .collect(Collectors.toSet()),
                 "The section should be added without removing the other sections");
     }
@@ -182,8 +182,8 @@ public class ResumeServiceIntegrationTest {
         CreateResumeRequest resumeRequest = CreateResumeRequest.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                        CreateSectionRequest.builder().title("Education").build(),
-                        CreateSectionRequest.builder().title("Experience").build()))
+                        SectionCreateReq.builder().title("Education").build(),
+                        SectionCreateReq.builder().title("Experience").build()))
                 .build();
 
         Long resumeId = resumeService.create(resumeRequest);
@@ -204,8 +204,8 @@ public class ResumeServiceIntegrationTest {
         CreateResumeRequest resumeRequest = CreateResumeRequest.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                        CreateSectionRequest.builder().title("Education").build(),
-                        CreateSectionRequest.builder().title("Experience").build()))
+                        SectionCreateReq.builder().title("Education").build(),
+                        SectionCreateReq.builder().title("Experience").build()))
                 .build();
 
         Long resumeId = resumeService.create(resumeRequest);
@@ -254,14 +254,14 @@ public class ResumeServiceIntegrationTest {
         CreateResumeRequest resumeRequest1 = CreateResumeRequest.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                        CreateSectionRequest.builder().title("Education").build(),
-                        CreateSectionRequest.builder().title("Experience").build()))
+                        SectionCreateReq.builder().title("Education").build(),
+                        SectionCreateReq.builder().title("Experience").build()))
                 .build();
         CreateResumeRequest resumeRequest2 = CreateResumeRequest.builder()
                 .title("Barista")
                 .sections(List.of(
-                        CreateSectionRequest.builder().title("Education").build(),
-                        CreateSectionRequest.builder().title("Experience").build()))
+                        SectionCreateReq.builder().title("Education").build(),
+                        SectionCreateReq.builder().title("Experience").build()))
                 .build();
         // Act
         Long resumeId1 = resumeService.create(resumeRequest1);
@@ -293,14 +293,14 @@ public class ResumeServiceIntegrationTest {
         CreateResumeRequest resumeRequest1 = CreateResumeRequest.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                        CreateSectionRequest.builder().title("Education").build(),
-                        CreateSectionRequest.builder().title("Experience").build()))
+                        SectionCreateReq.builder().title("Education").build(),
+                        SectionCreateReq.builder().title("Experience").build()))
                 .build();
         CreateResumeRequest resumeRequest2 = CreateResumeRequest.builder()
                 .title("Barista")
                 .sections(List.of(
-                        CreateSectionRequest.builder().title("Education").build(),
-                        CreateSectionRequest.builder().title("Experience").build()))
+                        SectionCreateReq.builder().title("Education").build(),
+                        SectionCreateReq.builder().title("Experience").build()))
                 .build();
 
         // Act

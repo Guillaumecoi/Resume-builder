@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 import com.coigniez.resumebuilder.domain.resume.Resume;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.section.SectionMapper;
-import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
-import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
-import com.coigniez.resumebuilder.domain.section.dtos.UpdateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionResp;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionUpdateReq;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.repository.ResumeRepository;
 import com.coigniez.resumebuilder.repository.SectionRepository;
@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class SectionService
-        implements ParentEntityService<CreateSectionRequest, UpdateSectionRequest, SectionResponse, Long> {
+        implements ParentEntityService<SectionCreateReq, SectionUpdateReq, SectionResp, Long> {
 
     private final SectionRepository sectionRepository;
     private final ResumeRepository resumeRepository;
@@ -29,7 +29,7 @@ public class SectionService
     private final SecurityUtils securityUtils;
 
     @Override
-    public Long create(CreateSectionRequest request) {
+    public Long create(SectionCreateReq request) {
         // Check if the user has access to the resume
         securityUtils.hasAccessResume(request.getResumeId());
 
@@ -49,7 +49,7 @@ public class SectionService
     }
 
     @Override
-    public SectionResponse get(Long id) {
+    public SectionResp get(Long id) {
         // Check if the user has access to the section
         securityUtils.hasAccessSection(id);
 
@@ -60,7 +60,7 @@ public class SectionService
     }
 
     @Override
-    public void update(UpdateSectionRequest request) {
+    public void update(SectionUpdateReq request) {
         // Check if the user has access to the section
         securityUtils.hasAccessSection(request.getId());
 
@@ -89,7 +89,7 @@ public class SectionService
     }
 
     @Override
-    public List<SectionResponse> getAllByParentId(Long resumeId) {
+    public List<SectionResp> getAllByParentId(Long resumeId) {
         return sectionRepository.findAllByResumeId(resumeId).stream()
                 .map(sectionMapper::toDto)
                 .toList();

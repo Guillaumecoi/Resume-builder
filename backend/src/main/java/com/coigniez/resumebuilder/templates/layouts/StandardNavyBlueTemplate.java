@@ -20,7 +20,7 @@ import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
-import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Title;
@@ -122,7 +122,7 @@ public class StandardNavyBlueTemplate {
     }
 
     private void addPictureSection(Long columnId, int sectionOrder) {
-        Long sectionId = sectionService.create(CreateSectionRequest.builder()
+        Long sectionId = sectionService.create(SectionCreateReq.builder()
                 .resumeId(resumeId)
                 .title("Picture")
                 .showTitle(false)
@@ -173,7 +173,7 @@ public class StandardNavyBlueTemplate {
                         .build())
                 .build();
             
-        Long titleId = sectionService.create(CreateSectionRequest.builder()
+        Long titleId = sectionService.create(SectionCreateReq.builder()
                 .resumeId(resumeId)
                 .title("Title")
                 .showTitle(false)

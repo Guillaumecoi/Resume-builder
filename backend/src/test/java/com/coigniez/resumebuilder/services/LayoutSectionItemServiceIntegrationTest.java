@@ -24,7 +24,7 @@ import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.CreateLayoutSect
 import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemResponse;
 import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.UpdateLayoutSectionItemRequest;
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
-import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
 import com.coigniez.resumebuilder.templates.color.ColorTemplates;
@@ -106,7 +106,7 @@ public class LayoutSectionItemServiceIntegrationTest {
                 .build());
 
         // Create section
-        Long sectionId = sectionService.create(CreateSectionRequest.builder()
+        Long sectionId = sectionService.create(SectionCreateReq.builder()
                 .resumeId(resumeId)
                 .title("Test Section")
                 .build());

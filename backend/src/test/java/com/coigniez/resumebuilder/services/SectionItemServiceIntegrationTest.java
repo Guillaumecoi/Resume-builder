@@ -30,7 +30,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.section.Section;
-import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemUpdateReq;
@@ -83,7 +83,7 @@ public class SectionItemServiceIntegrationTest {
 
         Long resumeId = resumeService.create(resumeRequest);
 
-        sectionId = sectionService.create(CreateSectionRequest.builder()
+        sectionId = sectionService.create(SectionCreateReq.builder()
                 .resumeId(resumeId)
                 .title("Education")
                 .build());

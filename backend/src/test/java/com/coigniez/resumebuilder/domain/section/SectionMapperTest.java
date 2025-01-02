@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
-import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionResp;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -26,7 +26,7 @@ public class SectionMapperTest {
             .build();
 
         // Act
-        SectionResponse dto = mapper.toDto(entity);
+        SectionResp dto = mapper.toDto(entity);
 
         // Assert
         assertEquals(1L, dto.getId());
@@ -36,7 +36,7 @@ public class SectionMapperTest {
     @Test
     void testToEntity() {
         // Arrange
-        CreateSectionRequest dto = CreateSectionRequest.builder()
+        SectionCreateReq dto = SectionCreateReq.builder()
             .title("Education")
             .build();
 

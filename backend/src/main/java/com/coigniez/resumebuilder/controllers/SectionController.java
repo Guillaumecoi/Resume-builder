@@ -4,9 +4,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
-import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
-import com.coigniez.resumebuilder.domain.section.dtos.UpdateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionResp;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionUpdateReq;
 import com.coigniez.resumebuilder.interfaces.CrudController;
 import com.coigniez.resumebuilder.services.SectionService;
 
@@ -29,13 +29,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequiredArgsConstructor
 @Tag(name = "Resume Sections")
 public class SectionController
-        implements CrudController<CreateSectionRequest, UpdateSectionRequest, SectionResponse, Long> {
+        implements CrudController<SectionCreateReq, SectionUpdateReq, SectionResp, Long> {
 
     private final SectionService sectionService;
 
     @Override
     @Operation(operationId = "createSection")
-    public ResponseEntity<Long> create(@Valid @RequestBody CreateSectionRequest request, Authentication user) {
+    public ResponseEntity<Long> create(@Valid @RequestBody SectionCreateReq request, Authentication user) {
         Long id = sectionService.create(request);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -47,14 +47,14 @@ public class SectionController
 
     @Override
     @Operation(operationId = "getSection")
-    public ResponseEntity<SectionResponse> get(@PathVariable Long id, Authentication user) {
-        SectionResponse section = sectionService.get(id);
+    public ResponseEntity<SectionResp> get(@PathVariable Long id, Authentication user) {
+        SectionResp section = sectionService.get(id);
         return ResponseEntity.ok(section);
     }
 
     @Override
     @Operation(operationId = "updateSection")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody UpdateSectionRequest request,
+    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody SectionUpdateReq request,
             Authentication user) {
         request.setId(id);
         sectionService.update(request);

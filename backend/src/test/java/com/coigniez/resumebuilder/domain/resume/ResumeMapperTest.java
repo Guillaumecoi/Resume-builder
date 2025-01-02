@@ -19,8 +19,8 @@ import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeDetailResponse;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResponse;
 import com.coigniez.resumebuilder.domain.section.Section;
-import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
-import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionResp;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -34,8 +34,8 @@ public class ResumeMapperTest {
         // Arrange
         CreateResumeRequest dto = CreateResumeRequest.builder().title("Software Engineer")
                 .sections(List.of(
-                    CreateSectionRequest.builder().title("Education").build(),
-                    CreateSectionRequest.builder().title("Experience").build()))
+                    SectionCreateReq.builder().title("Education").build(),
+                    SectionCreateReq.builder().title("Experience").build()))
                 .build();
 
         // Act
@@ -84,7 +84,7 @@ public class ResumeMapperTest {
         assertEquals(2, dto.getSections().size());
 
         Set<String> sectionTitles = dto.getSections().stream()
-                .map(SectionResponse::getTitle)
+                .map(SectionResp::getTitle)
                 .collect(Collectors.toSet());
 
         assertEquals(Set.of("Education", "Experience"), sectionTitles);

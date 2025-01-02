@@ -13,9 +13,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
-import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
-import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
-import com.coigniez.resumebuilder.domain.section.dtos.UpdateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionResp;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionUpdateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResp;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemUpdateReq;
@@ -58,7 +58,7 @@ public class SectionServiceWithItemsIntegrationTest {
                 SecurityContextHolder.getContext().setAuthentication(testuser);
 
                 CreateResumeRequest resumeRequest = CreateResumeRequest.builder().title("Software Developer")
-                                .sections(List.of(CreateSectionRequest.builder().title("Education").build())).build();
+                                .sections(List.of(SectionCreateReq.builder().title("Education").build())).build();
 
                 resumeId = resumeService.create(resumeRequest);
         }
@@ -79,7 +79,7 @@ public class SectionServiceWithItemsIntegrationTest {
                                 .item(Skill.builder().name("Java").proficiency(5).build())
                                 .build());
 
-                CreateSectionRequest request = CreateSectionRequest.builder()
+                SectionCreateReq request = SectionCreateReq.builder()
                                 .resumeId(resumeId)
                                 .title("Test Section")
                                 .sectionItems(sectionItems)
@@ -87,7 +87,7 @@ public class SectionServiceWithItemsIntegrationTest {
 
                 // Act
                 Long sectionId = sectionService.create(request);
-                SectionResponse response = sectionService.get(sectionId);
+                SectionResp response = sectionService.get(sectionId);
 
                 // Assert
                 assertNotNull(sectionId);
@@ -114,14 +114,14 @@ public class SectionServiceWithItemsIntegrationTest {
                                 .item(Skill.builder().name("Java").proficiency(5).build())
                                 .build());
 
-                CreateSectionRequest request = CreateSectionRequest.builder()
+                SectionCreateReq request = SectionCreateReq.builder()
                                 .resumeId(resumeId)
                                 .title("Test Section")
                                 .sectionItems(sectionItems)
                                 .build();
 
                 Long sectionId = sectionService.create(request);
-                SectionResponse initialResponse = sectionService.get(sectionId);
+                SectionResp initialResponse = sectionService.get(sectionId);
 
                 // Update the section
                 List<SectionItemCreateReq> createSectionItems = new ArrayList<>();
@@ -138,13 +138,13 @@ public class SectionServiceWithItemsIntegrationTest {
                                 .item(Textbox.builder().content("This is some updated text").build())
                                 .build());
 
-                UpdateSectionRequest updatedRequest = UpdateSectionRequest.builder().id(sectionId)
+                SectionUpdateReq updatedRequest = SectionUpdateReq.builder().id(sectionId)
                                 .title("Updated Section").showTitle(false)
                                 .createSectionItems(createSectionItems).updateSectionItems(updateSectionItems).build();
 
                 // Act
                 sectionService.update(updatedRequest);
-                SectionResponse response = sectionService.get(sectionId);
+                SectionResp response = sectionService.get(sectionId);
 
                 // Assert
                 assertNotNull(sectionId);
@@ -186,7 +186,7 @@ public class SectionServiceWithItemsIntegrationTest {
                                 .item(Skill.builder().name("java").proficiency(11).build())
                                 .build());
 
-                CreateSectionRequest request = CreateSectionRequest.builder()
+                SectionCreateReq request = SectionCreateReq.builder()
                                 .resumeId(resumeId)
                                 .title("Test Section")
                                 .sectionItems(sectionItems)

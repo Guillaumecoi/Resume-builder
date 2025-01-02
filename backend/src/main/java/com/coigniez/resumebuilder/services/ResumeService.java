@@ -14,12 +14,9 @@ import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeDetailResponse;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResponse;
 import com.coigniez.resumebuilder.domain.resume.dtos.UpdateResumeRequest;
-import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
-import com.coigniez.resumebuilder.domain.section.dtos.UpdateSectionRequest;
 import com.coigniez.resumebuilder.file.FileStorageService;
 import com.coigniez.resumebuilder.interfaces.CrudService;
 import com.coigniez.resumebuilder.repository.ResumeRepository;
-import com.coigniez.resumebuilder.repository.SectionRepository;
 import com.coigniez.resumebuilder.util.ExceptionUtils;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
@@ -31,8 +28,6 @@ public class ResumeService
         implements CrudService<CreateResumeRequest, UpdateResumeRequest, ResumeDetailResponse, Long> {
 
     private final ResumeRepository resumeRepository;
-    private final SectionRepository sectionRepository;
-    private final SectionService sectionService;
     private final ResumeMapper resumeMapper;
     private final FileStorageService fileStorageService;
     private final SecurityUtils securityUtils;
@@ -57,25 +52,6 @@ public class ResumeService
     public void update(UpdateResumeRequest request) {
         // Check if the connected user has access to the resume
         securityUtils.hasAccessResume(request.getId());
-
-        // Create and update sections
-        for (CreateSectionRequest section : request.getCreateSections()) {
-            section.setResumeId(request.getId());
-            sectionService.create(section);
-        }
-        for (UpdateSectionRequest section : request.getUpdateSections()) {
-            // Check if the section id is provided and if it belongs to the resume
-            if (section.getId() == null) {
-                throw new IllegalArgumentException("Section id must be provided");
-            }
-            if (sectionRepository.findById(section.getId())
-                    .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", section.getId()))
-                    .getResume().getId() != request.getId()) {
-                throw new IllegalArgumentException("Section does not belong to the resume");
-            }
-
-            sectionService.update(section);
-        }
 
         // Update the resume entity
         Resume resume = resumeRepository.findById(request.getId())

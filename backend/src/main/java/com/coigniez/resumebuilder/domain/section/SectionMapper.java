@@ -5,15 +5,15 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
-import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
-import com.coigniez.resumebuilder.domain.section.dtos.UpdateSectionRequest;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionResp;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionSimpleCreateReq;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionUpdateReq;
 import com.coigniez.resumebuilder.domain.subsection.SubSectionMapper;
 import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.util.MapperUtils;
 
 @Service
-public class SectionMapper implements Mapper<Section, CreateSectionRequest, UpdateSectionRequest, SectionResponse> {
+public class SectionMapper implements Mapper<Section, SectionSimpleCreateReq, SectionUpdateReq, SectionResp> {
 
     private static final Map<String, Object> DEFAULT_VALUES = Map.of(
             "showTitle", true);
@@ -22,7 +22,7 @@ public class SectionMapper implements Mapper<Section, CreateSectionRequest, Upda
     private SubSectionMapper subSectionMapper;
 
     @Override
-    public Section toEntity(CreateSectionRequest request) {
+    public Section toEntity(SectionSimpleCreateReq request) {
         if (request == null) {
             return null;
         }
@@ -38,12 +38,12 @@ public class SectionMapper implements Mapper<Section, CreateSectionRequest, Upda
     }
 
     @Override
-    public SectionResponse toDto(Section entity) {
+    public SectionResp toDto(Section entity) {
         if (entity == null) {
             return null;
         }
 
-        return SectionResponse.builder()
+        return SectionResp.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .showTitle(entity.isShowTitle())
@@ -52,7 +52,7 @@ public class SectionMapper implements Mapper<Section, CreateSectionRequest, Upda
     }
 
     @Override
-    public void updateEntity(Section entity, UpdateSectionRequest request) {
+    public void updateEntity(Section entity, SectionUpdateReq request) {
         if (request == null) {
             return;
         }
