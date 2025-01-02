@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
-import com.coigniez.resumebuilder.domain.subsection.dtos.CreateSubSectionRequest;
-import com.coigniez.resumebuilder.domain.subsection.dtos.SubSectionResponse;
-import com.coigniez.resumebuilder.domain.subsection.dtos.UpdateSubSectionRequest;
+import com.coigniez.resumebuilder.domain.subsection.dtos.SubSectionResp;
+import com.coigniez.resumebuilder.domain.subsection.dtos.SubSectionSimpleCreateReq;
+import com.coigniez.resumebuilder.domain.subsection.dtos.SubSectionUpdateReq;
 import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.util.MapperUtils;
 
@@ -16,7 +16,7 @@ import jakarta.validation.Valid;
 
 @Service
 public class SubSectionMapper
-        implements Mapper<SubSection, CreateSubSectionRequest, UpdateSubSectionRequest, SubSectionResponse> {
+        implements Mapper<SubSection, SubSectionSimpleCreateReq, SubSectionUpdateReq, SubSectionResp> {
 
     private static final Map<String, Object> DEFAULT_VALUES = Map.of(
         "showTitle", true);
@@ -25,7 +25,7 @@ public class SubSectionMapper
     private SectionItemMapper sectionItemMapper;
 
     @Override
-    public SubSection toEntity(@Valid CreateSubSectionRequest request) {
+    public SubSection toEntity(@Valid SubSectionSimpleCreateReq request) {
         if (request == null) {
             return null;
         }
@@ -41,12 +41,12 @@ public class SubSectionMapper
     }
 
     @Override
-    public SubSectionResponse toDto(SubSection entity) {
+    public SubSectionResp toDto(SubSection entity) {
         if (entity == null) {
             return null;
         }
 
-        return SubSectionResponse.builder()
+        return SubSectionResp.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .icon(entity.getIcon())
@@ -56,7 +56,7 @@ public class SubSectionMapper
     }
 
     @Override
-    public void updateEntity(SubSection entity, @Valid UpdateSubSectionRequest request) {
+    public void updateEntity(SubSection entity, @Valid SubSectionUpdateReq request) {
         if (request == null) {
             return;
         }
@@ -65,5 +65,4 @@ public class SubSectionMapper
         entity.setIcon(request.getIcon());
         entity.setShowTitle(request.getShowTitle());
     }
-
 }

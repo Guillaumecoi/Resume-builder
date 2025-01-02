@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UpdateSubSectionRequest implements UpdateRequest {
+public class SubSectionUpdateReq implements UpdateRequest {
 
     @NotNull
     private Long id;

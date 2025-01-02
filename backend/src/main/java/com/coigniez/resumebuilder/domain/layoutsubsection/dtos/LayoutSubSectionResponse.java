@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.domain.layoutsubsection.dtos;
 
 import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
 import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
-import com.coigniez.resumebuilder.domain.subsection.dtos.SubSectionResponse;
+import com.coigniez.resumebuilder.domain.subsection.dtos.SubSectionResp;
 import com.coigniez.resumebuilder.interfaces.Response;
 
 import jakarta.validation.constraints.NotNull;
@@ -25,7 +25,7 @@ public class LayoutSubSectionResponse implements Response {
     private boolean defaultOrder;
 
     @NotNull
-    private SubSectionResponse subSection;
+    private SubSectionResp subSection;
     @NotNull
     private LatexMethodResponse latexMethod;
 }

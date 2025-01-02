@@ -5,12 +5,11 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.section.Section;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
 import com.coigniez.resumebuilder.domain.subsection.SubSection;
 import com.coigniez.resumebuilder.domain.subsection.SubSectionMapper;
-import com.coigniez.resumebuilder.domain.subsection.dtos.CreateSubSectionRequest;
-import com.coigniez.resumebuilder.domain.subsection.dtos.SubSectionResponse;
-import com.coigniez.resumebuilder.domain.subsection.dtos.UpdateSubSectionRequest;
+import com.coigniez.resumebuilder.domain.subsection.dtos.SubSectionCreateReq;
+import com.coigniez.resumebuilder.domain.subsection.dtos.SubSectionResp;
+import com.coigniez.resumebuilder.domain.subsection.dtos.SubSectionUpdateReq;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.repository.SectionRepository;
 import com.coigniez.resumebuilder.repository.SubSectionRepository;
@@ -24,17 +23,16 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class SubSectionService
-        implements ParentEntityService<CreateSubSectionRequest, UpdateSubSectionRequest, SubSectionResponse, Long> {
+        implements ParentEntityService<SubSectionCreateReq, SubSectionUpdateReq, SubSectionResp, Long> {
 
     private final SubSectionRepository subSectionRepository;
     private final SectionRepository sectionRepository;
     private final SubSectionMapper subSectionMapper;
-    private final SectionItemService sectionItemService;
     private final SecurityUtils securityUtils;
     private final ParentRepositoryUtil parentRepositoryUtil;
 
     @Override
-    public Long create(@NotNull CreateSubSectionRequest request) {
+    public Long create(@NotNull SubSectionCreateReq request) {
         // Check if the user has access to the section
         securityUtils.hasAccessSection(request.getSectionId());
 
@@ -47,21 +45,11 @@ public class SubSectionService
                 .addSubSection(subSection);
         
         // Save the sub-section
-        Long subSectionId = subSectionRepository.save(subSection).getId();
-
-        // Create the section items
-        if (request.getSectionItems() != null) {
-            for (SectionItemCreateReq sectionItemRequest : request.getSectionItems()) {
-                sectionItemRequest.setSubSectionId(subSectionId);
-                sectionItemService.create(sectionItemRequest);
-            }
-        }
-
-        return subSectionId;
+        return subSectionRepository.save(subSection).getId();
     }
 
     @Override
-    public SubSectionResponse get(@NotNull Long id) {
+    public SubSectionResp get(@NotNull Long id) {
         // Check if the user has access to the sub-section
         securityUtils.hasAccessSubSection(id);
 
@@ -72,7 +60,7 @@ public class SubSectionService
     }
 
     @Override
-    public void update(@NotNull UpdateSubSectionRequest request) {
+    public void update(@NotNull SubSectionUpdateReq request) {
         // Check if the user has access to the sub-section
         securityUtils.hasAccessSubSection(request.getId());
 
@@ -100,7 +88,7 @@ public class SubSectionService
     }
 
     @Override
-    public List<SubSectionResponse> getAllByParentId(Long parentId) {
+    public List<SubSectionResp> getAllByParentId(Long parentId) {
         // Check if the user has access to the section
         securityUtils.hasAccessSection(parentId);
         // Get all the sub-sections

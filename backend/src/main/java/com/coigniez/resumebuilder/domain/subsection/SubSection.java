@@ -31,7 +31,8 @@ public class SubSection implements BaseEntity {
     @JoinColumn(name = "section_id", referencedColumnName = "id")
     private Section section;
 
-    @OneToMany(mappedBy = "subsection", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subsection", fetch = FetchType.EAGER, 
+            cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true)
     private List<SectionItem> items;
 
     public void addSectionItem(SectionItem item) {

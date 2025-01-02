@@ -12,7 +12,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class SubSectionResponse implements Response {
+public class SubSectionResp implements Response {
 
     @NotNull
     private long id;

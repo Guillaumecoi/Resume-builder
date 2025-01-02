@@ -8,16 +8,12 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
-public class CreateSubSectionRequest implements CreateRequest {
-
-    @NotNull
-    private Long sectionId;
+@SuperBuilder
+public class SubSectionSimpleCreateReq implements CreateRequest {
 
     @NotBlank
     private String title;
