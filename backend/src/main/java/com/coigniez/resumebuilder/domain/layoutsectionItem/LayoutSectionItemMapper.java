@@ -5,9 +5,9 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.latex.LatexMethodMapper;
-import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.CreateLayoutSectionItemRequest;
-import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemResponse;
-import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.UpdateLayoutSectionItemRequest;
+import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemResp;
+import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemSimpleCreateReq;
+import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemUpdateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
 import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.util.MapperUtils;
@@ -17,7 +17,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
-public class LayoutSectionItemMapper implements Mapper<LayoutSectionItem, CreateLayoutSectionItemRequest, UpdateLayoutSectionItemRequest, LayoutSectionItemResponse> {
+public class LayoutSectionItemMapper implements Mapper<LayoutSectionItem, LayoutSectionItemSimpleCreateReq, LayoutSectionItemUpdateReq, LayoutSectionItemResp> {
 
     private final SectionItemMapper sectionItemMapper;
     private final LatexMethodMapper latexMethodMapper;
@@ -26,7 +26,7 @@ public class LayoutSectionItemMapper implements Mapper<LayoutSectionItem, Create
             "hidden", false);
 
     @Override
-    public LayoutSectionItem toEntity(CreateLayoutSectionItemRequest request) {
+    public LayoutSectionItem toEntity(LayoutSectionItemSimpleCreateReq request) {
         if (request == null) {
             return null;
         }
@@ -41,12 +41,12 @@ public class LayoutSectionItemMapper implements Mapper<LayoutSectionItem, Create
     }
 
     @Override
-    public LayoutSectionItemResponse toDto(LayoutSectionItem entity) {
+    public LayoutSectionItemResp toDto(LayoutSectionItem entity) {
         if (entity == null) {
             return null;
         }
 
-        return LayoutSectionItemResponse.builder()
+        return LayoutSectionItemResp.builder()
                 .id(entity.getId())
                 .latexMethod(latexMethodMapper.toDto(entity.getLatexMethod()))
                 .sectionItem(sectionItemMapper.toDto(entity.getSectionItem()))
@@ -57,7 +57,7 @@ public class LayoutSectionItemMapper implements Mapper<LayoutSectionItem, Create
     }
 
     @Override
-    public void updateEntity(LayoutSectionItem entity, @Valid UpdateLayoutSectionItemRequest request) {
+    public void updateEntity(LayoutSectionItem entity, @Valid LayoutSectionItemUpdateReq request) {
         if (entity == null || request == null) {
             return;
         }

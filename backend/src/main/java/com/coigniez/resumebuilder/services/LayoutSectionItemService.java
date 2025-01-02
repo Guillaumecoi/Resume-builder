@@ -9,9 +9,9 @@ import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.layoutsectionItem.LayoutSectionItem;
 import com.coigniez.resumebuilder.domain.layoutsectionItem.LayoutSectionItemMapper;
-import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.CreateLayoutSectionItemRequest;
-import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemResponse;
-import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.UpdateLayoutSectionItemRequest;
+import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemCreateReq;
+import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemResp;
+import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemUpdateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.repository.ColumnSectionRepository;
@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class LayoutSectionItemService implements
-        ParentEntityService<CreateLayoutSectionItemRequest, UpdateLayoutSectionItemRequest, LayoutSectionItemResponse, Long> {
+        ParentEntityService<LayoutSectionItemCreateReq, LayoutSectionItemUpdateReq, LayoutSectionItemResp, Long> {
 
     @Autowired
     private LayoutSectionItemRepository layoutSectionItemRepository;
@@ -48,7 +48,7 @@ public class LayoutSectionItemService implements
     private ParentRepositoryUtil parentRepositoryUtil;
 
     @Override
-    public Long create(CreateLayoutSectionItemRequest request) {
+    public Long create(LayoutSectionItemCreateReq request) {
         // Check if the user has access to the ColumnSection and SectionItem
         securityUtils.hasAccessColumnSection(request.getColumnSectionId());
         securityUtils.hasAccessSectionItem(request.getSectionItemId());
@@ -99,7 +99,7 @@ public class LayoutSectionItemService implements
     }
 
     @Override
-    public LayoutSectionItemResponse get(Long id) {
+    public LayoutSectionItemResp get(Long id) {
         // Check if the user has access to the SectionItem
         securityUtils.hasAccessLayoutSectionItem(id);
         // Get the existing LayoutSectionItem entity
@@ -109,7 +109,7 @@ public class LayoutSectionItemService implements
     }
 
     @Override
-    public void update(UpdateLayoutSectionItemRequest request) {
+    public void update(LayoutSectionItemUpdateReq request) {
         // Check if the user has access to the SectionItem
         securityUtils.hasAccessLayoutSectionItem(request.getId());
 
@@ -163,7 +163,7 @@ public class LayoutSectionItemService implements
     }
 
     @Override
-    public List<LayoutSectionItemResponse> getAllByParentId(Long parentId) {
+    public List<LayoutSectionItemResp> getAllByParentId(Long parentId) {
         // Check if the user has access to the ColumnSection
         securityUtils.hasAccessColumnSection(parentId);
         // Get all LayoutSectionItems from the ColumnSection

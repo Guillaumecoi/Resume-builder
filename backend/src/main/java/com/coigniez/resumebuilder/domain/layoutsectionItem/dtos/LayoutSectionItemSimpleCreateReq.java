@@ -4,15 +4,13 @@ import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
 import com.coigniez.resumebuilder.interfaces.CreateRequest;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
-public class CreateLayoutSectionItemRequest implements CreateRequest {
+@SuperBuilder
+public class LayoutSectionItemSimpleCreateReq implements CreateRequest {
 
-    @NotNull
-    private long columnSectionId;
     @NotNull
     private long sectionItemId;
     private Long latexMethodId;

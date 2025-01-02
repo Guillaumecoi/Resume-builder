@@ -1,7 +1,9 @@
 package com.coigniez.resumebuilder.domain.layoutsectionItem.dtos;
 
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
 import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
-import com.coigniez.resumebuilder.interfaces.UpdateRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResp;
+import com.coigniez.resumebuilder.interfaces.Response;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -9,18 +11,19 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UpdateLayoutSectionItemRequest implements UpdateRequest {
+public class LayoutSectionItemResp implements Response {
 
     @NotNull
-    private Long id;
-
+    private long id;
+    
     @NotNull
-    private Long sectionItemId;
+    private SectionItemResp sectionItem;
     @NotNull
-    private Long latexMethodId;
+    private LatexMethodResponse latexMethod;
 
     @NotNull
     private boolean hidden;
+    @NotNull
     private Integer itemOrder;
     private AlignmentType alignment;
     

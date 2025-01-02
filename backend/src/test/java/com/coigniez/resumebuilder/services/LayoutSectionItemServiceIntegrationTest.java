@@ -20,9 +20,9 @@ import com.coigniez.resumebuilder.domain.latex.HasLatexMethod;
 import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
 import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
-import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.CreateLayoutSectionItemRequest;
-import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemResponse;
-import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.UpdateLayoutSectionItemRequest;
+import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemCreateReq;
+import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemResp;
+import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemUpdateReq;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
@@ -129,7 +129,7 @@ public class LayoutSectionItemServiceIntegrationTest {
     @Test
     void testCreate() {
         // Arrange
-        CreateLayoutSectionItemRequest request = CreateLayoutSectionItemRequest.builder()
+        LayoutSectionItemCreateReq request = LayoutSectionItemCreateReq.builder()
                 .columnSectionId(columnSectionId)
                 .sectionItemId(sectionItemId)
                 .latexMethodId(latexMethodId)
@@ -141,7 +141,7 @@ public class LayoutSectionItemServiceIntegrationTest {
 
         // Assert
         assertNotNull(id);
-        LayoutSectionItemResponse response = layoutSectionItemService.get(id);
+        LayoutSectionItemResp response = layoutSectionItemService.get(id);
         assertEquals(sectionItemId, response.getSectionItem().getId());
         assertEquals(latexMethodId, response.getLatexMethod().getId());
         assertEquals(1, response.getItemOrder());
@@ -150,14 +150,14 @@ public class LayoutSectionItemServiceIntegrationTest {
     @Test
     void testUpdate() {
         // Arrange
-        Long id = layoutSectionItemService.create(CreateLayoutSectionItemRequest.builder()
+        Long id = layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
                 .columnSectionId(columnSectionId)
                 .sectionItemId(sectionItemId)
                 .latexMethodId(latexMethodId)
                 .itemOrder(1)
                 .build());
 
-        UpdateLayoutSectionItemRequest request = UpdateLayoutSectionItemRequest.builder()
+        LayoutSectionItemUpdateReq request = LayoutSectionItemUpdateReq.builder()
                 .id(id)
                 .sectionItemId(sectionItemId)
                 .latexMethodId(latexMethodId)
@@ -169,14 +169,14 @@ public class LayoutSectionItemServiceIntegrationTest {
         layoutSectionItemService.update(request);
 
         // Assert
-        LayoutSectionItemResponse response = layoutSectionItemService.get(id);
+        LayoutSectionItemResp response = layoutSectionItemService.get(id);
         assertEquals(2, response.getItemOrder());
     }
 
     @Test
     void testDelete() {
         // Arrange
-        Long id = layoutSectionItemService.create(CreateLayoutSectionItemRequest.builder()
+        Long id = layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
                 .columnSectionId(columnSectionId)
                 .sectionItemId(sectionItemId)
                 .latexMethodId(latexMethodId)
@@ -193,7 +193,7 @@ public class LayoutSectionItemServiceIntegrationTest {
     @Test
     void testGetAllByParentId() {
         // Arrange
-        layoutSectionItemService.create(CreateLayoutSectionItemRequest.builder()
+        layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
                 .columnSectionId(columnSectionId)
                 .sectionItemId(sectionItemId)
                 .latexMethodId(latexMethodId)
@@ -201,7 +201,7 @@ public class LayoutSectionItemServiceIntegrationTest {
                 .build());
 
         // Act
-        List<LayoutSectionItemResponse> responses = layoutSectionItemService.getAllByParentId(columnSectionId);
+        List<LayoutSectionItemResp> responses = layoutSectionItemService.getAllByParentId(columnSectionId);
 
         // Assert
         assertEquals(1, responses.size());
@@ -210,7 +210,7 @@ public class LayoutSectionItemServiceIntegrationTest {
     @Test
     void testRemoveAllByParentId() {
         // Arrange
-        layoutSectionItemService.create(CreateLayoutSectionItemRequest.builder()
+        layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
                 .columnSectionId(columnSectionId)
                 .sectionItemId(sectionItemId)
                 .latexMethodId(latexMethodId)
@@ -221,14 +221,14 @@ public class LayoutSectionItemServiceIntegrationTest {
         layoutSectionItemService.removeAllByParentId(columnSectionId);
 
         // Assert
-        List<LayoutSectionItemResponse> responses = layoutSectionItemService.getAllByParentId(columnSectionId);
+        List<LayoutSectionItemResp> responses = layoutSectionItemService.getAllByParentId(columnSectionId);
         assertTrue(responses.isEmpty());
     }
 
     @Test
     void testAccessControl() {
         // Arrange
-        Long id = layoutSectionItemService.create(CreateLayoutSectionItemRequest.builder()
+        Long id = layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
                 .columnSectionId(columnSectionId)
                 .sectionItemId(sectionItemId)
                 .latexMethodId(latexMethodId)

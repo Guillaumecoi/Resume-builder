@@ -14,7 +14,7 @@ import com.coigniez.resumebuilder.domain.columnsection.dtos.CreateColumnSectionR
 import com.coigniez.resumebuilder.domain.columnsection.dtos.UpdateColumnSectionRequest;
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
-import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.CreateLayoutSectionItemRequest;
+import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemCreateReq;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
 import com.coigniez.resumebuilder.interfaces.MultiParentEntityService;
@@ -235,7 +235,7 @@ public class ColumnSectionService implements
         // Create the layoutSectionItems
         for (SectionItem sectionItem : sectionItems) {
             List<LatexMethodResponse> latexMethods = latexMethodMap.get(sectionItem.getItem().getClass());
-            layoutSectionItemService.create(CreateLayoutSectionItemRequest.builder()
+            layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
                     .columnSectionId(columnSection.getId())
                     .sectionItemId(sectionItem.getId())
                     // The first latexMethod will be the default
