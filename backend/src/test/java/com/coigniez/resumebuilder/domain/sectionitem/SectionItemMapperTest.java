@@ -8,8 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.validation.annotation.Validated;
 
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResponse;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResp;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.*;
 
 import jakarta.validation.ConstraintViolationException;
@@ -36,7 +36,7 @@ class SectionItemMapperTest {
                 .build();
 
         // Act
-        SectionItemResponse dto = mapper.toDto(entity);
+        SectionItemResp dto = mapper.toDto(entity);
 
         // Assert
         assertNotNull(dto);
@@ -49,7 +49,7 @@ class SectionItemMapperTest {
     @Test
     void testToDto_nullEntity() {
         // Act
-        SectionItemResponse dto = mapper.toDto(null);
+        SectionItemResp dto = mapper.toDto(null);
 
         // Assert
         assertNull(dto);
@@ -58,7 +58,7 @@ class SectionItemMapperTest {
     @Test
     void testToEntity() {
         // Arrange
-        CreateSectionItemRequest request = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request = SectionItemCreateReq.builder()
                 .itemOrder(2)
                 .sectionId(1)
                 .item(Textbox.builder()
@@ -88,7 +88,7 @@ class SectionItemMapperTest {
 
     @Test
     void testToEntity_missingRequiredFields() {
-        CreateSectionItemRequest dto = CreateSectionItemRequest.builder()
+        SectionItemCreateReq dto = SectionItemCreateReq.builder()
                 .itemOrder(1)
                 .build();
 
@@ -99,7 +99,7 @@ class SectionItemMapperTest {
     @Test
     void testToEntity_Skill() {
         // Arrange
-        CreateSectionItemRequest correctComplete = CreateSectionItemRequest.builder()
+        SectionItemCreateReq correctComplete = SectionItemCreateReq.builder()
                 .itemOrder(1)
                 .sectionId(1)
                 .item(Skill.builder()
@@ -108,7 +108,7 @@ class SectionItemMapperTest {
                         .build())
                 .build();
 
-        CreateSectionItemRequest nullProficiency = CreateSectionItemRequest.builder()
+        SectionItemCreateReq nullProficiency = SectionItemCreateReq.builder()
                 .itemOrder(1)
                 .sectionId(1)
                 .item(Skill.builder()
@@ -116,7 +116,7 @@ class SectionItemMapperTest {
                         .build())
                 .build();
 
-        CreateSectionItemRequest nullName = CreateSectionItemRequest.builder()
+        SectionItemCreateReq nullName = SectionItemCreateReq.builder()
                 .itemOrder(1)
                 .sectionId(1)
                 .item(Skill.builder()
@@ -124,7 +124,7 @@ class SectionItemMapperTest {
                         .build())
                 .build();
 
-        CreateSectionItemRequest emptyName = CreateSectionItemRequest.builder()
+        SectionItemCreateReq emptyName = SectionItemCreateReq.builder()
                 .itemOrder(1)
                 .sectionId(1)
                 .item(Skill.builder()
@@ -133,7 +133,7 @@ class SectionItemMapperTest {
                         .build())
                 .build();
 
-        CreateSectionItemRequest lowProficiency = CreateSectionItemRequest.builder()
+        SectionItemCreateReq lowProficiency = SectionItemCreateReq.builder()
                 .itemOrder(1)
                 .sectionId(1)
                 .item(Skill.builder()
@@ -142,7 +142,7 @@ class SectionItemMapperTest {
                         .build())
                 .build();
 
-        CreateSectionItemRequest highProficiency = CreateSectionItemRequest.builder()
+        SectionItemCreateReq highProficiency = SectionItemCreateReq.builder()
                 .itemOrder(1)
                 .sectionId(1)
                 .item(Skill.builder()
@@ -174,7 +174,7 @@ class SectionItemMapperTest {
     void testToEntity_Textbox() {
         // Act
         SectionItem entityCorrectComplete = mapper.toEntity(
-                CreateSectionItemRequest.builder()
+                SectionItemCreateReq.builder()
                         .itemOrder(1)
                         .sectionId(1)
                         .item(Textbox.builder()
@@ -188,7 +188,7 @@ class SectionItemMapperTest {
 
         // Act & Assert
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
-                CreateSectionItemRequest.builder()
+                SectionItemCreateReq.builder()
                         .itemOrder(1)
                         .sectionId(1)
                         .item(Textbox.builder()
@@ -196,7 +196,7 @@ class SectionItemMapperTest {
                         .build()));
 
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
-                CreateSectionItemRequest.builder()
+                SectionItemCreateReq.builder()
                         .itemOrder(1)
                         .item(Textbox.builder()
                                 .content("")
@@ -248,14 +248,14 @@ class SectionItemMapperTest {
 
         // Act
         SectionItem entityCorrectComplete = mapper.toEntity(
-                CreateSectionItemRequest.builder()
+                SectionItemCreateReq.builder()
                         .itemOrder(1)
                         .sectionId(1)
                         .item(correctComplete)
                         .build());
 
         SectionItem entityNullDescription = mapper.toEntity(
-                CreateSectionItemRequest.builder()
+                SectionItemCreateReq.builder()
                         .itemOrder(1)
                         .sectionId(1)
                         .item(nullDescription)
@@ -271,28 +271,28 @@ class SectionItemMapperTest {
 
         // Act & Assert
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
-                CreateSectionItemRequest.builder()
+                SectionItemCreateReq.builder()
                         .itemOrder(1)
                         .sectionId(1)
                         .item(nullDegree)
                         .build()));
 
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
-                CreateSectionItemRequest.builder()
+                SectionItemCreateReq.builder()
                         .itemOrder(1)
                         .sectionId(1)
                         .item(nullInstitution)
                         .build()));
 
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
-                CreateSectionItemRequest.builder()
+                SectionItemCreateReq.builder()
                         .itemOrder(1)
                         .sectionId(1)
                         .item(emptyDegree)
                         .build()));
 
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
-                CreateSectionItemRequest.builder()
+                SectionItemCreateReq.builder()
                         .itemOrder(1)
                         .sectionId(1)
                         .item(emptyInstitution)
@@ -319,7 +319,7 @@ class SectionItemMapperTest {
 
         // Act
         SectionItem entityCorrectComplete = mapper.toEntity(
-                CreateSectionItemRequest.builder()
+                SectionItemCreateReq.builder()
                         .itemOrder(1)
                         .sectionId(1)
                         .item(correctComplete)
@@ -338,7 +338,7 @@ class SectionItemMapperTest {
 
         // Act & Assert
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
-                CreateSectionItemRequest.builder()
+                SectionItemCreateReq.builder()
                         .itemOrder(1)
                         .item(nullJobTitle)
                         .build()));
@@ -372,7 +372,7 @@ class SectionItemMapperTest {
 
         // Act
         SectionItem entityCorrectComplete = mapper.toEntity(
-                CreateSectionItemRequest.builder()
+                SectionItemCreateReq.builder()
                         .itemOrder(1)
                         .sectionId(1)
                         .item(correctComplete)
@@ -395,7 +395,7 @@ class SectionItemMapperTest {
 
         // Act & Assert
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
-                CreateSectionItemRequest.builder()
+                SectionItemCreateReq.builder()
                         .itemOrder(1)
                         .sectionId(1)
                         .item(nullPath)
@@ -405,7 +405,7 @@ class SectionItemMapperTest {
     @Test
     void testToEntityAndBack() {
         // Arrange
-        CreateSectionItemRequest request = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request = SectionItemCreateReq.builder()
                 .itemOrder(2)
                 .sectionId(1)
                 .item(Textbox.builder()
@@ -416,7 +416,7 @@ class SectionItemMapperTest {
         // Act
         SectionItem entity = mapper.toEntity(request);
         entity.setId(1L);   // Simulate entity being saved to the database
-        SectionItemResponse dto = mapper.toDto(entity);
+        SectionItemResp dto = mapper.toDto(entity);
 
         // Assert
         assertNotNull(dto);

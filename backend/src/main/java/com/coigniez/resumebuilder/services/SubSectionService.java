@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.section.Section;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
 import com.coigniez.resumebuilder.domain.subsection.SubSection;
 import com.coigniez.resumebuilder.domain.subsection.SubSectionMapper;
 import com.coigniez.resumebuilder.domain.subsection.dtos.CreateSubSectionRequest;
@@ -51,7 +51,7 @@ public class SubSectionService
 
         // Create the section items
         if (request.getSectionItems() != null) {
-            for (CreateSectionItemRequest sectionItemRequest : request.getSectionItems()) {
+            for (SectionItemCreateReq sectionItemRequest : request.getSectionItems()) {
                 sectionItemRequest.setSubSectionId(subSectionId);
                 sectionItemService.create(sectionItemRequest);
             }

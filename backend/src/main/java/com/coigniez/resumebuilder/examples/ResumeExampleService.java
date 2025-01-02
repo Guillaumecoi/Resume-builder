@@ -13,7 +13,7 @@ import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeDetailResponse;
 import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Contact;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Education;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
@@ -78,7 +78,7 @@ public class ResumeExampleService {
                 .showTitle(false)
                 .build());
                 
-        CreateSectionItemRequest pictureRequest = CreateSectionItemRequest.builder()
+        SectionItemCreateReq pictureRequest = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .item(Picture.builder()
                         .caption("Photo by Ali Mammadli on Unsplash")
@@ -111,15 +111,15 @@ public class ResumeExampleService {
     }
 
     private void addContactSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
-        List<CreateSectionItemRequest> contactItems = new ArrayList<>();
-        contactItems.add(CreateSectionItemRequest.builder()
+        List<SectionItemCreateReq> contactItems = new ArrayList<>();
+        contactItems.add(SectionItemCreateReq.builder()
                 .item(Contact.builder()
                         .icon("\\faMapMarker")
                         .label("Brussels, Belgium")
                         .build())
                 .build());
     
-        contactItems.add(CreateSectionItemRequest.builder()
+        contactItems.add(SectionItemCreateReq.builder()
                 .item(Contact.builder()
                         .icon("\\faEnvelope")
                         .label("john@email.com")
@@ -127,7 +127,7 @@ public class ResumeExampleService {
                         .build())
                 .build());
 
-        contactItems.add(CreateSectionItemRequest.builder()
+        contactItems.add(SectionItemCreateReq.builder()
                 .item(Contact.builder()
                         .icon("\\faPhone")
                         .label("+32 123 456 789")
@@ -135,7 +135,7 @@ public class ResumeExampleService {
                         .build())
                 .build());
 
-        contactItems.add(CreateSectionItemRequest.builder()
+        contactItems.add(SectionItemCreateReq.builder()
                 .item(Contact.builder()
                         .icon("\\faLinkedin")
                         .label("johndoe")
@@ -143,7 +143,7 @@ public class ResumeExampleService {
                         .build())
                 .build());
 
-        contactItems.add(CreateSectionItemRequest.builder()
+        contactItems.add(SectionItemCreateReq.builder()
                 .item(Contact.builder()
                         .icon("\\faGithub")
                         .label("johndoe")
@@ -151,7 +151,7 @@ public class ResumeExampleService {
                         .build())
                 .build());
 
-        contactItems.add(CreateSectionItemRequest.builder()
+        contactItems.add(SectionItemCreateReq.builder()
                 .item(Contact.builder()
                         .icon("\\faCar")
                         .label("Driving License B")
@@ -176,8 +176,8 @@ public class ResumeExampleService {
 
 
     private void addEducationSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
-        List<CreateSectionItemRequest> educationItems = new ArrayList<>();
-        educationItems.add(CreateSectionItemRequest.builder()
+        List<SectionItemCreateReq> educationItems = new ArrayList<>();
+        educationItems.add(SectionItemCreateReq.builder()
                 .itemOrder(2)
                 .item(Education.builder()
                         .degree("Bachelor of Science in Computer Science")
@@ -186,7 +186,7 @@ public class ResumeExampleService {
                         .build())
                 .build());
 
-        educationItems.add(CreateSectionItemRequest.builder()
+        educationItems.add(SectionItemCreateReq.builder()
                 .itemOrder(1)
                 .item(Education.builder()
                         .degree("Master of Science in Computer Science")
@@ -195,7 +195,7 @@ public class ResumeExampleService {
                         .build())
                 .build());
         
-        educationItems.add(CreateSectionItemRequest.builder()
+        educationItems.add(SectionItemCreateReq.builder()
                 .itemOrder(3)
                 .item(Education.builder()
                         .degree("Science-Mathematics")
@@ -221,8 +221,8 @@ public class ResumeExampleService {
     }
 
     private void addExperienceSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
-        List<CreateSectionItemRequest> experienceItems = new ArrayList<>();
-        experienceItems.add(CreateSectionItemRequest.builder()
+        List<SectionItemCreateReq> experienceItems = new ArrayList<>();
+        experienceItems.add(SectionItemCreateReq.builder()
                 .item(Experience.builder()
                         .jobTitle("Software Engineer")
                         .companyName("MIVB/STIB")
@@ -246,7 +246,7 @@ public class ResumeExampleService {
     }
 
     private void addTitleSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
-        CreateSectionItemRequest title = CreateSectionItemRequest.builder()
+        SectionItemCreateReq title = SectionItemCreateReq.builder()
                 .item(Title.builder()
                         .title("John Doe")
                         .subtitle("Software Developer")
@@ -269,8 +269,8 @@ public class ResumeExampleService {
     }
 
     private void addSummarySection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
-        List<CreateSectionItemRequest> summaryItems = new ArrayList<>();
-        summaryItems.add(CreateSectionItemRequest.builder()
+        List<SectionItemCreateReq> summaryItems = new ArrayList<>();
+        summaryItems.add(SectionItemCreateReq.builder()
                 .item(Textbox.builder()
                         .content("""
                             Passionate software developer with a strong foundation in computer science, currently pursuing MSc at Open Universiteit Utrecht. 
@@ -295,34 +295,34 @@ public class ResumeExampleService {
     }
 
     private void addSkillsSection(Long resumeId, Long columnId, int sectionOrder, Map<String, Long> methodIds) {
-        List<CreateSectionItemRequest> skillsItems = new ArrayList<>();
-        skillsItems.add(CreateSectionItemRequest.builder()
+        List<SectionItemCreateReq> skillsItems = new ArrayList<>();
+        skillsItems.add(SectionItemCreateReq.builder()
                 .item(Skillboxes.builder()
                         .skills(List.of("Java", "Spring Boot", "HTML", "CSS", "JavaScript", "SQL", "Python", "C", "C++"))
                         .build())
                 .build());
 
-        skillsItems.add(CreateSectionItemRequest.builder()
+        skillsItems.add(SectionItemCreateReq.builder()
                 .item(Skill.builder()
                         .name("Dutch")
                         .build())
                 .build());
 
-        skillsItems.add(CreateSectionItemRequest.builder()
+        skillsItems.add(SectionItemCreateReq.builder()
                 .item(Skill.builder()
                         .name("French")
                         .description("Intermediate")
                         .build())
                 .build());
 
-        skillsItems.add(CreateSectionItemRequest.builder()
+        skillsItems.add(SectionItemCreateReq.builder()
                 .item(Skill.builder()
                         .name("English")
                         .proficiency(9)
                         .build())
                 .build());
 
-        skillsItems.add(CreateSectionItemRequest.builder()
+        skillsItems.add(SectionItemCreateReq.builder()
                 .item(Skill.builder()
                         .name("Japanese")
                         .proficiency(6)

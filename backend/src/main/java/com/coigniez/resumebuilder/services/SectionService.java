@@ -10,11 +10,8 @@ import com.coigniez.resumebuilder.domain.section.SectionMapper;
 import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
 import com.coigniez.resumebuilder.domain.section.dtos.UpdateSectionRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.UpdateSectionItemRequest;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.repository.ResumeRepository;
-import com.coigniez.resumebuilder.repository.SectionItemRepository;
 import com.coigniez.resumebuilder.repository.SectionRepository;
 import com.coigniez.resumebuilder.util.ExceptionUtils;
 import com.coigniez.resumebuilder.util.SecurityUtils;
@@ -27,9 +24,7 @@ public class SectionService
         implements ParentEntityService<CreateSectionRequest, UpdateSectionRequest, SectionResponse, Long> {
 
     private final SectionRepository sectionRepository;
-    private final SectionItemRepository sectionItemRepository;
     private final ResumeRepository resumeRepository;
-    private final SectionItemService sectionItemService;
     private final SectionMapper sectionMapper;
     private final SecurityUtils securityUtils;
 
@@ -48,8 +43,6 @@ public class SectionService
 
         // Save the section
         Long sectionId = sectionRepository.save(section).getId();
-
-        //TODO: Create the subSections
 
         // Return the section id
         return sectionId;

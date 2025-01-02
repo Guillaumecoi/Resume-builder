@@ -1,26 +1,18 @@
 package com.coigniez.resumebuilder.domain.sectionitem.dtos;
 
 import com.coigniez.resumebuilder.interfaces.SectionItemData;
-import com.coigniez.resumebuilder.interfaces.UpdateRequest;
+import com.coigniez.resumebuilder.interfaces.CreateRequest;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
-public class UpdateSectionItemRequest implements UpdateRequest {
-
-    @NotNull
-    private Long id;
-
-    @NotNull
-    private long subSectionId;
+@SuperBuilder
+public class SectionItemSimpleCreateReq implements CreateRequest {
 
     @NotNull
     private SectionItemData item;
-
     @NotNull
     private Integer itemOrder;
-
 }

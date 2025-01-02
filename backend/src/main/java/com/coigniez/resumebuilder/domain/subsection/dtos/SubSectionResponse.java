@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.domain.subsection.dtos;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResponse;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResp;
 import com.coigniez.resumebuilder.interfaces.Response;
 
 import jakarta.validation.constraints.NotBlank;
@@ -24,6 +24,6 @@ public class SubSectionResponse implements Response {
     private boolean showTitle;
 
     @NotNull
-    private List<SectionItemResponse> sectionItems;
+    private List<SectionItemResp> sectionItems;
     
 }

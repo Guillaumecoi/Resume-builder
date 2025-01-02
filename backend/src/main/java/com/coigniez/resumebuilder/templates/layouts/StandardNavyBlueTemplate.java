@@ -21,7 +21,7 @@ import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Title;
 import com.coigniez.resumebuilder.services.ColumnSectionService;
@@ -128,7 +128,7 @@ public class StandardNavyBlueTemplate {
                 .showTitle(false)
                 .build());
 
-        CreateSectionItemRequest pictureRequest = CreateSectionItemRequest.builder()
+        SectionItemCreateReq pictureRequest = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .item(Picture.builder()
                         .caption("Photo by Ali Mammadli on Unsplash")
@@ -166,7 +166,7 @@ public class StandardNavyBlueTemplate {
     }
 
     private void addTitleSection(Long columnId, int sectionOrder) {
-        CreateSectionItemRequest title = CreateSectionItemRequest.builder()
+        SectionItemCreateReq title = SectionItemCreateReq.builder()
                 .item(Title.builder()
                         .title("John Doe")
                         .subtitle("Software Developer")

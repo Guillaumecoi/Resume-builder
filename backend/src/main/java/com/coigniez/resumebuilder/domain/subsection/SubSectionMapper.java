@@ -36,6 +36,7 @@ public class SubSectionMapper
                 .title(request.getTitle())
                 .icon(request.getIcon())
                 .showTitle(request.getShowTitle())
+                .items(request.getSectionItems().stream().map(sectionItemMapper::toEntity).toList())
                 .build();
     }
 

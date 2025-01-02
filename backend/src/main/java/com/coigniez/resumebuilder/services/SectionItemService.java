@@ -9,9 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResponse;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.UpdateSectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResp;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemUpdateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.domain.subsection.SubSection;
 import com.coigniez.resumebuilder.file.FileStorageService;
@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SectionItemService
         implements
-        ParentEntityService<CreateSectionItemRequest, UpdateSectionItemRequest, SectionItemResponse, Long> {
+        ParentEntityService<SectionItemCreateReq, SectionItemUpdateReq, SectionItemResp, Long> {
 
     private final SectionItemRepository sectionItemRepository;
     private final SubSectionRepository subSectionRepository;
@@ -39,7 +39,7 @@ public class SectionItemService
     private OrderableRepositoryUtil orderableRepositoryUtil;
 
     @Override
-    public Long create(CreateSectionItemRequest request) {
+    public Long create(SectionItemCreateReq request) {
         // Check if the user has access to the section
         securityUtils.hasAccessSubSection(request.getSubSectionId());
 
@@ -76,7 +76,7 @@ public class SectionItemService
      * @param request the section item request for the picture
      * @return the id of the created item
      */
-    public Long createPicture(MultipartFile file, CreateSectionItemRequest request) {
+    public Long createPicture(MultipartFile file, SectionItemCreateReq request) {
         // Check if the user has access to the section
         securityUtils.hasAccessSection(request.getSubSectionId());
 
@@ -89,7 +89,7 @@ public class SectionItemService
     }
 
     @Override
-    public SectionItemResponse get(Long id) {
+    public SectionItemResp get(Long id) {
         // Check if the user has access to the sectionItem
         securityUtils.hasAccessSectionItem(id);
         // Get the item
@@ -99,7 +99,7 @@ public class SectionItemService
     }
 
     @Override
-    public void update(UpdateSectionItemRequest request) {
+    public void update(SectionItemUpdateReq request) {
         // Check if the user has access to the sectionItem
         securityUtils.hasAccessSectionItem(request.getId());
 
@@ -144,7 +144,7 @@ public class SectionItemService
     }
 
     @Override
-    public List<SectionItemResponse> getAllByParentId(Long id) {
+    public List<SectionItemResp> getAllByParentId(Long id) {
         // Check if the user has access to the section
         securityUtils.hasAccessSection(id);
 

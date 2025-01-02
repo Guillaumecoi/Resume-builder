@@ -6,9 +6,9 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResponse;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.UpdateSectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemSimpleCreateReq;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResp;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemUpdateReq;
 import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.interfaces.SectionItemData;
 
@@ -21,17 +21,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @AllArgsConstructor
 @Service
-public class SectionItemMapper implements Mapper<SectionItem, CreateSectionItemRequest, UpdateSectionItemRequest, SectionItemResponse> {
+public class SectionItemMapper implements Mapper<SectionItem, SectionItemSimpleCreateReq, SectionItemUpdateReq, SectionItemResp> {
 
     private final Validator validator;
 
     @Override
-    public SectionItem toEntity(CreateSectionItemRequest request) {
+    public SectionItem toEntity(SectionItemSimpleCreateReq request) {
         if (request == null) {
             return null;
         }
 
-        Set<ConstraintViolation<CreateSectionItemRequest>> violations = validator.validate(request);
+        Set<ConstraintViolation<SectionItemSimpleCreateReq>> violations = validator.validate(request);
         Set<ConstraintViolation<SectionItemData>> itemViolations = Collections.emptySet();
 
         if (request.getItem() != null) {
@@ -54,12 +54,12 @@ public class SectionItemMapper implements Mapper<SectionItem, CreateSectionItemR
     }
 
     @Override
-    public SectionItemResponse toDto(SectionItem entity) {
+    public SectionItemResp toDto(SectionItem entity) {
         if (entity == null) {
             return null;
         }
     
-        return SectionItemResponse.builder()
+        return SectionItemResp.builder()
             .id(entity.getId())
             .item(entity.getItem())
             .itemOrder(entity.getItemOrder())
@@ -67,7 +67,7 @@ public class SectionItemMapper implements Mapper<SectionItem, CreateSectionItemR
     }
 
     @Override
-    public void updateEntity(SectionItem entity, UpdateSectionItemRequest request) {
+    public void updateEntity(SectionItem entity, SectionItemUpdateReq request) {
         if (request == null) {
             return;
         }

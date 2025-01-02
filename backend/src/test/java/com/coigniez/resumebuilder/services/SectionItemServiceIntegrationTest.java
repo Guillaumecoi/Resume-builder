@@ -32,8 +32,8 @@ import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.UpdateSectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemUpdateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
@@ -95,7 +95,7 @@ public class SectionItemServiceIntegrationTest {
         Map<String, Object> data = new HashMap<>();
         data.put("content", "This is some example text");
 
-        CreateSectionItemRequest request = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Textbox.builder().content("This is some example text").build())
@@ -119,7 +119,7 @@ public class SectionItemServiceIntegrationTest {
         // Arrange
         MockMultipartFile file = getPictureFile();
 
-        CreateSectionItemRequest request = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Picture.builder().build())
@@ -144,12 +144,12 @@ public class SectionItemServiceIntegrationTest {
     @Test
     void testCreate_AutoIncrementItemOrder() {
         // Arrange
-        CreateSectionItemRequest request1 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request1 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .item(Textbox.builder().content("First item").build())
                 .build();
 
-        CreateSectionItemRequest request2 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request2 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .item(Textbox.builder().content("Second item").build())
                 .build();
@@ -174,12 +174,12 @@ public class SectionItemServiceIntegrationTest {
     @Test
     void testCreate_IncrementsItemOrder() {
         // Arrange
-        CreateSectionItemRequest request1 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request1 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .item(Textbox.builder().content("First item").build())
                 .build();
 
-        CreateSectionItemRequest request2 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request2 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .item(Textbox.builder().content("Second item").build())
 
@@ -189,7 +189,7 @@ public class SectionItemServiceIntegrationTest {
         sectionItemService.create(request2);
 
         // Act
-        CreateSectionItemRequest request3 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request3 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(2)
                 .item(Textbox.builder().content("Third item").build())
@@ -197,7 +197,7 @@ public class SectionItemServiceIntegrationTest {
 
         sectionItemService.create(request3);
 
-        CreateSectionItemRequest request4 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request4 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(4)
                 .item(Textbox.builder().content("Fourth item").build())
@@ -226,7 +226,7 @@ public class SectionItemServiceIntegrationTest {
     @Test
     void testUpdateLatexMethod() {
         // Arrange
-        CreateSectionItemRequest createRequest = CreateSectionItemRequest.builder()
+        SectionItemCreateReq createRequest = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Textbox.builder().content("First item").build())
@@ -234,7 +234,7 @@ public class SectionItemServiceIntegrationTest {
         Long sectionItemId = sectionItemService.create(createRequest);
 
         // Act
-        UpdateSectionItemRequest updateRequest = UpdateSectionItemRequest.builder()
+        SectionItemUpdateReq updateRequest = SectionItemUpdateReq.builder()
                 .id(sectionItemId)
                 .sectionId(sectionId)
                 .itemOrder(1)
@@ -252,7 +252,7 @@ public class SectionItemServiceIntegrationTest {
     @Test
     void testUpdate_DecrementItemOrder() {
         // Arrange
-        CreateSectionItemRequest request1 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request1 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Textbox.builder().content("First item").build())
@@ -260,7 +260,7 @@ public class SectionItemServiceIntegrationTest {
 
         sectionItemService.create(request1);
 
-        CreateSectionItemRequest request2 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request2 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(2)
                 .item(Textbox.builder().content("Second item").build())
@@ -268,7 +268,7 @@ public class SectionItemServiceIntegrationTest {
 
         sectionItemService.create(request2);
 
-        CreateSectionItemRequest request3 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request3 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(3)
                 .item(Textbox.builder().content("Third item").build())
@@ -277,7 +277,7 @@ public class SectionItemServiceIntegrationTest {
         Long itemId3 = sectionItemService.create(request3);
 
         // Act
-        sectionItemService.update(UpdateSectionItemRequest.builder()
+        sectionItemService.update(SectionItemUpdateReq.builder()
                 .id(itemId3)
                 .sectionId(sectionId)
                 .itemOrder(2)
@@ -303,7 +303,7 @@ public class SectionItemServiceIntegrationTest {
     @Test
     void testUpdate_IncrementsItemOrder() {
         // Arrange
-        CreateSectionItemRequest request1 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request1 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Textbox.builder().content("First item").build())
@@ -311,7 +311,7 @@ public class SectionItemServiceIntegrationTest {
 
         sectionItemService.create(request1);
 
-        CreateSectionItemRequest request2 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request2 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(2)
                 .item(Textbox.builder().content("Second item").build())
@@ -319,7 +319,7 @@ public class SectionItemServiceIntegrationTest {
 
         sectionItemService.create(request2);
 
-        CreateSectionItemRequest request3 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request3 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(3)
                 .item(Textbox.builder().content("Third item").build())
@@ -328,7 +328,7 @@ public class SectionItemServiceIntegrationTest {
         sectionItemService.create(request3);
 
         // Act
-        CreateSectionItemRequest request4 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request4 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(2)
                 .item(Textbox.builder().content("Fourth item").build())
@@ -360,7 +360,7 @@ public class SectionItemServiceIntegrationTest {
         Map<String, Object> data = new HashMap<>();
         data.put("content", "This is some example text");
 
-        CreateSectionItemRequest request = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Textbox.builder().content("This is some example text").build())
@@ -380,7 +380,7 @@ public class SectionItemServiceIntegrationTest {
     @Test
     void testDelete_DecrementItemOrder() {
         // Arrange
-        CreateSectionItemRequest request1 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request1 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Textbox.builder().content("First item").build())
@@ -388,7 +388,7 @@ public class SectionItemServiceIntegrationTest {
 
         sectionItemService.create(request1);
 
-        CreateSectionItemRequest request2 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request2 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(2)
                 .item(Textbox.builder().content("Second item").build())
@@ -396,7 +396,7 @@ public class SectionItemServiceIntegrationTest {
 
         Long itemId2 = sectionItemService.create(request2);
 
-        CreateSectionItemRequest request3 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request3 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(3)
                 .item(Textbox.builder().content("Third item").build())
@@ -423,7 +423,7 @@ public class SectionItemServiceIntegrationTest {
     @Test
     void testDeleteAllBySectionId() {
         // Arrange
-        CreateSectionItemRequest request1 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request1 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Textbox.builder().content("This is some example text").build())
@@ -431,7 +431,7 @@ public class SectionItemServiceIntegrationTest {
 
         sectionItemService.create(request1);
 
-        CreateSectionItemRequest request2 = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request2 = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(2)
                 .item(Textbox.builder().content("This is some example text").build())
@@ -456,7 +456,7 @@ public class SectionItemServiceIntegrationTest {
         Map<String, Object> data = new HashMap<>();
         data.put("content", "This is some example text");
 
-        CreateSectionItemRequest request = CreateSectionItemRequest.builder()
+        SectionItemCreateReq request = SectionItemCreateReq.builder()
                 .sectionId(sectionId)
                 .itemOrder(1)
                 .item(Textbox.builder().content("This is some example text").build())
@@ -472,7 +472,7 @@ public class SectionItemServiceIntegrationTest {
         assertThrows(AccessDeniedException.class, () -> sectionItemService.get(sectionItemId),
                 "Should not be able to get a section item that does not belong to the user");
         assertThrows(AccessDeniedException.class,
-                () -> sectionItemService.update(UpdateSectionItemRequest.builder()
+                () -> sectionItemService.update(SectionItemUpdateReq.builder()
                         .id(sectionItemId)
                         .sectionId(sectionId)
                         .itemOrder(1)

@@ -7,13 +7,13 @@ import jakarta.validation.Valid;
 /**
  * Interface for mapping between entities and request/response objects.
  * 
- * @param <Entity>   the entity type
- * @param <CreateReq> the create request type
- * @param <UpdateReq> the update request type
- * @param <Resp>      the response type
+ * @param <E>  the entity type
+ * @param <CR> the create request type
+ * @param <UR> the update request type
+ * @param <R>  the response type
  */
 @Validated
-public interface Mapper<Entity, CreateReq extends CreateRequest, UpdateReq extends UpdateRequest, Resp extends Response> {
+public interface Mapper<E, CR extends CreateRequest, UR extends UpdateRequest, R extends Response> {
 
     /**
      * Convert a create request object to an entity.
@@ -21,7 +21,7 @@ public interface Mapper<Entity, CreateReq extends CreateRequest, UpdateReq exten
      * @param request the create request object
      * @return the entity
      */
-    Entity toEntity(@Valid CreateReq request);
+    E toEntity(@Valid CR request);
 
     /**
      * Convert an entity to a response object.
@@ -29,13 +29,13 @@ public interface Mapper<Entity, CreateReq extends CreateRequest, UpdateReq exten
      * @param entity the entity
      * @return the response object
      */
-    Resp toDto(Entity entity);
+    R toDto(E entity);
 
     /**
      * Update an entity with values from an update request object.
      * 
-     * @param entity the entity to update
+     * @param entity  the entity to update
      * @param request the update request object with updated values
      */
-    void updateEntity(Entity entity, @Valid UpdateReq request);
+    void updateEntity(E entity, @Valid UR request);
 }

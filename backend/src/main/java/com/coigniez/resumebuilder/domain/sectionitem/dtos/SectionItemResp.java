@@ -1,6 +1,6 @@
 package com.coigniez.resumebuilder.domain.sectionitem.dtos;
 
-import com.coigniez.resumebuilder.interfaces.CreateRequest;
+import com.coigniez.resumebuilder.interfaces.Response;
 import com.coigniez.resumebuilder.interfaces.SectionItemData;
 
 import jakarta.validation.constraints.NotNull;
@@ -9,14 +9,14 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CreateSectionItemRequest implements CreateRequest {
+public class SectionItemResp implements Response {
 
     @NotNull
-    private long subSectionId;
-
+    private long id;
+    
     @NotNull
     private SectionItemData item;
 
+    @NotNull
     private Integer itemOrder;
-
 }

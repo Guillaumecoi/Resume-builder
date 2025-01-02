@@ -16,9 +16,9 @@ import com.coigniez.resumebuilder.domain.resume.dtos.CreateResumeRequest;
 import com.coigniez.resumebuilder.domain.section.dtos.CreateSectionRequest;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionResponse;
 import com.coigniez.resumebuilder.domain.section.dtos.UpdateSectionRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.CreateSectionItemRequest;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResponse;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.UpdateSectionItemRequest;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResp;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemUpdateReq;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Skill;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
 
@@ -66,15 +66,15 @@ public class SectionServiceWithItemsIntegrationTest {
         @Test
         void testCreateAndGet() {
                 // Arrange
-                List<CreateSectionItemRequest> sectionItems = new ArrayList<>();
+                List<SectionItemCreateReq> sectionItems = new ArrayList<>();
 
                 // Add a textbox item to the section
-                sectionItems.add(CreateSectionItemRequest.builder()
+                sectionItems.add(SectionItemCreateReq.builder()
                                 .itemOrder(1)
                                 .item(Textbox.builder().content("This is some example text").build())
                                 .build());
 
-                sectionItems.add(CreateSectionItemRequest.builder()
+                sectionItems.add(SectionItemCreateReq.builder()
                                 .itemOrder(2)
                                 .item(Skill.builder().name("Java").proficiency(5).build())
                                 .build());
@@ -104,13 +104,13 @@ public class SectionServiceWithItemsIntegrationTest {
         @Test
         void testUpdate() {
                 // Arrange
-                List<CreateSectionItemRequest> sectionItems = new ArrayList<>();
+                List<SectionItemCreateReq> sectionItems = new ArrayList<>();
 
-                sectionItems.add(CreateSectionItemRequest.builder()
+                sectionItems.add(SectionItemCreateReq.builder()
                                 .item(Textbox.builder().content("This is some example text").build())
                                 .build());
 
-                sectionItems.add(CreateSectionItemRequest.builder()
+                sectionItems.add(SectionItemCreateReq.builder()
                                 .item(Skill.builder().name("Java").proficiency(5).build())
                                 .build());
 
@@ -124,15 +124,15 @@ public class SectionServiceWithItemsIntegrationTest {
                 SectionResponse initialResponse = sectionService.get(sectionId);
 
                 // Update the section
-                List<CreateSectionItemRequest> createSectionItems = new ArrayList<>();
-                List<UpdateSectionItemRequest> updateSectionItems = new ArrayList<>();
+                List<SectionItemCreateReq> createSectionItems = new ArrayList<>();
+                List<SectionItemUpdateReq> updateSectionItems = new ArrayList<>();
 
                 // Add a new skill item to the section
-                createSectionItems.add(CreateSectionItemRequest.builder()
+                createSectionItems.add(SectionItemCreateReq.builder()
                                 .itemOrder(1)
                                 .item(Skill.builder().name("Python").proficiency(4).build())
                                 .build());
-                updateSectionItems.add(UpdateSectionItemRequest.builder()
+                updateSectionItems.add(SectionItemUpdateReq.builder()
                                 .id(initialResponse.getSectionItems().get(0).getId())
                                 .itemOrder(3)
                                 .item(Textbox.builder().content("This is some updated text").build())
@@ -152,25 +152,25 @@ public class SectionServiceWithItemsIntegrationTest {
                 assertFalse(response.isShowTitle(), "Show title should be updated");
                 assertEquals(3, response.getSectionItems().size(), "Section should have 3 items after update");
                 assertEquals(List.of(1, 2, 3), response.getSectionItems().stream()
-                                .map(SectionItemResponse::getItemOrder)
+                                .map(SectionItemResp::getItemOrder)
                                 .toList(), "Item order should be updated");
 
                 // First skill item
-                SectionItemResponse firstSkill = response.getSectionItems().get(0);
+                SectionItemResp firstSkill = response.getSectionItems().get(0);
                 assertTrue(firstSkill.getItem() instanceof Skill);
                 Skill skill1 = (Skill) firstSkill.getItem();
                 assertEquals("Python", skill1.getName());
                 assertEquals(4, skill1.getProficiency());
 
                 // Second skill item
-                SectionItemResponse secondSkill = response.getSectionItems().get(1);
+                SectionItemResp secondSkill = response.getSectionItems().get(1);
                 assertTrue(secondSkill.getItem() instanceof Skill);
                 Skill skill2 = (Skill) secondSkill.getItem();
                 assertEquals("Java", skill2.getName());
                 assertEquals(5, skill2.getProficiency());
 
                 // Textbox item
-                SectionItemResponse textbox = response.getSectionItems().get(2);
+                SectionItemResp textbox = response.getSectionItems().get(2);
                 assertTrue(textbox.getItem() instanceof Textbox);
                 assertEquals(initialResponse.getSectionItems().get(0).getId(), textbox.getId());
                 assertEquals("This is some updated text", ((Textbox) textbox.getItem()).getContent());
@@ -179,9 +179,9 @@ public class SectionServiceWithItemsIntegrationTest {
         @Test
         void testValidation() {
                 // Arrange
-                List<CreateSectionItemRequest> sectionItems = new ArrayList<>();
+                List<SectionItemCreateReq> sectionItems = new ArrayList<>();
 
-                sectionItems.add(CreateSectionItemRequest.builder()
+                sectionItems.add(SectionItemCreateReq.builder()
                                 .itemOrder(1)
                                 .item(Skill.builder().name("java").proficiency(11).build())
                                 .build());
