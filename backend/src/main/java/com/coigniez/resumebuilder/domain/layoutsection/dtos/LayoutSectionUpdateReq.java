@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UpdateLayoutSectionRequest implements UpdateRequest {
+public class LayoutSectionUpdateReq implements UpdateRequest {
 
     @NotNull
     private Long id;

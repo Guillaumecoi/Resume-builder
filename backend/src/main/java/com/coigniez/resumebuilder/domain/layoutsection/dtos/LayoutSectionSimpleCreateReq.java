@@ -3,15 +3,13 @@ package com.coigniez.resumebuilder.domain.layoutsection.dtos;
 import com.coigniez.resumebuilder.interfaces.CreateRequest;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
-public class CreateLayoutSectionRequest implements CreateRequest {
+@SuperBuilder
+public class LayoutSectionSimpleCreateReq implements CreateRequest {
 
-    @NotNull
-    private long columnSectionId;
     @NotNull
     private long sectionId;
     private Long latexMethodId;

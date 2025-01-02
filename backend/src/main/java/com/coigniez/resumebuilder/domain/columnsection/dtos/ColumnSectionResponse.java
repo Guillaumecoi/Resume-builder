@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
 import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
-import com.coigniez.resumebuilder.domain.layoutsection.dtos.LayoutSectionResponse;
+import com.coigniez.resumebuilder.domain.layoutsection.dtos.LayoutSectionResp;
 import com.coigniez.resumebuilder.domain.layoutsectionrow.dtos.LayoutSectionRowResp;
 import com.coigniez.resumebuilder.interfaces.Response;
 
@@ -30,7 +30,7 @@ public class ColumnSectionResponse implements Response {
     private boolean hidden;
 
     @NotNull
-    private LayoutSectionResponse layoutSection;
+    private LayoutSectionResp layoutSection;
     @NotNull
     private LatexMethodResponse latexMethod;
 

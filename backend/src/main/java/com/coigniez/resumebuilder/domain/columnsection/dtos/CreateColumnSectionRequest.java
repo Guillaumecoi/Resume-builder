@@ -3,7 +3,7 @@ package com.coigniez.resumebuilder.domain.columnsection.dtos;
 import java.util.List;
 
 import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
-import com.coigniez.resumebuilder.domain.layoutsection.dtos.CreateLayoutSectionRequest;
+import com.coigniez.resumebuilder.domain.layoutsection.dtos.LayoutSectionCreateReq;
 import com.coigniez.resumebuilder.domain.layoutsectionrow.dtos.LayoutSectionRowSimpleCreateReq;
 import com.coigniez.resumebuilder.interfaces.CreateRequest;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -27,7 +27,7 @@ public class CreateColumnSectionRequest implements CreateRequest {
     private AlignmentType alignment;
     private Boolean hidden;
 
-    private CreateLayoutSectionRequest layoutSection;
+    private LayoutSectionCreateReq layoutSection;
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<LayoutSectionRowSimpleCreateReq> rows;
