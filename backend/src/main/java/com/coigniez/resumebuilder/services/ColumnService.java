@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.column.Column;
 import com.coigniez.resumebuilder.domain.column.ColumnMapper;
-import com.coigniez.resumebuilder.domain.column.dtos.ColumnResponse;
-import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
-import com.coigniez.resumebuilder.domain.column.dtos.UpdateColumnRequest;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnResp;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnCreateReq;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnUpdateReq;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionUpdateReq;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
@@ -24,7 +24,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Service
 public class ColumnService
-        implements ParentEntityService<CreateColumnRequest, UpdateColumnRequest, ColumnResponse, Long> {
+        implements ParentEntityService<ColumnCreateReq, ColumnUpdateReq, ColumnResp, Long> {
 
     private final ColumnRepository columnRepository;
     private final LayoutRepository layoutRepository;
@@ -34,7 +34,7 @@ public class ColumnService
     private final SecurityUtils securityUtils;
 
     @Override
-    public Long create(CreateColumnRequest request) {
+    public Long create(ColumnCreateReq request) {
         // Check if the current user has access to the layout
         securityUtils.hasAccessLayout(request.getLayoutId());
 
@@ -49,7 +49,7 @@ public class ColumnService
     }
 
     @Override
-    public ColumnResponse get(Long id) {
+    public ColumnResp get(Long id) {
         // Check if the current user has access to the column
         securityUtils.hasAccessColumn(id);
 
@@ -60,7 +60,7 @@ public class ColumnService
     }
 
     @Override
-    public void update(UpdateColumnRequest request) {
+    public void update(ColumnUpdateReq request) {
         // Check if the current user has access to the column
         securityUtils.hasAccessColumn(request.getId());
 
@@ -107,7 +107,7 @@ public class ColumnService
     }
 
     @Override
-    public List<ColumnResponse> getAllByParentId(Long layoutId) {
+    public List<ColumnResp> getAllByParentId(Long layoutId) {
         // Check if the current user has access to the layout
         securityUtils.hasAccessLayout(layoutId);
 

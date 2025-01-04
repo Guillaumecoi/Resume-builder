@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
-import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
-import com.coigniez.resumebuilder.domain.latex.dtos.UpdateLatexMethodRequest;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodCreateReq;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodUpdateReq;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -30,7 +30,7 @@ public class LatexMethodMapperTest {
                 .build();
 
         // Act
-        LatexMethodResponse dto = mapper.toDto(entity);
+        LatexMethodResp dto = mapper.toDto(entity);
 
         // Assert
         assertNotNull(dto);
@@ -43,7 +43,7 @@ public class LatexMethodMapperTest {
     @Test
     void testToEntity() {
         // Arrange
-        CreateLatexMethodRequest request = CreateLatexMethodRequest.builder()
+        LatexMethodCreateReq request = LatexMethodCreateReq.builder()
                 .name("Method1")
                 .method("MethodContent")
                 .type(HasLatexMethod.TEXTBOX)
@@ -62,7 +62,7 @@ public class LatexMethodMapperTest {
     @Test
     void testUpdateEntity() {
         // Arrange
-        UpdateLatexMethodRequest request = UpdateLatexMethodRequest.builder()
+        LatexMethodUpdateReq request = LatexMethodUpdateReq.builder()
                 .id(1L)
                 .name("UpdatedMethod")
                 .method("UpdatedContent")

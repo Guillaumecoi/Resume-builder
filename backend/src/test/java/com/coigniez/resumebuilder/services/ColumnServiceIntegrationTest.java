@@ -18,10 +18,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.domain.column.dtos.ColumnResponse;
-import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
-import com.coigniez.resumebuilder.domain.column.dtos.UpdateColumnRequest;
-import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnResp;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnCreateReq;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnUpdateReq;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
@@ -67,7 +67,7 @@ public class ColumnServiceIntegrationTest {
 
         Long resumeId = resumeService.create(resumeRequest);
 
-        CreateLayoutRequest layoutRequest = CreateLayoutRequest.builder().resumeId(resumeId).numberOfColumns(1)
+        LayoutCreateReq layoutRequest = LayoutCreateReq.builder().resumeId(resumeId).numberOfColumns(1)
                 .build();
         layoutId = layoutService.create(layoutRequest);
     }
@@ -75,7 +75,7 @@ public class ColumnServiceIntegrationTest {
     @Test
     void testCreateAndGetColumn() {
         // Arrange
-        CreateColumnRequest columnRequest = CreateColumnRequest.builder()
+        ColumnCreateReq columnRequest = ColumnCreateReq.builder()
                 .layoutId(layoutId)
                 .columnNumber(1)
                 .backgroundColor(ColorLocation.DARK_BG)
@@ -88,7 +88,7 @@ public class ColumnServiceIntegrationTest {
 
         // Assert
         assertNotNull(columnId, "Column ID should not be null");
-        ColumnResponse columnResponse = columnService.get(columnId);
+        ColumnResp columnResponse = columnService.get(columnId);
         assertEquals(columnId, columnResponse.getId(), "Column ID should match");
         assertEquals(1, columnResponse.getColumnNumber(), "Column number should be 1");
     }
@@ -96,7 +96,7 @@ public class ColumnServiceIntegrationTest {
     @Test
     void testUpdateColumn() {
         // Arrange
-        CreateColumnRequest columnRequest = CreateColumnRequest.builder()
+        ColumnCreateReq columnRequest = ColumnCreateReq.builder()
                 .layoutId(layoutId)
                 .columnNumber(1)
                 .backgroundColor(ColorLocation.DARK_BG)
@@ -106,7 +106,7 @@ public class ColumnServiceIntegrationTest {
 
         Long columnId = columnService.create(columnRequest);
 
-        UpdateColumnRequest updateRequest = UpdateColumnRequest.builder()
+        ColumnUpdateReq updateRequest = ColumnUpdateReq.builder()
                 .id(columnId)
                 .columnNumber(2)
                 .backgroundColor(ColorLocation.DARK_BG)
@@ -128,14 +128,14 @@ public class ColumnServiceIntegrationTest {
         columnService.update(updateRequest);
 
         // Assert
-        ColumnResponse updatedColumn = columnService.get(columnId);
+        ColumnResp updatedColumn = columnService.get(columnId);
         assertEquals(2, updatedColumn.getColumnNumber(), "Column number should be updated to 2");
     }
 
     @Test
     void testDeleteColumn() {
         // Arrange
-        CreateColumnRequest columnRequest = CreateColumnRequest.builder()
+        ColumnCreateReq columnRequest = ColumnCreateReq.builder()
                 .layoutId(layoutId)
                 .columnNumber(1)
                 .backgroundColor(ColorLocation.DARK_BG)
@@ -156,7 +156,7 @@ public class ColumnServiceIntegrationTest {
     @Test
     void testAccessControl() {
         // Arrange
-        CreateColumnRequest columnRequest = CreateColumnRequest.builder()
+        ColumnCreateReq columnRequest = ColumnCreateReq.builder()
                 .layoutId(layoutId)
                 .columnNumber(1)
                 .backgroundColor(ColorLocation.DARK_BG)
@@ -174,7 +174,7 @@ public class ColumnServiceIntegrationTest {
         assertThrows(AccessDeniedException.class, () -> columnService.get(columnId),
                 "Should not be able to get a column for another user");
         assertThrows(AccessDeniedException.class,
-                () -> columnService.update(UpdateColumnRequest.builder().id(columnId).build()),
+                () -> columnService.update(ColumnUpdateReq.builder().id(columnId).build()),
                 "Should not be able to update a column for another user");
         assertThrows(AccessDeniedException.class, () -> columnService.delete(columnId),
                 "Should not be able to delete a column for another user");

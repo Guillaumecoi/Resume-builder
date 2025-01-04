@@ -2,7 +2,8 @@ package com.coigniez.resumebuilder.domain.layout.dtos;
 
 import java.util.Set;
 
-import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodCreateReq;
+import com.coigniez.resumebuilder.domain.layout.embedded.ColorScheme;
 import com.coigniez.resumebuilder.domain.layout.enums.*;
 import com.coigniez.resumebuilder.interfaces.UpdateRequest;
 import jakarta.validation.constraints.Max;
@@ -13,7 +14,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UpdateLayoutRequest implements UpdateRequest {
+public class LayoutUpdateReq implements UpdateRequest {
 
     @NotNull
     private Long id;
@@ -35,6 +36,6 @@ public class UpdateLayoutRequest implements UpdateRequest {
     private ColorScheme colorScheme;
 
     @NotNull
-    private Set<CreateLatexMethodRequest> latexMethods;
+    private Set<LatexMethodCreateReq> latexMethods;
 
 }

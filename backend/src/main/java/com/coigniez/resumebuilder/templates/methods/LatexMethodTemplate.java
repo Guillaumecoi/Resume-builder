@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.templates.methods;
 
 import com.coigniez.resumebuilder.domain.latex.HasLatexMethod;
 import com.coigniez.resumebuilder.domain.latex.MethodType;
-import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodCreateReq;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,8 +30,8 @@ public class LatexMethodTemplate {
      * 
      * @return CreateLatexMethodRequest
      */
-    public CreateLatexMethodRequest toCreateLatexMethodRequest() {
-        return CreateLatexMethodRequest.builder()
+    public LatexMethodCreateReq toCreateLatexMethodRequest() {
+        return LatexMethodCreateReq.builder()
             .type(type)
             .name(methodName)
             .methodType(methodType)

@@ -21,13 +21,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.validation.annotation.Validated;
 
-import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnCreateReq;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResp;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionUpdateReq;
-import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
-import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResp;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
@@ -81,18 +81,18 @@ public class ColumnSectionServiceIntegrationTest {
         Long resumeId = resumeService.create(ResumeCreateReq.builder().title("Software Developer").build());
 
         // Create a layout
-        Long layoutId = layoutService.create(CreateLayoutRequest.builder()
+        Long layoutId = layoutService.create(LayoutCreateReq.builder()
                 .resumeId(resumeId)
                 .numberOfColumns(1)
                 .columns(List.of(
-                        CreateColumnRequest.builder()
+                        ColumnCreateReq.builder()
                                 .columnNumber(1)
                                 .backgroundColor(ColorLocation.LIGHT_BG)
                                 .textColor(ColorLocation.DARK_TEXT)
                                 .borderColor(ColorLocation.ACCENT)
                                 .borderRight(2.0)
                                 .build(),
-                        CreateColumnRequest.builder()
+                        ColumnCreateReq.builder()
                                 .columnNumber(2)
                                 .backgroundColor(ColorLocation.LIGHT_BG)
                                 .textColor(ColorLocation.DARK_TEXT)
@@ -102,7 +102,7 @@ public class ColumnSectionServiceIntegrationTest {
                 .latexMethods(LatexMethodTemplates.getStandardMethods())
                 .build());
 
-        LayoutResponse layout = layoutService.get(layoutId);
+        LayoutResp layout = layoutService.get(layoutId);
         // Create a column
         columnId = layout.getColumns().get(0).getId();
 

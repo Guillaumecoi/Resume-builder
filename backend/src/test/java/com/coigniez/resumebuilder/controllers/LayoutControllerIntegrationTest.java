@@ -22,8 +22,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
-import com.coigniez.resumebuilder.domain.layout.dtos.UpdateLayoutRequest;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutUpdateReq;
 import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 import com.coigniez.resumebuilder.templates.color.ColorTemplates;
@@ -60,7 +60,7 @@ public class LayoutControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = "USER")
     void testCreateAndGetLayout() throws Exception {
         // Arrange
-        CreateLayoutRequest request = CreateLayoutRequest.builder().resumeId(resumeId).numberOfColumns(1).build();
+        LayoutCreateReq request = LayoutCreateReq.builder().resumeId(resumeId).numberOfColumns(1).build();
 
         // Act - Create
         String createResponse = mockMvc.perform(post("/layouts")
@@ -87,7 +87,7 @@ public class LayoutControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = "USER")
     void testUpdateLayout() throws Exception {
         // Arrange
-        CreateLayoutRequest createRequest = CreateLayoutRequest.builder().resumeId(resumeId).numberOfColumns(1).build();
+        LayoutCreateReq createRequest = LayoutCreateReq.builder().resumeId(resumeId).numberOfColumns(1).build();
         String createResponse = mockMvc.perform(post("/layouts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(createRequest)))
@@ -96,7 +96,7 @@ public class LayoutControllerIntegrationTest {
 
         Long layoutId = Long.parseLong(createResponse);
 
-        UpdateLayoutRequest updateRequest = UpdateLayoutRequest.builder()
+        LayoutUpdateReq updateRequest = LayoutUpdateReq.builder()
                 .id(layoutId).pageSize(PageSize.A4)
                 .numberOfColumns(1).columnSeparator(0.4).colorScheme(ColorTemplates.EXECUTIVE_SUITE)
                 .latexMethods(LatexMethodTemplates.getStandardMethods())
@@ -119,7 +119,7 @@ public class LayoutControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = "USER")
     void testDeleteLayout() throws Exception {
         // Arrange
-        CreateLayoutRequest createRequest = CreateLayoutRequest.builder().resumeId(resumeId).numberOfColumns(1).build();
+        LayoutCreateReq createRequest = LayoutCreateReq.builder().resumeId(resumeId).numberOfColumns(1).build();
         String createResponse = mockMvc.perform(post("/layouts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(createRequest)))
@@ -141,7 +141,7 @@ public class LayoutControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = "USER")
     void testGenerateLatexPdf() throws Exception {
         // Arrange
-        CreateLayoutRequest createRequest = CreateLayoutRequest.builder().resumeId(resumeId).numberOfColumns(1).build();
+        LayoutCreateReq createRequest = LayoutCreateReq.builder().resumeId(resumeId).numberOfColumns(1).build();
         String createResponse = mockMvc.perform(post("/layouts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(createRequest)))
@@ -162,7 +162,7 @@ public class LayoutControllerIntegrationTest {
     @WithMockUser(username = "testuser", roles = "USER")
     void testGetLatexMethods() throws Exception {
         // Arrange
-        CreateLayoutRequest createRequest = CreateLayoutRequest.builder().resumeId(resumeId).numberOfColumns(1).build();
+        LayoutCreateReq createRequest = LayoutCreateReq.builder().resumeId(resumeId).numberOfColumns(1).build();
         String createResponse = mockMvc.perform(post("/layouts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(createRequest)))

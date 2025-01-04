@@ -18,9 +18,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
-import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
-import com.coigniez.resumebuilder.domain.layout.dtos.UpdateLayoutRequest;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResp;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutUpdateReq;
 import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
@@ -67,14 +67,14 @@ public class LayoutServiceIntegrationTest {
     @Test
     void testCreateAndGetOneColumn() {
         // Arrange
-        CreateLayoutRequest layoutDTO = CreateLayoutRequest.builder().resumeId(resumeId).build();
+        LayoutCreateReq layoutDTO = LayoutCreateReq.builder().resumeId(resumeId).build();
 
         // Act
         Long layoutId = layoutService.create(layoutDTO);
 
         // Assert
         assertNotNull(layoutId, "Layout ID should not be null");
-        LayoutResponse createdLayout = layoutService.get(layoutId);
+        LayoutResp createdLayout = layoutService.get(layoutId);
 
         assertEquals(layoutId, createdLayout.getId(), "Layout ID should match");
         assertEquals(PageSize.A4, createdLayout.getPageSize(), "Page size should be A4");
@@ -88,7 +88,7 @@ public class LayoutServiceIntegrationTest {
     @Test
     void testCreateAndGetTwoColumns() {
         // Arrange
-        CreateLayoutRequest layoutRequest = CreateLayoutRequest.builder()
+        LayoutCreateReq layoutRequest = LayoutCreateReq.builder()
                 .resumeId(resumeId)
                 .numberOfColumns(2)
                 .build();
@@ -98,7 +98,7 @@ public class LayoutServiceIntegrationTest {
 
         // Assert
         assertNotNull(layoutId, "Layout ID should not be null");
-        LayoutResponse createdLayout = layoutService.get(layoutId);
+        LayoutResp createdLayout = layoutService.get(layoutId);
 
         assertEquals(layoutId, createdLayout.getId(), "Layout ID should match");
         assertEquals(PageSize.A4, createdLayout.getPageSize(), "Page size should be A4");
@@ -113,7 +113,7 @@ public class LayoutServiceIntegrationTest {
     @Test
     void testAccessControl() {
         // Arrange
-        CreateLayoutRequest layoutRequest = CreateLayoutRequest.builder()
+        LayoutCreateReq layoutRequest = LayoutCreateReq.builder()
                 .resumeId(resumeId)
                 .numberOfColumns(1)
                 .build();
@@ -128,7 +128,7 @@ public class LayoutServiceIntegrationTest {
         assertThrows(AccessDeniedException.class, () -> layoutService.get(layoutId),
                 "User should not be able to get a layout for an others resume");
         assertThrows(AccessDeniedException.class,
-                () -> layoutService.update(UpdateLayoutRequest.builder().id(layoutId).build()),
+                () -> layoutService.update(LayoutUpdateReq.builder().id(layoutId).build()),
                 "User should not be able to update a layout for an others resume");
         assertThrows(AccessDeniedException.class, () -> layoutService.delete(layoutId),
                 "User should not be able to delete a layout for an others resume");
@@ -140,7 +140,7 @@ public class LayoutServiceIntegrationTest {
         assertThrows(EntityNotFoundException.class, () -> layoutService.get(-1L),
                 "Should throw EntityNotFoundException when layout is not found");
         assertThrows(EntityNotFoundException.class,
-                () -> layoutService.update(UpdateLayoutRequest.builder().id(-1L).build()),
+                () -> layoutService.update(LayoutUpdateReq.builder().id(-1L).build()),
                 "Should throw EntityNotFoundException when layout is not found");
         assertThrows(EntityNotFoundException.class, () -> layoutService.delete(-1L),
                 "Should throw EntityNotFoundException when layout is not found");

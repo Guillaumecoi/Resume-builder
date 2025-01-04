@@ -14,11 +14,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnCreateReq;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
 import com.coigniez.resumebuilder.domain.latex.HasLatexMethod;
-import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
-import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodCreateReq;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemCreateReq;
 import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemResp;
@@ -73,18 +73,18 @@ public class LayoutSectionItemServiceIntegrationTest {
                 .build());
 
         // Create layout
-        Long layoutId = layoutService.create(CreateLayoutRequest.builder()
+        Long layoutId = layoutService.create(LayoutCreateReq.builder()
                 .resumeId(resumeId)
                 .numberOfColumns(1)
                 .columns(List.of(
-                        CreateColumnRequest.builder()
+                        ColumnCreateReq.builder()
                                 .columnNumber(1)
                                 .backgroundColor(ColorLocation.LIGHT_BG)
                                 .textColor(ColorLocation.DARK_TEXT)
                                 .borderColor(ColorLocation.ACCENT)
                                 .borderRight(2.0)
                                 .build(),
-                        CreateColumnRequest.builder()
+                        ColumnCreateReq.builder()
                                 .columnNumber(2)
                                 .backgroundColor(ColorLocation.LIGHT_BG)
                                 .textColor(ColorLocation.DARK_TEXT)
@@ -98,7 +98,7 @@ public class LayoutSectionItemServiceIntegrationTest {
         Long columnId = layoutService.get(layoutId).getColumns().get(0).getId();
 
         // Create latex method
-        latexMethodId = latexMethodService.create(CreateLatexMethodRequest.builder()
+        latexMethodId = latexMethodService.create(LatexMethodCreateReq.builder()
                 .layoutId(layoutId)
                 .name("Test Method")
                 .type(HasLatexMethod.TEXTBOX)

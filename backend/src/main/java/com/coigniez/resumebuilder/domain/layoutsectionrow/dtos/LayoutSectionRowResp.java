@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.domain.layoutsectionrow.dtos;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
 import com.coigniez.resumebuilder.domain.layoutsubsection.dtos.LayoutSubSectionResp;
 import com.coigniez.resumebuilder.interfaces.Response;
 
@@ -21,7 +21,7 @@ public class LayoutSectionRowResp implements Response {
     private int rowOrder;
 
     @NotNull
-    private LatexMethodResponse latexMethod;
+    private LatexMethodResp latexMethod;
     @NotNull
     private List<LayoutSubSectionResp> subSections;
 }

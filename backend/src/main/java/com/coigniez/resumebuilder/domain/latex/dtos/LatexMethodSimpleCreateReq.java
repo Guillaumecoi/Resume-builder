@@ -1,25 +1,24 @@
 package com.coigniez.resumebuilder.domain.latex.dtos;
 
+
 import com.coigniez.resumebuilder.domain.latex.HasLatexMethod;
 import com.coigniez.resumebuilder.domain.latex.MethodType;
-import com.coigniez.resumebuilder.interfaces.Response;
+import com.coigniez.resumebuilder.interfaces.CreateRequest;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
-public class LatexMethodResponse implements Response {
-    
-    @NotNull
-    private long id;
+@SuperBuilder
+public class LatexMethodSimpleCreateReq implements CreateRequest {
+
     @NotNull
     private HasLatexMethod type;
-    @NotNull
+    @NotBlank
     private String name;
-    @NotNull
     private MethodType methodType;
-    @NotNull
+    @NotBlank
     private String method;
 }

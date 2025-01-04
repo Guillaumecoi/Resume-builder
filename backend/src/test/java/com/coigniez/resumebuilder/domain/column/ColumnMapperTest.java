@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.coigniez.resumebuilder.domain.column.dtos.ColumnResponse;
-import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
-import com.coigniez.resumebuilder.domain.column.dtos.UpdateColumnRequest;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnResp;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnCreateReq;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnUpdateReq;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 
 import jakarta.validation.ConstraintViolationException;
@@ -43,7 +43,7 @@ public class ColumnMapperTest {
                 .build();
 
         // Act
-        ColumnResponse dto = mapper.toDto(entity);
+        ColumnResp dto = mapper.toDto(entity);
 
         // Assert
         assertNotNull(dto);
@@ -65,7 +65,7 @@ public class ColumnMapperTest {
     @Test
     void testToEntity() {
         // Arrange
-        CreateColumnRequest request = CreateColumnRequest.builder()
+        ColumnCreateReq request = ColumnCreateReq.builder()
                 .layoutId(1L)
                 .columnNumber(1)
                 .backgroundColor(ColorLocation.PRIMARY)
@@ -103,7 +103,7 @@ public class ColumnMapperTest {
     @Test
     void testToEntity_DefaultValues() {
         // Arrange
-        CreateColumnRequest request = CreateColumnRequest.builder()
+        ColumnCreateReq request = ColumnCreateReq.builder()
                 .layoutId(1L)
                 .backgroundColor(ColorLocation.PRIMARY)
                 .textColor(ColorLocation.SECONDARY)
@@ -129,7 +129,7 @@ public class ColumnMapperTest {
     @Test
     void testToEntity_InvalidRequest() {
         // Arrange
-        CreateColumnRequest request = CreateColumnRequest.builder().build();
+        ColumnCreateReq request = ColumnCreateReq.builder().build();
 
         // Act & Assert
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(request));
@@ -138,7 +138,7 @@ public class ColumnMapperTest {
     @Test
     void testUpdateEntity() {
         // Arrange
-        UpdateColumnRequest request = UpdateColumnRequest.builder()
+        ColumnUpdateReq request = ColumnUpdateReq.builder()
                 .id(1L)
                 .columnNumber(2)
                 .backgroundColor(ColorLocation.PRIMARY)

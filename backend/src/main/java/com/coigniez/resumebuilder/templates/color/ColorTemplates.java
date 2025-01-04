@@ -1,6 +1,6 @@
 package com.coigniez.resumebuilder.templates.color;
 
-import com.coigniez.resumebuilder.domain.layout.enums.ColorScheme;
+import com.coigniez.resumebuilder.domain.layout.embedded.ColorScheme;
 
 public class ColorTemplates {
 

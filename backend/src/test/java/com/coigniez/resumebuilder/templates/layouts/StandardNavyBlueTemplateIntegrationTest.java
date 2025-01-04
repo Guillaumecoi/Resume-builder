@@ -18,7 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResp;
 import com.coigniez.resumebuilder.services.LayoutService;
 
 @SpringBootTest
@@ -53,7 +53,7 @@ public class StandardNavyBlueTemplateIntegrationTest {
         
         // Act
         long layoutId = standardNavyBlueTemplate.generate(title);
-        LayoutResponse layout = layoutService.get(layoutId);
+        LayoutResp layout = layoutService.get(layoutId);
         byte[] generatedPdf = layoutService.generateLatexPdf(layoutId);
 
 

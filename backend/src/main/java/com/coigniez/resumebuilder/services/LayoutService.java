@@ -7,14 +7,14 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
-import com.coigniez.resumebuilder.domain.column.dtos.UpdateColumnRequest;
-import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnCreateReq;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnUpdateReq;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
 import com.coigniez.resumebuilder.domain.layout.Layout;
 import com.coigniez.resumebuilder.domain.layout.LayoutMapper;
-import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
-import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
-import com.coigniez.resumebuilder.domain.layout.dtos.UpdateLayoutRequest;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResp;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutUpdateReq;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.latex.generators.LatexDocumentGenerator;
 import com.coigniez.resumebuilder.repository.ColumnRepository;
@@ -29,7 +29,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
-public class LayoutService implements ParentEntityService<CreateLayoutRequest, UpdateLayoutRequest, LayoutResponse, Long> {
+public class LayoutService implements ParentEntityService<LayoutCreateReq, LayoutUpdateReq, LayoutResp, Long> {
 
     private final LayoutRepository layoutRepository;
     private final ResumeRepository resumeRepository;
@@ -42,7 +42,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
     private final LayoutTemplates layoutTemplates;
     
     @Override
-    public Long create(CreateLayoutRequest request) {
+    public Long create(LayoutCreateReq request) {
         // Check if the connected user has access to the resume
         securityUtils.hasAccessResume(request.getResumeId());
 
@@ -58,7 +58,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
     }
 
     @Override
-    public LayoutResponse get(Long id) {
+    public LayoutResp get(Long id) {
         // Check if the connected user has access to the layout
         securityUtils.hasAccessLayout(id);
         // Get the layout
@@ -68,15 +68,15 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
     }
 
     @Override
-    public void update(UpdateLayoutRequest request) {
+    public void update(LayoutUpdateReq request) {
         // Check if the connected user has access to the layout
         securityUtils.hasAccessLayout(request.getId());
 
-        for (CreateColumnRequest column : request.getCreateColumns()) {
+        for (ColumnCreateReq column : request.getCreateColumns()) {
             column.setLayoutId(request.getId());
             columnService.create(column);
         }
-        for (UpdateColumnRequest column : request.getUpdateColumns()) {
+        for (ColumnUpdateReq column : request.getUpdateColumns()) {
             // Check if the column exists and belongs to the layout
             if (column.getId() == null) {
                 throw new IllegalArgumentException("Column id is required");
@@ -114,7 +114,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
     }
 
     @Override
-    public List<LayoutResponse> getAllByParentId(Long resumetId) {
+    public List<LayoutResp> getAllByParentId(Long resumetId) {
         // Check if the connected user has access to the resume
         securityUtils.hasAccessResume(resumetId);
 
@@ -150,7 +150,7 @@ public class LayoutService implements ParentEntityService<CreateLayoutRequest, U
      * @param id layout id to get the latex methods from
      * @return a map of latex methods grouped by class
      */
-    public Map<Class<?>, List<LatexMethodResponse>> getLatexMethodsMap(Long id) {
+    public Map<Class<?>, List<LatexMethodResp>> getLatexMethodsMap(Long id) {
         return latexService.getLatexMethodsMap(id);
     }
 

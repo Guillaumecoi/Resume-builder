@@ -12,7 +12,7 @@ import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResp;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionUpdateReq;
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
-import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
 import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemCreateReq;
 import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
@@ -54,7 +54,7 @@ public class ColumnSectionService implements
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", request.getColumnId()));
         Section section = sectionRepository.findById(request.getSectionId())
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", request.getSectionId()));
-        Map<Class<?>, List<LatexMethodResponse>> latexMethodMap = latexMethodService
+        Map<Class<?>, List<LatexMethodResp>> latexMethodMap = latexMethodService
                 .getLatexMethodsMap(column.getLayout().getId());
 
         if (request.getLatexMethodId() == null) {
@@ -184,14 +184,14 @@ public class ColumnSectionService implements
      * Create the default layoutSectionItems for all the sectionItems in the section
      */
     private void createDefaultLayoutSectionItems(ColumnSection columnSection, List<SectionItem> sectionItems,
-            Map<Class<?>, List<LatexMethodResponse>> latexMethodMap) {
+            Map<Class<?>, List<LatexMethodResp>> latexMethodMap) {
         if (sectionItems.isEmpty()) {
             return;
         }
 
         // Create the layoutSectionItems
         for (SectionItem sectionItem : sectionItems) {
-            List<LatexMethodResponse> latexMethods = latexMethodMap.get(sectionItem.getItem().getClass());
+            List<LatexMethodResp> latexMethods = latexMethodMap.get(sectionItem.getItem().getClass());
             layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
                     .columnSectionId(columnSection.getId())
                     .sectionItemId(sectionItem.getId())

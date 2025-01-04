@@ -1,6 +1,6 @@
 package com.coigniez.resumebuilder.domain.layoutsection.dtos;
 
-import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionResp;
 import com.coigniez.resumebuilder.interfaces.Response;
 
@@ -17,5 +17,5 @@ public class LayoutSectionResp  implements Response {
     @NotNull
     private SectionResp section;
     @NotNull
-    private LatexMethodResponse latexMethod;
+    private LatexMethodResp latexMethod;
 }

@@ -1,6 +1,6 @@
 package com.coigniez.resumebuilder.domain.layoutsectionItem.dtos;
 
-import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
 import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResp;
 import com.coigniez.resumebuilder.interfaces.Response;
@@ -19,7 +19,7 @@ public class LayoutSectionItemResp implements Response {
     @NotNull
     private SectionItemResp sectionItem;
     @NotNull
-    private LatexMethodResponse latexMethod;
+    private LatexMethodResp latexMethod;
 
     @NotNull
     private boolean hidden;

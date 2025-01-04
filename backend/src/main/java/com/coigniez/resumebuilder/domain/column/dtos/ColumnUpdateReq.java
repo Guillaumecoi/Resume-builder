@@ -10,7 +10,7 @@ import lombok.*;
 
 @Data
 @Builder
-public class UpdateColumnRequest implements UpdateRequest {
+public class ColumnUpdateReq implements UpdateRequest {
 
     @NotNull
     private Long id;

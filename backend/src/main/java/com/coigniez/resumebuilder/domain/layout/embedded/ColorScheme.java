@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.domain.layout.enums;
+package com.coigniez.resumebuilder.domain.layout.embedded;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

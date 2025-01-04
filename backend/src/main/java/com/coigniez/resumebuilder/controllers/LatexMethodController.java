@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
-import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
-import com.coigniez.resumebuilder.domain.latex.dtos.UpdateLatexMethodRequest;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodCreateReq;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodUpdateReq;
 import com.coigniez.resumebuilder.interfaces.CrudController;
 import com.coigniez.resumebuilder.services.LatexMethodService;
 
@@ -24,13 +24,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Tag(name = "LatexMethod")
 public class LatexMethodController
-        implements CrudController<CreateLatexMethodRequest, UpdateLatexMethodRequest, LatexMethodResponse, Long> {
+        implements CrudController<LatexMethodCreateReq, LatexMethodUpdateReq, LatexMethodResp, Long> {
 
     private final LatexMethodService latexMethodService;
 
     @Override
     @Operation(operationId = "createLatexMethod")
-    public ResponseEntity<Long> create(@Valid CreateLatexMethodRequest request, Authentication user) {
+    public ResponseEntity<Long> create(@Valid LatexMethodCreateReq request, Authentication user) {
         Long id = latexMethodService.create(request);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -42,14 +42,14 @@ public class LatexMethodController
 
     @Override
     @Operation(operationId = "getLatexMethod")
-    public ResponseEntity<LatexMethodResponse> get(Long id, Authentication user) {
-        LatexMethodResponse latexMethod = latexMethodService.get(id);
+    public ResponseEntity<LatexMethodResp> get(Long id, Authentication user) {
+        LatexMethodResp latexMethod = latexMethodService.get(id);
         return ResponseEntity.ok(latexMethod);
     }
 
     @Override
     @Operation(operationId = "updateLatexMethod")
-    public ResponseEntity<Void> update(Long id, UpdateLatexMethodRequest request, Authentication user) {
+    public ResponseEntity<Void> update(Long id, LatexMethodUpdateReq request, Authentication user) {
         request.setId(id);
         latexMethodService.update(request);
         return ResponseEntity.ok().build();

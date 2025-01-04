@@ -1,8 +1,8 @@
 package com.coigniez.resumebuilder.domain.column;
 
-import com.coigniez.resumebuilder.domain.column.dtos.ColumnResponse;
-import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
-import com.coigniez.resumebuilder.domain.column.dtos.UpdateColumnRequest;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnResp;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnSimpleCreateReq;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnUpdateReq;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionMapper;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResp;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
 @Service
-public class ColumnMapper implements Mapper<Column, CreateColumnRequest, UpdateColumnRequest, ColumnResponse> {
+public class ColumnMapper implements Mapper<Column, ColumnSimpleCreateReq, ColumnUpdateReq, ColumnResp> {
 
     private final ColumnSectionMapper columnSectionMapper;
 
@@ -37,7 +37,7 @@ public class ColumnMapper implements Mapper<Column, CreateColumnRequest, UpdateC
     );
     
     @Override
-    public Column toEntity(@Valid CreateColumnRequest request) {
+    public Column toEntity(@Valid ColumnSimpleCreateReq request) {
         if (request == null) {
             return null;
         }
@@ -71,7 +71,7 @@ public class ColumnMapper implements Mapper<Column, CreateColumnRequest, UpdateC
     }
 
     @Override
-    public ColumnResponse toDto(Column entity) {
+    public ColumnResp toDto(Column entity) {
         if (entity == null) {
             return null;
         }
@@ -81,7 +81,7 @@ public class ColumnMapper implements Mapper<Column, CreateColumnRequest, UpdateC
             entity.getSectionMappings().forEach(section -> sectionMappings.add(columnSectionMapper.toDto(section)));
         }
 
-        return ColumnResponse.builder()
+        return ColumnResp.builder()
                 .id(entity.getId())
                 .columnNumber(entity.getColumnNumber())
                 .sectionMappings(sectionMappings)
@@ -100,7 +100,7 @@ public class ColumnMapper implements Mapper<Column, CreateColumnRequest, UpdateC
     }
 
     @Override
-    public void updateEntity(Column entity, UpdateColumnRequest request) {
+    public void updateEntity(Column entity, ColumnUpdateReq request) {
         if (request == null) {
             return;
         }

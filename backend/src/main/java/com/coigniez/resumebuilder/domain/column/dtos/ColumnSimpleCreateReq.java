@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.domain.column.dtos;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
+import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionSimpleCreateReq;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.interfaces.CreateRequest;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -12,14 +12,11 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
-public class CreateColumnRequest implements CreateRequest {
-
-    @NotNull
-    private long layoutId;
+@SuperBuilder
+public class ColumnSimpleCreateReq implements CreateRequest {
 
     @Min(1) @Max(2)
     private Integer columnNumber;
@@ -50,5 +47,5 @@ public class CreateColumnRequest implements CreateRequest {
     private Double borderBottom;
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    private List<ColumnSectionCreateReq> sectionMappings;
+    private List<ColumnSectionSimpleCreateReq> sectionMappings;
 }

@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.latex.LatexMethodMapper;
-import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
-import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
-import com.coigniez.resumebuilder.domain.latex.dtos.UpdateLatexMethodRequest;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodCreateReq;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodUpdateReq;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.repository.LatexMethodRepository;
 import com.coigniez.resumebuilder.repository.LayoutRepository;
@@ -23,7 +23,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
-public class LatexMethodService implements ParentEntityService<CreateLatexMethodRequest, UpdateLatexMethodRequest, LatexMethodResponse, Long> {
+public class LatexMethodService implements ParentEntityService<LatexMethodCreateReq, LatexMethodUpdateReq, LatexMethodResp, Long> {
 
     private final LayoutRepository layoutRepository;
     private final LatexMethodRepository latexMethodRepository;
@@ -31,7 +31,7 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
     private final SecurityUtils securityUtils;
 
     @Override
-    public Long create(CreateLatexMethodRequest request) {
+    public Long create(LatexMethodCreateReq request) {
         // Check if the user has access to the layout
         securityUtils.hasAccessLayout(request.getLayoutId());
 
@@ -46,7 +46,7 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
     }
 
     @Override
-    public LatexMethodResponse get(Long id) {
+    public LatexMethodResp get(Long id) {
         // Check if the user has access to the method
         securityUtils.hasAccessLatexMethod(id);
 
@@ -57,7 +57,7 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
     }
 
     @Override
-    public void update(UpdateLatexMethodRequest request) {
+    public void update(LatexMethodUpdateReq request) {
         // Check if the user has access to the method
         securityUtils.hasAccessLatexMethod(request.getId());
 
@@ -86,7 +86,7 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
     }
 
     @Override
-    public List<LatexMethodResponse> getAllByParentId(Long layoutId) {
+    public List<LatexMethodResp> getAllByParentId(Long layoutId) {
         // Check if the user has access to the layout
         securityUtils.hasAccessLayout(layoutId);
 
@@ -116,7 +116,7 @@ public class LatexMethodService implements ParentEntityService<CreateLatexMethod
      * @param id layout id to get the latex methods from
      * @return a map of latex methods grouped by class
      */
-    public Map<Class<?>, List<LatexMethodResponse>> getLatexMethodsMap(Long id) {
+    public Map<Class<?>, List<LatexMethodResp>> getLatexMethodsMap(Long id) {
         return latexMethodRepository.findAllByLayoutId(id).stream()
                 .map(latexMethodMapper::toDto)
                 .filter(latexMethod -> latexMethod.getType() != null && latexMethod.getType().getDataType() != null) // TODO: Handle Section?

@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
-import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
-import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
-import com.coigniez.resumebuilder.domain.layout.dtos.UpdateLayoutRequest;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResp;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutUpdateReq;
 import com.coigniez.resumebuilder.interfaces.CrudController;
 import com.coigniez.resumebuilder.services.LatexMethodService;
 import com.coigniez.resumebuilder.services.LayoutService;
@@ -34,14 +34,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Tag(name = "Layout")
 public class LayoutController
-        implements CrudController<CreateLayoutRequest, UpdateLayoutRequest, LayoutResponse, Long> {
+        implements CrudController<LayoutCreateReq, LayoutUpdateReq, LayoutResp, Long> {
 
     private final LayoutService layoutService;
     private final LatexMethodService latexMethodService;
 
     @Override
     @Operation(operationId = "createLayout")
-    public ResponseEntity<Long> create(@Valid CreateLayoutRequest request, Authentication user) {
+    public ResponseEntity<Long> create(@Valid LayoutCreateReq request, Authentication user) {
         Long id = layoutService.create(request);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -53,14 +53,14 @@ public class LayoutController
 
     @Override
     @Operation(operationId = "getLayout")
-    public ResponseEntity<LayoutResponse> get(Long id, Authentication user) {
-        LayoutResponse layout = layoutService.get(id);
+    public ResponseEntity<LayoutResp> get(Long id, Authentication user) {
+        LayoutResp layout = layoutService.get(id);
         return ResponseEntity.ok(layout);
     }
 
     @Override
     @Operation(operationId = "updateLayout")
-    public ResponseEntity<Void> update(Long id, UpdateLayoutRequest request, Authentication user) {
+    public ResponseEntity<Void> update(Long id, LayoutUpdateReq request, Authentication user) {
         request.setId(id);
         layoutService.update(request);
         return ResponseEntity.ok().build();
@@ -99,7 +99,7 @@ public class LayoutController
      * @return the methods
      */
     @GetMapping("/{id}/methods")
-    public ResponseEntity<List<LatexMethodResponse>> getLatexMethods(@PathVariable Long id) {
+    public ResponseEntity<List<LatexMethodResp>> getLatexMethods(@PathVariable Long id) {
         return ResponseEntity.ok(latexMethodService.getAllByParentId(id));
     }
 

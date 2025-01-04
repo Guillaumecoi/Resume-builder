@@ -12,12 +12,12 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 
-import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnCreateReq;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
-import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
-import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
-import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResp;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
@@ -73,10 +73,10 @@ public class StandardNavyBlueTemplate {
     public long generate(String title) {
         resumeId = createResume(title);
         long layoutId = createLayout(resumeId);
-        LayoutResponse layout = layoutService.get(layoutId);
+        LayoutResp layout = layoutService.get(layoutId);
         long leftColumnId = layout.getColumns().get(0).getId();
         long rightColumnId = layout.getColumns().get(1).getId();
-        Map<Class<?>, List<LatexMethodResponse>> methodIds = layoutService.getLatexMethodsMap(layoutId);
+        Map<Class<?>, List<LatexMethodResp>> methodIds = layoutService.getLatexMethodsMap(layoutId);
         sectionTitleMethodId = methodIds.get(ColumnSection.class).get(0).getId();
 
         // Left Column Sections
@@ -97,18 +97,18 @@ public class StandardNavyBlueTemplate {
     }
 
     private long createLayout(long resumeId) {
-        CreateLayoutRequest request = CreateLayoutRequest.builder()
+        LayoutCreateReq request = LayoutCreateReq.builder()
                 .resumeId(resumeId)
                 .numberOfColumns(2)
                 .columns(List.of(
-                        CreateColumnRequest.builder()
+                        ColumnCreateReq.builder()
                                 .columnNumber(1)
                                 .backgroundColor(ColorLocation.DARK_BG)
                                 .textColor(ColorLocation.LIGHT_TEXT)
                                 .borderColor(ColorLocation.ACCENT)
                                 .borderRight(2.5)
                                 .build(),
-                        CreateColumnRequest.builder()
+                        ColumnCreateReq.builder()
                                 .columnNumber(2)
                                 .backgroundColor(ColorLocation.LIGHT_BG)
                                 .textColor(ColorLocation.DARK_TEXT)

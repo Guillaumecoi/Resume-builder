@@ -12,7 +12,7 @@ import lombok.*;
 
 @Data
 @Builder
-public class ColumnResponse implements Response {
+public class ColumnResp implements Response {
 
     @NotNull
     private long id;

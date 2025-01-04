@@ -3,8 +3,9 @@ package com.coigniez.resumebuilder.domain.layout.dtos;
 import java.util.List;
 import java.util.Set;
 
-import com.coigniez.resumebuilder.domain.column.dtos.ColumnResponse;
-import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnResp;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
+import com.coigniez.resumebuilder.domain.layout.embedded.ColorScheme;
 import com.coigniez.resumebuilder.domain.layout.enums.*;
 import com.coigniez.resumebuilder.interfaces.Response;
 
@@ -14,14 +15,14 @@ import lombok.Data;
 
 @Data
 @Builder
-public class LayoutResponse implements Response {
+public class LayoutResp implements Response {
 
     @NotNull
     private Long id;
     @NotNull
     private PageSize pageSize;
     @NotNull
-    private List<ColumnResponse> columns;
+    private List<ColumnResp> columns;
     @NotNull
     private int numberOfColumns;
     @NotNull
@@ -29,6 +30,6 @@ public class LayoutResponse implements Response {
     @NotNull
     private ColorScheme colorScheme;
     @NotNull
-    private Set<LatexMethodResponse> latexMethods;
+    private Set<LatexMethodResp> latexMethods;
     
 }

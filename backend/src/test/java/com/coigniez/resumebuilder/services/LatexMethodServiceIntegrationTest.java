@@ -19,10 +19,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.coigniez.resumebuilder.domain.latex.HasLatexMethod;
-import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
-import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
-import com.coigniez.resumebuilder.domain.latex.dtos.UpdateLatexMethodRequest;
-import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodCreateReq;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodUpdateReq;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 
 import java.util.List;
@@ -63,13 +63,13 @@ public class LatexMethodServiceIntegrationTest {
         Long resumeId = resumeService.create(ResumeCreateReq.builder().title("Software Developer").build());
 
         // Create a layout
-        layoutId = layoutService.create(CreateLayoutRequest.builder().resumeId(resumeId).build());
+        layoutId = layoutService.create(LayoutCreateReq.builder().resumeId(resumeId).build());
     }
 
     @Test
     void testCreate() {
         // Arrange
-        CreateLatexMethodRequest request = CreateLatexMethodRequest.builder()
+        LatexMethodCreateReq request = LatexMethodCreateReq.builder()
                 .layoutId(layoutId)
                 .type(HasLatexMethod.TEXTBOX)
                 .name("Test Method")
@@ -86,7 +86,7 @@ public class LatexMethodServiceIntegrationTest {
     @Test
     void testCreate_NonExistentLayout() {
         // Arrange
-        CreateLatexMethodRequest request = CreateLatexMethodRequest.builder()
+        LatexMethodCreateReq request = LatexMethodCreateReq.builder()
                 .layoutId(999L) // Non-existent layout ID
                 .type(HasLatexMethod.TEXTBOX)
                 .name("Test Method")
@@ -101,7 +101,7 @@ public class LatexMethodServiceIntegrationTest {
     @Test
     void testGet() {
         // Arrange
-        CreateLatexMethodRequest request = CreateLatexMethodRequest.builder()
+        LatexMethodCreateReq request = LatexMethodCreateReq.builder()
                 .layoutId(layoutId)
                 .type(HasLatexMethod.TEXTBOX)
                 .name("Test Method")
@@ -111,7 +111,7 @@ public class LatexMethodServiceIntegrationTest {
         Long latexMethodId = latexMethodService.create(request);
 
         // Act
-        LatexMethodResponse response = latexMethodService.get(latexMethodId);
+        LatexMethodResp response = latexMethodService.get(latexMethodId);
 
         // Assert
         assertNotNull(response, "Latex method response should not be null");
@@ -122,7 +122,7 @@ public class LatexMethodServiceIntegrationTest {
     @Test
     void testUpdate() {
         // Arrange
-        CreateLatexMethodRequest createRequest = CreateLatexMethodRequest.builder()
+        LatexMethodCreateReq createRequest = LatexMethodCreateReq.builder()
                 .layoutId(layoutId)
                 .type(HasLatexMethod.TEXTBOX)
                 .name("Test Method")
@@ -131,7 +131,7 @@ public class LatexMethodServiceIntegrationTest {
 
         Long latexMethodId = latexMethodService.create(createRequest);
 
-        UpdateLatexMethodRequest updateRequest = UpdateLatexMethodRequest.builder()
+        LatexMethodUpdateReq updateRequest = LatexMethodUpdateReq.builder()
                 .id(latexMethodId)
                 .name("Updated Method")
                 .method("Updated Content")
@@ -141,7 +141,7 @@ public class LatexMethodServiceIntegrationTest {
         latexMethodService.update(updateRequest);
 
         // Assert
-        LatexMethodResponse updatedLatexMethod = latexMethodService.get(latexMethodId);
+        LatexMethodResp updatedLatexMethod = latexMethodService.get(latexMethodId);
         assertEquals("Updated Method", updatedLatexMethod.getName(), "Latex method name should be updated");
         assertEquals("Updated Content", updatedLatexMethod.getMethod(), "Latex method content should be updated");
     }
@@ -149,7 +149,7 @@ public class LatexMethodServiceIntegrationTest {
     @Test
     void testDelete() {
         // Arrange
-        CreateLatexMethodRequest request = CreateLatexMethodRequest.builder()
+        LatexMethodCreateReq request = LatexMethodCreateReq.builder()
                 .layoutId(layoutId)
                 .type(HasLatexMethod.TEXTBOX)
                 .name("Test Method")
@@ -169,7 +169,7 @@ public class LatexMethodServiceIntegrationTest {
     @Test
     void testAccessDenied() {
         // Arrange
-        CreateLatexMethodRequest request = CreateLatexMethodRequest.builder()
+        LatexMethodCreateReq request = LatexMethodCreateReq.builder()
                 .layoutId(layoutId)
                 .type(HasLatexMethod.TEXTBOX)
                 .name("Test Method")
@@ -187,7 +187,7 @@ public class LatexMethodServiceIntegrationTest {
         assertThrows(AccessDeniedException.class, () -> latexMethodService.get(latexMethodId),
                 "Should throw AccessDeniedException for unauthorized access to get");
         assertThrows(AccessDeniedException.class,
-                () -> latexMethodService.update(UpdateLatexMethodRequest.builder().id(latexMethodId).build()),
+                () -> latexMethodService.update(LatexMethodUpdateReq.builder().id(latexMethodId).build()),
                 "Should throw AccessDeniedException for unauthorized access to update");
         assertThrows(AccessDeniedException.class, () -> latexMethodService.delete(latexMethodId),
                 "Should throw AccessDeniedException for unauthorized access to delete");
@@ -199,7 +199,7 @@ public class LatexMethodServiceIntegrationTest {
         assertThrows(EntityNotFoundException.class, () -> latexMethodService.get(999L),
                 "Should throw EntityNotFoundException for non-existent latex method on get");
         assertThrows(EntityNotFoundException.class,
-                () -> latexMethodService.update(UpdateLatexMethodRequest.builder().id(999L).build()),
+                () -> latexMethodService.update(LatexMethodUpdateReq.builder().id(999L).build()),
                 "Should throw EntityNotFoundException for non-existent latex method on update");
         assertThrows(EntityNotFoundException.class, () -> latexMethodService.delete(999L),
                 "Should throw EntityNotFoundException for non-existent latex method on delete");

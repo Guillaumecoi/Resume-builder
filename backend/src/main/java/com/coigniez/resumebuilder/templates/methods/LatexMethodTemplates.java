@@ -7,7 +7,7 @@ import java.util.Set;
 
 import com.coigniez.resumebuilder.domain.latex.HasLatexMethod;
 import com.coigniez.resumebuilder.domain.latex.MethodType;
-import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodCreateReq;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 
 public class LatexMethodTemplates {
@@ -30,8 +30,8 @@ public class LatexMethodTemplates {
         return templates;
     }
 
-    public static Set<CreateLatexMethodRequest> getStandardMethods() {
-        HashSet<CreateLatexMethodRequest> result = new HashSet<>();
+    public static Set<LatexMethodCreateReq> getStandardMethods() {
+        HashSet<LatexMethodCreateReq> result = new HashSet<>();
         result.add(LatexMethodTemplates.getSectionTemplate().toCreateLatexMethodRequest());
         result.add(LatexMethodTemplates.getSectionTitlesTemplates().get("Standard Section Title").toCreateLatexMethodRequest());
         result.add(LatexMethodTemplates.getContactTemplates().get("Standard Contact").toCreateLatexMethodRequest());

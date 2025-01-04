@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UpdateLatexMethodRequest implements UpdateRequest {
+public class LatexMethodUpdateReq implements UpdateRequest {
 
     @NotNull
     private Long id;

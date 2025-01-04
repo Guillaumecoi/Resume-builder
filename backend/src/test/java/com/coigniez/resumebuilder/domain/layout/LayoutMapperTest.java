@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResponse;
-import com.coigniez.resumebuilder.domain.layout.dtos.CreateLayoutRequest;
-import com.coigniez.resumebuilder.domain.layout.dtos.UpdateLayoutRequest;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResp;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutUpdateReq;
 import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
 import com.coigniez.resumebuilder.domain.resume.Resume;
 import com.coigniez.resumebuilder.templates.color.ColorTemplates;
@@ -39,7 +39,7 @@ public class LayoutMapperTest {
                 .build();
 
         // Act
-        LayoutResponse dto = mapper.toDto(entity);
+        LayoutResp dto = mapper.toDto(entity);
 
         // Assert
         assertNotNull(dto);
@@ -53,7 +53,7 @@ public class LayoutMapperTest {
     @Test
     void testToEntity() {
         // Arrange
-        CreateLayoutRequest request = CreateLayoutRequest.builder()
+        LayoutCreateReq request = LayoutCreateReq.builder()
                 .resumeId(1L)
                 .pageSize(PageSize.A4)
                 .numberOfColumns(1)
@@ -75,7 +75,7 @@ public class LayoutMapperTest {
     @Test
     void testToEntity_DefaultValues() {
         // Arrange
-        CreateLayoutRequest request = CreateLayoutRequest.builder()
+        LayoutCreateReq request = LayoutCreateReq.builder()
                 .resumeId(1L)
                 .build();
 
@@ -93,7 +93,7 @@ public class LayoutMapperTest {
     @Test
     void testToEntity_InvalidRequest() {
         // Arrange
-        CreateLayoutRequest request = CreateLayoutRequest.builder().numberOfColumns(-1).build();
+        LayoutCreateReq request = LayoutCreateReq.builder().numberOfColumns(-1).build();
 
         // Act & Assert
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(request));
@@ -102,7 +102,7 @@ public class LayoutMapperTest {
     @Test
     void testUpdateEntity() {
         // Arrange
-        UpdateLayoutRequest request = UpdateLayoutRequest.builder()
+        LayoutUpdateReq request = LayoutUpdateReq.builder()
                 .id(2L)
                 .pageSize(PageSize.A4)
                 .numberOfColumns(2)

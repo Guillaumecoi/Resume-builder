@@ -3,9 +3,10 @@ package com.coigniez.resumebuilder.domain.layout;
 import java.util.List;
 import java.util.Set;
 
-import com.coigniez.resumebuilder.domain.column.Column;
+import com.coigniez.resumebuilder.domain.columnholder.headerfooter.HeaderFooter;
+import com.coigniez.resumebuilder.domain.columnholder.page.LayoutPage;
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
-import com.coigniez.resumebuilder.domain.layout.enums.ColorScheme;
+import com.coigniez.resumebuilder.domain.layout.embedded.ColorScheme;
 import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
 import com.coigniez.resumebuilder.domain.resume.Resume;
 import com.coigniez.resumebuilder.interfaces.BaseEntity;
@@ -26,8 +27,7 @@ public class Layout implements BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private PageSize pageSize;
-    private Integer numberOfColumns;
-    private Double columnSeparator;
+
     @Embedded
     private ColorScheme colorScheme;
 
@@ -36,26 +36,14 @@ public class Layout implements BaseEntity {
     private Resume resume;
 
     @OneToMany(mappedBy = "layout", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("columnNumber ASC")
-    private List<Column> columns;
-
-    @OneToMany(mappedBy = "layout", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<LatexMethod> latexMethods;
 
-    public void addColumn(Column column) {
-        columns.add(column);
-        column.setLayout(this);
-    }
-
-    public void removeColumn(Column column) {
-        columns.remove(column);
-        column.setLayout(null);
-    }
-
-    public void clearColumns() {
-        columns.forEach(column -> column.setLayout(null));
-        columns.clear();
-    }
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LayoutPage> pages;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private HeaderFooter header;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private HeaderFooter footer;
 
     public void addLatexMethod(LatexMethod latexMethod) {
         latexMethods.add(latexMethod);
@@ -70,5 +58,20 @@ public class Layout implements BaseEntity {
     public void clearLatexMethods() {
         latexMethods.forEach(latexMethod -> latexMethod.setLayout(null));
         latexMethods.clear();
+    }
+
+    public void addPage(LayoutPage page) {
+        pages.add(page);
+        page.setLayout(this);
+    }
+
+    public void removePage(LayoutPage page) {
+        pages.remove(page);
+        page.setLayout(null);
+    }
+
+    public void clearPages() {
+        pages.forEach(page -> page.setLayout(null));
+        pages.clear();
     }
 }

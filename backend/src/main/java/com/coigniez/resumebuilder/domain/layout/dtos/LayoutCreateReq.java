@@ -3,36 +3,34 @@ package com.coigniez.resumebuilder.domain.layout.dtos;
 import java.util.List;
 import java.util.Set;
 
-import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
-import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
+import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderFooterCreateRequest;
+import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageCreateRequest;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodCreateReq;
+import com.coigniez.resumebuilder.domain.layout.embedded.ColorScheme;
 import com.coigniez.resumebuilder.domain.layout.enums.*;
 import com.coigniez.resumebuilder.interfaces.CreateRequest;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class CreateLayoutRequest implements CreateRequest {
+public class LayoutCreateReq implements CreateRequest {
 
     @NotNull
     private long resumeId;
 
     private PageSize pageSize;
 
-    @Min(1) @Max(2)
-    private Integer numberOfColumns;
-    @Min(0) @Max(1)
-    private Double columnSeparator;
-
     private ColorScheme colorScheme;
-    private Set<CreateLatexMethodRequest> latexMethods;
+    private Set<LatexMethodCreateReq> latexMethods;
+
+    private HeaderFooterCreateRequest header;
+    private HeaderFooterCreateRequest footer;
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    private List<CreateColumnRequest> columns;
+    private List<PageCreateRequest> pages;
 }

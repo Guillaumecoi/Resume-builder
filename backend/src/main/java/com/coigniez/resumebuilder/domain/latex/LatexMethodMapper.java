@@ -4,21 +4,21 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.coigniez.resumebuilder.domain.latex.dtos.CreateLatexMethodRequest;
-import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResponse;
-import com.coigniez.resumebuilder.domain.latex.dtos.UpdateLatexMethodRequest;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodSimpleCreateReq;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodUpdateReq;
 import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.util.MapperUtils;
 
 @Service
 public class LatexMethodMapper
-        implements Mapper<LatexMethod, CreateLatexMethodRequest, UpdateLatexMethodRequest, LatexMethodResponse> {
+        implements Mapper<LatexMethod, LatexMethodSimpleCreateReq, LatexMethodUpdateReq, LatexMethodResp> {
 
     private static final Map<String, Object> DEFAULT_VALUES = Map.of(
             "methodType", MethodType.COMMAND);
 
     @Override
-    public LatexMethod toEntity(CreateLatexMethodRequest request) {
+    public LatexMethod toEntity(LatexMethodSimpleCreateReq request) {
         if (request == null) {
             return null;
         }
@@ -35,12 +35,12 @@ public class LatexMethodMapper
     }
 
     @Override
-    public LatexMethodResponse toDto(LatexMethod entity) {
+    public LatexMethodResp toDto(LatexMethod entity) {
         if (entity == null) {
             return null;
         }
 
-        return LatexMethodResponse.builder()
+        return LatexMethodResp.builder()
                 .id(entity.getId())
                 .type(entity.getType())
                 .name(entity.getName())
@@ -50,7 +50,7 @@ public class LatexMethodMapper
     }
 
     @Override
-    public void updateEntity(LatexMethod entity, UpdateLatexMethodRequest request) {
+    public void updateEntity(LatexMethod entity, LatexMethodUpdateReq request) {
         if (request == null) {
             return;
         }

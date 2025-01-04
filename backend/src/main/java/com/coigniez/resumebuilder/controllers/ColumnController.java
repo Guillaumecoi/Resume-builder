@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.coigniez.resumebuilder.domain.column.dtos.ColumnResponse;
-import com.coigniez.resumebuilder.domain.column.dtos.CreateColumnRequest;
-import com.coigniez.resumebuilder.domain.column.dtos.UpdateColumnRequest;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnResp;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnCreateReq;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnUpdateReq;
 import com.coigniez.resumebuilder.interfaces.CrudController;
 import com.coigniez.resumebuilder.services.ColumnService;
 
@@ -23,13 +23,13 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("columns")
 @RequiredArgsConstructor
 @Tag(name = "Column")
-public class ColumnController implements CrudController<CreateColumnRequest, UpdateColumnRequest, ColumnResponse, Long> {
+public class ColumnController implements CrudController<ColumnCreateReq, ColumnUpdateReq, ColumnResp, Long> {
 
     private final ColumnService columnService;
 
     @Override
     @Operation(operationId = "createColumn")
-    public ResponseEntity<Long> create(@Valid CreateColumnRequest request, Authentication user) {
+    public ResponseEntity<Long> create(@Valid ColumnCreateReq request, Authentication user) {
         long id = columnService.create(request);
         URI location = ServletUriComponentsBuilder
             .fromCurrentRequest()
@@ -41,14 +41,14 @@ public class ColumnController implements CrudController<CreateColumnRequest, Upd
 
     @Override
     @Operation(operationId = "getColumn")
-    public ResponseEntity<ColumnResponse> get(Long id, Authentication user) {
-        ColumnResponse column = columnService.get(id);
+    public ResponseEntity<ColumnResp> get(Long id, Authentication user) {
+        ColumnResp column = columnService.get(id);
         return ResponseEntity.ok(column);
     }
 
     @Override
     @Operation(operationId = "updateColumn")
-    public ResponseEntity<Void> update(Long id, UpdateColumnRequest request, Authentication user) {
+    public ResponseEntity<Void> update(Long id, ColumnUpdateReq request, Authentication user) {
         request.setId(id);
         columnService.update(request);
         return ResponseEntity.ok().build();

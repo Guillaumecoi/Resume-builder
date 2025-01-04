@@ -2,8 +2,8 @@ package com.coigniez.resumebuilder.domain.column;
 
 import java.util.List;
 
+import com.coigniez.resumebuilder.domain.columnholder.ColumnHolder;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
-import com.coigniez.resumebuilder.domain.layout.Layout;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.interfaces.BaseEntity;
 
@@ -24,8 +24,8 @@ public class Column implements BaseEntity {
     private int columnNumber;
 
     @ManyToOne
-    @JoinColumn(name = "layout_id", referencedColumnName = "id")
-    private Layout layout;
+    @JoinColumn(name = "column_holder_id", referencedColumnName = "id")
+    private ColumnHolder columnHolder;
     
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ColumnSection> sectionMappings;
