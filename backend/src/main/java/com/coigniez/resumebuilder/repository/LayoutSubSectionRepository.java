@@ -12,7 +12,7 @@ import com.coigniez.resumebuilder.domain.layoutsubsection.LayoutSubSection;
 @Repository
 public interface LayoutSubSectionRepository extends JpaRepository<LayoutSubSection, Long> {
 
-    @Query("SELECT r.createdBy FROM LayoutSubSection lss JOIN layoutSectionRow lsr JOIN lsr.columnSection cs JOIN cs.column c JOIN c.layout l JOIN l.resume r WHERE lsi.id = :id")
-    Optional<String> findCreatedBy(@Param("id") Long id);
+    // @Query("SELECT r.createdBy FROM LayoutSubSection lss JOIN layoutSectionRow lsr JOIN lsr.columnSection cs JOIN cs.column c JOIN c.layout l JOIN l.resume r WHERE lsi.id = :id")
+    // Optional<String> findCreatedBy(@Param("id") Long id);
 
 }

@@ -106,7 +106,7 @@ public class SectionItemService
         // Get the entity
         SectionItem sectionItem = sectionItemRepository.findById(request.getId())
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("SectionItem", request.getId()));
-        Long sectionId = sectionItem.getSection().getId();
+        Long sectionId = sectionItem.getSubSection().getId();
 
         // Shift other items
         orderableRepositoryUtil.updateItemOrder(SectionItem.class, Section.class, sectionId,
@@ -129,16 +129,18 @@ public class SectionItemService
         // Get the item
         SectionItem sectionItem = sectionItemRepository.findById(id)
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("SectionItem", id));
-        long sectionId = sectionItem.getSection().getId();
+        long sectionId = sectionItem.getSubSection().getId();
 
         // Remove the item from the section
-        sectionItem.getSection().removeSectionItem(sectionItem);
+        sectionItem.getSubSection().removeSectionItem(sectionItem);
 
         // Delete the item
         sectionItemRepository.deleteById(id);
 
         // Shift other items
-        int maxOrder = sectionItemRepository.findMaxItemOrderBySectionId(sectionId).orElse(0);
+        int maxOrder = orderableRepositoryUtil
+                .findMaxItemOrderByParentId(SectionItem.class, Section.class, sectionId,
+                        "itemOrder");
         orderableRepositoryUtil.updateItemOrder(SectionItem.class, Section.class, sectionId,
                 "itemOrder", maxOrder + 1, sectionItem.getItemOrder());
     }
@@ -148,10 +150,7 @@ public class SectionItemService
         // Check if the user has access to the section
         securityUtils.hasAccessSection(id);
 
-        List<SectionItem> items = sectionItemRepository.findAllBySectionId(id);
-        return items.stream()
-                .map(sectionitemMapper::toDto)
-                .toList();
+        return null;
     }
 
     @Override
@@ -163,6 +162,5 @@ public class SectionItemService
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("SubSection", id));
 
         section.clearSectionItems();
-        sectionItemRepository.deleteAllBySectionId(id);
     }
 }

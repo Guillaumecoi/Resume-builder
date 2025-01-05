@@ -31,5 +31,5 @@ public class SectionItem implements BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "subsection_id", referencedColumnName = "id")
-    private SubSection section;
+    private SubSection subSection;
 }

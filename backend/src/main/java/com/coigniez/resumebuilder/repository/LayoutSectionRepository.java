@@ -12,7 +12,7 @@ import com.coigniez.resumebuilder.domain.layoutsection.LayoutSection;
 @Repository
 public interface LayoutSectionRepository extends JpaRepository<LayoutSection, Long> {
 
-    @Query("SELECT r.createdBy FROM LayoutSection ls JOIN ls.columnSection cs JOIN cs.column c JOIN c.layout l JOIN l.resume r WHERE lsi.id = :id")
-    Optional<String> findCreatedBy(@Param("id") Long id);
+    // @Query("SELECT r.createdBy FROM LayoutSection ls JOIN ls.columnSection cs JOIN cs.column c JOIN c.layout l JOIN l.resume r WHERE lsi.id = :id")
+    // Optional<String> findCreatedBy(@Param("id") Long id);
 
 }

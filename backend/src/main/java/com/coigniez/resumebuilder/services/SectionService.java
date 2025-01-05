@@ -54,7 +54,7 @@ public class SectionService
         securityUtils.hasAccessSection(id);
 
         // Retrieve the section
-        return sectionRepository.findByIdWithOrderedItems(id)
+        return sectionRepository.findById(id)
                 .map(sectionMapper::toDto)
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", id));
     }

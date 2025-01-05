@@ -1,6 +1,7 @@
 package com.coigniez.resumebuilder.domain.columnholder;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.column.ColumnMapper;
 import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderCreateRequest;
@@ -16,6 +17,7 @@ import com.coigniez.resumebuilder.interfaces.Mapper;
 
 import jakarta.validation.Valid;
 
+@Service
 public class ColumnHolderMapper
         implements Mapper<ColumnHolder, ColumnHolderCreateRequest, ColumnHolderUpdateRequest, ColumnHolderResp> {
     

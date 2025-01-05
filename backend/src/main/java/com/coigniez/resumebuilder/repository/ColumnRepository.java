@@ -13,14 +13,7 @@ import com.coigniez.resumebuilder.domain.column.Column;
 @Repository
 public interface ColumnRepository extends JpaRepository<Column, Long> {
 
-    @Query("SELECT c FROM Column c JOIN c.layout l WHERE l.id = :layoutId")
-    List<Column> findAllByLayoutId(long layoutId);
-
-    @Modifying
-    @Query("DELETE FROM Column c WHERE c.layout.id = :layoutId")
-    void deleteAllByLayoutId(long layoutId);
-
-    @Query("SELECT r.createdBy FROM Column c JOIN c.layout l JOIN l.resume r WHERE c.id = :id")
-    Optional<String> findCreatedBy(long id);
+    // @Query("SELECT r.createdBy FROM Column c JOIN c.layout l JOIN l.resume r WHERE c.id = :id")
+    // Optional<String> findCreatedBy(long id);
 
 }

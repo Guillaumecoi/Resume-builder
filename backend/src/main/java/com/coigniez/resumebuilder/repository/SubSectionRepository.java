@@ -9,6 +9,6 @@ import com.coigniez.resumebuilder.domain.subsection.SubSection;
 
 public interface SubSectionRepository extends JpaRepository<SubSection, Long> {
 
-    @Query("SELECT r.createdBy FROM SubSection ss JOIN ss.section s JOIN s.resume r WHERE si.id = :id")
+    @Query("SELECT r.createdBy FROM SubSection ss JOIN ss.section s JOIN s.resume r WHERE ss.id = :id")
     Optional<String> findCreatedBy(Long id);
 }

@@ -12,7 +12,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
-import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.InheritanceType;
@@ -25,7 +24,6 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @AllArgsConstructor
-@MappedSuperclass
 @SuperBuilder
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -37,7 +35,7 @@ public abstract class ColumnHolder implements BaseEntity {
     @GeneratedValue
     private Long id;
 
-    @OneToMany(mappedBy = "column_holder", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "columnHolder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Column> columns;
 
     public void addColumn(Column column) {

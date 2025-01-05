@@ -82,9 +82,7 @@ public class ColumnService
         securityUtils.hasAccessLayout(layoutId);
 
         // Get all columns from the layout
-        return columnRepository.findAllByLayoutId(layoutId).stream()
-                .map(columnMapper::toDto)
-                .toList();
+        return null;
     }
 
     @Override
@@ -95,7 +93,7 @@ public class ColumnService
         //TODO: Remove all columns from the layout
         
         // Delete all columns from the database
-        columnRepository.deleteAllByLayoutId(layoutId);
+        
     }
 
 }

@@ -44,7 +44,7 @@ public class LayoutSubSection implements BaseEntity, LatexMethodProvider {
     @JoinColumn(name = "latex_method_id", referencedColumnName = "id")
     private LatexMethod latexMethod;
 
-    @OneToMany(mappedBy = "layout_subsection", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "layoutSubSection", fetch = FetchType.EAGER)
     private List<LayoutSectionItem> layoutSectionItems;
 
     public void addLayoutSectionItem(LayoutSectionItem layoutSectionItem) {

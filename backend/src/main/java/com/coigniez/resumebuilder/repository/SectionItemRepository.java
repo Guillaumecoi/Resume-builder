@@ -14,16 +14,6 @@ import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
 @Repository
 public interface SectionItemRepository extends JpaRepository<SectionItem, Long> {
 
-    @Query("SELECT MAX(si.itemOrder) FROM SectionItem si WHERE si.section.id = :sectionId")
-    Optional<Integer> findMaxItemOrderBySectionId(@Param("sectionId") Long sectionId);
-
-    @Query("SELECT si FROM SectionItem si WHERE si.section.id = :sectionId")
-    List<SectionItem> findAllBySectionId(@Param("sectionId") Long sectionId);
-
-    @Modifying
-    @Query("DELETE FROM SectionItem si WHERE si.section.id = :sectionId")
-    void deleteAllBySectionId(Long sectionId);
-
     @Query("SELECT r.createdBy FROM SectionItem si JOIN si.subSection ss JOIN ss.section s JOIN s.resume r WHERE si.id = :id")
     Optional<String> findCreatedBy(Long id);
 

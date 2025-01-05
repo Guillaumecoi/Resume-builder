@@ -31,18 +31,18 @@ public class SubSection implements BaseEntity {
     @JoinColumn(name = "section_id", referencedColumnName = "id")
     private Section section;
 
-    @OneToMany(mappedBy = "subsection", fetch = FetchType.EAGER, 
+    @OneToMany(mappedBy = "subSection", fetch = FetchType.EAGER, 
             cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true)
     private List<SectionItem> items;
 
     public void addSectionItem(SectionItem item) {
         items.add(item);
-        item.setSection(this);
+        item.setSubSection(this);
     }
 
     public void removeSectionItem(SectionItem item) {
         items.remove(item);
-        item.setSection(null);
+        item.setSubSection(null);
     }
 
     public void clearSectionItems() {
