@@ -9,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
+@NoArgsConstructor
 public class LayoutSubSectionSimpleCreateReq implements CreateRequest {
 
     @NotNull

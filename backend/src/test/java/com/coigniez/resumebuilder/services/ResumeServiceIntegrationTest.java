@@ -4,16 +4,17 @@ import jakarta.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,22 +23,19 @@ import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResp;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeSimpleResp;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeUpdateReq;
-import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
+import com.coigniez.resumebuilder.domain.resume.enums.ResumeOrderBy;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionResp;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionSimpleCreateReq;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -72,8 +70,8 @@ public class ResumeServiceIntegrationTest {
         ResumeCreateReq resumeRequest = ResumeCreateReq.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                        SectionCreateReq.builder().title("Education").build(),
-                        SectionCreateReq.builder().title("Experience").build()))
+                        SectionSimpleCreateReq.builder().title("Education").build(),
+                        SectionSimpleCreateReq.builder().title("Experience").build()))
                 .build();
 
         // Act
@@ -94,64 +92,13 @@ public class ResumeServiceIntegrationTest {
     }
 
     @Test
-    void testUploadPicture() throws IOException {
-        // Arrange
-        ResumeCreateReq resumeRequest = ResumeCreateReq.builder()
-                .title("Software Engineer")
-                .sections(List.of(
-                        SectionCreateReq.builder().title("Education").build(),
-                        SectionCreateReq.builder().title("Experience").build()))
-                .build();
-
-        Long resumeId = resumeService.create(resumeRequest);
-        MockMultipartFile pictureFile = getPictureFile();
-
-        // Act
-        resumeService.uploadPicture(resumeId, pictureFile);
-        ResumeResp resume = resumeService.get(resumeId);
-
-        // Assert
-        assertNotNull(resume.getPicture(), "Picture path should not be null after upload");
-        assertArrayEquals(pictureFile.getBytes(), resume.getPicture(),
-                "Picture content should be the same as the uploaded file");
-        assertEquals("Software Engineer", resume.getTitle(), "Title should not be changed");
-        assertEquals(2, resume.getSections().size(), "Sections should not be changed");
-    }
-
-    @Test
-    void updateDoesNotRemovePicture() throws IOException {
-        // Arrange
-        ResumeCreateReq resumeRequest = ResumeCreateReq.builder()
-                .title("Software Engineer")
-                .sections(List.of(
-                        SectionCreateReq.builder().title("Education").build(),
-                        SectionCreateReq.builder().title("Experience").build()))
-                .build();
-
-        Long resumeId = resumeService.create(resumeRequest);
-        MockMultipartFile pictureFile = getPictureFile();
-
-        // Act
-        resumeService.uploadPicture(resumeId, pictureFile);
-        resumeService.update(ResumeUpdateReq.builder().id(resumeId).title("updated")
-                .createSections(List.of()).updateSections(List.of()).build());
-        ResumeResp resume = resumeService.get(resumeId);
-
-        // Assert
-        assertNotNull(resume.getPicture(), "Picture path should not be null after update");
-        assertArrayEquals(pictureFile.getBytes(), resume.getPicture(),
-                "Picture content should be the same as the uploaded file");
-        assertEquals("updated", resume.getTitle(), "Title should be updated");
-    }
-
-    @Test
     void testUpdate() {
         // Arrange
         ResumeCreateReq resumeRequest = ResumeCreateReq.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                        SectionCreateReq.builder().title("Education").build(),
-                        SectionCreateReq.builder().title("Experience").build()))
+                        SectionSimpleCreateReq.builder().title("Education").build(),
+                        SectionSimpleCreateReq.builder().title("Experience").build()))
                 .build();
 
         Long resumeId = resumeService.create(resumeRequest);
@@ -159,8 +106,6 @@ public class ResumeServiceIntegrationTest {
         ResumeUpdateReq updatedResumeRequest = ResumeUpdateReq.builder()
                 .id(resumeId)
                 .title("Barista")
-                .createSections(List.of(SectionCreateReq.builder().title("CoffeeLover").build()))
-                .updateSections(List.of())
                 .build();
         // Act
         resumeService.update(updatedResumeRequest);
@@ -169,11 +114,9 @@ public class ResumeServiceIntegrationTest {
         // Assert
         assertNotNull(updatedResume, "Resume should not be null after update");
         assertEquals("Barista", updatedResume.getTitle(), "Title should be updated");
-        assertEquals(3, updatedResume.getSections().size(), "There should be 3 sections");
-        assertEquals(Set.of("Education", "Experience", "CoffeeLover"),
-                updatedResume.getSections().stream().map(SectionResp::getTitle)
-                        .collect(Collectors.toSet()),
-                "The section should be added without removing the other sections");
+        assertEquals(2, updatedResume.getSections().size(), "There should be 3 sections");
+        assertThat(updatedResume.getSections().stream().map(SectionResp::getTitle))
+                .containsExactlyInAnyOrder("Education", "Experience");
     }
 
     @Test
@@ -182,8 +125,8 @@ public class ResumeServiceIntegrationTest {
         ResumeCreateReq resumeRequest = ResumeCreateReq.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                        SectionCreateReq.builder().title("Education").build(),
-                        SectionCreateReq.builder().title("Experience").build()))
+                        SectionSimpleCreateReq.builder().title("Education").build(),
+                        SectionSimpleCreateReq.builder().title("Experience").build()))
                 .build();
 
         Long resumeId = resumeService.create(resumeRequest);
@@ -204,8 +147,8 @@ public class ResumeServiceIntegrationTest {
         ResumeCreateReq resumeRequest = ResumeCreateReq.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                        SectionCreateReq.builder().title("Education").build(),
-                        SectionCreateReq.builder().title("Experience").build()))
+                        SectionSimpleCreateReq.builder().title("Education").build(),
+                        SectionSimpleCreateReq.builder().title("Experience").build()))
                 .build();
 
         Long resumeId = resumeService.create(resumeRequest);
@@ -254,19 +197,20 @@ public class ResumeServiceIntegrationTest {
         ResumeCreateReq resumeRequest1 = ResumeCreateReq.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                        SectionCreateReq.builder().title("Education").build(),
-                        SectionCreateReq.builder().title("Experience").build()))
+                        SectionSimpleCreateReq.builder().title("Education").build(),
+                        SectionSimpleCreateReq.builder().title("Experience").build()))
                 .build();
         ResumeCreateReq resumeRequest2 = ResumeCreateReq.builder()
                 .title("Barista")
                 .sections(List.of(
-                        SectionCreateReq.builder().title("Education").build(),
-                        SectionCreateReq.builder().title("Experience").build()))
+                        SectionSimpleCreateReq.builder().title("Education").build(),
+                        SectionSimpleCreateReq.builder().title("Experience").build()))
                 .build();
         // Act
         Long resumeId1 = resumeService.create(resumeRequest1);
         Long resumeId2 = resumeService.create(resumeRequest2);
-        PageResponse<ResumeSimpleResp> resumes = resumeService.getAll(0, 10, "lastModifiedDate");
+        PageResponse<ResumeSimpleResp> resumes = resumeService.getAll(0, 10, ResumeOrderBy.LAST_MODIFIED_DATE,
+                Sort.Direction.DESC);
 
         // Assert
         assertNotNull(resumes, "Resumes should not be null");
@@ -287,20 +231,79 @@ public class ResumeServiceIntegrationTest {
         assertEquals(1, resumes.getTotalPages(), "Total pages should be 1");
     }
 
+    @ParameterizedTest
+    @MethodSource("orderByParameters")
+    void testGetAllOrdering(ResumeOrderBy orderBy, Sort.Direction direction, BiFunction<ResumeSimpleResp, ResumeSimpleResp, Boolean> orderValidator) throws InterruptedException {
+        // Arrange
+        ResumeCreateReq resumeRequest1 = ResumeCreateReq.builder()
+                .title("A-Software Engineer")
+                .sections(List.of(SectionSimpleCreateReq.builder().title("Education").build()))
+                .build();
+        ResumeCreateReq resumeRequest2 = ResumeCreateReq.builder()
+                .title("B-Barista")
+                .sections(List.of(SectionSimpleCreateReq.builder().title("Experience").build()))
+                .build();
+    
+        // Act
+        resumeService.create(resumeRequest1);
+        // Add delay to ensure different creation times
+        Thread.sleep(100);
+        resumeService.create(resumeRequest2);
+        
+        PageResponse<ResumeSimpleResp> resumes = resumeService.getAll(0, 10, orderBy, direction);
+    
+        // Assert
+        assertNotNull(resumes);
+        assertEquals(2, resumes.getContent().size());
+        
+        // Verify ordering
+        ResumeSimpleResp first = resumes.getContent().get(0);
+        ResumeSimpleResp second = resumes.getContent().get(1);
+        assertTrue(orderValidator.apply(first, second));
+    }
+    
+    private static Stream<Arguments> orderByParameters() {
+        return Stream.of(
+            // Title ordering
+            Arguments.of(ResumeOrderBy.TITLE, Sort.Direction.ASC, 
+                (BiFunction<ResumeSimpleResp, ResumeSimpleResp, Boolean>) 
+                (first, second) -> first.getTitle().compareTo(second.getTitle()) <= 0),
+            Arguments.of(ResumeOrderBy.TITLE, Sort.Direction.DESC, 
+                (BiFunction<ResumeSimpleResp, ResumeSimpleResp, Boolean>) 
+                (first, second) -> first.getTitle().compareTo(second.getTitle()) >= 0),
+                
+            // Created date ordering
+            Arguments.of(ResumeOrderBy.CREATED_DATE, Sort.Direction.ASC, 
+                (BiFunction<ResumeSimpleResp, ResumeSimpleResp, Boolean>) 
+                (first, second) -> first.getCreatedDate().compareTo(second.getCreatedDate()) <= 0),
+            Arguments.of(ResumeOrderBy.CREATED_DATE, Sort.Direction.DESC, 
+                (BiFunction<ResumeSimpleResp, ResumeSimpleResp, Boolean>) 
+                (first, second) -> first.getCreatedDate().compareTo(second.getCreatedDate()) >= 0),
+                
+            // Last modified date ordering
+            Arguments.of(ResumeOrderBy.LAST_MODIFIED_DATE, Sort.Direction.ASC, 
+                (BiFunction<ResumeSimpleResp, ResumeSimpleResp, Boolean>) 
+                (first, second) -> first.getLastModifiedDate().compareTo(second.getLastModifiedDate()) <= 0),
+            Arguments.of(ResumeOrderBy.LAST_MODIFIED_DATE, Sort.Direction.DESC, 
+                (BiFunction<ResumeSimpleResp, ResumeSimpleResp, Boolean>) 
+                (first, second) -> first.getLastModifiedDate().compareTo(second.getLastModifiedDate()) >= 0)
+        );
+    }
+
     @Test
     void testDeleteAll() {
         // Arrange
         ResumeCreateReq resumeRequest1 = ResumeCreateReq.builder()
                 .title("Software Engineer")
                 .sections(List.of(
-                        SectionCreateReq.builder().title("Education").build(),
-                        SectionCreateReq.builder().title("Experience").build()))
+                        SectionSimpleCreateReq.builder().title("Education").build(),
+                        SectionSimpleCreateReq.builder().title("Experience").build()))
                 .build();
         ResumeCreateReq resumeRequest2 = ResumeCreateReq.builder()
                 .title("Barista")
                 .sections(List.of(
-                        SectionCreateReq.builder().title("Education").build(),
-                        SectionCreateReq.builder().title("Experience").build()))
+                        SectionSimpleCreateReq.builder().title("Education").build(),
+                        SectionSimpleCreateReq.builder().title("Experience").build()))
                 .build();
 
         // Act
@@ -316,18 +319,6 @@ public class ResumeServiceIntegrationTest {
             resumeService.get(resumeId2);
         }, "Resume 2 should not be found after deletion");
 
-    }
-
-    private MockMultipartFile getPictureFile() throws IOException {
-        // Create mock file with real image content
-        Path imagePath = Paths.get("src/test/resources/blue.jpg");
-        byte[] imageContent = Files.readAllBytes(imagePath);
-
-        return new MockMultipartFile(
-                "file",
-                "blue.jpg",
-                MediaType.IMAGE_JPEG_VALUE,
-                imageContent);
     }
 
 }

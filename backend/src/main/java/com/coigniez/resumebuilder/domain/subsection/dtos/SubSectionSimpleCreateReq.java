@@ -9,10 +9,12 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
+@NoArgsConstructor
 public class SubSectionSimpleCreateReq implements CreateRequest {
 
     @NotBlank

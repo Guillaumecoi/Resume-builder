@@ -5,10 +5,12 @@ import com.coigniez.resumebuilder.interfaces.CreateRequest;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
+@NoArgsConstructor
 public class LayoutSectionItemSimpleCreateReq implements CreateRequest {
 
     @NotNull

@@ -16,6 +16,7 @@ import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
+@NoArgsConstructor
 public class ColumnSimpleCreateReq implements CreateRequest {
 
     @Min(1) @Max(2)

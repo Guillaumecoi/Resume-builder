@@ -2,7 +2,6 @@ package com.coigniez.resumebuilder.domain.resume;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedBy;
@@ -28,14 +27,20 @@ import lombok.*;
 @EntityListeners(AuditingEntityListener.class)
 @DynamicUpdate
 @NamedEntityGraph(name = "Resume.withSections", attributeNodes = @NamedAttributeNode("sections"))
+@Table(name = "resumes", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_resumes_title_created_by", columnNames = {"title", "created_by"})
+}, indexes = {
+        @Index(name = "idx_resumes_created_by", columnList = "created_by"),
+        @Index(name = "idx_resumes_last_modified_date", columnList = "last_modified_date")
+})
 public class Resume implements BaseEntity, TimeTrackable, Creatable {
 
     @Id
     @GeneratedValue
     private Long id;
 
+    @Column(nullable = false)
     private String title;
-    private String picture;
 
     @CreatedBy
     @Column(nullable = false, updatable = false)
@@ -46,11 +51,11 @@ public class Resume implements BaseEntity, TimeTrackable, Creatable {
     private LocalDateTime createdDate;
 
     @LastModifiedDate
-    @Column
+    @Column(nullable = false)
     private LocalDateTime lastModifiedDate;
 
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Section> sections;
+    private List<Section> sections;
 
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Layout> layouts;

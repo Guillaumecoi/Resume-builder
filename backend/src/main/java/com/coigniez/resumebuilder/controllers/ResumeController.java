@@ -3,7 +3,6 @@ package com.coigniez.resumebuilder.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.coigniez.resumebuilder.domain.common.PageResponse;
@@ -11,6 +10,7 @@ import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResp;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeSimpleResp;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeUpdateReq;
+import com.coigniez.resumebuilder.domain.resume.enums.ResumeOrderBy;
 import com.coigniez.resumebuilder.interfaces.CrudController;
 import com.coigniez.resumebuilder.services.ResumeService;
 
@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -82,18 +83,10 @@ public class ResumeController
     public ResponseEntity<PageResponse<ResumeSimpleResp>> getAllResumes(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
-            @RequestParam(name = "order", defaultValue = "lastModifiedDate", required = false) String order,
+            @RequestParam(name = "order", defaultValue = "LAST_MODIFIED_DATE") ResumeOrderBy order,
+            @RequestParam(name = "direction", defaultValue = "DESC") Sort.Direction direction,
             Authentication connectedUser) {
-        return ResponseEntity.ok(resumeService.getAll(page, size, order));
-    }
-
-    @PostMapping(value = "/{id}/uploadPicture", consumes = "multipart/form-data")
-    public ResponseEntity<Void> uploadResumePicture(
-            @PathVariable Long id,
-            @RequestParam("file") MultipartFile file,
-            Authentication connectedUser) {
-        resumeService.uploadPicture(id, file);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(resumeService.getAll(page, size, order, direction));
     }
 
     @PostMapping("/deleteAll")

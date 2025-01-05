@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -42,9 +43,9 @@ public class FileStorageService {
     }
 
     public void deleteAllUserFiles(@Nonnull String userId) {
-        final String fileUploadSubPath = "users" + separator + userId;
-        Path targetPath = Paths.get(fileUploadPath, fileUploadSubPath);
+        final String fileUploadSubPath = "users" + separator + userId;     
         try {
+            Path targetPath = Paths.get(fileUploadPath, fileUploadSubPath);
             Files.walk(targetPath)
                     .sorted((p1, p2) -> -p1.compareTo(p2))
                     .forEach(path -> {
@@ -55,8 +56,12 @@ public class FileStorageService {
                         }
                     });
             log.info("All files for user {} deleted", userId);
+        } catch (NoSuchFileException e) {
+            log.info(fileUploadSubPath + " does not exist so no files were deleted");
+            return;
         } catch (IOException e) {
             log.error("Files were not deleted", e);
+            return;
         }
     }
 

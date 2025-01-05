@@ -6,27 +6,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Base64;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
-import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionSimpleCreateReq;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -44,8 +37,8 @@ public class ResumeControllerIntegrationTest {
         // Arrange
         ResumeCreateReq createRequest = ResumeCreateReq.builder().title("Software Engineer")
                         .sections(List.of(
-                                SectionCreateReq.builder().title("Education").build(),
-                                SectionCreateReq.builder().title("Experience").build()))
+                                SectionSimpleCreateReq.builder().title("Education").build(),
+                                SectionSimpleCreateReq.builder().title("Experience").build()))
                         .build();
 
         // Act - Create
@@ -116,108 +109,6 @@ public class ResumeControllerIntegrationTest {
         mockMvc.perform(get("/resumes/" + resumeId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Barista"));
-    }
-
-    @Test
-    @WithMockUser(username = "testuser", roles = { "USER" })
-    void testUploadPicture() throws Exception {
-        // Arrange
-        ResumeCreateReq createRequest = ResumeCreateReq.builder().title("Software Engineer").build();
-        String createResponse = mockMvc.perform(post("/resumes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(createRequest)))
-                .andExpect(status().isCreated())
-                .andReturn().getResponse().getContentAsString();
-
-        Long resumeId = Long.parseLong(createResponse);
-
-        // Create mock file with real image content
-        Path imagePath = Paths.get("src/test/resources/blue.jpg");
-        byte[] imageContent = Files.readAllBytes(imagePath);
-
-        MockMultipartFile file = new MockMultipartFile(
-                "file",
-                "blue.jpg",
-                MediaType.IMAGE_JPEG_VALUE,
-                imageContent);
-
-        // Act
-        mockMvc.perform(MockMvcRequestBuilders
-                .multipart(HttpMethod.POST, "/resumes/" + resumeId + "/uploadPicture")
-                .file(file)
-                .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isOk());
-
-        // Assert
-        // Replace the failing assertion with:
-        mockMvc.perform(get("/resumes/" + resumeId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.picture").value(Base64.getEncoder().encodeToString(file.getBytes())));
-    }
-
-    @Test
-    @WithMockUser(username = "testuser", roles = { "USER" })
-    void testUpdatePicture() throws Exception {
-        // Arrange
-        ResumeCreateReq createRequest = ResumeCreateReq.builder().title("Software Engineer").build();
-        String createResponse = mockMvc.perform(post("/resumes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(createRequest)))
-                .andExpect(status().isCreated())
-                .andReturn().getResponse().getContentAsString();
-
-        Long resumeId = Long.parseLong(createResponse);
-
-        // Create mock file with real image content
-        Path imagePath = Paths.get("src/test/resources/blue.jpg");
-        byte[] imageContent = Files.readAllBytes(imagePath);
-
-        MockMultipartFile file = new MockMultipartFile(
-                "file",
-                "blue.jpg",
-                MediaType.IMAGE_JPEG_VALUE,
-                imageContent);
-
-        // Upload picture
-        mockMvc.perform(MockMvcRequestBuilders
-                .multipart(HttpMethod.POST, "/resumes/" + resumeId + "/uploadPicture")
-                .file(file)
-                .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isOk());
-
-        // Create mock file with real image content
-        Path imagePath2 = Paths.get("src/test/resources/red.jpg");
-        byte[] imageContent2 = Files.readAllBytes(imagePath2);
-
-        MockMultipartFile file2 = new MockMultipartFile(
-                "file",
-                "red.jpg",
-                MediaType.IMAGE_JPEG_VALUE,
-                imageContent2);
-
-        // Act
-        mockMvc.perform(MockMvcRequestBuilders
-                .multipart(HttpMethod.POST, "/resumes/" + resumeId + "/uploadPicture")
-                .file(file2)
-                .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isOk());
-
-        // Assert
-        mockMvc.perform(get("/resumes/" + resumeId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.picture").value(Base64.getEncoder().encodeToString(file2.getBytes())));
-
-        // Act - update user
-        ResumeCreateReq updateRequest = ResumeCreateReq.builder().title("Software Engineer").build();
-        mockMvc.perform(post("/resumes/" + resumeId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(updateRequest)))
-                .andExpect(status().isOk());
-
-        // Assert - picture is still there
-        mockMvc.perform(get("/resumes/" + resumeId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.picture").value(Base64.getEncoder().encodeToString(file2.getBytes())));
     }
 
     @Test

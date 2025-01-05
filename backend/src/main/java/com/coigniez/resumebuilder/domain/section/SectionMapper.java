@@ -1,6 +1,9 @@
 package com.coigniez.resumebuilder.domain.section;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,12 +32,20 @@ public class SectionMapper implements Mapper<Section, SectionSimpleCreateReq, Se
 
         MapperUtils.setDefaultValues(request, DEFAULT_VALUES);
 
-        return Section.builder()
+        Section section = Section.builder()
                 .title(request.getTitle())
                 .icon(request.getIcon())
                 .showTitle(request.getShowTitle())
-                .subSections(request.getSubSections().stream().map(subSectionMapper::toEntity).toList())
+                .subSections(new ArrayList<>())
                 .build();
+
+        // Add subSections
+        Optional.ofNullable(request.getSubSections())
+                .ifPresent(subSections -> subSections.forEach(subSection -> {
+                    section.addSubSection(subSectionMapper.toEntity(subSection));
+                }));
+
+        return section;
     }
 
     @Override
@@ -47,7 +58,9 @@ public class SectionMapper implements Mapper<Section, SectionSimpleCreateReq, Se
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .showTitle(entity.isShowTitle())
-                .subSections(entity.getSubSections().stream().map(subSectionMapper::toDto).toList())
+                .subSections(Optional.ofNullable(entity.getSubSections())
+                        .map(subSections -> subSections.stream().map(subSectionMapper::toDto).toList())
+                        .orElse(Collections.emptyList()))
                 .build();
     }
 

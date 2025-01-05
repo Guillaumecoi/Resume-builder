@@ -1,15 +1,13 @@
 package com.coigniez.resumebuilder.domain.resume;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +17,12 @@ import org.springframework.test.context.ActiveProfiles;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeResp;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeSimpleResp;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeUpdateReq;
 import com.coigniez.resumebuilder.domain.section.Section;
-import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionResp;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionSimpleCreateReq;
+
+import jakarta.validation.ConstraintViolationException;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -35,8 +36,8 @@ public class ResumeMapperTest {
         // Arrange
         ResumeCreateReq dto = ResumeCreateReq.builder().title("Software Engineer")
                 .sections(List.of(
-                    SectionCreateReq.builder().title("Education").build(),
-                    SectionCreateReq.builder().title("Experience").build()))
+                    SectionSimpleCreateReq.builder().title("Education").build(),
+                    SectionSimpleCreateReq.builder().title("Experience").build()))
                 .build();
 
         // Act
@@ -46,12 +47,34 @@ public class ResumeMapperTest {
         assertEquals("Software Engineer", entity.getTitle());
         assertEquals(2, entity.getSections().size());
 
-        Set<String> sectionTitles = entity.getSections().stream()
+        List<String> sectionTitles = entity.getSections().stream()
                 .map(Section::getTitle)
-                .collect(Collectors.toSet());
+                .toList();
 
-        assertEquals(Set.of("Education", "Experience"), sectionTitles);
+        assertEquals(List.of("Education", "Experience"), sectionTitles);
         assertTrue(entity.getSections().stream().allMatch(section -> section.getResume().equals(entity)));
+    }
+
+    @Test
+    void testToEntity_NullValues() {
+        // Arrange
+        ResumeCreateReq dto = ResumeCreateReq.builder().title("Software Engineer").sections(null).build();
+
+        // Act
+        Resume entity = mapper.toEntity(dto);
+
+        // Assert
+        assertEquals("Software Engineer", entity.getTitle());
+        assertEquals(Collections.emptyList(), entity.getSections());
+    }
+
+    @Test
+    void testToEntity_InvalidTitle() {
+        // Arrange
+        ResumeCreateReq dto = ResumeCreateReq.builder().title("").build();
+
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(dto));
     }
 
     @Test
@@ -72,7 +95,7 @@ public class ResumeMapperTest {
             .title("Software Engineer")
             .createdDate(LocalDateTime.parse("2023-01-01T00:00"))
             .lastModifiedDate(LocalDateTime.parse("2023-01-02T00:00"))
-            .sections(new HashSet<>(Arrays.asList(section1, section2)))
+            .sections(Arrays.asList(section1, section2))
             .build();
     
         // Act
@@ -85,15 +108,15 @@ public class ResumeMapperTest {
         assertEquals("2023-01-02T00:00", dto.getLastModifiedDate());
         assertEquals(2, dto.getSections().size());
 
-        Set<String> sectionTitles = dto.getSections().stream()
+        List<String> sectionTitles = dto.getSections().stream()
                 .map(SectionResp::getTitle)
-                .collect(Collectors.toSet());
+                .toList();
 
-        assertEquals(Set.of("Education", "Experience"), sectionTitles);
+        assertEquals(List.of("Education", "Experience"), sectionTitles);
     }
 
     @Test
-    void testToDtoWithNullValues() {
+    void testToDto_NullValues() {
         // Arrange
         Resume entity = Resume.builder()
             .id(1L)
@@ -132,5 +155,18 @@ public class ResumeMapperTest {
         assertEquals("Software Engineer", dto.getTitle());
         assertEquals("2023-01-01T00:00", dto.getCreatedDate());
         assertEquals("2023-01-02T00:00", dto.getLastModifiedDate());
+    }
+
+    @Test
+    void testUpdateEntity() {
+        // Arrange
+        Resume entity = Resume.builder().id(1L).title("Software Engineer").build();
+        ResumeUpdateReq dto = ResumeUpdateReq.builder().id(1L).title("Software Developer").build();
+
+        // Act
+        mapper.updateEntity(entity, dto);
+
+        // Assert
+        assertEquals("Software Developer", entity.getTitle());
     }
 }
