@@ -22,10 +22,15 @@ public class ResumeMapper implements Mapper<Resume, ResumeCreateReq, ResumeUpdat
             return null;
         }
 
-        return Resume.builder()
+        Resume resume = Resume.builder()
                 .title(request.getTitle())
-                .sections(request.getSections().stream().map(sectionMapper::toEntity).collect(Collectors.toSet()))
                 .build();
+
+        request.getSections().forEach(section -> {
+            resume.addSection(sectionMapper.toEntity(section));
+        });
+
+        return resume;
     }
 
     public ResumeResp toDto(Resume entity) {

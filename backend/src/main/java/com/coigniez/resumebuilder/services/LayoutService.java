@@ -72,24 +72,6 @@ public class LayoutService implements ParentEntityService<LayoutCreateReq, Layou
         // Check if the connected user has access to the layout
         securityUtils.hasAccessLayout(request.getId());
 
-        for (ColumnCreateReq column : request.getCreateColumns()) {
-            column.setLayoutId(request.getId());
-            columnService.create(column);
-        }
-        for (ColumnUpdateReq column : request.getUpdateColumns()) {
-            // Check if the column exists and belongs to the layout
-            if (column.getId() == null) {
-                throw new IllegalArgumentException("Column id is required");
-            }
-            if (columnRepository.findById(column.getId())
-                    .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", column.getId()))
-                    .getLayout().getId() != request.getId()) {
-                throw new IllegalArgumentException("Column does not belong to the layout");
-            }
-            
-            columnService.update(column);
-        }
-
         // UpexistingLayoutdate the entity
         Layout layout = layoutRepository.findById(request.getId())
             .orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", request.getId()));

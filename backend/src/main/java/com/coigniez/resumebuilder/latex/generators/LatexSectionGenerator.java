@@ -30,28 +30,31 @@ public class LatexSectionGenerator implements LatexGenerator<ColumnSection> {
         String sectionString = LatexMethodGenerator.generateUsage(sectionMethod.getMethodType(),
                 sectionMethod.getType(), sectionMethod.getMethodName(), columnSection.getData());
 
-        // Sort the items
-        List<LayoutSectionItem> items = columnSection.getLayoutSectionItems();
-        if (columnSection.isDefaultOrder()){
-            items.sort((a, b) -> a.getSectionItem().getItemOrder() - b.getSectionItem().getItemOrder());
-        } else {
-            items.sort((a, b) -> a.getItemOrder() - b.getItemOrder());
-        }
 
-        // Set the items
-        String itemsString = "";
-        for (LayoutSectionItem item : columnSection.getLayoutSectionItems()) {
-            if (item.isHidden()) {
-                continue;
-            }
-            itemsString += stringUtils.addTabToEachLine(latexItemGenerator.generate(item), 1) + "\n";
-        }
+        //TODO: implement subsections
+        // // Sort the items
+        // List<LayoutSectionItem> items = columnSection.getLayoutSectionItems();
+        // if (columnSection.isDefaultOrder()){
+        //     items.sort((a, b) -> a.getSectionItem().getItemOrder() - b.getSectionItem().getItemOrder());
+        // } else {
+        //     items.sort((a, b) -> a.getItemOrder() - b.getItemOrder());
+        // }
 
-        if (itemsString.isEmpty()) {
-            return "";
-        } else {
-            return sectionString.formatted(itemsString);
-        }
+        // // Set the items
+        // String itemsString = "";
+        // for (LayoutSectionItem item : columnSection.getLayoutSectionItems()) {
+        //     if (item.isHidden()) {
+        //         continue;
+        //     }
+        //     itemsString += stringUtils.addTabToEachLine(latexItemGenerator.generate(item), 1) + "\n";
+        // }
+
+        // if (itemsString.isEmpty()) {
+        //     return "";
+        // } else {
+        //     return sectionString.formatted(itemsString);
+        // }
+        return "";
     }
 
 }

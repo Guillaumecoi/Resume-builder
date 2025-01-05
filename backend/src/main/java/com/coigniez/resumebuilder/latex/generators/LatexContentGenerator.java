@@ -3,6 +3,7 @@ package com.coigniez.resumebuilder.latex.generators;
 import org.springframework.stereotype.Component;
 
 import com.coigniez.resumebuilder.domain.column.Column;
+import com.coigniez.resumebuilder.domain.columnholder.page.LayoutPage;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.layout.Layout;
 import com.coigniez.resumebuilder.interfaces.LatexGenerator;
@@ -21,10 +22,19 @@ public class LatexContentGenerator implements LatexGenerator<Layout> {
     private final LatexSectionGenerator latexSectionGenerator;
     
     public String generate(Layout layout) {
-        StringBuilder content = new StringBuilder();
-        content.append("\\begin{paracol}{%s}\n\n".formatted(layout.getNumberOfColumns()));
+        StringBuilder result = new StringBuilder();
+        layout.getPages().forEach(page -> {
+            result.append(generatePage(page));
+        });
 
-        for (Column column : layout.getColumns()) {
+        return result.toString();
+    }
+
+    private String generatePage(LayoutPage layoutPage) {
+        StringBuilder content = new StringBuilder();
+        content.append("\\begin{paracol}{%s}\n\n".formatted(layoutPage.getColumns().size()));
+
+        for (Column column : layoutPage.getColumns()) {
             content.append(getColumn(column));
         }
 

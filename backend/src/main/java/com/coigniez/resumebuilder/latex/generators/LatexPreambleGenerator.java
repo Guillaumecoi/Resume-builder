@@ -1,17 +1,14 @@
 package com.coigniez.resumebuilder.latex.generators;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.coigniez.resumebuilder.domain.column.Column;
 import com.coigniez.resumebuilder.domain.layout.Layout;
 import com.coigniez.resumebuilder.domain.layout.embedded.ColorScheme;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
 import com.coigniez.resumebuilder.interfaces.LatexGenerator;
-import com.coigniez.resumebuilder.util.StringUtils;
 
 import lombok.AllArgsConstructor;
 
@@ -22,11 +19,9 @@ import lombok.AllArgsConstructor;
 @Component
 public class LatexPreambleGenerator implements LatexGenerator<Layout> {
 
-    private final StringUtils stringUtils;
-
     public String generate(Layout layout) {
         // Generate the imports
-        String latexPreamble = getImports(layout.getPageSize(), layout.getColumnSeparator()) + "\n";
+        String latexPreamble = getImports(layout.getPageSize()) + "\n";
         // Generate the colors
         latexPreamble += getColors(layout.getColorScheme()) + "\n";
         // Add the latex methods
@@ -35,7 +30,6 @@ public class LatexPreambleGenerator implements LatexGenerator<Layout> {
                         method.getName(), method.getMethod()))
                 .collect(Collectors.joining("\n"));
         latexPreamble += latexMethods + "\n";
-        latexPreamble += getColumnColorboxMethods(layout.getColumns()) + "\n";
 
         return latexPreamble;
     }
@@ -47,7 +41,7 @@ public class LatexPreambleGenerator implements LatexGenerator<Layout> {
      * @param columnsep The column separation of the document
      * @return The imports for the latex document
      */
-    private String getImports(PageSize pageSize, Double columnsep) {
+    private String getImports(PageSize pageSize) {
         return String.format("""
                 \\documentclass[%s,10pt]{article}
                 \\usepackage[utf8]{inputenc}
@@ -77,12 +71,11 @@ public class LatexPreambleGenerator implements LatexGenerator<Layout> {
                 \\usetikzlibrary{shadows.blur}
 
                 %% settings
-                \\columnratio{%.3f}
                 \\setlength{\\columnsep}{0pt}
                 \\renewcommand{\\arraystretch}{1.5}
                 \\shadowoffset{0.3pt}\\shadowcolor{black!70}
 
-                """, pageSize.getLatexName(), pageSize.getLatexName(), columnsep);
+                """, pageSize.getLatexName(), pageSize.getLatexName());
     }
 
     /**
@@ -107,84 +100,5 @@ public class LatexPreambleGenerator implements LatexGenerator<Layout> {
     private String getColorLine(String colorName, String color) {
         // Use substring to remove the # from the color
         return "\\definecolor{" + colorName + "}{HTML}{" + color.substring(1) + "} \n";
-    }
-
-    /**
-     * Generates the tcolorbox environments for each column.
-     * 
-     * @param columns The columns to generate the tcolorbox environments for
-     * @return The tcolorbox environments for each column
-     */
-    private String getColumnColorboxMethods(List<Column> columns) {
-        StringBuilder columnMethods = new StringBuilder();
-        for (Column column : columns) {
-            String columnContent = String.format("\\newenvironment{tcolorbox%d}[0] { \n", column.getColumnNumber());
-
-            columnContent += stringUtils.addTabToEachLine(
-                    getTcolorbox(column.getBackgroundColor().toString(),
-                            column.getTextColor().toString(),
-                            column.getBorderColor().toString(),
-                            column.getPaddingTop(),
-                            column.getPaddingBottom(),
-                            column.getPaddingLeft(),
-                            column.getPaddingRight(),
-                            column.getBorderLeft(),
-                            column.getBorderRight(),
-                            column.getBorderTop(),
-                            column.getBorderBottom()),
-                    1);
-
-            columnContent += """
-                            }{
-                        \\end{tcolorbox}
-                    }
-                    """;
-
-            columnMethods.append(columnContent);
-        }
-        return columnMethods.toString();
-    }
-
-    /**
-     * Generates the tcolorbox environment for a column.
-     * 
-     * @param colback      The background color of the tcolorbox
-     * @param textcolor    The text color of the tcolorbox
-     * @param bordercolor  The border color of the tcolorbox
-     * @param top          The top padding of the tcolorbox
-     * @param bottom       The bottom padding of the tcolorbox
-     * @param left         The left padding of the tcolorbox
-     * @param right        The right padding of the tcolorbox
-     * @param borderLeft   The left border width of the tcolorbox
-     * @param borderRight  The right border width of the tcolorbox
-     * @param borderTop    The top border width of the tcolorbox
-     * @param borderBottom The bottom border width of the tcolorbox
-     * @return The tcolorbox environment for a column
-     */
-    private String getTcolorbox(String colback, String textcolor, String bordercolor, double top, double bottom,
-            double left, double right,
-            double borderLeft, double borderRight, double borderTop, double borderBottom) {
-        return String.format("""
-                \\begin{tcolorbox}[
-                    colback=%s,
-                    width=\\linewidth,
-                    height=\\textheight,
-                    left=%.1fpt,
-                    right=%.1fpt,
-                    top=%.1fpt,
-                    bottom=%.1fpt,
-                    arc=0mm,
-                    boxrule=0pt,
-                    rightrule=%.1fpt,
-                    leftrule=%.1fpt,
-                    toprule=%.1fpt,
-                    bottomrule=%.1fpt,
-                    colframe=%s
-                ]
-                \\color{%s}
-
-                """, colback, left, right, top, bottom,
-                borderRight, borderLeft, borderTop, borderBottom,
-                bordercolor, textcolor);
     }
 }

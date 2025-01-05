@@ -72,20 +72,21 @@ public class StandardNavyBlueTemplate {
 
     public long generate(String title) {
         resumeId = createResume(title);
-        long layoutId = createLayout(resumeId);
-        LayoutResp layout = layoutService.get(layoutId);
-        long leftColumnId = layout.getColumns().get(0).getId();
-        long rightColumnId = layout.getColumns().get(1).getId();
-        Map<Class<?>, List<LatexMethodResp>> methodIds = layoutService.getLatexMethodsMap(layoutId);
-        sectionTitleMethodId = methodIds.get(ColumnSection.class).get(0).getId();
+        // long layoutId = createLayout(resumeId);
+        // LayoutResp layout = layoutService.get(layoutId);
+        // long leftColumnId = layout.getColumns().get(0).getId();
+        // long rightColumnId = layout.getColumns().get(1).getId();
+        // Map<Class<?>, List<LatexMethodResp>> methodIds = layoutService.getLatexMethodsMap(layoutId);
+        // sectionTitleMethodId = methodIds.get(ColumnSection.class).get(0).getId();
 
-        // Left Column Sections
-        addPictureSection(leftColumnId, 1);
+        // // Left Column Sections
+        // addPictureSection(leftColumnId, 1);
 
-        // Right Column Sections
-        addTitleSection(rightColumnId, 1);
+        // // Right Column Sections
+        // addTitleSection(rightColumnId, 1);
 
-        return layoutId;
+        // return layoutId;
+        return 0;
     }
 
     private long createResume(String title) {
@@ -96,96 +97,97 @@ public class StandardNavyBlueTemplate {
 
     }
 
-    private long createLayout(long resumeId) {
-        LayoutCreateReq request = LayoutCreateReq.builder()
-                .resumeId(resumeId)
-                .numberOfColumns(2)
-                .columns(List.of(
-                        ColumnCreateReq.builder()
-                                .columnNumber(1)
-                                .backgroundColor(ColorLocation.DARK_BG)
-                                .textColor(ColorLocation.LIGHT_TEXT)
-                                .borderColor(ColorLocation.ACCENT)
-                                .borderRight(2.5)
-                                .build(),
-                        ColumnCreateReq.builder()
-                                .columnNumber(2)
-                                .backgroundColor(ColorLocation.LIGHT_BG)
-                                .textColor(ColorLocation.DARK_TEXT)
-                                .borderColor(ColorLocation.ACCENT)
-                                .build()))
-                .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
-                .latexMethods(LatexMethodTemplates.getStandardMethods())
-                .build();
+//     private long createLayout(long resumeId) {
+//         LayoutCreateReq request = LayoutCreateReq.builder()
+//                 .resumeId(resumeId)
 
-        return layoutService.create(request);
-    }
+                
+//                 .columns(List.of(
+//                         ColumnCreateReq.builder()
+//                                 .columnNumber(1)
+//                                 .backgroundColor(ColorLocation.DARK_BG)
+//                                 .textColor(ColorLocation.LIGHT_TEXT)
+//                                 .borderColor(ColorLocation.ACCENT)
+//                                 .borderRight(2.5)
+//                                 .build(),
+//                         ColumnCreateReq.builder()
+//                                 .columnNumber(2)
+//                                 .backgroundColor(ColorLocation.LIGHT_BG)
+//                                 .textColor(ColorLocation.DARK_TEXT)
+//                                 .borderColor(ColorLocation.ACCENT)
+//                                 .build()))
+//                 .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
+//                 .latexMethods(LatexMethodTemplates.getStandardMethods())
+//                 .build();
 
-    private void addPictureSection(Long columnId, int sectionOrder) {
-        Long sectionId = sectionService.create(SectionCreateReq.builder()
-                .resumeId(resumeId)
-                .title("Picture")
-                .showTitle(false)
-                .build());
+//         return layoutService.create(request);
+//     }
 
-        SectionItemCreateReq pictureRequest = SectionItemCreateReq.builder()
-                .sectionId(sectionId)
-                .item(Picture.builder()
-                        .caption("Photo by Ali Mammadli on Unsplash")
-                        .width(0.9)
-                        .height(1.1)
-                        .shadow(2.0)
-                        .zoom(1.8)
-                        .yoffset(-8.0)
-                        .build())
-                .build();
+//     private void addPictureSection(Long columnId, int sectionOrder) {
+//         Long sectionId = sectionService.create(SectionCreateReq.builder()
+//                 .resumeId(resumeId)
+//                 .title("Picture")
+//                 .showTitle(false)
+//                 .build());
 
-        //Todo: handle exception
-        Path resourcePath = Paths.get("src", "main", "resources", "images", "ali-mammadli-unsplash.jpg");
-        byte[] content;
-        try {
-                content = Files.readAllBytes(resourcePath);
-        } catch (IOException e) {
-                e.printStackTrace();
-                content = new byte[0];
-        }
+//         SectionItemCreateReq pictureRequest = SectionItemCreateReq.builder()
+//                 .sectionId(sectionId)
+//                 .item(Picture.builder()
+//                         .caption("Photo by Ali Mammadli on Unsplash")
+//                         .width(0.9)
+//                         .height(1.1)
+//                         .shadow(2.0)
+//                         .zoom(1.8)
+//                         .yoffset(-8.0)
+//                         .build())
+//                 .build();
 
-        MockMultipartFile file = new MockMultipartFile(
-                "file",
-                "ali-mammadli-unsplash.jpg",
-                MediaType.IMAGE_JPEG_VALUE,
-                content);
-        sectionItemService.createPicture(file, pictureRequest);
+//         //Todo: handle exception
+//         Path resourcePath = Paths.get("src", "main", "resources", "images", "ali-mammadli-unsplash.jpg");
+//         byte[] content;
+//         try {
+//                 content = Files.readAllBytes(resourcePath);
+//         } catch (IOException e) {
+//                 e.printStackTrace();
+//                 content = new byte[0];
+//         }
 
-        columnSectionService.create(ColumnSectionCreateReq.builder()
-                .columnId(columnId)
-                .sectionId(sectionId)
-                .latexMethodId(sectionTitleMethodId)
-                .itemOrder(sectionOrder)
-                .build());
-    }
+//         MockMultipartFile file = new MockMultipartFile(
+//                 "file",
+//                 "ali-mammadli-unsplash.jpg",
+//                 MediaType.IMAGE_JPEG_VALUE,
+//                 content);
+//         sectionItemService.createPicture(file, pictureRequest);
 
-    private void addTitleSection(Long columnId, int sectionOrder) {
-        SectionItemCreateReq title = SectionItemCreateReq.builder()
-                .item(Title.builder()
-                        .title("John Doe")
-                        .subtitle("Software Developer")
-                        .build())
-                .build();
+//         columnSectionService.create(ColumnSectionCreateReq.builder()
+//                 .columnId(columnId)
+//                 .sectionId(sectionId)
+//                 .latexMethodId(sectionTitleMethodId)
+//                 .itemOrder(sectionOrder)
+//                 .build());
+//     }
+
+//     private void addTitleSection(Long columnId, int sectionOrder) {
+//         SectionItemCreateReq title = SectionItemCreateReq.builder()
+//                 .item(Title.builder()
+//                         .title("John Doe")
+//                         .subtitle("Software Developer")
+//                         .build())
+//                 .build();
             
-        Long titleId = sectionService.create(SectionCreateReq.builder()
-                .resumeId(resumeId)
-                .title("Title")
-                .showTitle(false)
-                .sectionItems(List.of(title))
-                .build());
-        columnSectionService.create(ColumnSectionCreateReq.builder()
-                .columnId(columnId)
-                .sectionId(titleId)
-                .latexMethodId(sectionTitleMethodId)
-                .itemOrder(sectionOrder)
-                .endsep(6.0)
-                .build());
-    }
+//         Long titleId = sectionService.create(SectionCreateReq.builder()
+//                 .resumeId(resumeId)
+//                 .title("Title")
+//                 .showTitle(false)
+//                 .sectionItems(List.of(title))
+//                 .build());
+//         columnSectionService.create(ColumnSectionCreateReq.builder()
+//                 .columnId(columnId)
+//                 .sectionId(titleId)
+//                 .latexMethodId(sectionTitleMethodId)
+//                 .itemOrder(sectionOrder)
+//                 .endsep(6.0)
+//                 .build());
+//     }
 
 }

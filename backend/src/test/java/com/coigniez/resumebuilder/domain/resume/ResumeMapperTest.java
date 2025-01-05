@@ -1,6 +1,7 @@
 package com.coigniez.resumebuilder.domain.resume;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -50,6 +51,7 @@ public class ResumeMapperTest {
                 .collect(Collectors.toSet());
 
         assertEquals(Set.of("Education", "Experience"), sectionTitles);
+        assertTrue(entity.getSections().stream().allMatch(section -> section.getResume().equals(entity)));
     }
 
     @Test

@@ -47,64 +47,9 @@ public class ColumnSectionService implements
     public Long create(ColumnSectionCreateReq request) {
         // Check if the user has access to the column and section
         securityUtils.hasAccessColumn(request.getColumnId());
-        securityUtils.hasAccessSection(request.getSectionId());
     
-        // Get the column and section and layoutMethodsMap
-        Column column = columnRepository.findById(request.getColumnId())
-                .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", request.getColumnId()));
-        Section section = sectionRepository.findById(request.getSectionId())
-                .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", request.getSectionId()));
-        Map<Class<?>, List<LatexMethodResp>> latexMethodMap = latexMethodService
-                .getLatexMethodsMap(column.getLayout().getId());
-
-        if (request.getLatexMethodId() == null) {
-            request.setLatexMethodId(latexMethodMap.get(ColumnSection.class).getFirst().getId());
-        } 
-
-        // Get the latexMethod
-        securityUtils.hasAccessLatexMethod(request.getLatexMethodId());
-        LatexMethod latexMethod = latexMethodRepository.findById(request.getLatexMethodId())
-                .orElseThrow(() -> ExceptionUtils.entityNotFound("LatexMethod", request.getLatexMethodId()));    
-
-        // Check if the column and latexMethod belong to the same layout
-        if (!column.getLayout().getId().equals(latexMethod.getLayout().getId())) {
-            throw new IllegalArgumentException("The Column and LatexMethod must belong to the same layout");
-        }
-    
-        // Check if the column and section belong to the same resume
-        if (column.getLayout().getResume().getId() != section.getResume().getId()) {
-            throw new IllegalArgumentException("Column and Section must belong to the same resume");
-        }
-    
-        // Find the maximum sectionOrder in the column
-        int maxOrder = orderableRepositoryUtil.findMaxItemOrderByParentId(ColumnSection.class, Column.class,
-                column.getId());
-    
-        int newOrder = request.getSectionOrder() == null ? maxOrder + 1 : request.getSectionOrder();
-    
-        // Shift the order
-        orderableRepositoryUtil.updateItemOrder(ColumnSection.class, Column.class, column.getId(),
-                newOrder, maxOrder + 1);
-    
-        // Create the entity from the request
-        request.setSectionOrder(newOrder);
-        ColumnSection columnSection = columnSectionMapper.toEntity(request);
-    
-        // Add the columnSection to the column and section
-        column.addSectionMapping(columnSection);
-        section.addColumnSection(columnSection);
-        if (latexMethod != null) {
-            latexMethod.addColumnSection(columnSection);
-        }
-    
-        // Save the columnSection
-        long id = columnSectionRepository.save(columnSection).getId();
-    
-        // Create the default layoutSectionItems
-        columnSection.setId(id);
-        createDefaultLayoutSectionItems(columnSection, section.getItems(), latexMethodMap);
-    
-        return id;
+        //TODO: Implement the create method
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
@@ -125,10 +70,6 @@ public class ColumnSectionService implements
         // Get the existing columnSection entity
         ColumnSection columnSection = columnSectionRepository.findById(request.getId())
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("ColumnSection", request.getId()));
-
-        // Shift the order
-        orderableRepositoryUtil.updateItemOrder(ColumnSection.class, Column.class, columnSection.getColumn().getId(),
-                request.getSectionOrder(), columnSection.getSectionOrder());
 
         // Update the latexMethod
         LatexMethod latexMethod = latexMethodRepository.findById(request.getLatexMethodId())
@@ -153,19 +94,10 @@ public class ColumnSectionService implements
 
         // Remove the columnSection from the column and section
         Column column = columnSection.getColumn();
-        Section section = columnSection.getSection();
 
         column.removeSectionMapping(columnSection);
-        section.removeColumnSection(columnSection);
-
         // Delete the columnSection
         columnSectionRepository.delete(columnSection);
-
-        // Shift other columnSections
-        int maxOrder = orderableRepositoryUtil.findMaxItemOrderByParentId(ColumnSection.class, Column.class,
-                column.getId());
-        orderableRepositoryUtil.updateItemOrder(ColumnSection.class, Column.class, column.getId(),
-                maxOrder + 1, columnSection.getSectionOrder());
     }
 
     @Override
@@ -183,22 +115,22 @@ public class ColumnSectionService implements
     /*
      * Create the default layoutSectionItems for all the sectionItems in the section
      */
-    private void createDefaultLayoutSectionItems(ColumnSection columnSection, List<SectionItem> sectionItems,
-            Map<Class<?>, List<LatexMethodResp>> latexMethodMap) {
-        if (sectionItems.isEmpty()) {
-            return;
-        }
+//     private void createDefaultLayoutSectionItems(ColumnSection columnSection, List<SectionItem> sectionItems,
+//             Map<Class<?>, List<LatexMethodResp>> latexMethodMap) {
+//         if (sectionItems.isEmpty()) {
+//             return;
+//         }
 
-        // Create the layoutSectionItems
-        for (SectionItem sectionItem : sectionItems) {
-            List<LatexMethodResp> latexMethods = latexMethodMap.get(sectionItem.getItem().getClass());
-            layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
-                    .columnSectionId(columnSection.getId())
-                    .sectionItemId(sectionItem.getId())
-                    // The first latexMethod will be the default
-                    .latexMethodId(latexMethods.isEmpty() ? null : latexMethods.getFirst().getId())
-                    .itemOrder(columnSection.isDefaultOrder() ? null : sectionItem.getItemOrder())
-                    .build());
-        }
-    }
+//         // Create the layoutSectionItems
+//         for (SectionItem sectionItem : sectionItems) {
+//             List<LatexMethodResp> latexMethods = latexMethodMap.get(sectionItem.getItem().getClass());
+//             layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
+//                     .columnSectionId(columnSection.getId())
+//                     .sectionItemId(sectionItem.getId())
+//                     // The first latexMethod will be the default
+//                     .latexMethodId(latexMethods.isEmpty() ? null : latexMethods.getFirst().getId())
+//                     .itemOrder(columnSection.isDefaultOrder() ? null : sectionItem.getItemOrder())
+//                     .build());
+//         }
+//     }
 }

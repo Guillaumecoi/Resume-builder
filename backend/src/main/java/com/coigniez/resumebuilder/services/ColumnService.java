@@ -35,17 +35,8 @@ public class ColumnService
 
     @Override
     public Long create(ColumnCreateReq request) {
-        // Check if the current user has access to the layout
-        securityUtils.hasAccessLayout(request.getLayoutId());
-
-        // Create the column entity
-        Column column = columnMapper.toEntity(request);
-        layoutRepository.findById(request.getLayoutId())
-                .orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", request.getLayoutId()))
-                .addColumn(column);
-
-        // Save the column entity
-        return columnRepository.save(column).getId();
+        //TODO: Implement the create method
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
@@ -64,24 +55,6 @@ public class ColumnService
         // Check if the current user has access to the column
         securityUtils.hasAccessColumn(request.getId());
 
-        for (ColumnSectionCreateReq section : request.getCreateSectionMappings()) {
-            section.setColumnId(request.getId());
-            columnSectionService.create(section);
-        }
-        for (ColumnSectionUpdateReq section : request.getUpdateSectionMappings()) {
-            // Check if the section belongs to the column
-            if (section.getId() == null) {
-                throw new IllegalArgumentException("Section id is required");
-            }
-            if (columnSectionRepository.findById(section.getId())
-                    .orElseThrow(() -> ExceptionUtils.entityNotFound("ColumnSection", section.getId()))
-                    .getColumn().getId() != request.getId()) {
-                throw new IllegalArgumentException("Section does not belong to the column");
-            }
-
-            columnSectionService.update(section);
-        }
-
         // Update the entity
         Column column = columnRepository.findById(request.getId())
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", request.getId()));
@@ -97,10 +70,7 @@ public class ColumnService
         // Check if the current user has access to the column
         securityUtils.hasAccessColumn(id);
 
-        // Remove the column from the layout
-        Column column = columnRepository.findById(id)
-                .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", id));
-        Optional.ofNullable(column.getLayout()).ifPresent(layout -> layout.removeColumn(column));
+        //TODO: Remove the column from the layout
 
         // Delete the column from the database
         columnRepository.deleteById(id);
@@ -122,11 +92,8 @@ public class ColumnService
         // Check if the current user has access to the layout
         securityUtils.hasAccessLayout(layoutId);
 
-        // Remove all columns from the layout
-        layoutRepository.findById(layoutId)
-                .orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", layoutId))
-                .clearColumns();
-
+        //TODO: Remove all columns from the layout
+        
         // Delete all columns from the database
         columnRepository.deleteAllByLayoutId(layoutId);
     }
