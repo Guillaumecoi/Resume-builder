@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import jakarta.validation.constraints.NotBlank;
-
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,6 +17,7 @@ import lombok.Data;
 public class ResumeCreateReq implements CreateRequest {
 
     @NotBlank
+    @Size(max = 255)
     private String title;
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)

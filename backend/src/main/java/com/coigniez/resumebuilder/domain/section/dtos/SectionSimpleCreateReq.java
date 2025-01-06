@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -18,7 +19,9 @@ import lombok.experimental.SuperBuilder;
 public class SectionSimpleCreateReq implements CreateRequest {  
 
     @NotBlank
+    @Size(max = 255)
     private String title;
+    @Size(max = 50)
     private String icon;
     private Boolean showTitle;
 

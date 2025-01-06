@@ -57,9 +57,10 @@ public class SectionMapper implements Mapper<Section, SectionSimpleCreateReq, Se
         return SectionResp.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
+                .icon(entity.getIcon())
                 .showTitle(entity.isShowTitle())
                 .subSections(Optional.ofNullable(entity.getSubSections())
-                        .map(subSections -> subSections.stream().map(subSectionMapper::toDto).toList())
+                        .map(list -> list.stream().map(subSectionMapper::toDto).toList())
                         .orElse(Collections.emptyList()))
                 .build();
     }

@@ -23,7 +23,9 @@ public class Section implements BaseEntity {
     @GeneratedValue
     private Long id;
 
+    @Column(nullable = false)
     private String title;
+    @Column(length = 50)
     private String icon;
     private boolean showTitle;
 
