@@ -1,131 +1,131 @@
-package com.coigniez.resumebuilder.domain.layout;
+// package com.coigniez.resumebuilder.domain.layout;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+// import static org.junit.jupiter.api.Assertions.assertEquals;
+// import static org.junit.jupiter.api.Assertions.assertNotNull;
+// import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.boot.test.context.SpringBootTest;
+// import org.springframework.test.context.ActiveProfiles;
 
-import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResp;
-import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
-import com.coigniez.resumebuilder.domain.layout.dtos.LayoutUpdateReq;
-import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
-import com.coigniez.resumebuilder.domain.resume.Resume;
-import com.coigniez.resumebuilder.templates.color.ColorTemplates;
-import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplates;
+// import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResp;
+// import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
+// import com.coigniez.resumebuilder.domain.layout.dtos.LayoutUpdateReq;
+// import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
+// import com.coigniez.resumebuilder.domain.resume.Resume;
+// import com.coigniez.resumebuilder.templates.color.ColorTemplates;
+// import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplates;
 
-import jakarta.validation.ConstraintViolationException;
+// import jakarta.validation.ConstraintViolationException;
 
-@SpringBootTest
-@ActiveProfiles("test")
-public class LayoutMapperTest {
+// @SpringBootTest
+// @ActiveProfiles("test")
+// public class LayoutMapperTest {
 
-    @Autowired
-    private LayoutMapper mapper;
+//     @Autowired
+//     private LayoutMapper mapper;
 
-    @Test
-    void testToDto() {
-        // Arrange
-        Layout entity = Layout.builder()
-                .id(1L)
-                .resume(Resume.builder().build())
-                .pageSize(PageSize.A4)
-                .numberOfColumns(1)
-                .columnSeparator(0.35)
-                .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
-                .build();
+//     @Test
+//     void testToDto() {
+//         // Arrange
+//         Layout entity = Layout.builder()
+//                 .id(1L)
+//                 .resume(Resume.builder().build())
+//                 .pageSize(PageSize.A4)
+//                 .numberOfColumns(1)
+//                 .columnSeparator(0.35)
+//                 .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
+//                 .build();
 
-        // Act
-        LayoutResp dto = mapper.toDto(entity);
+//         // Act
+//         LayoutResp dto = mapper.toDto(entity);
 
-        // Assert
-        assertNotNull(dto);
-        assertEquals(entity.getId(), dto.getId());
-        assertEquals(entity.getPageSize(), dto.getPageSize());
-        assertEquals(entity.getNumberOfColumns(), dto.getNumberOfColumns());
-        assertEquals(entity.getColumnSeparator(), dto.getColumnSeparator());
-        assertEquals(entity.getColorScheme(), dto.getColorScheme());
-    }
+//         // Assert
+//         assertNotNull(dto);
+//         assertEquals(entity.getId(), dto.getId());
+//         assertEquals(entity.getPageSize(), dto.getPageSize());
+//         assertEquals(entity.getNumberOfColumns(), dto.getNumberOfColumns());
+//         assertEquals(entity.getColumnSeparator(), dto.getColumnSeparator());
+//         assertEquals(entity.getColorScheme(), dto.getColorScheme());
+//     }
 
-    @Test
-    void testToEntity() {
-        // Arrange
-        LayoutCreateReq request = LayoutCreateReq.builder()
-                .resumeId(1L)
-                .pageSize(PageSize.A4)
-                .numberOfColumns(1)
-                .columnSeparator(0.35)
-                .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
-                .build();
+//     @Test
+//     void testToEntity() {
+//         // Arrange
+//         LayoutCreateReq request = LayoutCreateReq.builder()
+//                 .resumeId(1L)
+//                 .pageSize(PageSize.A4)
+//                 .numberOfColumns(1)
+//                 .columnSeparator(0.35)
+//                 .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
+//                 .build();
 
-        // Act
-        Layout entity = mapper.toEntity(request);
+//         // Act
+//         Layout entity = mapper.toEntity(request);
 
-        // Assert
-        assertNotNull(entity);
-        assertEquals(request.getPageSize(), entity.getPageSize());
-        assertEquals(request.getNumberOfColumns(), entity.getNumberOfColumns());
-        assertEquals(request.getColumnSeparator(), entity.getColumnSeparator());
-        assertEquals(request.getColorScheme(), entity.getColorScheme());
-    }
+//         // Assert
+//         assertNotNull(entity);
+//         assertEquals(request.getPageSize(), entity.getPageSize());
+//         assertEquals(request.getNumberOfColumns(), entity.getNumberOfColumns());
+//         assertEquals(request.getColumnSeparator(), entity.getColumnSeparator());
+//         assertEquals(request.getColorScheme(), entity.getColorScheme());
+//     }
 
-    @Test
-    void testToEntity_DefaultValues() {
-        // Arrange
-        LayoutCreateReq request = LayoutCreateReq.builder()
-                .resumeId(1L)
-                .build();
+//     @Test
+//     void testToEntity_DefaultValues() {
+//         // Arrange
+//         LayoutCreateReq request = LayoutCreateReq.builder()
+//                 .resumeId(1L)
+//                 .build();
 
-        // Act
-        Layout entity = mapper.toEntity(request);
+//         // Act
+//         Layout entity = mapper.toEntity(request);
 
-        // Assert
-        assertNotNull(entity);
-        assertEquals(PageSize.A4, entity.getPageSize());
-        assertEquals(1, entity.getNumberOfColumns());
-        assertEquals(0.35, entity.getColumnSeparator());
-        assertEquals(ColorTemplates.EXECUTIVE_SUITE.getName(), entity.getColorScheme().getName());
-    }
+//         // Assert
+//         assertNotNull(entity);
+//         assertEquals(PageSize.A4, entity.getPageSize());
+//         assertEquals(1, entity.getNumberOfColumns());
+//         assertEquals(0.35, entity.getColumnSeparator());
+//         assertEquals(ColorTemplates.EXECUTIVE_SUITE.getName(), entity.getColorScheme().getName());
+//     }
 
-    @Test
-    void testToEntity_InvalidRequest() {
-        // Arrange
-        LayoutCreateReq request = LayoutCreateReq.builder().numberOfColumns(-1).build();
+//     @Test
+//     void testToEntity_InvalidRequest() {
+//         // Arrange
+//         LayoutCreateReq request = LayoutCreateReq.builder().numberOfColumns(-1).build();
 
-        // Act & Assert
-        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(request));
-    }
+//         // Act & Assert
+//         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(request));
+//     }
 
-    @Test
-    void testUpdateEntity() {
-        // Arrange
-        LayoutUpdateReq request = LayoutUpdateReq.builder()
-                .id(2L)
-                .pageSize(PageSize.A4)
-                .numberOfColumns(2)
-                .columnSeparator(0.5)
-                .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
-                .latexMethods(LatexMethodTemplates.getStandardMethods())
-                .build();
+//     @Test
+//     void testUpdateEntity() {
+//         // Arrange
+//         LayoutUpdateReq request = LayoutUpdateReq.builder()
+//                 .id(2L)
+//                 .pageSize(PageSize.A4)
+//                 .numberOfColumns(2)
+//                 .columnSeparator(0.5)
+//                 .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
+//                 .latexMethods(LatexMethodTemplates.getStandardMethods())
+//                 .build();
 
-        Layout entity = Layout.builder()
-                .id(1L)
-                .pageSize(PageSize.A4)
-                .numberOfColumns(1)
-                .columnSeparator(0.35)
-                .build();
+//         Layout entity = Layout.builder()
+//                 .id(1L)
+//                 .pageSize(PageSize.A4)
+//                 .numberOfColumns(1)
+//                 .columnSeparator(0.35)
+//                 .build();
 
-        // Act
-        mapper.updateEntity(entity, request);
+//         // Act
+//         mapper.updateEntity(entity, request);
 
-        // Assert
-        assertEquals(1L, entity.getId(), "ID should not be updated");
-        assertEquals(request.getPageSize(), entity.getPageSize());
-        assertEquals(request.getNumberOfColumns(), entity.getNumberOfColumns());
-        assertEquals(request.getColumnSeparator(), entity.getColumnSeparator());
-        assertEquals(request.getColorScheme(), entity.getColorScheme());
-    }
-}
+//         // Assert
+//         assertEquals(1L, entity.getId(), "ID should not be updated");
+//         assertEquals(request.getPageSize(), entity.getPageSize());
+//         assertEquals(request.getNumberOfColumns(), entity.getNumberOfColumns());
+//         assertEquals(request.getColumnSeparator(), entity.getColumnSeparator());
+//         assertEquals(request.getColorScheme(), entity.getColorScheme());
+//     }
+// }

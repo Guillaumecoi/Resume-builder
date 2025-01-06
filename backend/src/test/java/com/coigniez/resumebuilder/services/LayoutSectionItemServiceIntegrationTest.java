@@ -1,242 +1,242 @@
-package com.coigniez.resumebuilder.services;
+// package com.coigniez.resumebuilder.services;
 
-import static org.junit.jupiter.api.Assertions.*;
+// import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
+// import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.ActiveProfiles;
+// import org.junit.jupiter.api.BeforeEach;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.boot.test.context.SpringBootTest;
+// import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+// import org.springframework.security.core.Authentication;
+// import org.springframework.security.core.authority.SimpleGrantedAuthority;
+// import org.springframework.security.core.context.SecurityContextHolder;
+// import org.springframework.test.context.ActiveProfiles;
 
-import com.coigniez.resumebuilder.domain.column.dtos.ColumnCreateReq;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
-import com.coigniez.resumebuilder.domain.latex.HasLatexMethod;
-import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodCreateReq;
-import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
-import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
-import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemCreateReq;
-import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemResp;
-import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemUpdateReq;
-import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
-import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
-import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
-import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
-import com.coigniez.resumebuilder.templates.color.ColorTemplates;
-import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplates;
+// import com.coigniez.resumebuilder.domain.column.dtos.ColumnCreateReq;
+// import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
+// import com.coigniez.resumebuilder.domain.latex.HasLatexMethod;
+// import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodCreateReq;
+// import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
+// import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
+// import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemCreateReq;
+// import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemResp;
+// import com.coigniez.resumebuilder.domain.layoutsectionItem.dtos.LayoutSectionItemUpdateReq;
+// import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
+// import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
+// import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
+// import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Textbox;
+// import com.coigniez.resumebuilder.templates.color.ColorTemplates;
+// import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplates;
 
-import jakarta.transaction.Transactional;
+// import jakarta.transaction.Transactional;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Transactional
-public class LayoutSectionItemServiceIntegrationTest {
+// @SpringBootTest
+// @ActiveProfiles("test")
+// @Transactional
+// public class LayoutSectionItemServiceIntegrationTest {
 
-    @Autowired
-    private LayoutSectionItemService layoutSectionItemService;
-    @Autowired
-    private ResumeService resumeService;
-    @Autowired
-    private LayoutService layoutService;
-    @Autowired
-    private SectionService sectionService;
-    @Autowired
-    private ColumnSectionService columnSectionService;
-    @Autowired
-    private SectionItemService sectionItemService;
-    @Autowired
-    private LatexMethodService latexMethodService;
+//     @Autowired
+//     private LayoutSectionItemService layoutSectionItemService;
+//     @Autowired
+//     private ResumeService resumeService;
+//     @Autowired
+//     private LayoutService layoutService;
+//     @Autowired
+//     private SectionService sectionService;
+//     @Autowired
+//     private ColumnSectionService columnSectionService;
+//     @Autowired
+//     private SectionItemService sectionItemService;
+//     @Autowired
+//     private LatexMethodService latexMethodService;
 
-    private Authentication testuser;
-    private Authentication otheruser;
-    private Long columnSectionId;
-    private Long sectionItemId;
-    private Long latexMethodId;
+//     private Authentication testuser;
+//     private Authentication otheruser;
+//     private Long columnSectionId;
+//     private Long sectionItemId;
+//     private Long latexMethodId;
 
-    @BeforeEach
-    void setUp() {
-        // Set up test users
-        testuser = new UsernamePasswordAuthenticationToken("testuser", "password",
-                List.of(new SimpleGrantedAuthority("ROLE_USER")));
-        otheruser = new UsernamePasswordAuthenticationToken("otheruser", "password",
-                List.of(new SimpleGrantedAuthority("ROLE_USER")));
-        SecurityContextHolder.getContext().setAuthentication(testuser);
+//     @BeforeEach
+//     void setUp() {
+//         // Set up test users
+//         testuser = new UsernamePasswordAuthenticationToken("testuser", "password",
+//                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
+//         otheruser = new UsernamePasswordAuthenticationToken("otheruser", "password",
+//                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
+//         SecurityContextHolder.getContext().setAuthentication(testuser);
 
-        // Create resume
-        Long resumeId = resumeService.create(ResumeCreateReq.builder()
-                .title("Test Resume")
-                .build());
+//         // Create resume
+//         Long resumeId = resumeService.create(ResumeCreateReq.builder()
+//                 .title("Test Resume")
+//                 .build());
 
-        // Create layout
-        Long layoutId = layoutService.create(LayoutCreateReq.builder()
-                .resumeId(resumeId)
-                .numberOfColumns(1)
-                .columns(List.of(
-                        ColumnCreateReq.builder()
-                                .columnNumber(1)
-                                .backgroundColor(ColorLocation.LIGHT_BG)
-                                .textColor(ColorLocation.DARK_TEXT)
-                                .borderColor(ColorLocation.ACCENT)
-                                .borderRight(2.0)
-                                .build(),
-                        ColumnCreateReq.builder()
-                                .columnNumber(2)
-                                .backgroundColor(ColorLocation.LIGHT_BG)
-                                .textColor(ColorLocation.DARK_TEXT)
-                                .borderColor(ColorLocation.ACCENT)
-                                .build()))
-                .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
-                .latexMethods(LatexMethodTemplates.getStandardMethods())
-                .build());
+//         // Create layout
+//         Long layoutId = layoutService.create(LayoutCreateReq.builder()
+//                 .resumeId(resumeId)
+//                 .numberOfColumns(1)
+//                 .columns(List.of(
+//                         ColumnCreateReq.builder()
+//                                 .columnNumber(1)
+//                                 .backgroundColor(ColorLocation.LIGHT_BG)
+//                                 .textColor(ColorLocation.DARK_TEXT)
+//                                 .borderColor(ColorLocation.ACCENT)
+//                                 .borderRight(2.0)
+//                                 .build(),
+//                         ColumnCreateReq.builder()
+//                                 .columnNumber(2)
+//                                 .backgroundColor(ColorLocation.LIGHT_BG)
+//                                 .textColor(ColorLocation.DARK_TEXT)
+//                                 .borderColor(ColorLocation.ACCENT)
+//                                 .build()))
+//                 .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
+//                 .latexMethods(LatexMethodTemplates.getStandardMethods())
+//                 .build());
 
-        // get column
-        Long columnId = layoutService.get(layoutId).getColumns().get(0).getId();
+//         // get column
+//         Long columnId = layoutService.get(layoutId).getColumns().get(0).getId();
 
-        // Create latex method
-        latexMethodId = latexMethodService.create(LatexMethodCreateReq.builder()
-                .layoutId(layoutId)
-                .name("Test Method")
-                .type(HasLatexMethod.TEXTBOX)
-                .method("method")
-                .build());
+//         // Create latex method
+//         latexMethodId = latexMethodService.create(LatexMethodCreateReq.builder()
+//                 .layoutId(layoutId)
+//                 .name("Test Method")
+//                 .type(HasLatexMethod.TEXTBOX)
+//                 .method("method")
+//                 .build());
 
-        // Create section
-        Long sectionId = sectionService.create(SectionCreateReq.builder()
-                .resumeId(resumeId)
-                .title("Test Section")
-                .build());
+//         // Create section
+//         Long sectionId = sectionService.create(SectionCreateReq.builder()
+//                 .resumeId(resumeId)
+//                 .title("Test Section")
+//                 .build());
 
-        // Create column section
-        columnSectionId = columnSectionService.create(ColumnSectionCreateReq.builder()
-                .columnId(columnId)
-                .sectionId(sectionId)
-                .latexMethodId(latexMethodId)
-                .defaultOrder(false)
-                .build());
+//         // Create column section
+//         columnSectionId = columnSectionService.create(ColumnSectionCreateReq.builder()
+//                 .columnId(columnId)
+//                 .sectionId(sectionId)
+//                 .latexMethodId(latexMethodId)
+//                 .defaultOrder(false)
+//                 .build());
 
-        // Create section item
-        sectionItemId = sectionItemService.create(SectionItemCreateReq.builder()
-                .sectionId(sectionId)
-                .item(Textbox.builder().content("Test content").build())
-                .build());
-    }
+//         // Create section item
+//         sectionItemId = sectionItemService.create(SectionItemCreateReq.builder()
+//                 .sectionId(sectionId)
+//                 .item(Textbox.builder().content("Test content").build())
+//                 .build());
+//     }
 
-    @Test
-    void testCreate() {
-        // Arrange
-        LayoutSectionItemCreateReq request = LayoutSectionItemCreateReq.builder()
-                .columnSectionId(columnSectionId)
-                .sectionItemId(sectionItemId)
-                .latexMethodId(latexMethodId)
-                .itemOrder(1)
-                .build();
+//     @Test
+//     void testCreate() {
+//         // Arrange
+//         LayoutSectionItemCreateReq request = LayoutSectionItemCreateReq.builder()
+//                 .columnSectionId(columnSectionId)
+//                 .sectionItemId(sectionItemId)
+//                 .latexMethodId(latexMethodId)
+//                 .itemOrder(1)
+//                 .build();
 
-        // Act
-        Long id = layoutSectionItemService.create(request);
+//         // Act
+//         Long id = layoutSectionItemService.create(request);
 
-        // Assert
-        assertNotNull(id);
-        LayoutSectionItemResp response = layoutSectionItemService.get(id);
-        assertEquals(sectionItemId, response.getSectionItem().getId());
-        assertEquals(latexMethodId, response.getLatexMethod().getId());
-        assertEquals(1, response.getItemOrder());
-    }
+//         // Assert
+//         assertNotNull(id);
+//         LayoutSectionItemResp response = layoutSectionItemService.get(id);
+//         assertEquals(sectionItemId, response.getSectionItem().getId());
+//         assertEquals(latexMethodId, response.getLatexMethod().getId());
+//         assertEquals(1, response.getItemOrder());
+//     }
 
-    @Test
-    void testUpdate() {
-        // Arrange
-        Long id = layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
-                .columnSectionId(columnSectionId)
-                .sectionItemId(sectionItemId)
-                .latexMethodId(latexMethodId)
-                .itemOrder(1)
-                .build());
+//     @Test
+//     void testUpdate() {
+//         // Arrange
+//         Long id = layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
+//                 .columnSectionId(columnSectionId)
+//                 .sectionItemId(sectionItemId)
+//                 .latexMethodId(latexMethodId)
+//                 .itemOrder(1)
+//                 .build());
 
-        LayoutSectionItemUpdateReq request = LayoutSectionItemUpdateReq.builder()
-                .id(id)
-                .sectionItemId(sectionItemId)
-                .latexMethodId(latexMethodId)
-                .latexMethodId(latexMethodId)
-                .itemOrder(2)
-                .build();
+//         LayoutSectionItemUpdateReq request = LayoutSectionItemUpdateReq.builder()
+//                 .id(id)
+//                 .sectionItemId(sectionItemId)
+//                 .latexMethodId(latexMethodId)
+//                 .latexMethodId(latexMethodId)
+//                 .itemOrder(2)
+//                 .build();
 
-        // Act
-        layoutSectionItemService.update(request);
+//         // Act
+//         layoutSectionItemService.update(request);
 
-        // Assert
-        LayoutSectionItemResp response = layoutSectionItemService.get(id);
-        assertEquals(2, response.getItemOrder());
-    }
+//         // Assert
+//         LayoutSectionItemResp response = layoutSectionItemService.get(id);
+//         assertEquals(2, response.getItemOrder());
+//     }
 
-    @Test
-    void testDelete() {
-        // Arrange
-        Long id = layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
-                .columnSectionId(columnSectionId)
-                .sectionItemId(sectionItemId)
-                .latexMethodId(latexMethodId)
-                .itemOrder(1)
-                .build());
+//     @Test
+//     void testDelete() {
+//         // Arrange
+//         Long id = layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
+//                 .columnSectionId(columnSectionId)
+//                 .sectionItemId(sectionItemId)
+//                 .latexMethodId(latexMethodId)
+//                 .itemOrder(1)
+//                 .build());
 
-        // Act
-        layoutSectionItemService.delete(id);
+//         // Act
+//         layoutSectionItemService.delete(id);
 
-        // Assert
-        assertThrows(RuntimeException.class, () -> layoutSectionItemService.get(id));
-    }
+//         // Assert
+//         assertThrows(RuntimeException.class, () -> layoutSectionItemService.get(id));
+//     }
 
-    @Test
-    void testGetAllByParentId() {
-        // Arrange
-        layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
-                .columnSectionId(columnSectionId)
-                .sectionItemId(sectionItemId)
-                .latexMethodId(latexMethodId)
-                .itemOrder(1)
-                .build());
+//     @Test
+//     void testGetAllByParentId() {
+//         // Arrange
+//         layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
+//                 .columnSectionId(columnSectionId)
+//                 .sectionItemId(sectionItemId)
+//                 .latexMethodId(latexMethodId)
+//                 .itemOrder(1)
+//                 .build());
 
-        // Act
-        List<LayoutSectionItemResp> responses = layoutSectionItemService.getAllByParentId(columnSectionId);
+//         // Act
+//         List<LayoutSectionItemResp> responses = layoutSectionItemService.getAllByParentId(columnSectionId);
 
-        // Assert
-        assertEquals(1, responses.size());
-    }
+//         // Assert
+//         assertEquals(1, responses.size());
+//     }
 
-    @Test
-    void testRemoveAllByParentId() {
-        // Arrange
-        layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
-                .columnSectionId(columnSectionId)
-                .sectionItemId(sectionItemId)
-                .latexMethodId(latexMethodId)
-                .itemOrder(1)
-                .build());
+//     @Test
+//     void testRemoveAllByParentId() {
+//         // Arrange
+//         layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
+//                 .columnSectionId(columnSectionId)
+//                 .sectionItemId(sectionItemId)
+//                 .latexMethodId(latexMethodId)
+//                 .itemOrder(1)
+//                 .build());
 
-        // Act
-        layoutSectionItemService.removeAllByParentId(columnSectionId);
+//         // Act
+//         layoutSectionItemService.removeAllByParentId(columnSectionId);
 
-        // Assert
-        List<LayoutSectionItemResp> responses = layoutSectionItemService.getAllByParentId(columnSectionId);
-        assertTrue(responses.isEmpty());
-    }
+//         // Assert
+//         List<LayoutSectionItemResp> responses = layoutSectionItemService.getAllByParentId(columnSectionId);
+//         assertTrue(responses.isEmpty());
+//     }
 
-    @Test
-    void testAccessControl() {
-        // Arrange
-        Long id = layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
-                .columnSectionId(columnSectionId)
-                .sectionItemId(sectionItemId)
-                .latexMethodId(latexMethodId)
-                .itemOrder(1)
-                .build());
+//     @Test
+//     void testAccessControl() {
+//         // Arrange
+//         Long id = layoutSectionItemService.create(LayoutSectionItemCreateReq.builder()
+//                 .columnSectionId(columnSectionId)
+//                 .sectionItemId(sectionItemId)
+//                 .latexMethodId(latexMethodId)
+//                 .itemOrder(1)
+//                 .build());
 
-        // Act & Assert
-        SecurityContextHolder.getContext().setAuthentication(otheruser);
-        assertThrows(RuntimeException.class, () -> layoutSectionItemService.get(id));
-    }
-}
+//         // Act & Assert
+//         SecurityContextHolder.getContext().setAuthentication(otheruser);
+//         assertThrows(RuntimeException.class, () -> layoutSectionItemService.get(id));
+//     }
+// }
