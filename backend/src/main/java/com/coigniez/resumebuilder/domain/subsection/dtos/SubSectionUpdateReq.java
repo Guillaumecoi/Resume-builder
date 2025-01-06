@@ -4,7 +4,7 @@ import com.coigniez.resumebuilder.interfaces.UpdateRequest;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,7 +18,9 @@ public class SubSectionUpdateReq implements UpdateRequest {
     private Long sectionId;
 
     @NotBlank
+    @Size(max = 255)
     private String title;
+    @Size(max = 50)
     private String icon;
     @NotNull
     private Boolean showTitle;

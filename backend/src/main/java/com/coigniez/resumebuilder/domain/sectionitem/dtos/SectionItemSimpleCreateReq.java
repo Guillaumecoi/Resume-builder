@@ -15,6 +15,5 @@ public class SectionItemSimpleCreateReq implements CreateRequest {
 
     @NotNull
     private SectionItemData item;
-    @NotNull
     private Integer itemOrder;
 }

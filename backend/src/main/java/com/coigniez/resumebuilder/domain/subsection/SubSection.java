@@ -23,8 +23,11 @@ public class SubSection implements BaseEntity {
     @GeneratedValue
     private Long id;
 
+    @Column(nullable = false)
     private String title;
+    @Column(length = 50)
     private String icon;
+    @Column(nullable = false)
     private boolean showTitle;
 
     @ManyToOne

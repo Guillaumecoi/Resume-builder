@@ -27,6 +27,7 @@ public class Section implements BaseEntity {
     private String title;
     @Column(length = 50)
     private String icon;
+    @Column(nullable = false)
     private boolean showTitle;
 
     @ManyToOne

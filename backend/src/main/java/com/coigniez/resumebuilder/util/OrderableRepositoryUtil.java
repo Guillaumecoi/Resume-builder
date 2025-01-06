@@ -1,6 +1,13 @@
 package com.coigniez.resumebuilder.util;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,6 +23,59 @@ public class OrderableRepositoryUtil {
     private EntityManager entityManager;
     @Autowired
     private ParentRepositoryUtil parentRepositoryUtil;
+
+    /**
+     * Assigns sequential orders to items, preserving existing valid orders.
+     * Duplicate orders are incremented by 1.
+     * 
+     * @param <T>         Type of items
+     * @param items       List of items to order
+     * @param orderGetter Function to get order from item
+     * @param orderSetter Function to set order on item
+     * @return Array of ordered items with their orders set.
+     */
+    public <T> T[] assignOrders(List<T> items,
+            Function<T, Integer> orderGetter,
+            BiConsumer<T, Integer> orderSetter,
+            IntFunction<T[]> arrayCreator) {
+        if (items == null)
+            return arrayCreator.apply(0);
+
+        // Create result array and available orders
+        T[] result = arrayCreator.apply(items.size());
+        List<Integer> availableOrders = IntStream.range(1, items.size() + 1).boxed()
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        // Get items with and without order
+        List<T> withOrder = items.stream()
+                .filter(item -> orderGetter.apply(item) != null &&
+                        availableOrders.contains(orderGetter.apply(item)))
+                .sorted(Comparator.comparing(orderGetter))
+                .collect(Collectors.toList());
+        List<T> withoutOrder = items.stream()
+                .filter(item -> orderGetter.apply(item) == null ||
+                        !availableOrders.contains(orderGetter.apply(item)))
+                .collect(Collectors.toList());
+
+        // Assign orders to items
+        for (T item : withOrder) {
+            // Increment order if duplicate
+            if (!availableOrders.contains(orderGetter.apply(item))) {
+                orderSetter.accept(item, orderGetter.apply(item) + 1);
+            }
+            int order = orderGetter.apply(item);
+            result[order - 1] = item;
+            availableOrders.remove(Integer.valueOf(order));
+        }
+        for (T item : withoutOrder) {
+            int newOrder = availableOrders.getFirst();
+            orderSetter.accept(item, newOrder);
+            availableOrders.remove(0);
+            result[newOrder - 1] = item;
+        }
+
+        return result;
+    }
 
     /**
      * Method to find the maximum item order by parent id

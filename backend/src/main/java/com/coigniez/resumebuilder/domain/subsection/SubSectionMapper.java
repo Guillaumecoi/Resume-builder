@@ -1,5 +1,7 @@
 package com.coigniez.resumebuilder.domain.subsection;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -8,11 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemSimpleCreateReq;
 import com.coigniez.resumebuilder.domain.subsection.dtos.SubSectionResp;
 import com.coigniez.resumebuilder.domain.subsection.dtos.SubSectionSimpleCreateReq;
 import com.coigniez.resumebuilder.domain.subsection.dtos.SubSectionUpdateReq;
 import com.coigniez.resumebuilder.interfaces.Mapper;
 import com.coigniez.resumebuilder.util.MapperUtils;
+import com.coigniez.resumebuilder.util.OrderableRepositoryUtil;
 
 import jakarta.validation.Valid;
 
@@ -25,6 +29,8 @@ public class SubSectionMapper
 
     @Autowired
     private SectionItemMapper sectionItemMapper;
+    @Autowired
+    private OrderableRepositoryUtil orderableRepositoryUtil;
 
     @Override
     public SubSection toEntity(@Valid SubSectionSimpleCreateReq request) {
@@ -38,13 +44,17 @@ public class SubSectionMapper
                 .title(request.getTitle())
                 .icon(request.getIcon())
                 .showTitle(request.getShowTitle())
+                .items(new ArrayList<>())
                 .build();
 
         // Add items
-        Optional.ofNullable(request.getSectionItems())
-                .ifPresent(items -> items.forEach(item -> {
+        Arrays.stream(orderableRepositoryUtil.assignOrders(request.getSectionItems(),
+                SectionItemSimpleCreateReq::getItemOrder, SectionItemSimpleCreateReq::setItemOrder,
+                SectionItemSimpleCreateReq[]::new))
+                .forEach(item -> {
                     subSection.addSectionItem(sectionItemMapper.toEntity(item));
-                }));
+                });
+
         return subSection;
     }
 
