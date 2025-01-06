@@ -43,7 +43,7 @@ public class SubSectionService
         sectionRepository.findById(request.getSectionId())
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", request.getSectionId()))
                 .addSubSection(subSection);
-        
+
         // Save the sub-section
         return subSectionRepository.save(subSection).getId();
     }
@@ -92,7 +92,7 @@ public class SubSectionService
         // Check if the user has access to the section
         securityUtils.hasAccessSection(parentId);
         // Get all the sub-sections
-        return parentRepositoryUtil.findAllByParentId(SubSection.class, Section.class, parentId)
+        return parentRepositoryUtil.findAllByParentId(SubSection.class, Section.class, parentId, null)
                 .stream()
                 .map(subSectionMapper::toDto)
                 .toList();
@@ -102,8 +102,13 @@ public class SubSectionService
     public void removeAllByParentId(Long parentId) {
         // Check if the user has access to the section
         securityUtils.hasAccessSection(parentId);
-        // Remove all the sub-sections
-        parentRepositoryUtil.removeAllByParentId(SubSection.class, Section.class, parentId);
+        // Clear the sub-sections from the section
+        Section section = sectionRepository.findById(parentId)
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", parentId));
+        section.clearSubSections();
+
+        // Save the section
+        sectionRepository.save(section);
     }
 
 }

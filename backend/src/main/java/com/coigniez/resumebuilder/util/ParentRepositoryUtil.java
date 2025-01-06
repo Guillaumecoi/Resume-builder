@@ -13,7 +13,7 @@ import jakarta.transaction.Transactional;
 public class ParentRepositoryUtil {
 
     @Autowired
-    private EntityManager entityManager; 
+    private EntityManager entityManager;
 
     /**
      * Method to find all entities by parent id
@@ -26,32 +26,16 @@ public class ParentRepositoryUtil {
      * @return The list of entities ordered by item order
      */
     @SuppressWarnings("unchecked")
-    public <T, ID> List<T> findAllByParentId(Class<T> entityClass, Class<?> parentClass, ID parentId) {
-        String query = "SELECT e FROM " + getEntityName(entityClass) + " e WHERE e." 
-                + getParentName(parentClass) + ".id = :parentId ORDER BY e.itemOrder";
-        
+    public <T, ID> List<T> findAllByParentId(Class<T> entityClass, Class<?> parentClass, ID parentId, String orderBy) {
+        String query = "SELECT e FROM " + getEntityName(entityClass) + " e WHERE e."
+                + getParentName(parentClass) + ".id = :parentId";
+                
+        query += (orderBy != null ? " ORDER BY e." + orderBy : "");
+    
         return entityManager.createQuery(query)
                 .setParameter("parentId", parentId)
                 .getResultList();
     }
-
-    /**
-     * Method to remove all entities by parent id
-     * 
-     * @param <ID>         The type of the parent id
-     * @param entityClass  The entity class
-     * @param parentClass  The parent class
-     * @param parentId     The parent id
-     */
-    public <ID> void removeAllByParentId(Class<?> entityClass, Class<?> parentClass, ID parentId) {
-        String query = "DELETE FROM " + getEntityName(entityClass) + " e WHERE e." 
-                + getParentName(parentClass) + ".id = :parentId";
-        
-        entityManager.createQuery(query)
-                .setParameter("parentId", parentId)
-                .executeUpdate();
-    }
-
 
     private String getEntityName(Class<?> entityClass) {
         return entityClass.getSimpleName();

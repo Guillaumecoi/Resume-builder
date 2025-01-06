@@ -60,7 +60,7 @@ public class OrderableRepositoryUtil {
         }
 
         // Refresh the entities to get the updated item order
-        refreshEntityItems(parentRepositoryUtil.findAllByParentId(entityClass, parentClass, parentId));
+        refreshEntityItems(parentRepositoryUtil.findAllByParentId(entityClass, parentClass, parentId, orderName));
     }
 
     private <ID> void incrementItemOrderBetween(Class<?> entityClass, Class<?> parentClass, ID parentId,

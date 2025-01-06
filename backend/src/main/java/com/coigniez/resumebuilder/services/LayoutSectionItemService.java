@@ -123,7 +123,7 @@ public class LayoutSectionItemService implements
         // Check if the user has access to the ColumnSection
         securityUtils.hasAccessColumnSection(parentId);
         // Get all LayoutSectionItems from the ColumnSection
-        return parentRepositoryUtil.findAllByParentId(LayoutSectionItem.class, ColumnSection.class, parentId)
+        return parentRepositoryUtil.findAllByParentId(LayoutSectionItem.class, ColumnSection.class, parentId, "itemOrder")
                 .stream()
                 .map(layoutSectionItemMaper::toDto)
                 .toList();
@@ -133,7 +133,7 @@ public class LayoutSectionItemService implements
     public void removeAllByParentId(Long parentId) {
         // Check if the user has access to the ColumnSection
         securityUtils.hasAccessColumnSection(parentId);
-        // Remove all LayoutSectionItems from the ColumnSection
-        parentRepositoryUtil.removeAllByParentId(LayoutSectionItem.class, ColumnSection.class, parentId);
+        // TODO: Implement the removeAllByParentId method
+
     }
 }

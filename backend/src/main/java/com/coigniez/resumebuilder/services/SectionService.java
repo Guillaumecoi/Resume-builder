@@ -14,6 +14,7 @@ import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.repository.ResumeRepository;
 import com.coigniez.resumebuilder.repository.SectionRepository;
 import com.coigniez.resumebuilder.util.ExceptionUtils;
+import com.coigniez.resumebuilder.util.ParentRepositoryUtil;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class SectionService
     private final ResumeRepository resumeRepository;
     private final SectionMapper sectionMapper;
     private final SecurityUtils securityUtils;
+    private final ParentRepositoryUtil parentRepositoryUtil;
 
     @Override
     public Long create(SectionCreateReq request) {
@@ -42,10 +44,7 @@ public class SectionService
                 .addSection(section);
 
         // Save the section
-        Long sectionId = sectionRepository.save(section).getId();
-
-        // Return the section id
-        return sectionId;
+        return sectionRepository.save(section).getId();
     }
 
     @Override
@@ -82,7 +81,7 @@ public class SectionService
         Section section = sectionRepository.findById(id)
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", id));
         Resume resume = section.getResume();
-        resume.getSections().remove(section);
+        resume.removeSection(section);
 
         // Delete the section
         sectionRepository.deleteById(id);
@@ -90,20 +89,23 @@ public class SectionService
 
     @Override
     public List<SectionResp> getAllByParentId(Long resumeId) {
-        return sectionRepository.findAllByResumeId(resumeId).stream()
-                .map(sectionMapper::toDto)
-                .toList();
+        // Check if the user has access to the resume
+        securityUtils.hasAccessResume(resumeId);
+
+        return parentRepositoryUtil.findAllByParentId(Section.class, Resume.class, resumeId, null)
+                .stream().map(sectionMapper::toDto).toList();
     }
 
     @Override
     public void removeAllByParentId(Long resumeId) {
+        // Check if the user has access to the resume
+        securityUtils.hasAccessResume(resumeId);
         // Clear the sections from the resume
-        resumeRepository.findById(resumeId)
-                .orElseThrow(() -> ExceptionUtils.entityNotFound("Resume", resumeId))
-                .clearSections();
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Resume", resumeId));
+        resume.clearSections();
 
-        // Delete the sections
-        sectionRepository.deleteAll(sectionRepository.findAllByResumeId(resumeId));
-
+        // Save the resume
+        resumeRepository.save(resume);
     }
 }
