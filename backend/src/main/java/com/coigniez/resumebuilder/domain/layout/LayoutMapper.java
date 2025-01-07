@@ -1,8 +1,9 @@
 package com.coigniez.resumebuilder.domain.layout;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -48,17 +49,23 @@ public class LayoutMapper implements Mapper<Layout, LayoutCreateReq, LayoutUpdat
         Layout layout = Layout.builder()
                 .pageSize(request.getPageSize())
                 .colorScheme(request.getColorScheme())
+                .latexMethods(new ArrayList<>())
                 .build();
 
         // Set the child entities
         request.getLatexMethods().forEach(method -> layout.addLatexMethod(latexMethodMapper.toEntity(method)));
-        HeaderFooter header = (HeaderFooter) columnHolderMapper.toEntity(request.getHeader());
-        header.setLayout(layout);
-        layout.setHeader(header);
-        HeaderFooter footer = (HeaderFooter) columnHolderMapper.toEntity(request.getFooter());
-        footer.setLayout(layout);
-        layout.setFooter(footer);
-        request.getPages().forEach(page -> layout.addPage((LayoutPage) columnHolderMapper.toEntity(page)));
+        if (request.getHeader() != null) {
+            HeaderFooter header = (HeaderFooter) columnHolderMapper.toEntity(request.getHeader());
+            header.setLayout(layout);
+            layout.setHeader(header);
+        }
+        if (request.getFooter() != null) {
+            HeaderFooter footer = (HeaderFooter) columnHolderMapper.toEntity(request.getFooter());
+            footer.setLayout(layout);
+            layout.setFooter(footer);
+        }
+        Optional.ofNullable(request.getPages()).ifPresent(
+                pages -> pages.forEach(page -> layout.addPage((LayoutPage) columnHolderMapper.toEntity(page))));
 
         return layout;
     }
@@ -69,7 +76,7 @@ public class LayoutMapper implements Mapper<Layout, LayoutCreateReq, LayoutUpdat
             return null;
         }
 
-        Set<LatexMethodResp> latexMethodDTOs = new HashSet<>();
+        List<LatexMethodResp> latexMethodDTOs = new ArrayList<>();
         if (entity.getLatexMethods() != null) {
             entity.getLatexMethods().forEach(method -> latexMethodDTOs.add(latexMethodMapper.toDto(method)));
         }

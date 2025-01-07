@@ -3,12 +3,14 @@ package com.coigniez.resumebuilder.domain.subsection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemSimpleCreateReq;
 import com.coigniez.resumebuilder.domain.subsection.dtos.SubSectionResp;
@@ -70,7 +72,9 @@ public class SubSectionMapper
                 .icon(entity.getIcon())
                 .showTitle(entity.isShowTitle())
                 .sectionItems(Optional.ofNullable(entity.getItems())
-                        .map(items -> items.stream().map(sectionItemMapper::toDto).toList())
+                        .map(items -> items.stream()
+                                .sorted(Comparator.comparingInt(SectionItem::getItemOrder))
+                                .map(sectionItemMapper::toDto).toList())
                         .orElse(Collections.emptyList()))
                 .build();
     }

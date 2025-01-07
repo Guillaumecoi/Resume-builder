@@ -1,7 +1,6 @@
 package com.coigniez.resumebuilder.domain.layout;
 
 import java.util.List;
-import java.util.Set;
 
 import com.coigniez.resumebuilder.domain.columnholder.headerfooter.HeaderFooter;
 import com.coigniez.resumebuilder.domain.columnholder.page.LayoutPage;
@@ -36,7 +35,7 @@ public class Layout implements BaseEntity {
     private Resume resume;
 
     @OneToMany(mappedBy = "layout", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<LatexMethod> latexMethods;
+    private List<LatexMethod> latexMethods;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LayoutPage> pages;

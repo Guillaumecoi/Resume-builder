@@ -12,15 +12,22 @@ import com.coigniez.resumebuilder.domain.resume.dtos.ResumeSimpleResp;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeUpdateReq;
 import com.coigniez.resumebuilder.domain.resume.enums.ResumeOrderBy;
 import com.coigniez.resumebuilder.interfaces.CrudController;
+import com.coigniez.resumebuilder.services.LayoutService;
 import com.coigniez.resumebuilder.services.ResumeService;
+import com.coigniez.resumebuilder.services.SectionService;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
+import java.util.List;
+import java.util.Arrays;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +46,8 @@ public class ResumeController
         implements CrudController<ResumeCreateReq, ResumeUpdateReq, ResumeResp, Long> {
 
     private final ResumeService resumeService;
+    private final SectionService sectionService;
+    private final LayoutService layoutService;
 
     @Override
     @PostMapping
@@ -80,6 +89,7 @@ public class ResumeController
     }
 
     @GetMapping
+    @Operation(operationId = "getAllResumes")
     public ResponseEntity<PageResponse<ResumeSimpleResp>> getAllResumes(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
@@ -90,8 +100,54 @@ public class ResumeController
     }
 
     @PostMapping("/deleteAll")
+    @Operation(operationId = "deleteAllResumes")
     public ResponseEntity<Void> deleteAllResumes(Authentication user) {
         resumeService.deleteAll();
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}/{type}")
+    @Operation(operationId = "getResumeChildren")
+    public ResponseEntity<List<?>> getChildren(
+        @PathVariable Long id, 
+        @PathVariable(value = "type") @Pattern(regexp = ChildType.REGEX) String typeStr,
+        Authentication user) {
+        ChildType type = ChildType.fromString(typeStr);
+        return switch(type) {
+            case SECTION -> ResponseEntity.ok(sectionService.getAllByParentId(id));
+            case LAYOUT -> ResponseEntity.ok(layoutService.getAllByParentId(id));
+        };
+    }
+
+    @PostMapping("/{id}/delete/{type}")
+    @Operation(operationId = "deleteResumeChildren")
+    public ResponseEntity<Void> deleteChildren(
+        @PathVariable Long id, 
+        @PathVariable(value = "type") @Pattern(regexp = ChildType.REGEX) String typeStr,
+        Authentication user) {
+        switch(ChildType.fromString(typeStr)) {
+            case SECTION -> sectionService.removeAllByParentId(id);
+            case LAYOUT -> layoutService.removeAllByParentId(id);
+        }
+        return ResponseEntity.noContent().build();
+    }
+    
+    @Getter
+    @RequiredArgsConstructor
+    public enum ChildType {
+        SECTION("sections"),
+        LAYOUT("layouts");
+    
+        private final String value;
+        private static final String REGEX = "^(sections|layouts)$";
+    
+        @JsonCreator
+        public static ChildType fromString(String value) {
+            return Arrays.stream(values())
+                .filter(type -> type.value.equals(value.toLowerCase()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown child type: " + value));
+        }
+    }
+    
 }

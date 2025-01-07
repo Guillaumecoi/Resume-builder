@@ -27,6 +27,7 @@ public class ResumeMapper implements Mapper<Resume, ResumeCreateReq, ResumeUpdat
         Resume resume = Resume.builder()
                 .title(request.getTitle())
                 .sections(new ArrayList<>())
+                .layouts(new ArrayList<>())
                 .build();
 
         Optional.ofNullable(request.getSections())

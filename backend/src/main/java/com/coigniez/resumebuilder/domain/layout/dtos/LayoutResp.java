@@ -1,7 +1,6 @@
 package com.coigniez.resumebuilder.domain.layout.dtos;
 
 import java.util.List;
-import java.util.Set;
 
 import com.coigniez.resumebuilder.domain.column.dtos.ColumnResp;
 import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
@@ -30,6 +29,6 @@ public class LayoutResp implements Response {
     @NotNull
     private ColorScheme colorScheme;
     @NotNull
-    private Set<LatexMethodResp> latexMethods;
+    private List<LatexMethodResp> latexMethods;
     
 }

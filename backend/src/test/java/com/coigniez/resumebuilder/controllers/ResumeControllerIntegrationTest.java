@@ -18,7 +18,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
 import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
+import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
 import com.coigniez.resumebuilder.domain.section.dtos.SectionSimpleCreateReq;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -36,10 +38,10 @@ public class ResumeControllerIntegrationTest {
     void testCreateAndGetResume() throws Exception {
         // Arrange
         ResumeCreateReq createRequest = ResumeCreateReq.builder().title("Software Engineer")
-                        .sections(List.of(
-                                SectionSimpleCreateReq.builder().title("Education").build(),
-                                SectionSimpleCreateReq.builder().title("Experience").build()))
-                        .build();
+                .sections(List.of(
+                        SectionSimpleCreateReq.builder().title("Education").build(),
+                        SectionSimpleCreateReq.builder().title("Experience").build()))
+                .build();
 
         // Act - Create
         String createResponse = mockMvc.perform(post("/resumes")
@@ -166,6 +168,150 @@ public class ResumeControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.totalElements").value(0));
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    void testGetChildren() throws Exception {
+        // Arrange
+        ResumeCreateReq resumeRequest = ResumeCreateReq.builder()
+                .title("Test Resume")
+                .build();
+
+        String resumeResponse = mockMvc.perform(post("/resumes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(resumeRequest)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+        Long resumeId = Long.parseLong(resumeResponse);
+
+        // Create sections
+        SectionCreateReq sectionRequest = SectionCreateReq.builder()
+                .resumeId(resumeId)
+                .title("Test Section")
+                .build();
+        mockMvc.perform(post("/sections")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(sectionRequest)))
+                .andExpect(status().isCreated());
+
+        // Create layout
+        LayoutCreateReq layoutRequest = LayoutCreateReq.builder()
+                .resumeId(resumeId)
+                .build();
+        mockMvc.perform(post("/layouts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(layoutRequest)))
+                .andExpect(status().isCreated());
+
+        // Act & Assert - Get sections
+        mockMvc.perform(get("/resumes/" + resumeId + "/sections"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].title").value("Test Section"));
+
+        // Get layouts
+        mockMvc.perform(get("/resumes/" + resumeId + "/layouts"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].pageSize").value("A4"));
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    void testDeleteChildren() throws Exception {
+        // Arrange
+        ResumeCreateReq resumeRequest = ResumeCreateReq.builder()
+                .title("Test Resume")
+                .build();
+
+        String resumeResponse = mockMvc.perform(post("/resumes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(resumeRequest)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+        Long resumeId = Long.parseLong(resumeResponse);
+
+        // Create sections
+        SectionCreateReq sectionRequest = SectionCreateReq.builder()
+                .resumeId(resumeId)
+                .title("Test Section")
+                .build();
+        mockMvc.perform(post("/sections")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(sectionRequest)))
+                .andExpect(status().isCreated());
+
+        // Create layout
+        LayoutCreateReq layoutRequest = LayoutCreateReq.builder()
+                .resumeId(resumeId)
+                .build();
+        mockMvc.perform(post("/layouts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(layoutRequest)))
+                .andExpect(status().isCreated());
+
+        // Act & Assert - Delete sections
+        mockMvc.perform(post("/resumes/" + resumeId + "/delete/sections"))
+                .andExpect(status().isNoContent());
+
+        // Verify sections are deleted
+        mockMvc.perform(get("/resumes/" + resumeId + "/sections"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    void testChildrenAccessControl() throws Exception {
+        // Arrange
+        ResumeCreateReq resumeRequest = ResumeCreateReq.builder()
+                .title("Test Resume")
+                .build();
+
+        String resumeResponse = mockMvc.perform(post("/resumes")
+                .with(user("testuser").roles("USER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(resumeRequest)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+        Long resumeId = Long.parseLong(resumeResponse);
+
+        // Create sections
+        SectionCreateReq sectionRequest = SectionCreateReq.builder()
+                .resumeId(resumeId)
+                .title("Test Section")
+                .build();
+        mockMvc.perform(post("/sections")
+                .with(user("testuser").roles("USER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(sectionRequest)))
+                .andExpect(status().isCreated());
+
+        // Create layout
+        LayoutCreateReq layoutRequest = LayoutCreateReq.builder()
+                .resumeId(resumeId)
+                .build();
+        mockMvc.perform(post("/layouts")
+                .with(user("testuser").roles("USER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(layoutRequest)))
+                .andExpect(status().isCreated());
+
+        // Try access with different user - should fail
+        mockMvc.perform(get("/resumes/" + resumeId + "/sections")
+                .with(user("otheruser").roles("USER")))
+                .andExpect(status().isNotFound()); 
+        mockMvc.perform(get("/resumes/" + resumeId + "/layouts")
+                .with(user("otheruser").roles("USER")))
+                .andExpect(status().isNotFound());
+        mockMvc.perform(post("/resumes/" + resumeId + "/delete/sections")
+                .with(user("otheruser").roles("USER")))
+                .andExpect(status().isNotFound());
+        mockMvc.perform(post("/resumes/" + resumeId + "/delete/layouts")
+                .with(user("otheruser").roles("USER")))
+                .andExpect(status().isNotFound());
+
     }
 
 }
