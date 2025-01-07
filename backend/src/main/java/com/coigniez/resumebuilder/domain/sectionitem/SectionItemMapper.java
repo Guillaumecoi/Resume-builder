@@ -21,7 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @AllArgsConstructor
 @Service
-public class SectionItemMapper implements Mapper<SectionItem, SectionItemSimpleCreateReq, SectionItemUpdateReq, SectionItemResp> {
+public class SectionItemMapper
+        implements Mapper<SectionItem, SectionItemSimpleCreateReq, SectionItemUpdateReq, SectionItemResp> {
 
     private final Validator validator;
 
@@ -30,26 +31,14 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemSimpleC
         if (request == null) {
             return null;
         }
-
-        Set<ConstraintViolation<SectionItemSimpleCreateReq>> violations = validator.validate(request);
-        Set<ConstraintViolation<SectionItemData>> itemViolations = Collections.emptySet();
-
-        if (request.getItem() != null) {
-            itemViolations = validator.validate(request.getItem());
-        }
-
-        if (!violations.isEmpty() || !itemViolations.isEmpty()) {
-            Set<ConstraintViolation<?>> allViolations = new HashSet<>();
-            allViolations.addAll(violations);
-            allViolations.addAll(itemViolations);
-            throw new ConstraintViolationException(allViolations);
-        }
+        // Validate the item
+        validateRequest(request.getItem());
 
         SectionItem sectionItem = SectionItem.builder()
                 .item(request.getItem())
                 .itemOrder(request.getItemOrder())
                 .build();
-    
+
         return sectionItem;
     }
 
@@ -58,12 +47,12 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemSimpleC
         if (entity == null) {
             return null;
         }
-    
+
         return SectionItemResp.builder()
-            .id(entity.getId())
-            .item(entity.getItem())
-            .itemOrder(entity.getItemOrder())
-            .build();
+                .id(entity.getId())
+                .item(entity.getItem())
+                .itemOrder(entity.getItemOrder())
+                .build();
     }
 
     @Override
@@ -71,8 +60,24 @@ public class SectionItemMapper implements Mapper<SectionItem, SectionItemSimpleC
         if (request == null) {
             return;
         }
+        // Validate the item
+        validateRequest(request.getItem());
 
         entity.setItem(request.getItem());
         entity.setItemOrder(request.getItemOrder());
+    }
+
+    private void validateRequest(SectionItemData item) {
+        Set<ConstraintViolation<SectionItemData>> itemViolations = Collections.emptySet();
+
+        if (item != null) {
+            itemViolations = validator.validate(item);
+        }
+
+        if (!itemViolations.isEmpty()) {
+            Set<ConstraintViolation<?>> allViolations = new HashSet<>();
+            allViolations.addAll(itemViolations);
+            throw new ConstraintViolationException(allViolations);
+        }
     }
 }

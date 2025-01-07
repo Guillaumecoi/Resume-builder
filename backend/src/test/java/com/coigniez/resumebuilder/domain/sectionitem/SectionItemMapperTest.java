@@ -1,428 +1,482 @@
-// package com.coigniez.resumebuilder.domain.sectionitem;
+package com.coigniez.resumebuilder.domain.sectionitem;
 
-// import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-// import org.junit.jupiter.api.Test;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.boot.test.context.SpringBootTest;
-// import org.springframework.test.context.ActiveProfiles;
-// import org.springframework.validation.annotation.Validated;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.validation.annotation.Validated;
 
-// import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
-// import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResp;
-// import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.*;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResp;
+import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemUpdateReq;
+import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.*;
 
-// import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 
-// import java.util.List;
+import java.util.List;
 
-// @SpringBootTest
-// @ActiveProfiles("test")
-// @Validated
-// class SectionItemMapperTest {
+@SpringBootTest
+@ActiveProfiles("test")
+@Validated
+class SectionItemMapperTest {
 
-//     @Autowired
-//     private SectionItemMapper mapper;
+    @Autowired
+    private SectionItemMapper mapper;
 
-//     @Test
-//     void testToDto() {
-//         // Arrange
-//         SectionItem entity = SectionItem.builder()
-//                 .id(1L)
-//                 .itemOrder(1)
-//                 .item(Textbox.builder()
-//                         .content("This is some example text")
-//                         .build())
-//                 .build();
+    @Test
+    void testToDto() {
+        // Arrange
+        SectionItem entity = SectionItem.builder()
+                .id(1L)
+                .itemOrder(1)
+                .item(Textbox.builder()
+                        .content("This is some example text")
+                        .build())
+                .build();
 
-//         // Act
-//         SectionItemResp dto = mapper.toDto(entity);
+        // Act
+        SectionItemResp dto = mapper.toDto(entity);
 
-//         // Assert
-//         assertNotNull(dto);
-//         assertEquals(entity.getId(), dto.getId());
-//         assertEquals(entity.getItemOrder(), dto.getItemOrder());
-//         assertNotNull(dto.getItem());
-//         assertEquals("This is some example text", ((Textbox) dto.getItem()).getContent());
-//     }
+        // Assert
+        assertNotNull(dto);
+        assertEquals(entity.getId(), dto.getId());
+        assertEquals(entity.getItemOrder(), dto.getItemOrder());
+        assertNotNull(dto.getItem());
+        assertEquals("This is some example text", ((Textbox) dto.getItem()).getContent());
+    }
 
-//     @Test
-//     void testToDto_nullEntity() {
-//         // Act
-//         SectionItemResp dto = mapper.toDto(null);
+    @Test
+    void testToDto_nullEntity() {
+        // Act
+        SectionItemResp dto = mapper.toDto(null);
 
-//         // Assert
-//         assertNull(dto);
-//     }
+        // Assert
+        assertNull(dto);
+    }
 
-//     @Test
-//     void testToEntity() {
-//         // Arrange
-//         SectionItemCreateReq request = SectionItemCreateReq.builder()
-//                 .itemOrder(2)
-//                 .sectionId(1)
-//                 .item(Textbox.builder()
-//                         .content("This is some example text")
-//                         .build())
-//                 .build();
+    @Test
+    void testToEntity() {
+        // Arrange
+        SectionItemCreateReq request = SectionItemCreateReq.builder()
+                .itemOrder(2)
+                .subSectionId(1)
+                .item(Textbox.builder()
+                        .content("This is some example text")
+                        .build())
+                .build();
 
-//         // Act
-//         SectionItem entity = mapper.toEntity(request);
+        // Act
+        SectionItem entity = mapper.toEntity(request);
 
-//         // Assert
-//         assertNotNull(entity);
-//         assertEquals(request.getItemOrder(), entity.getItemOrder());
-//         assertTrue(entity.getItem() instanceof Textbox);
-//         assertEquals("This is some example text", ((Textbox) entity.getItem()).getContent());
+        // Assert
+        assertNotNull(entity);
+        assertEquals(request.getItemOrder(), entity.getItemOrder());
+        assertTrue(entity.getItem() instanceof Textbox);
+        assertEquals("This is some example text", ((Textbox) entity.getItem()).getContent());
 
-//     }
+    }
 
-//     @Test
-//     void testToEntity_nullRequest() {
-//         // Act: Map a null request to an entity
-//         SectionItem entity = mapper.toEntity(null);
+    @Test
+    void testToEntity_nullRequest() {
+        // Act: Map a null request to an entity
+        SectionItem entity = mapper.toEntity(null);
 
-//         // Assert: Verify the mapping
-//         assertNull(entity);
-//     }
+        // Assert: Verify the mapping
+        assertNull(entity);
+    }
 
-//     @Test
-//     void testToEntity_missingRequiredFields() {
-//         SectionItemCreateReq dto = SectionItemCreateReq.builder()
-//                 .itemOrder(1)
-//                 .build();
+    @Test
+    void testToEntity_missingRequiredFields() {
+        SectionItemCreateReq dto = SectionItemCreateReq.builder()
+                .itemOrder(1)
+                .build();
 
-//         // Act & Assert
-//         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(dto));
-//     }
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(dto));
+    }
 
-//     @Test
-//     void testToEntity_Skill() {
-//         // Arrange
-//         SectionItemCreateReq correctComplete = SectionItemCreateReq.builder()
-//                 .itemOrder(1)
-//                 .sectionId(1)
-//                 .item(Skill.builder()
-//                         .name("Java")
-//                         .proficiency(8)
-//                         .build())
-//                 .build();
+    @Test
+    void testToEntity_Skill() {
+        // Arrange
+        SectionItemCreateReq correctComplete = SectionItemCreateReq.builder()
+                .itemOrder(1)
+                .subSectionId(1)
+                .item(Skill.builder()
+                        .name("Java")
+                        .proficiency(8)
+                        .build())
+                .build();
 
-//         SectionItemCreateReq nullProficiency = SectionItemCreateReq.builder()
-//                 .itemOrder(1)
-//                 .sectionId(1)
-//                 .item(Skill.builder()
-//                         .name("Java")
-//                         .build())
-//                 .build();
+        SectionItemCreateReq nullProficiency = SectionItemCreateReq.builder()
+                .itemOrder(1)
+                .subSectionId(1)
+                .item(Skill.builder()
+                        .name("Java")
+                        .build())
+                .build();
 
-//         SectionItemCreateReq nullName = SectionItemCreateReq.builder()
-//                 .itemOrder(1)
-//                 .sectionId(1)
-//                 .item(Skill.builder()
-//                         .proficiency(8)
-//                         .build())
-//                 .build();
+        SectionItemCreateReq nullName = SectionItemCreateReq.builder()
+                .itemOrder(1)
+                .subSectionId(1)
+                .item(Skill.builder()
+                        .proficiency(8)
+                        .build())
+                .build();
 
-//         SectionItemCreateReq emptyName = SectionItemCreateReq.builder()
-//                 .itemOrder(1)
-//                 .sectionId(1)
-//                 .item(Skill.builder()
-//                         .name("")
-//                         .proficiency(8)
-//                         .build())
-//                 .build();
+        SectionItemCreateReq emptyName = SectionItemCreateReq.builder()
+                .itemOrder(1)
+                .subSectionId(1)
+                .item(Skill.builder()
+                        .name("")
+                        .proficiency(8)
+                        .build())
+                .build();
 
-//         SectionItemCreateReq lowProficiency = SectionItemCreateReq.builder()
-//                 .itemOrder(1)
-//                 .sectionId(1)
-//                 .item(Skill.builder()
-//                         .name("Java")
-//                         .proficiency(0)
-//                         .build())
-//                 .build();
+        SectionItemCreateReq lowProficiency = SectionItemCreateReq.builder()
+                .itemOrder(1)
+                .subSectionId(1)
+                .item(Skill.builder()
+                        .name("Java")
+                        .proficiency(0)
+                        .build())
+                .build();
 
-//         SectionItemCreateReq highProficiency = SectionItemCreateReq.builder()
-//                 .itemOrder(1)
-//                 .sectionId(1)
-//                 .item(Skill.builder()
-//                         .name("Java")
-//                         .proficiency(11)
-//                         .build())
-//                 .build();
+        SectionItemCreateReq highProficiency = SectionItemCreateReq.builder()
+                .itemOrder(1)
+                .subSectionId(1)
+                .item(Skill.builder()
+                        .name("Java")
+                        .proficiency(11)
+                        .build())
+                .build();
 
-//         // Act
-//         SectionItem entityCorrectComplete = mapper.toEntity(correctComplete);
-//         SectionItem entityNullProficiency = mapper.toEntity(nullProficiency);
+        // Act
+        SectionItem entityCorrectComplete = mapper.toEntity(correctComplete);
+        SectionItem entityNullProficiency = mapper.toEntity(nullProficiency);
 
-//         // Assert
-//         assertNotNull(entityCorrectComplete);
-//         assertEquals("Java", ((Skill) entityCorrectComplete.getItem()).getName());
-//         assertEquals(8, ((Skill) entityCorrectComplete.getItem()).getProficiency());
-//         assertNotNull(entityNullProficiency);
-//         assertEquals("Java", ((Skill) entityNullProficiency.getItem()).getName());
-//         assertNull(((Skill) entityNullProficiency.getItem()).getProficiency());
+        // Assert
+        assertNotNull(entityCorrectComplete);
+        assertEquals("Java", ((Skill) entityCorrectComplete.getItem()).getName());
+        assertEquals(8, ((Skill) entityCorrectComplete.getItem()).getProficiency());
+        assertNotNull(entityNullProficiency);
+        assertEquals("Java", ((Skill) entityNullProficiency.getItem()).getName());
+        assertNull(((Skill) entityNullProficiency.getItem()).getProficiency());
 
-//         // Act & Assert
-//         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(nullName));
-//         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(emptyName));
-//         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(lowProficiency));
-//         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(highProficiency));
-//     }
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(nullName));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(emptyName));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(lowProficiency));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(highProficiency));
+    }
 
-//     @Test
-//     void testToEntity_Textbox() {
-//         // Act
-//         SectionItem entityCorrectComplete = mapper.toEntity(
-//                 SectionItemCreateReq.builder()
-//                         .itemOrder(1)
-//                         .sectionId(1)
-//                         .item(Textbox.builder()
-//                                 .content("This is some example text")
-//                                 .build())
-//                         .build());
+    @Test
+    void testToEntity_Textbox() {
+        // Act
+        SectionItem entityCorrectComplete = mapper.toEntity(
+                SectionItemCreateReq.builder()
+                        .itemOrder(1)
+                        .subSectionId(1)
+                        .item(Textbox.builder()
+                                .content("This is some example text")
+                                .build())
+                        .build());
 
-//         // Assert
-//         assertNotNull(entityCorrectComplete);
-//         assertEquals("This is some example text", ((Textbox) entityCorrectComplete.getItem()).getContent());
+        // Assert
+        assertNotNull(entityCorrectComplete);
+        assertEquals("This is some example text", ((Textbox) entityCorrectComplete.getItem()).getContent());
 
-//         // Act & Assert
-//         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
-//                 SectionItemCreateReq.builder()
-//                         .itemOrder(1)
-//                         .sectionId(1)
-//                         .item(Textbox.builder()
-//                                 .build())
-//                         .build()));
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
+                SectionItemCreateReq.builder()
+                        .itemOrder(1)
+                        .subSectionId(1)
+                        .item(Textbox.builder()
+                                .build())
+                        .build()));
 
-//         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
-//                 SectionItemCreateReq.builder()
-//                         .itemOrder(1)
-//                         .item(Textbox.builder()
-//                                 .content("")
-//                                 .build())
-//                         .build()));
-//     }
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
+                SectionItemCreateReq.builder()
+                        .itemOrder(1)
+                        .item(Textbox.builder()
+                                .content("")
+                                .build())
+                        .build()));
+    }
 
-//     @Test
-//     void testToEntity_Education() {
-//         // Arrange
-//         Education correctComplete = Education.builder()
-//                 .degree("Bachelor of Science")
-//                 .institution("University of Example")
-//                 .period("2020-2023")
-//                 .description("This is a description")
-//                 .build();
+    @Test
+    void testToEntity_Education() {
+        // Arrange
+        Education correctComplete = Education.builder()
+                .degree("Bachelor of Science")
+                .institution("University of Example")
+                .period("2020-2023")
+                .description("This is a description")
+                .build();
 
-//         Education nullDegree = Education.builder()
-//                 .institution("University of Example")
-//                 .period("2020-2023")
-//                 .description("This is a description")
-//                 .build();
+        Education nullDegree = Education.builder()
+                .institution("University of Example")
+                .period("2020-2023")
+                .description("This is a description")
+                .build();
 
-//         Education nullInstitution = Education.builder()
-//                 .degree("Bachelor of Science")
-//                 .period("2020-2023")
-//                 .description("This is a description")
-//                 .build();
+        Education nullInstitution = Education.builder()
+                .degree("Bachelor of Science")
+                .period("2020-2023")
+                .description("This is a description")
+                .build();
 
-//         Education nullDescription = Education.builder()
-//                 .degree("Bachelor of Science")
-//                 .institution("University of Example")
-//                 .period("2020-2023")
-//                 .build();
+        Education nullDescription = Education.builder()
+                .degree("Bachelor of Science")
+                .institution("University of Example")
+                .period("2020-2023")
+                .build();
 
-//         Education emptyDegree = Education.builder()
-//                 .degree("")
-//                 .institution("University of Example")
-//                 .period("2020-2023")
-//                 .description("This is a description")
-//                 .build();
+        Education emptyDegree = Education.builder()
+                .degree("")
+                .institution("University of Example")
+                .period("2020-2023")
+                .description("This is a description")
+                .build();
 
-//         Education emptyInstitution = Education.builder()
-//                 .degree("Bachelor of Science")
-//                 .institution("")
-//                 .period("2020-2023")
-//                 .description("This is a description")
-//                 .build();
+        Education emptyInstitution = Education.builder()
+                .degree("Bachelor of Science")
+                .institution("")
+                .period("2020-2023")
+                .description("This is a description")
+                .build();
 
-//         // Act
-//         SectionItem entityCorrectComplete = mapper.toEntity(
-//                 SectionItemCreateReq.builder()
-//                         .itemOrder(1)
-//                         .sectionId(1)
-//                         .item(correctComplete)
-//                         .build());
+        // Act
+        SectionItem entityCorrectComplete = mapper.toEntity(
+                SectionItemCreateReq.builder()
+                        .itemOrder(1)
+                        .subSectionId(1)
+                        .item(correctComplete)
+                        .build());
 
-//         SectionItem entityNullDescription = mapper.toEntity(
-//                 SectionItemCreateReq.builder()
-//                         .itemOrder(1)
-//                         .sectionId(1)
-//                         .item(nullDescription)
-//                         .build());
+        SectionItem entityNullDescription = mapper.toEntity(
+                SectionItemCreateReq.builder()
+                        .itemOrder(1)
+                        .subSectionId(1)
+                        .item(nullDescription)
+                        .build());
 
-//         // Assert
-//         assertNotNull(entityCorrectComplete);
-//         assertEquals("Bachelor of Science", ((Education) entityCorrectComplete.getItem()).getDegree());
-//         assertEquals("University of Example", ((Education) entityCorrectComplete.getItem()).getInstitution());
-//         assertEquals("2020-2023", ((Education) entityCorrectComplete.getItem()).getPeriod());
-//         assertEquals("This is a description", ((Education) entityCorrectComplete.getItem()).getDescription());
-//         assertNotNull(entityNullDescription);
+        // Assert
+        assertNotNull(entityCorrectComplete);
+        assertEquals("Bachelor of Science", ((Education) entityCorrectComplete.getItem()).getDegree());
+        assertEquals("University of Example", ((Education) entityCorrectComplete.getItem()).getInstitution());
+        assertEquals("2020-2023", ((Education) entityCorrectComplete.getItem()).getPeriod());
+        assertEquals("This is a description", ((Education) entityCorrectComplete.getItem()).getDescription());
+        assertNotNull(entityNullDescription);
 
-//         // Act & Assert
-//         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
-//                 SectionItemCreateReq.builder()
-//                         .itemOrder(1)
-//                         .sectionId(1)
-//                         .item(nullDegree)
-//                         .build()));
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
+                SectionItemCreateReq.builder()
+                        .itemOrder(1)
+                        .subSectionId(1)
+                        .item(nullDegree)
+                        .build()));
 
-//         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
-//                 SectionItemCreateReq.builder()
-//                         .itemOrder(1)
-//                         .sectionId(1)
-//                         .item(nullInstitution)
-//                         .build()));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
+                SectionItemCreateReq.builder()
+                        .itemOrder(1)
+                        .subSectionId(1)
+                        .item(nullInstitution)
+                        .build()));
 
-//         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
-//                 SectionItemCreateReq.builder()
-//                         .itemOrder(1)
-//                         .sectionId(1)
-//                         .item(emptyDegree)
-//                         .build()));
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
+                SectionItemCreateReq.builder()
+                        .itemOrder(1)
+                        .subSectionId(1)
+                        .item(emptyDegree)
+                        .build()));
 
-//         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
-//                 SectionItemCreateReq.builder()
-//                         .itemOrder(1)
-//                         .sectionId(1)
-//                         .item(emptyInstitution)
-//                         .build()));
-//     }
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
+                SectionItemCreateReq.builder()
+                        .itemOrder(1)
+                        .subSectionId(1)
+                        .item(emptyInstitution)
+                        .build()));
+    }
 
-//     @Test
-//     void testToEntity_Workexperience() {
-//         // Arrange
-//         Experience correctComplete = Experience.builder()
-//                 .jobTitle("Software Engineer")
-//                 .companyName("Tech Corp")
-//                 .period("2020-2023")
-//                 .description("This is a description")
-//                 .responsibilities(List.of("Responsibility 1", "Responsibility 2"))
-//                 .build();
+    @Test
+    void testToEntity_Workexperience() {
+        // Arrange
+        Experience correctComplete = Experience.builder()
+                .jobTitle("Software Engineer")
+                .companyName("Tech Corp")
+                .period("2020-2023")
+                .description("This is a description")
+                .responsibilities(List.of("Responsibility 1", "Responsibility 2"))
+                .build();
 
-//         Experience nullJobTitle = Experience.builder()
-//                 .companyName("Tech Corp")
-//                 .period("2020-2023")
-//                 .description("This is a description")
-//                 .responsibilities(List.of("Responsibility 1", "Responsibility 2"))
-//                 .build();
+        Experience nullJobTitle = Experience.builder()
+                .companyName("Tech Corp")
+                .period("2020-2023")
+                .description("This is a description")
+                .responsibilities(List.of("Responsibility 1", "Responsibility 2"))
+                .build();
 
-//         // Act
-//         SectionItem entityCorrectComplete = mapper.toEntity(
-//                 SectionItemCreateReq.builder()
-//                         .itemOrder(1)
-//                         .sectionId(1)
-//                         .item(correctComplete)
-//                         .build());
+        // Act
+        SectionItem entityCorrectComplete = mapper.toEntity(
+                SectionItemCreateReq.builder()
+                        .itemOrder(1)
+                        .subSectionId(1)
+                        .item(correctComplete)
+                        .build());
 
-//         // Assert
-//         assertNotNull(entityCorrectComplete);
-//         assertEquals("Software Engineer", ((Experience) entityCorrectComplete.getItem()).getJobTitle());
-//         assertEquals("Tech Corp", ((Experience) entityCorrectComplete.getItem()).getCompanyName());
-//         assertEquals("2020-2023", ((Experience) entityCorrectComplete.getItem()).getPeriod());
-//         assertEquals("This is a description", ((Experience) entityCorrectComplete.getItem()).getDescription());
-//         assertEquals(List.of("Responsibility 1", "Responsibility 2"),
-//                 ((Experience) entityCorrectComplete.getItem()).getResponsibilities());
-//         assertEquals("\\item Responsibility 1\n\\item Responsibility 2",
-//                 ((Experience) entityCorrectComplete.getItem()).getResponsibilitiesAsItems());
+        // Assert
+        assertNotNull(entityCorrectComplete);
+        assertEquals("Software Engineer", ((Experience) entityCorrectComplete.getItem()).getJobTitle());
+        assertEquals("Tech Corp", ((Experience) entityCorrectComplete.getItem()).getCompanyName());
+        assertEquals("2020-2023", ((Experience) entityCorrectComplete.getItem()).getPeriod());
+        assertEquals("This is a description", ((Experience) entityCorrectComplete.getItem()).getDescription());
+        assertEquals(List.of("Responsibility 1", "Responsibility 2"),
+                ((Experience) entityCorrectComplete.getItem()).getResponsibilities());
+        assertEquals("\\item Responsibility 1\n\\item Responsibility 2",
+                ((Experience) entityCorrectComplete.getItem()).getResponsibilitiesAsItems());
 
-//         // Act & Assert
-//         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
-//                 SectionItemCreateReq.builder()
-//                         .itemOrder(1)
-//                         .item(nullJobTitle)
-//                         .build()));
-//     }
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
+                SectionItemCreateReq.builder()
+                        .itemOrder(1)
+                        .item(nullJobTitle)
+                        .build()));
+    }
 
-//     @Test
-//     void testToEntity_Picture() {
-//         // Arrange
-//         Picture correctComplete = Picture.builder()
-//                 .path("path/to/image.jpg")
-//                 .caption("Test Caption")
-//                 .width(0.8)
-//                 .height(1.0)
-//                 .rounded(50)
-//                 .zoom(1.2)
-//                 .xoffset(0.5)
-//                 .yoffset(-0.5)
-//                 .shadow(2.0)
-//                 .build();
+    @Test
+    void testToEntity_Picture() {
+        // Arrange
+        Picture correctComplete = Picture.builder()
+                .path("path/to/image.jpg")
+                .caption("Test Caption")
+                .width(0.8)
+                .height(1.0)
+                .rounded(50)
+                .zoom(1.2)
+                .xoffset(0.5)
+                .yoffset(-0.5)
+                .shadow(2.0)
+                .build();
 
-//         Picture nullPath = Picture.builder()
-//                 .caption("Test Caption")
-//                 .width(0.8)
-//                 .height(1.0)
-//                 .rounded(50)
-//                 .zoom(1.2)
-//                 .xoffset(0.5)
-//                 .yoffset(-0.5)
-//                 .shadow(2.0)
-//                 .build();
+        Picture nullPath = Picture.builder()
+                .caption("Test Caption")
+                .width(0.8)
+                .height(1.0)
+                .rounded(50)
+                .zoom(1.2)
+                .xoffset(0.5)
+                .yoffset(-0.5)
+                .shadow(2.0)
+                .build();
 
-//         // Act
-//         SectionItem entityCorrectComplete = mapper.toEntity(
-//                 SectionItemCreateReq.builder()
-//                         .itemOrder(1)
-//                         .sectionId(1)
-//                         .item(correctComplete)
-//                         .build());
+        // Act
+        SectionItem entityCorrectComplete = mapper.toEntity(
+                SectionItemCreateReq.builder()
+                        .itemOrder(1)
+                        .subSectionId(1)
+                        .item(correctComplete)
+                        .build());
 
-//         // Assert
-//         assertNotNull(entityCorrectComplete);
-//         assertTrue(entityCorrectComplete.getItem() instanceof Picture);
-//         Picture picture = (Picture) entityCorrectComplete.getItem();
+        // Assert
+        assertNotNull(entityCorrectComplete);
+        assertTrue(entityCorrectComplete.getItem() instanceof Picture);
+        Picture picture = (Picture) entityCorrectComplete.getItem();
 
-//         assertEquals("path/to/image.jpg", picture.getPath());
-//         assertEquals("Test Caption", picture.getCaption());
-//         assertEquals(0.8, picture.getWidth());
-//         assertEquals(1.0, picture.getHeight());
-//         assertEquals(50, picture.getRounded());
-//         assertEquals(1.2, picture.getZoom());
-//         assertEquals(0.5, picture.getXoffset());
-//         assertEquals(-0.5, picture.getYoffset());
-//         assertEquals(2.0, picture.getShadow());
+        assertEquals("path/to/image.jpg", picture.getPath());
+        assertEquals("Test Caption", picture.getCaption());
+        assertEquals(0.8, picture.getWidth());
+        assertEquals(1.0, picture.getHeight());
+        assertEquals(50, picture.getRounded());
+        assertEquals(1.2, picture.getZoom());
+        assertEquals(0.5, picture.getXoffset());
+        assertEquals(-0.5, picture.getYoffset());
+        assertEquals(2.0, picture.getShadow());
 
-//         // Act & Assert
-//         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
-//                 SectionItemCreateReq.builder()
-//                         .itemOrder(1)
-//                         .sectionId(1)
-//                         .item(nullPath)
-//                         .build()));
-//     }
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(
+                SectionItemCreateReq.builder()
+                        .itemOrder(1)
+                        .subSectionId(1)
+                        .item(nullPath)
+                        .build()));
+    }
 
-//     @Test
-//     void testToEntityAndBack() {
-//         // Arrange
-//         SectionItemCreateReq request = SectionItemCreateReq.builder()
-//                 .itemOrder(2)
-//                 .sectionId(1)
-//                 .item(Textbox.builder()
-//                         .content("This is some example text")
-//                         .build())
-//                 .build();
+    @Test
+    void testToEntityAndBack() {
+        // Arrange
+        SectionItemCreateReq request = SectionItemCreateReq.builder()
+                .itemOrder(2)
+                .subSectionId(1)
+                .item(Textbox.builder()
+                        .content("This is some example text")
+                        .build())
+                .build();
 
-//         // Act
-//         SectionItem entity = mapper.toEntity(request);
-//         entity.setId(1L);   // Simulate entity being saved to the database
-//         SectionItemResp dto = mapper.toDto(entity);
+        // Act
+        SectionItem entity = mapper.toEntity(request);
+        entity.setId(1L);   // Simulate entity being saved to the database
+        SectionItemResp dto = mapper.toDto(entity);
 
-//         // Assert
-//         assertNotNull(dto);
-//         assertEquals(entity.getItemOrder(), dto.getItemOrder());
-//         assertNotNull(dto.getItem());
-//         assertEquals("This is some example text", ((Textbox) dto.getItem()).getContent());
-//     }
+        // Assert
+        assertNotNull(dto);
+        assertEquals(entity.getItemOrder(), dto.getItemOrder());
+        assertNotNull(dto.getItem());
+        assertEquals("This is some example text", ((Textbox) dto.getItem()).getContent());
+    }
 
-// }
+    @Test
+    void testUpdateEntity() {
+        // Arrange
+        SectionItem entity = SectionItem.builder()
+                .id(1L)
+                .itemOrder(1)
+                .item(Textbox.builder()
+                        .content("This is some example text")
+                        .build())
+                .build();
+
+        SectionItemUpdateReq request = SectionItemUpdateReq.builder()
+                .id(1L)
+                .subSectionId(1)
+                .itemOrder(2)
+                .item(Textbox.builder()
+                        .content("This is some updated text")
+                        .build())
+                .build();
+
+        // Act
+        mapper.updateEntity(entity, request);
+
+        // Assert
+        assertEquals(request.getItemOrder(), entity.getItemOrder());
+        assertTrue(entity.getItem() instanceof Textbox);
+        assertEquals("This is some updated text", ((Textbox) entity.getItem()).getContent());
+    }
+
+    @Test
+    void testUpdateEntity_Validation() {
+        // Arrange
+        SectionItem entity = SectionItem.builder()
+                .id(1L)
+                .itemOrder(1)
+                .item(Textbox.builder()
+                        .content("This is some example text")
+                        .build())
+                .build();
+
+        SectionItemUpdateReq request = SectionItemUpdateReq.builder()
+                .id(1L)
+                .subSectionId(1)
+                .itemOrder(2)
+                .item(Textbox.builder()
+                        .content("")
+                        .build())
+                .build();
+
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () -> mapper.updateEntity(entity, request));
+    }
+
+}
