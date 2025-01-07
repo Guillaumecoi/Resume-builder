@@ -2,6 +2,8 @@ package com.coigniez.resumebuilder.interfaces;
 
 import java.util.List;
 
+import jakarta.validation.constraints.NotNull;
+
 /**
  * Interface for CRUD services that manage entities that have a parent entity.
  * 
@@ -19,12 +21,12 @@ public interface ParentEntityService<CreateReq extends CreateRequest, UpdateReq 
      * @param parentId The ID of the parent entity.
      * @return A list of entities that have the given parent entity.
      */
-    List<Resp> getAllByParentId(ID parentId);
+    List<Resp> getAllByParentId(@NotNull ID parentId);
 
     /**
      * Remove all entities that have a parent entity with the given ID.
      * 
      * @param parentId The ID of the parent entity.
      */
-    void removeAllByParentId(ID parentId);
+    void removeAllByParentId(@NotNull ID parentId);
 }

@@ -162,7 +162,7 @@ public class ResumeServiceIntegrationTest {
         },
                 "Should throw AccessDeniedException when trying to get resume of other user");
         assertThrows(AccessDeniedException.class, () -> {
-            resumeService.update(ResumeUpdateReq.builder().id(resumeId).build());
+            resumeService.update(ResumeUpdateReq.builder().id(resumeId).title("updated title").build());
         },
                 "Should throw AccessDeniedException when trying to update resume of other user");
         assertThrows(AccessDeniedException.class, () -> {

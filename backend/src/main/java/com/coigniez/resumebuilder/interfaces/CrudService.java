@@ -5,6 +5,7 @@ import org.springframework.validation.annotation.Validated;
 import com.coigniez.resumebuilder.validation.HasID;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -27,7 +28,7 @@ public interface CrudService<CreateReq extends CreateRequest, UpdateReq extends 
      * @throws AccessDeniedException if the connected user is not permitted to
      *                               create the object
      */
-    ID create(@NotNull CreateReq request);
+    ID create(@NotNull @Valid CreateReq request);
 
     /**
      * Get an object by its id
@@ -48,7 +49,7 @@ public interface CrudService<CreateReq extends CreateRequest, UpdateReq extends 
      *                                 update the object
      * @throws EntityNotFoundException if the object is not found
      */
-    void update(@NotNull @HasID UpdateReq request);
+    void update(@NotNull @Valid @HasID UpdateReq request);
 
     /**
      * Delete an object by its id

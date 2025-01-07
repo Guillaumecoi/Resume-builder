@@ -17,7 +17,6 @@ import com.coigniez.resumebuilder.util.ExceptionUtils;
 import com.coigniez.resumebuilder.util.ParentRepositoryUtil;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -32,7 +31,7 @@ public class SubSectionService
     private final ParentRepositoryUtil parentRepositoryUtil;
 
     @Override
-    public Long create(@NotNull SubSectionCreateReq request) {
+    public Long create(SubSectionCreateReq request) {
         // Check if the user has access to the section
         securityUtils.hasAccessSection(request.getSectionId());
 
@@ -49,7 +48,7 @@ public class SubSectionService
     }
 
     @Override
-    public SubSectionResp get(@NotNull Long id) {
+    public SubSectionResp get(Long id) {
         // Check if the user has access to the sub-section
         securityUtils.hasAccessSubSection(id);
 
@@ -60,7 +59,7 @@ public class SubSectionService
     }
 
     @Override
-    public void update(@NotNull SubSectionUpdateReq request) {
+    public void update(SubSectionUpdateReq request) {
         // Check if the user has access to the sub-section
         securityUtils.hasAccessSubSection(request.getId());
 
@@ -69,12 +68,24 @@ public class SubSectionService
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("SubSection", request.getId()));
         subSectionMapper.updateEntity(subSection, request);
 
+        // Change the section if needed
+        if (!subSection.getSection().getId().equals(request.getSectionId())) {
+            // Check Access to the new section
+            securityUtils.hasAccessSection(request.getSectionId());
+            // Remove the sub-section from the old section
+            subSection.getSection().removeSubSection(subSection);
+            // Add the sub-section to the new section
+            sectionRepository.findById(request.getSectionId())
+                    .orElseThrow(() -> ExceptionUtils.entityNotFound("Section", request.getSectionId()))
+                    .addSubSection(subSection);
+        }
+
         // Save the sub-section
         subSectionRepository.save(subSection);
     }
 
     @Override
-    public void delete(@NotNull Long id) {
+    public void delete(Long id) {
         // Check if the user has access to the sub-section
         securityUtils.hasAccessSubSection(id);
 
@@ -93,9 +104,7 @@ public class SubSectionService
         securityUtils.hasAccessSection(parentId);
         // Get all the sub-sections
         return parentRepositoryUtil.findAllByParentId(SubSection.class, Section.class, parentId, null)
-                .stream()
-                .map(subSectionMapper::toDto)
-                .toList();
+                .stream().map(subSectionMapper::toDto).toList();
     }
 
     @Override

@@ -211,7 +211,7 @@ public class SectionServiceIntegrationTest {
             sectionService.get(sectionId);
         }, "Other user should not be able to get a section in another user's resume");
         assertThrows(AccessDeniedException.class, () -> {
-            sectionService.update(SectionUpdateReq.builder().id(sectionId).build());
+            sectionService.update(SectionUpdateReq.builder().id(sectionId).title("updated").showTitle(false).build());
         }, "Other user should not be able to update a section in another user's resume");
         assertThrows(AccessDeniedException.class, () -> {
             sectionService.delete(sectionId);
@@ -234,7 +234,7 @@ public class SectionServiceIntegrationTest {
             sectionService.get(sectionId);
         }, "Section should not be found");
         assertThrows(EntityNotFoundException.class, () -> {
-            sectionService.update(SectionUpdateReq.builder().id(sectionId).build());
+            sectionService.update(SectionUpdateReq.builder().id(sectionId).title("updated").showTitle(false).build());
         }, "Section should not be found");
         assertThrows(EntityNotFoundException.class, () -> {
             sectionService.delete(sectionId);
