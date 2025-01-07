@@ -2,6 +2,7 @@ package com.coigniez.resumebuilder.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -11,9 +12,6 @@ import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemResp;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemUpdateReq;
 import com.coigniez.resumebuilder.interfaces.CrudController;
 import com.coigniez.resumebuilder.services.SectionItemService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -25,7 +23,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("section-items")
@@ -34,7 +31,6 @@ public class SectionItemController
         implements CrudController<SectionItemCreateReq, SectionItemUpdateReq, SectionItemResp, Long> {
 
     private final SectionItemService sectionItemService;
-    private final ObjectMapper objectMapper;
 
     @Override
     @Operation(operationId = "createSectionItem")
@@ -70,14 +66,20 @@ public class SectionItemController
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/createpicture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(operationId = "createPictureItem")
     public ResponseEntity<Long> createPicture(
-            @PathVariable Long sectionId,
             @RequestParam("file") MultipartFile file,
-            @RequestParam("request") String requestJson) throws JsonMappingException, JsonProcessingException {
+            @RequestPart("request") SectionItemCreateReq request) {
 
-        SectionItemCreateReq request = objectMapper.readValue(requestJson, SectionItemCreateReq.class);
-        request.setSubSectionId(sectionId);
-        return ResponseEntity.ok(sectionItemService.createPicture(file, request));
+        Long id = sectionItemService.createPicture(file, request);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(id)
+                .toUri();
+
+        return ResponseEntity.created(location).body(id);
     }
 }
