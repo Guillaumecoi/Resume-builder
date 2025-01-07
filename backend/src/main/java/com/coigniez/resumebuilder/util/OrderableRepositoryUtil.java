@@ -108,11 +108,20 @@ public class OrderableRepositoryUtil {
      * @param newOrder    The new order
      * @param oldOrder    The old order
      */
-    public <ID> void updateItemOrder(Class<?> entityClass, Class<?> parentClass, ID parentId,
-            String orderName, int newOrder, int oldOrder) {
+    public <ID> int updateItemOrder(Class<?> entityClass, Class<?> parentClass, ID parentId,
+            String orderName, Integer newOrder, Integer oldOrder) {
+        // Set the orders if they are null
+        int maxOrder = findMaxItemOrderByParentId(entityClass, parentClass, parentId, orderName);
+        if (oldOrder == null) {
+            oldOrder = maxOrder + 1;
+        }
+        if (newOrder == null) {
+            newOrder = maxOrder + 1;
+        }
+
         // Update the item order of the other items
         if (newOrder == oldOrder) {
-            return;
+            return newOrder;
         } else if (newOrder < oldOrder) {
             incrementItemOrderBetween(entityClass, parentClass, parentId, orderName, newOrder, oldOrder);
         } else {
@@ -121,6 +130,8 @@ public class OrderableRepositoryUtil {
 
         // Refresh the entities to get the updated item order
         refreshEntityItems(parentRepositoryUtil.findAllByParentId(entityClass, parentClass, parentId, orderName));
+
+        return newOrder;
     }
 
     private <ID> void incrementItemOrderBetween(Class<?> entityClass, Class<?> parentClass, ID parentId,

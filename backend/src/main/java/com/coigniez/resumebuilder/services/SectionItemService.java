@@ -2,11 +2,9 @@ package com.coigniez.resumebuilder.services;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.coigniez.resumebuilder.domain.section.Section;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItem;
 import com.coigniez.resumebuilder.domain.sectionitem.SectionItemMapper;
 import com.coigniez.resumebuilder.domain.sectionitem.dtos.SectionItemCreateReq;
@@ -35,8 +33,7 @@ public class SectionItemService
     private final SectionItemMapper sectionitemMapper;
     private final FileStorageService fileStorageService;
     private final SecurityUtils securityUtils;
-    @Autowired
-    private OrderableRepositoryUtil orderableRepositoryUtil;
+    private final OrderableRepositoryUtil orderableRepositoryUtil;
 
     @Override
     public Long create(SectionItemCreateReq request) {
@@ -45,28 +42,10 @@ public class SectionItemService
 
         // Get the section and latexMethod
         SubSection section = subSectionRepository.findById(request.getSubSectionId())
-                .orElseThrow(() -> ExceptionUtils.entityNotFound("SubSection",
-                        request.getSubSectionId()));
-
-        // Find the maximum itemOrder in the section
-        int maxOrder = orderableRepositoryUtil
-                .findMaxItemOrderByParentId(SectionItem.class, Section.class, section.getId(),
-                        "itemOrder");
-        int newOrder = request.getItemOrder() == null ? maxOrder + 1 : request.getItemOrder();
-
-        // Shift the order
-        orderableRepositoryUtil.updateItemOrder(SectionItem.class, Section.class, section.getId(),
-                "itemOrder", newOrder, maxOrder + 1);
-
-        // Create the entity from the request
-        request.setItemOrder(newOrder);
-        SectionItem sectionItem = sectionitemMapper.toEntity(request);
-
-        // Add the sectionItem to the section and latexMethod
-        section.addSectionItem(sectionItem);
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("SubSection", request.getSubSectionId()));
 
         // Save the item
-        return sectionItemRepository.save(sectionItem).getId();
+        return addItemToSection(sectionitemMapper.toEntity(request), section);
     }
 
     /**
@@ -78,7 +57,7 @@ public class SectionItemService
      */
     public Long createPicture(MultipartFile file, SectionItemCreateReq request) {
         // Check if the user has access to the section
-        securityUtils.hasAccessSection(request.getSubSectionId());
+        securityUtils.hasAccessSubSection(request.getSubSectionId());
 
         // Save the file to the file storage and add the path to the request
         String path = fileStorageService.saveFile(file, securityUtils.getUserName());
@@ -92,7 +71,7 @@ public class SectionItemService
     public SectionItemResp get(Long id) {
         // Check if the user has access to the sectionItem
         securityUtils.hasAccessSectionItem(id);
-        // Get the item
+
         return sectionItemRepository.findById(id)
                 .map(sectionitemMapper::toDto)
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("SectionItem", id));
@@ -106,19 +85,32 @@ public class SectionItemService
         // Get the entity
         SectionItem sectionItem = sectionItemRepository.findById(request.getId())
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("SectionItem", request.getId()));
-        Long sectionId = sectionItem.getSubSection().getId();
+        SubSection oldSection = sectionItem.getSubSection();
 
-        // Shift other items
-        orderableRepositoryUtil.updateItemOrder(SectionItem.class, Section.class, sectionId,
-                "itemOrder", request.getItemOrder(), sectionItem.getItemOrder());
+        // Change subSection if needed
+        if (request.getSubSectionId() != oldSection.getId()) {
+            // Check if the user has access to the section
+            securityUtils.hasAccessSubSection(request.getSubSectionId());
 
-        // Update the entity
-        sectionitemMapper.updateEntity(sectionItem, request);
+            // Get the section
+            SubSection newSection = subSectionRepository.findById(request.getSubSectionId())
+                    .orElseThrow(() -> ExceptionUtils.entityNotFound("SubSection", request.getSubSectionId()));
 
-        // TODO: Update the section
-
-        // save the updated item
-        sectionItemRepository.save(sectionItem);
+            // Remove the item from the old section
+            deleteItemFromSection(sectionItem, oldSection);
+            // Update the entity
+            sectionitemMapper.updateEntity(sectionItem, request);
+            sectionItem.setId(null);
+            // Add the item to the new section
+            addItemToSection(sectionItem, newSection);
+        } else {
+            // Shift other items
+            updateItemOrder(request.getItemOrder(), sectionItem.getItemOrder(), oldSection.getId());
+            // Update the entity
+            sectionitemMapper.updateEntity(sectionItem, request);
+            // save the updated item
+            sectionItemRepository.save(sectionItem);
+        }
     }
 
     @Override
@@ -129,20 +121,9 @@ public class SectionItemService
         // Get the item
         SectionItem sectionItem = sectionItemRepository.findById(id)
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("SectionItem", id));
-        long sectionId = sectionItem.getSubSection().getId();
 
-        // Remove the item from the section
-        sectionItem.getSubSection().removeSectionItem(sectionItem);
-
-        // Delete the item
-        sectionItemRepository.deleteById(id);
-
-        // Shift other items
-        int maxOrder = orderableRepositoryUtil
-                .findMaxItemOrderByParentId(SectionItem.class, Section.class, sectionId,
-                        "itemOrder");
-        orderableRepositoryUtil.updateItemOrder(SectionItem.class, Section.class, sectionId,
-                "itemOrder", maxOrder + 1, sectionItem.getItemOrder());
+        // Remove the item from the section and save the section
+        deleteItemFromSection(sectionItem, sectionItem.getSubSection());
     }
 
     @Override
@@ -162,5 +143,35 @@ public class SectionItemService
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("SubSection", id));
 
         section.clearSectionItems();
+    }
+
+    /*
+     * Remove the item from the section and update the order of the other items
+     */
+    private void deleteItemFromSection(SectionItem sectionItem, SubSection section) {
+        section.removeSectionItem(sectionItem);
+        updateItemOrder(null, sectionItem.getItemOrder(), section.getId());
+        subSectionRepository.save(section);
+    }
+
+    /*
+     * Add the item to the section
+     */
+    private Long addItemToSection(SectionItem sectionItem, SubSection section) {
+        int newOrder = updateItemOrder(sectionItem.getItemOrder(), null, section.getId());
+        if (sectionItem.getItemOrder() == null) {
+            sectionItem.setItemOrder(newOrder);
+        }
+        section.addSectionItem(sectionItem);
+        long sectionItemId = sectionItemRepository.save(sectionItem).getId();
+        return sectionItemId;
+    }
+
+    /*
+     * Update the order of the items in the section
+     */
+    private int updateItemOrder(Integer newOrder, Integer oldOrder, Long sectionId) {
+        return orderableRepositoryUtil.updateItemOrder(SectionItem.class, SubSection.class, sectionId,
+                "itemOrder", newOrder, oldOrder);
     }
 }

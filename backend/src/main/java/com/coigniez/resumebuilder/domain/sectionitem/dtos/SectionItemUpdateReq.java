@@ -19,8 +19,6 @@ public class SectionItemUpdateReq implements UpdateRequest {
 
     @NotNull
     private SectionItemData item;
-
-    @NotNull
     private Integer itemOrder;
 
 }
