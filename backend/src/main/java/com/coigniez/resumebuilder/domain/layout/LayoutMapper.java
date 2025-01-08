@@ -1,17 +1,19 @@
 package com.coigniez.resumebuilder.domain.layout;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.columnholder.ColumnHolderMapper;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.HeaderFooter;
+import com.coigniez.resumebuilder.domain.columnholder.headerfooter.Header;
+import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderResp;
 import com.coigniez.resumebuilder.domain.columnholder.page.LayoutPage;
+import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageResp;
+import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageUpdateReq;
 import com.coigniez.resumebuilder.domain.latex.LatexMethodMapper;
-import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResp;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutUpdateReq;
@@ -50,19 +52,15 @@ public class LayoutMapper implements Mapper<Layout, LayoutCreateReq, LayoutUpdat
                 .pageSize(request.getPageSize())
                 .colorScheme(request.getColorScheme())
                 .latexMethods(new ArrayList<>())
+                .pages(new ArrayList<>())
                 .build();
 
         // Set the child entities
         request.getLatexMethods().forEach(method -> layout.addLatexMethod(latexMethodMapper.toEntity(method)));
         if (request.getHeader() != null) {
-            HeaderFooter header = (HeaderFooter) columnHolderMapper.toEntity(request.getHeader());
+            Header header = (Header) columnHolderMapper.toEntity(request.getHeader());
             header.setLayout(layout);
             layout.setHeader(header);
-        }
-        if (request.getFooter() != null) {
-            HeaderFooter footer = (HeaderFooter) columnHolderMapper.toEntity(request.getFooter());
-            footer.setLayout(layout);
-            layout.setFooter(footer);
         }
         Optional.ofNullable(request.getPages()).ifPresent(
                 pages -> pages.forEach(page -> layout.addPage((LayoutPage) columnHolderMapper.toEntity(page))));
@@ -76,16 +74,16 @@ public class LayoutMapper implements Mapper<Layout, LayoutCreateReq, LayoutUpdat
             return null;
         }
 
-        List<LatexMethodResp> latexMethodDTOs = new ArrayList<>();
-        if (entity.getLatexMethods() != null) {
-            entity.getLatexMethods().forEach(method -> latexMethodDTOs.add(latexMethodMapper.toDto(method)));
-        }
-
         return LayoutResp.builder()
                 .id(entity.getId())
                 .pageSize(entity.getPageSize())
                 .colorScheme(entity.getColorScheme())
-                .latexMethods(latexMethodDTOs)
+                .latexMethods(Optional.ofNullable(entity.getLatexMethods()).orElse(Collections.emptyList())
+                        .stream().map(latexMethodMapper::toDto).toList())
+                .header((HeaderResp) Optional.ofNullable(entity.getHeader()).map(columnHolderMapper::toDto)
+                        .orElse(null))
+                .pages(Optional.ofNullable(entity.getPages()).orElse(Collections.emptyList())
+                        .stream().map(page -> (PageResp) columnHolderMapper.toDto(page)).toList())
                 .build();
     }
 
@@ -95,7 +93,17 @@ public class LayoutMapper implements Mapper<Layout, LayoutCreateReq, LayoutUpdat
             return;
         }
 
-        entity.setPageSize(request.getPageSize());
-        entity.setColorScheme(request.getColorScheme());
+        Optional.ofNullable(request.getPageSize()).ifPresent(entity::setPageSize);
+        Optional.ofNullable(request.getColorScheme()).ifPresent(entity::setColorScheme);
+        Optional.ofNullable(request.getHeader()).ifPresent(header -> columnHolderMapper.updateEntity(entity.getHeader(), header));
+        Optional.ofNullable(request.getPages()).ifPresent(pages -> {
+            for (PageUpdateReq req : pages) {
+                LayoutPage page = entity.getPages().stream()
+                        .filter(p -> p.getId().equals(req.getId()))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("Page with id" + req.getId() + " not found"));
+                columnHolderMapper.updateEntity(page, req);
+            }
+        });
     }
 }

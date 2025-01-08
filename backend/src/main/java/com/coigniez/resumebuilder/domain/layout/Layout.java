@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.domain.layout;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.HeaderFooter;
+import com.coigniez.resumebuilder.domain.columnholder.headerfooter.Header;
 import com.coigniez.resumebuilder.domain.columnholder.page.LayoutPage;
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.layout.embedded.ColorScheme;
@@ -13,8 +13,10 @@ import com.coigniez.resumebuilder.interfaces.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Entity
 @Table(name = "layout")
@@ -40,10 +42,8 @@ public class Layout implements BaseEntity {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LayoutPage> pages;
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    private HeaderFooter header;
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    private HeaderFooter footer;
+    @OneToOne(mappedBy = "layout", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Header header;
 
     public void addLatexMethod(LatexMethod latexMethod) {
         latexMethods.add(latexMethod);

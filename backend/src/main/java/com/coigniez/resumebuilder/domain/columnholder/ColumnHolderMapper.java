@@ -12,10 +12,10 @@ import com.coigniez.resumebuilder.domain.column.dtos.ColumnResp;
 import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderCreateReq;
 import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderResp;
 import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderUpdateReq;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.HeaderFooter;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderFooterCreateReq;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderFooterResp;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderFooterUpdateReq;
+import com.coigniez.resumebuilder.domain.columnholder.headerfooter.Header;
+import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderCreateReq;
+import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderResp;
+import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderUpdateReq;
 import com.coigniez.resumebuilder.domain.columnholder.page.LayoutPage;
 import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageCreateReq;
 import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageResp;
@@ -41,10 +41,10 @@ public class ColumnHolderMapper
                 .map(cols -> cols.stream().map(columnMapper::toEntity).toList())
                 .orElse(List.of());
 
-        if (request instanceof HeaderFooterCreateReq) {
-            return HeaderFooter.builder()
-                    .height(((HeaderFooterCreateReq) request).getHeight())
-                    .repeatOnEveryPage(((HeaderFooterCreateReq) request).getRepeatOnEveryPage())
+        if (request instanceof HeaderCreateReq) {
+            return Header.builder()
+                    .height(((HeaderCreateReq) request).getHeight())
+                    .repeatOnEveryPage(((HeaderCreateReq) request).getRepeatOnEveryPage())
                     .columns(columns)
                     .build();
         } else if (request instanceof PageCreateReq) {
@@ -67,14 +67,16 @@ public class ColumnHolderMapper
                 .map(cols -> cols.stream().map(columnMapper::toDto).toList())
                 .orElse(List.of());
 
-        if (entity instanceof HeaderFooter) {
-            return HeaderFooterResp.builder()
-                    .height(((HeaderFooter) entity).getHeight())
-                    .repeatOnEveryPage(((HeaderFooter) entity).getRepeatOnEveryPage())
+        if (entity instanceof Header) {
+            return HeaderResp.builder()
+                    .id(entity.getId())
+                    .height(((Header) entity).getHeight())
+                    .repeatOnEveryPage(((Header) entity).getRepeatOnEveryPage())
                     .columns(columns)
                     .build();
         } else if (entity instanceof LayoutPage) {
             return PageResp.builder()
+                    .id(entity.getId())
                     .pageNumber(((LayoutPage) entity).getPageNumber())
                     .columns(columns)
                     .build();
@@ -89,9 +91,9 @@ public class ColumnHolderMapper
             return;
         }
 
-        if (entity instanceof HeaderFooter && request instanceof HeaderFooterUpdateReq) {
-            HeaderFooter headerFooter = (HeaderFooter) entity;
-            HeaderFooterUpdateReq headerFooterUpdateReq = (HeaderFooterUpdateReq) request;
+        if (entity instanceof Header && request instanceof HeaderUpdateReq) {
+            Header headerFooter = (Header) entity;
+            HeaderUpdateReq headerFooterUpdateReq = (HeaderUpdateReq) request;
 
             Optional.ofNullable(headerFooterUpdateReq.getHeight()).ifPresent(headerFooter::setHeight);
             Optional.ofNullable(headerFooterUpdateReq.getRepeatOnEveryPage())

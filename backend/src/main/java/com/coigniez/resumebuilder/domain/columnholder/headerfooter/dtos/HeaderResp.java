@@ -1,20 +1,22 @@
 package com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos;
 
-import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderUpdateReq;
+import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderResp;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Data
-@SuperBuilder
 @NoArgsConstructor
+@SuperBuilder
 @EqualsAndHashCode(callSuper = true)
-public class HeaderFooterUpdateReq extends ColumnHolderUpdateReq {
+public class HeaderResp extends ColumnHolderResp {
 
-    private Long id;
+    @NotNull
     private Double height;
+    @NotNull
     private Boolean repeatOnEveryPage;
-    
+
 }

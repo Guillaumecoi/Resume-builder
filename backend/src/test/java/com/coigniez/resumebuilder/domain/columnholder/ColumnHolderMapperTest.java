@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderResp;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.HeaderFooter;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderFooterCreateReq;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderFooterResp;
+import com.coigniez.resumebuilder.domain.columnholder.headerfooter.Header;
+import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderCreateReq;
+import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderResp;
 import com.coigniez.resumebuilder.domain.columnholder.page.LayoutPage;
 import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageCreateReq;
 import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageResp;
@@ -22,7 +22,7 @@ public class ColumnHolderMapperTest {
 
     @Test
     void testToEntity_HeaderFooterCreateReq() {
-        HeaderFooterCreateReq request = HeaderFooterCreateReq.builder()
+        HeaderCreateReq request = HeaderCreateReq.builder()
                 .height(10.0)
                 .repeatOnEveryPage(true)
                 .build();
@@ -30,8 +30,8 @@ public class ColumnHolderMapperTest {
         ColumnHolder entity = columnHolderMapper.toEntity(request);
 
         assertNotNull(entity);
-        assertTrue(entity instanceof HeaderFooter);
-        HeaderFooter headerFooter = (HeaderFooter) entity;
+        assertTrue(entity instanceof Header);
+        Header headerFooter = (Header) entity;
         assertEquals(10.0, headerFooter.getHeight());
         assertTrue(headerFooter.getRepeatOnEveryPage());
         assertEquals(0, headerFooter.getColumns().size());
@@ -53,7 +53,7 @@ public class ColumnHolderMapperTest {
 
     @Test
     void testToDto_HeaderFooter() {
-        HeaderFooter entity = HeaderFooter.builder()
+        Header entity = Header.builder()
                 .height(10.0)
                 .repeatOnEveryPage(true)
                 .build();
@@ -61,8 +61,8 @@ public class ColumnHolderMapperTest {
         ColumnHolderResp dto = columnHolderMapper.toDto(entity);
 
         assertNotNull(dto);
-        assertTrue(dto instanceof HeaderFooterResp);
-        HeaderFooterResp headerFooterResp = (HeaderFooterResp) dto;
+        assertTrue(dto instanceof HeaderResp);
+        HeaderResp headerFooterResp = (HeaderResp) dto;
         assertEquals(10.0, headerFooterResp.getHeight());
         assertTrue(headerFooterResp.getRepeatOnEveryPage());
     }

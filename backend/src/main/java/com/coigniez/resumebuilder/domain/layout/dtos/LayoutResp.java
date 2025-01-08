@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.domain.layout.dtos;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderFooterResp;
+import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderResp;
 import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageResp;
 import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
 import com.coigniez.resumebuilder.domain.layout.embedded.ColorScheme;
@@ -27,7 +27,6 @@ public class LayoutResp implements Response {
     private List<LatexMethodResp> latexMethods;
     @NotNull
     private List<PageResp> pages;
-    private HeaderFooterResp header;
-    private HeaderFooterResp footer;
+    private HeaderResp header;
     
 }

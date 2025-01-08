@@ -12,13 +12,14 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Entity
 @DiscriminatorValue("HEADER_FOOTER")
-public class HeaderFooter extends ColumnHolder {
+public class Header extends ColumnHolder {
 
     @Column(precision = 4)
     private Double height;
     private Boolean repeatOnEveryPage;
 
     @OneToOne
+    @JoinColumn(name = "layout_id")
     private Layout layout;
 
 }

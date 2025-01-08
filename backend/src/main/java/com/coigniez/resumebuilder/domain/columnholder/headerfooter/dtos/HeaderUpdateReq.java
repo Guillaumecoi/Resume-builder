@@ -1,17 +1,17 @@
 package com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos;
 
-import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderCreateReq;
+import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderUpdateReq;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-@Data
+@Getter
+@Setter
 @SuperBuilder
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class HeaderFooterCreateReq extends ColumnHolderCreateReq {
+public class HeaderUpdateReq extends ColumnHolderUpdateReq {
 
     private Double height;
     private Boolean repeatOnEveryPage;
