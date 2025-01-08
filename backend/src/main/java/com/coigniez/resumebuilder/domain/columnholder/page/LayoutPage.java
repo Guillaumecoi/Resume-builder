@@ -4,7 +4,6 @@ import com.coigniez.resumebuilder.domain.columnholder.ColumnHolder;
 import com.coigniez.resumebuilder.domain.layout.Layout;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -15,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @DiscriminatorValue("PAGE")
 public class LayoutPage extends ColumnHolder {
 
-    @NotNull
+    @Column(nullable = false, columnDefinition = "smallint")
     private int pageNumber;
 
     @ManyToOne

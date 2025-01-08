@@ -14,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 @DiscriminatorValue("HEADER_FOOTER")
 public class HeaderFooter extends ColumnHolder {
 
+    @Column(precision = 4)
     private Double height;
     private Boolean repeatOnEveryPage;
 

@@ -25,6 +25,7 @@ public class Layout implements BaseEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 10)
     private PageSize pageSize;
 
     @Embedded

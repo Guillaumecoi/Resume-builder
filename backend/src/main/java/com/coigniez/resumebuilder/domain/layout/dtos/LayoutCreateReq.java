@@ -3,8 +3,8 @@ package com.coigniez.resumebuilder.domain.layout.dtos;
 import java.util.List;
 import java.util.Set;
 
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderFooterCreateRequest;
-import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageCreateRequest;
+import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderFooterCreateReq;
+import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageCreateReq;
 import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodCreateReq;
 import com.coigniez.resumebuilder.domain.layout.embedded.ColorScheme;
 import com.coigniez.resumebuilder.domain.layout.enums.*;
@@ -28,9 +28,9 @@ public class LayoutCreateReq implements CreateRequest {
     private ColorScheme colorScheme;
     private Set<LatexMethodCreateReq> latexMethods;
 
-    private HeaderFooterCreateRequest header;
-    private HeaderFooterCreateRequest footer;
+    private HeaderFooterCreateReq header;
+    private HeaderFooterCreateReq footer;
 
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    private List<PageCreateRequest> pages;
+    private List<PageCreateReq> pages;
 }

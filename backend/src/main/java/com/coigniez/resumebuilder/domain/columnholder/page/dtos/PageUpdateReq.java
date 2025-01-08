@@ -1,8 +1,8 @@
 package com.coigniez.resumebuilder.domain.columnholder.page.dtos;
 
-import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderResp;
+import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderUpdateReq;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -12,9 +12,9 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class PageResp extends ColumnHolderResp {
+public class PageUpdateReq extends ColumnHolderUpdateReq {
 
-    @NotNull
+    @Min(1)
     private int pageNumber;
     
 }
