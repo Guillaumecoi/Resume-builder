@@ -1,179 +1,146 @@
-// package com.coigniez.resumebuilder.controllers;
+package com.coigniez.resumebuilder.controllers;
 
-// import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-// import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-// import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-// import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-// import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
-// import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-// import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutUpdateReq;
+import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
+import com.coigniez.resumebuilder.templates.color.ColorTemplates;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-// import org.junit.jupiter.api.BeforeEach;
-// import org.junit.jupiter.api.Test;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-// import org.springframework.boot.test.context.SpringBootTest;
-// import org.springframework.http.HttpHeaders;
-// import org.springframework.http.MediaType;
-// import org.springframework.security.test.context.support.WithMockUser;
-// import org.springframework.test.context.ActiveProfiles;
-// import org.springframework.test.web.servlet.MockMvc;
-// import org.springframework.transaction.annotation.Transactional;
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+@Transactional
+public class LayoutControllerIntegrationTest {
 
-// import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
-// import com.coigniez.resumebuilder.domain.layout.dtos.LayoutUpdateReq;
-// import com.coigniez.resumebuilder.domain.layout.enums.PageSize;
-// import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
-// import com.coigniez.resumebuilder.templates.color.ColorTemplates;
-// import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplates;
-// import com.fasterxml.jackson.databind.ObjectMapper;
+    @Autowired
+    private MockMvc mockMvc;
 
-// @SpringBootTest
-// @AutoConfigureMockMvc
-// @ActiveProfiles("test")
-// @Transactional
-// public class LayoutControllerIntegrationTest {
+    private Long resumeId;
 
-//     @Autowired
-//     private MockMvc mockMvc;
+    @BeforeEach
+    @WithMockUser(username = "testuser", roles = "USER")
+    void setUp() throws Exception {
+        // Arrange
+        ResumeCreateReq createRequest = ResumeCreateReq.builder().title("Software Developer").build();
 
-//     private Long resumeId;
+        // Act - Create
+        String createResponse = mockMvc.perform(post("/resumes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(createRequest)))
+                .andReturn().getResponse().getContentAsString();
 
-//     @BeforeEach
-//     @WithMockUser(username = "testuser", roles = "USER")
-//     void setUp() throws Exception {
-//         // Arrange
-//         ResumeCreateReq createRequest = ResumeCreateReq.builder().title("Software Developer").build();
+        resumeId = Long.parseLong(createResponse);
+    }
 
-//         // Act - Create
-//         String createResponse = mockMvc.perform(post("/resumes")
-//                 .contentType(MediaType.APPLICATION_JSON)
-//                 .content(new ObjectMapper().writeValueAsString(createRequest)))
-//                 .andReturn().getResponse().getContentAsString();
+    @Test
+    @WithMockUser(username = "testuser", roles = "USER")
+    void testCreateAndGetLayout() throws Exception {
+        // Arrange
+        LayoutCreateReq request = LayoutCreateReq.builder().resumeId(resumeId).build();
 
-//         resumeId = Long.parseLong(createResponse);
-//     }
+        // Act - Create
+        String createResponse = mockMvc.perform(post("/layouts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
 
-//     @Test
-//     @WithMockUser(username = "testuser", roles = "USER")
-//     void testCreateAndGetLayout() throws Exception {
-//         // Arrange
-//         LayoutCreateReq request = LayoutCreateReq.builder().resumeId(resumeId).numberOfColumns(1).build();
+        Long layoutId = Long.parseLong(createResponse);
 
-//         // Act - Create
-//         String createResponse = mockMvc.perform(post("/layouts")
-//                 .contentType(MediaType.APPLICATION_JSON)
-//                 .content(new ObjectMapper().writeValueAsString(request)))
-//                 .andExpect(status().isCreated())
-//                 .andReturn().getResponse().getContentAsString();
+        // Assert - Get created layout
+        mockMvc.perform(get("/layouts/" + layoutId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.pageSize").value("A4"))
+                .andExpect(jsonPath("$.colorScheme").isMap())
+                .andExpect(jsonPath("$.latexMethods").isArray());
+    }
 
-//         Long layoutId = Long.parseLong(createResponse);
+    @Test
+    @WithMockUser(username = "testuser", roles = "USER")
+    void testUpdateLayout() throws Exception {
+        // Arrange
+        LayoutCreateReq createRequest = LayoutCreateReq.builder().resumeId(resumeId).build();
+        String createResponse = mockMvc.perform(post("/layouts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(createRequest)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
 
-//         // Assert - Get created layout
-//         mockMvc.perform(get("/layouts/" + layoutId))
-//                 .andExpect(status().isOk())
-//                 .andExpect(jsonPath("$.id").exists())
-//                 .andExpect(jsonPath("$.pageSize").value("A4"))
-//                 .andExpect(jsonPath("$.numberOfColumns").value(1))
-//                 .andExpect(jsonPath("$.columns").isArray())
-//                 .andExpect(jsonPath("$.columnSeparator").value(0.35))
-//                 .andExpect(jsonPath("$.colorScheme").isMap())
-//                 .andExpect(jsonPath("$.latexMethods").isArray());
-//     }
+        Long layoutId = Long.parseLong(createResponse);
 
-//     @Test
-//     @WithMockUser(username = "testuser", roles = "USER")
-//     void testUpdateLayout() throws Exception {
-//         // Arrange
-//         LayoutCreateReq createRequest = LayoutCreateReq.builder().resumeId(resumeId).numberOfColumns(1).build();
-//         String createResponse = mockMvc.perform(post("/layouts")
-//                 .contentType(MediaType.APPLICATION_JSON)
-//                 .content(new ObjectMapper().writeValueAsString(createRequest)))
-//                 .andExpect(status().isCreated())
-//                 .andReturn().getResponse().getContentAsString();
+        LayoutUpdateReq updateRequest = LayoutUpdateReq.builder()
+                .id(layoutId).pageSize(PageSize.A5)
+                .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
+                .build();
 
-//         Long layoutId = Long.parseLong(createResponse);
+        // Act
+        mockMvc.perform(post("/layouts/" + layoutId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(updateRequest)))
+                .andExpect(status().isOk());
 
-//         LayoutUpdateReq updateRequest = LayoutUpdateReq.builder()
-//                 .id(layoutId).pageSize(PageSize.A4)
-//                 .numberOfColumns(1).columnSeparator(0.4).colorScheme(ColorTemplates.EXECUTIVE_SUITE)
-//                 .latexMethods(LatexMethodTemplates.getStandardMethods())
-//                 .CreateColumns(List.of()).updateColumns(List.of())
-//                 .build();
+        // Assert
+        mockMvc.perform(get("/layouts/" + layoutId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.pageSize").value("A5"));
+    }
 
-//         // Act
-//         mockMvc.perform(post("/layouts/" + layoutId)
-//                 .contentType(MediaType.APPLICATION_JSON)
-//                 .content(new ObjectMapper().writeValueAsString(updateRequest)))
-//                 .andExpect(status().isOk());
+    @Test
+    @WithMockUser(username = "testuser", roles = "USER")
+    void testDeleteLayout() throws Exception {
+        // Arrange
+        LayoutCreateReq createRequest = LayoutCreateReq.builder().resumeId(resumeId).build();
+        String createResponse = mockMvc.perform(post("/layouts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(createRequest)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
 
-//         // Assert
-//         mockMvc.perform(get("/layouts/" + layoutId))
-//                 .andExpect(status().isOk())
-//                 .andExpect(jsonPath("$.columnSeparator").value(0.4));
-//     }
+        Long layoutId = Long.parseLong(createResponse);
 
-//     @Test
-//     @WithMockUser(username = "testuser", roles = "USER")
-//     void testDeleteLayout() throws Exception {
-//         // Arrange
-//         LayoutCreateReq createRequest = LayoutCreateReq.builder().resumeId(resumeId).numberOfColumns(1).build();
-//         String createResponse = mockMvc.perform(post("/layouts")
-//                 .contentType(MediaType.APPLICATION_JSON)
-//                 .content(new ObjectMapper().writeValueAsString(createRequest)))
-//                 .andExpect(status().isCreated())
-//                 .andReturn().getResponse().getContentAsString();
+        // Act
+        mockMvc.perform(post("/layouts/" + layoutId + "/delete"))
+                .andExpect(status().isNoContent());
 
-//         Long layoutId = Long.parseLong(createResponse);
+        // Assert
+        mockMvc.perform(get("/layouts/" + layoutId))
+                .andExpect(status().isNotFound());
+    }
 
-//         // Act
-//         mockMvc.perform(post("/layouts/" + layoutId + "/delete"))
-//                 .andExpect(status().isNoContent());
+    @Test
+    @WithMockUser(username = "testuser", roles = "USER")
+    void testGetLatexMethods() throws Exception {
+        // Arrange
+        LayoutCreateReq createRequest = LayoutCreateReq.builder().resumeId(resumeId).build();
+        String createResponse = mockMvc.perform(post("/layouts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(createRequest)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
 
-//         // Assert
-//         mockMvc.perform(get("/layouts/" + layoutId))
-//                 .andExpect(status().isNotFound());
-//     }
+        Long layoutId = Long.parseLong(createResponse);
 
-//     @Test
-//     @WithMockUser(username = "testuser", roles = "USER")
-//     void testGenerateLatexPdf() throws Exception {
-//         // Arrange
-//         LayoutCreateReq createRequest = LayoutCreateReq.builder().resumeId(resumeId).numberOfColumns(1).build();
-//         String createResponse = mockMvc.perform(post("/layouts")
-//                 .contentType(MediaType.APPLICATION_JSON)
-//                 .content(new ObjectMapper().writeValueAsString(createRequest)))
-//                 .andExpect(status().isCreated())
-//                 .andReturn().getResponse().getContentAsString();
-
-//         Long layoutId = Long.parseLong(createResponse);
-
-//         // Act & Assert
-//         mockMvc.perform(get("/layouts/" + layoutId + "/pdf"))
-//                 .andExpect(status().isOk())
-//                 .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION,
-//                         "attachment;filename=layout_" + layoutId + ".pdf"))
-//                 .andExpect(content().contentType(MediaType.APPLICATION_PDF));
-//     }
-
-//     @Test
-//     @WithMockUser(username = "testuser", roles = "USER")
-//     void testGetLatexMethods() throws Exception {
-//         // Arrange
-//         LayoutCreateReq createRequest = LayoutCreateReq.builder().resumeId(resumeId).numberOfColumns(1).build();
-//         String createResponse = mockMvc.perform(post("/layouts")
-//                 .contentType(MediaType.APPLICATION_JSON)
-//                 .content(new ObjectMapper().writeValueAsString(createRequest)))
-//                 .andExpect(status().isCreated())
-//                 .andReturn().getResponse().getContentAsString();
-
-//         Long layoutId = Long.parseLong(createResponse);
-
-//         // Act & Assert
-//         mockMvc.perform(get("/layouts/" + layoutId + "/methods"))
-//                 .andExpect(status().isOk())
-//                 .andExpect(jsonPath("$").isArray());
-//     }
-// }
+        // Act & Assert
+        mockMvc.perform(get("/layouts/" + layoutId + "/methods"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray());
+    }
+}

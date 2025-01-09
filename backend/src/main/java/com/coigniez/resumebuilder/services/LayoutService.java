@@ -13,6 +13,7 @@ import com.coigniez.resumebuilder.domain.layout.LayoutMapper;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResp;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutUpdateReq;
+import com.coigniez.resumebuilder.domain.resume.Resume;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
 import com.coigniez.resumebuilder.latex.generators.LatexDocumentGenerator;
 import com.coigniez.resumebuilder.repository.LayoutRepository;
@@ -106,8 +107,13 @@ public class LayoutService implements ParentEntityService<LayoutCreateReq, Layou
         // Check if the connected user has access to the resume
         securityUtils.hasAccessResume(resumetId);
 
-        // Delete all layouts for the resume
-        layoutRepository.deleteAll(layoutRepository.findAllByResumeId(resumetId));
+        // Get the resume and clear all layouts
+        Resume resume = resumeRepository.findById(resumetId)
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Resume", resumetId));
+        resume.clearLayouts();
+
+        // Save the updated resume
+        resumeRepository.save(resume);
     }
 
     /**

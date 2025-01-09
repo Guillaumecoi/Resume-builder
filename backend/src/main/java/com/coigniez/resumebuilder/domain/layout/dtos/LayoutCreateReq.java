@@ -21,7 +21,7 @@ import lombok.Data;
 public class LayoutCreateReq implements CreateRequest {
 
     @NotNull
-    private long resumeId;
+    private Long resumeId;
 
     private PageSize pageSize;
 
