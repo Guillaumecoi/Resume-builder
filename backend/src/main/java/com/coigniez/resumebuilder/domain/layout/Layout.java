@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.domain.layout;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.Header;
+import com.coigniez.resumebuilder.domain.columnholder.header.Header;
 import com.coigniez.resumebuilder.domain.columnholder.page.LayoutPage;
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.layout.embedded.ColorScheme;

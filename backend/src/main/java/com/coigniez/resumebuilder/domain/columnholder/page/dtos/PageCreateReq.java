@@ -2,19 +2,17 @@ package com.coigniez.resumebuilder.domain.columnholder.page.dtos;
 
 import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderCreateReq;
 
-import jakarta.validation.constraints.Min;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import lombok.EqualsAndHashCode;
 
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class PageCreateReq extends ColumnHolderCreateReq {
+public class PageCreateReq extends PageSimpleCreateReq implements ColumnHolderCreateReq {
 
-    @Min(1)
-    private int pageNumber;
+    private long layoutId;
 
 }

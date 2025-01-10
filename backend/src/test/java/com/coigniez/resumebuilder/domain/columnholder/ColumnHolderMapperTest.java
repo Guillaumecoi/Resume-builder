@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderResp;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.Header;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderCreateReq;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderResp;
+import com.coigniez.resumebuilder.domain.columnholder.header.Header;
+import com.coigniez.resumebuilder.domain.columnholder.header.dtos.HeaderSimpleCreateReq;
+import com.coigniez.resumebuilder.domain.columnholder.header.dtos.HeaderResp;
 import com.coigniez.resumebuilder.domain.columnholder.page.LayoutPage;
-import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageCreateReq;
+import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageSimpleCreateReq;
 import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageResp;
 
 @SpringBootTest
@@ -22,7 +22,7 @@ public class ColumnHolderMapperTest {
 
     @Test
     void testToEntity_HeaderFooterCreateReq() {
-        HeaderCreateReq request = HeaderCreateReq.builder()
+        HeaderSimpleCreateReq request = HeaderSimpleCreateReq.builder()
                 .height(10.0)
                 .repeatOnEveryPage(true)
                 .build();
@@ -39,7 +39,7 @@ public class ColumnHolderMapperTest {
 
     @Test
     void testToEntity_PageCreateReq() {
-        PageCreateReq request = PageCreateReq.builder()
+        PageSimpleCreateReq request = PageSimpleCreateReq.builder()
                 .pageNumber(1)
                 .build();
 

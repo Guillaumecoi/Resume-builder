@@ -14,11 +14,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutResp;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.Header;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderCreateReq;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderUpdateReq;
+import com.coigniez.resumebuilder.domain.columnholder.header.Header;
+import com.coigniez.resumebuilder.domain.columnholder.header.dtos.HeaderSimpleCreateReq;
+import com.coigniez.resumebuilder.domain.columnholder.header.dtos.HeaderUpdateReq;
 import com.coigniez.resumebuilder.domain.columnholder.page.LayoutPage;
-import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageCreateReq;
+import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageSimpleCreateReq;
 import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageUpdateReq;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutUpdateReq;
@@ -118,14 +118,14 @@ public class LayoutMapperTest {
     @Test
     void testToEntity_WithHeaderAndPages() {
         // Arrange
-        HeaderCreateReq header = HeaderCreateReq.builder()
+        HeaderSimpleCreateReq header = HeaderSimpleCreateReq.builder()
                 .height(0.100)
                 .repeatOnEveryPage(true)
                 .build();
 
-        List<PageCreateReq> pages = List.of(
-                PageCreateReq.builder().pageNumber(1).build(),
-                PageCreateReq.builder().pageNumber(2).build());
+        List<PageSimpleCreateReq> pages = List.of(
+                PageSimpleCreateReq.builder().pageNumber(1).build(),
+                PageSimpleCreateReq.builder().pageNumber(2).build());
 
         LayoutCreateReq request = LayoutCreateReq.builder()
                 .resumeId(1L)

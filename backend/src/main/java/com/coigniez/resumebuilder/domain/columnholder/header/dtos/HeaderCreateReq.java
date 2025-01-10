@@ -1,19 +1,18 @@
-package com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos;
+package com.coigniez.resumebuilder.domain.columnholder.header.dtos;
 
 import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderCreateReq;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import lombok.EqualsAndHashCode;
 
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class HeaderCreateReq extends ColumnHolderCreateReq {
+public class HeaderCreateReq extends HeaderSimpleCreateReq implements ColumnHolderCreateReq {
 
-    private Double height;
-    private Boolean repeatOnEveryPage;
+    private long layoutId;
     
 }

@@ -21,9 +21,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderCreateReq;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderUpdateReq;
-import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageCreateReq;
+import com.coigniez.resumebuilder.domain.columnholder.header.dtos.HeaderSimpleCreateReq;
+import com.coigniez.resumebuilder.domain.columnholder.header.dtos.HeaderUpdateReq;
+import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageSimpleCreateReq;
 import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageUpdateReq;
 import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
 import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
@@ -74,16 +74,16 @@ public class LayoutServiceIntegrationTest {
     @Test
     void testCreateAndGetComplete() {
         // Arrange
-        HeaderCreateReq header = HeaderCreateReq.builder()
+        HeaderSimpleCreateReq header = HeaderSimpleCreateReq.builder()
                 .height(0.100)
                 .repeatOnEveryPage(true)
                 .build();
 
-        List<PageCreateReq> pages = List.of(
-                PageCreateReq.builder()
+        List<PageSimpleCreateReq> pages = List.of(
+                PageSimpleCreateReq.builder()
                         .pageNumber(1)
                         .build(),
-                PageCreateReq.builder()
+                PageSimpleCreateReq.builder()
                         .pageNumber(2)
                         .build());
 
@@ -124,8 +124,8 @@ public class LayoutServiceIntegrationTest {
                 .resumeId(resumeId)
                 .pageSize(PageSize.A4)
                 .colorScheme(ColorTemplates.EXECUTIVE_SUITE)
-                .header(HeaderCreateReq.builder().height(0.100).repeatOnEveryPage(true).build())
-                .pages(List.of(PageCreateReq.builder().pageNumber(1).build()))
+                .header(HeaderSimpleCreateReq.builder().height(0.100).repeatOnEveryPage(true).build())
+                .pages(List.of(PageSimpleCreateReq.builder().pageNumber(1).build()))
                 .build();
 
         Long layoutId = layoutService.create(layoutRequest);
@@ -168,7 +168,7 @@ public class LayoutServiceIntegrationTest {
         // Arrange
         LayoutCreateReq layoutRequest = LayoutCreateReq.builder()
                 .resumeId(resumeId)
-                .header(HeaderCreateReq.builder().height(0.100).build())
+                .header(HeaderSimpleCreateReq.builder().height(0.100).build())
                 .build();
 
         Long layoutId = layoutService.create(layoutRequest);
@@ -193,8 +193,8 @@ public class LayoutServiceIntegrationTest {
         // Arrange
         LayoutCreateReq layoutRequest = LayoutCreateReq.builder()
                 .resumeId(resumeId)
-                .header(HeaderCreateReq.builder().height(0.100).build())
-                .pages(List.of(PageCreateReq.builder().pageNumber(1).build()))
+                .header(HeaderSimpleCreateReq.builder().height(0.100).build())
+                .pages(List.of(PageSimpleCreateReq.builder().pageNumber(1).build()))
                 .build();
 
         Long layoutId = layoutService.create(layoutRequest);

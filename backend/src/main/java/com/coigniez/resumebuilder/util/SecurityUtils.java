@@ -8,6 +8,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import com.coigniez.resumebuilder.domain.columnholder.ColumnHolder;
+import com.coigniez.resumebuilder.repository.ColumnHolderRepository;
 import com.coigniez.resumebuilder.repository.ColumnRepository;
 import com.coigniez.resumebuilder.repository.ColumnSectionRepository;
 import com.coigniez.resumebuilder.repository.LatexMethodRepository;
@@ -39,6 +41,8 @@ public class SecurityUtils {
     private LayoutRepository layoutRepository;
     @Autowired
     private LatexMethodRepository latexMethodRepository;
+    @Autowired
+    private ColumnHolderRepository columnHolderRepository;
     @Autowired
     private ColumnRepository columnRepository;
     @Autowired
@@ -174,6 +178,24 @@ public class SecurityUtils {
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("Latex method", latexMethodId));
         if (!hasAccess(List.of(owner))) {
             throw ExceptionUtils.accessDenied(owner, "latex method", latexMethodId);
+        }
+    }
+
+    /**
+     * Check if the connected user has access to the column holder
+     * 
+     * @param id            the id of the column holder
+     * @param connectedUser the connected user
+     * @throws AccessDeniedException   if the connected user does not have access to
+     *                                 the column holder
+     * @throws EntityNotFoundException if the column holder does not exist
+     */
+    public void hasAccessColumnHolder(Long columnHolderId) {
+        ColumnHolder columnHolder = columnHolderRepository.findById(columnHolderId)
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Column holder", columnHolderId));
+        String owner = columnHolder.getLayout().getResume().getCreatedBy();
+        if (!hasAccess(List.of(owner))) {
+            throw ExceptionUtils.accessDenied(owner, "column holder", columnHolderId);
         }
     }
 

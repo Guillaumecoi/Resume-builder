@@ -9,15 +9,15 @@ import org.springframework.stereotype.Service;
 import com.coigniez.resumebuilder.domain.column.Column;
 import com.coigniez.resumebuilder.domain.column.ColumnMapper;
 import com.coigniez.resumebuilder.domain.column.dtos.ColumnResp;
-import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderCreateReq;
+import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderSimpleCreateReq;
 import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderResp;
 import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderUpdateReq;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.Header;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderCreateReq;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderResp;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderUpdateReq;
+import com.coigniez.resumebuilder.domain.columnholder.header.Header;
+import com.coigniez.resumebuilder.domain.columnholder.header.dtos.HeaderSimpleCreateReq;
+import com.coigniez.resumebuilder.domain.columnholder.header.dtos.HeaderResp;
+import com.coigniez.resumebuilder.domain.columnholder.header.dtos.HeaderUpdateReq;
 import com.coigniez.resumebuilder.domain.columnholder.page.LayoutPage;
-import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageCreateReq;
+import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageSimpleCreateReq;
 import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageResp;
 import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageUpdateReq;
 import com.coigniez.resumebuilder.interfaces.Mapper;
@@ -26,13 +26,13 @@ import jakarta.validation.Valid;
 
 @Service
 public class ColumnHolderMapper
-        implements Mapper<ColumnHolder, ColumnHolderCreateReq, ColumnHolderUpdateReq, ColumnHolderResp> {
+        implements Mapper<ColumnHolder, ColumnHolderSimpleCreateReq, ColumnHolderUpdateReq, ColumnHolderResp> {
 
     @Autowired
     private ColumnMapper columnMapper;
 
     @Override
-    public ColumnHolder toEntity(@Valid ColumnHolderCreateReq request) {
+    public ColumnHolder toEntity(@Valid ColumnHolderSimpleCreateReq request) {
         if (request == null) {
             return null;
         }
@@ -41,15 +41,15 @@ public class ColumnHolderMapper
                 .map(cols -> cols.stream().map(columnMapper::toEntity).toList())
                 .orElse(List.of());
 
-        if (request instanceof HeaderCreateReq) {
+        if (request instanceof HeaderSimpleCreateReq) {
             return Header.builder()
-                    .height(((HeaderCreateReq) request).getHeight())
-                    .repeatOnEveryPage(((HeaderCreateReq) request).getRepeatOnEveryPage())
+                    .height(((HeaderSimpleCreateReq) request).getHeight())
+                    .repeatOnEveryPage(((HeaderSimpleCreateReq) request).getRepeatOnEveryPage())
                     .columns(columns)
                     .build();
-        } else if (request instanceof PageCreateReq) {
+        } else if (request instanceof PageSimpleCreateReq) {
             return LayoutPage.builder()
-                    .pageNumber(((PageCreateReq) request).getPageNumber())
+                    .pageNumber(((PageSimpleCreateReq) request).getPageNumber())
                     .columns(columns)
                     .build();
         } else {

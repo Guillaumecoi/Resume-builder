@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.domain.layout.dtos;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderUpdateReq;
+import com.coigniez.resumebuilder.domain.columnholder.header.dtos.HeaderUpdateReq;
 import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageUpdateReq;
 import com.coigniez.resumebuilder.domain.layout.embedded.ColorScheme;
 import com.coigniez.resumebuilder.domain.layout.enums.*;

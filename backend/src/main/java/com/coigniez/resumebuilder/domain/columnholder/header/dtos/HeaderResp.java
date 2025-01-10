@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos;
+package com.coigniez.resumebuilder.domain.columnholder.header.dtos;
 
 import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderResp;
 

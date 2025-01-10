@@ -8,8 +8,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.coigniez.resumebuilder.domain.columnholder.ColumnHolderMapper;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.Header;
-import com.coigniez.resumebuilder.domain.columnholder.headerfooter.dtos.HeaderResp;
+import com.coigniez.resumebuilder.domain.columnholder.header.Header;
+import com.coigniez.resumebuilder.domain.columnholder.header.dtos.HeaderResp;
 import com.coigniez.resumebuilder.domain.columnholder.page.LayoutPage;
 import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageResp;
 import com.coigniez.resumebuilder.domain.columnholder.page.dtos.PageUpdateReq;

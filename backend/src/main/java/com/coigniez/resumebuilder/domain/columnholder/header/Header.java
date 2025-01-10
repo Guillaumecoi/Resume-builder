@@ -1,4 +1,4 @@
-package com.coigniez.resumebuilder.domain.columnholder.headerfooter;
+package com.coigniez.resumebuilder.domain.columnholder.header;
 
 import com.coigniez.resumebuilder.domain.columnholder.ColumnHolder;
 import com.coigniez.resumebuilder.domain.layout.Layout;
