@@ -216,6 +216,23 @@ public class ColumnServiceIntegrationTest {
 
         Long columnId = columnService.create(request);
 
+        ColumnUpdateReq updateRequest = ColumnUpdateReq.builder()
+        .id(columnId)
+        .columnNumber((short) 2)
+        .columnSize(2.0f)
+        .backgroundColor(ColorLocation.DARK_BG)
+        .textColor(ColorLocation.LIGHT_TEXT)
+        .borderColor(ColorLocation.PRIMARY)
+        .paddingLeft(15.0f)
+        .paddingRight(15.0f)
+        .paddingTop(25.0f)
+        .paddingBottom(25.0f)
+        .borderLeft(1.0f)
+        .borderRight(1.0f)
+        .borderTop(1.0f)
+        .borderBottom(1.0f)
+        .build();
+
         // Set it to otheruser
         SecurityContextHolder.getContext().setAuthentication(otheruser);
 
@@ -229,7 +246,7 @@ public class ColumnServiceIntegrationTest {
         }, "Other user should not be able to get another user's column");
 
         assertThrows(AccessDeniedException.class, () -> {
-            columnService.update(ColumnUpdateReq.builder().id(columnId).build());
+            columnService.update(updateRequest);
         }, "Other user should not be able to update another user's column");
 
         assertThrows(AccessDeniedException.class, () -> {

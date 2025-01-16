@@ -192,9 +192,8 @@ public class SecurityUtils {
      * @throws EntityNotFoundException if the column holder does not exist
      */
     public void hasAccessColumnHolder(Long columnHolderId) {
-        ColumnHolder columnHolder = columnHolderRepository.findById(columnHolderId)
+        String owner = columnHolderRepository.findCreatedBy(columnHolderId)
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("Column holder", columnHolderId));
-        String owner = columnHolder.getLayout().getResume().getCreatedBy();
         if (!hasAccess(List.of(owner))) {
             throw ExceptionUtils.accessDenied(owner, "column holder", columnHolderId);
         }
@@ -210,9 +209,8 @@ public class SecurityUtils {
      * @throws EntityNotFoundException if the column does not exist
      */
     public void hasAccessColumn(Long columnId) {
-        LayoutColumn column = columnRepository.findById(columnId)
+        String owner = columnRepository.findCreatedBy(columnId)
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", columnId));
-        String owner = column.getColumnHolder().getLayout().getResume().getCreatedBy();
         if (!hasAccess(List.of(owner))) {
             throw ExceptionUtils.accessDenied(owner, "column", columnId);
         }
