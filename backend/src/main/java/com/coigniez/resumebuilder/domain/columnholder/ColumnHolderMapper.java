@@ -7,7 +7,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.coigniez.resumebuilder.domain.column.LayoutColumn;
 import com.coigniez.resumebuilder.domain.column.ColumnMapper;
 import com.coigniez.resumebuilder.domain.column.dtos.ColumnResp;
 import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderSimpleCreateReq;
@@ -38,24 +37,27 @@ public class ColumnHolderMapper
             return null;
         }
 
-        List<LayoutColumn> columns = Optional.ofNullable(request.getColumns())
-                .map(cols -> cols.stream().map(columnMapper::toEntity).toList())
-                .orElse(new ArrayList<>());
+        ColumnHolder columnHolder;
 
         if (request instanceof HeaderSimpleCreateReq) {
-            return Header.builder()
+            columnHolder = Header.builder()
                     .height(((HeaderSimpleCreateReq) request).getHeight())
                     .repeatOnEveryPage(((HeaderSimpleCreateReq) request).getRepeatOnEveryPage())
-                    .columns(columns)
+                    .columns(new ArrayList<>())
                     .build();
         } else if (request instanceof PageSimpleCreateReq) {
-            return LayoutPage.builder()
+            columnHolder = LayoutPage.builder()
                     .pageNumber(((PageSimpleCreateReq) request).getPageNumber())
-                    .columns(columns)
+                    .columns(new ArrayList<>())
                     .build();
         } else {
             throw new IllegalArgumentException("Unknown request type: " + request.getClass().getName());
         }
+
+        Optional.ofNullable(request.getColumns())
+                .ifPresent(cols -> cols.forEach(col -> columnHolder.addColumn(columnMapper.toEntity(col))));
+
+        return columnHolder;
     }
 
     @Override
