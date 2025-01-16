@@ -3,6 +3,8 @@ package com.coigniez.resumebuilder.domain.column.dtos;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.interfaces.UpdateRequest;
 
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -17,8 +19,13 @@ public class ColumnUpdateReq implements UpdateRequest {
 
     @NotNull
     @Min(1)
-    @Max(2)
-    private Integer columnNumber;
+    @Max(10)
+    private Short columnNumber;
+
+    @NotNull
+    @DecimalMin("0.1")
+    @DecimalMax("5.0")
+    private Float columnSize;
 
     @NotNull
     private ColorLocation backgroundColor;
@@ -28,28 +35,36 @@ public class ColumnUpdateReq implements UpdateRequest {
     private ColorLocation borderColor;
 
     @NotNull
-    @Min(0)
-    private Double paddingLeft;
+    @DecimalMin("0.0")
+    @DecimalMax("999.9")
+    private float paddingLeft;
     @NotNull
-    @Min(0)
-    private Double paddingRight;
+    @DecimalMin("0.0")
+    @DecimalMax("999.9")
+    private float paddingRight;
     @NotNull
-    @Min(0)
-    private Double paddingTop;
+    @DecimalMin("0.0")
+    @DecimalMax("999.9")
+    private float paddingTop;
     @NotNull
-    @Min(0)
-    private Double paddingBottom;
+    @DecimalMin("0.0")
+    @DecimalMax("999.9")
+    private float paddingBottom;
 
     @NotNull
-    @Min(0)
-    private Double borderLeft;
+    @DecimalMin("0.0")
+    @DecimalMax("999.9")
+    private float borderLeft;
     @NotNull
-    @Min(0)
-    private Double borderRight;
+    @DecimalMin("0.0")
+    @DecimalMax("999.9")
+    private float borderRight;
     @NotNull
-    @Min(0)
-    private Double borderTop;
+    @DecimalMin("0.0")
+    @DecimalMax("999.9")
+    private float borderTop;
     @NotNull
-    @Min(0)
-    private Double borderBottom;
+    @DecimalMin("0.0")
+    @DecimalMax("999.9")
+    private float borderBottom;
 }

@@ -8,10 +8,10 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.coigniez.resumebuilder.domain.column.Column;
+import com.coigniez.resumebuilder.domain.column.LayoutColumn;
 
 @Repository
-public interface ColumnRepository extends JpaRepository<Column, Long> {
+public interface ColumnRepository extends JpaRepository<LayoutColumn, Long> {
 
     // @Query("SELECT r.createdBy FROM Column c JOIN c.layout l JOIN l.resume r WHERE c.id = :id")
     // Optional<String> findCreatedBy(long id);

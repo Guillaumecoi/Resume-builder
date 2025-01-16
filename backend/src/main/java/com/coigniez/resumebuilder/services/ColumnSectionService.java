@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.coigniez.resumebuilder.domain.column.Column;
+import com.coigniez.resumebuilder.domain.column.LayoutColumn;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSectionMapper;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResp;
@@ -93,7 +93,7 @@ public class ColumnSectionService implements
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("ColumnSection", id));
 
         // Remove the columnSection from the column and section
-        Column column = columnSection.getColumn();
+        LayoutColumn column = columnSection.getColumn();
 
         column.removeSectionMapping(columnSection);
         // Delete the columnSection

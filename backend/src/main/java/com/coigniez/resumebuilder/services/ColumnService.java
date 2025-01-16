@@ -4,19 +4,21 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.coigniez.resumebuilder.domain.column.Column;
+import com.coigniez.resumebuilder.domain.column.LayoutColumn;
 import com.coigniez.resumebuilder.domain.column.ColumnMapper;
 import com.coigniez.resumebuilder.domain.column.dtos.ColumnResp;
 import com.coigniez.resumebuilder.domain.column.dtos.ColumnCreateReq;
 import com.coigniez.resumebuilder.domain.column.dtos.ColumnUpdateReq;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionCreateReq;
-import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionUpdateReq;
+import com.coigniez.resumebuilder.domain.column.enums.BackgroungImage;
+import com.coigniez.resumebuilder.domain.columnholder.ColumnHolder;
+import com.coigniez.resumebuilder.file.FileStorageService;
 import com.coigniez.resumebuilder.interfaces.ParentEntityService;
+import com.coigniez.resumebuilder.repository.ColumnHolderRepository;
 import com.coigniez.resumebuilder.repository.ColumnRepository;
-import com.coigniez.resumebuilder.repository.ColumnSectionRepository;
-import com.coigniez.resumebuilder.repository.LayoutRepository;
 import com.coigniez.resumebuilder.util.ExceptionUtils;
+import com.coigniez.resumebuilder.util.ParentRepositoryUtil;
 import com.coigniez.resumebuilder.util.SecurityUtils;
 
 import lombok.AllArgsConstructor;
@@ -27,16 +29,42 @@ public class ColumnService
         implements ParentEntityService<ColumnCreateReq, ColumnUpdateReq, ColumnResp, Long> {
 
     private final ColumnRepository columnRepository;
-    private final LayoutRepository layoutRepository;
-    private final ColumnSectionRepository columnSectionRepository;
-    private final ColumnSectionService columnSectionService;
+    private final ColumnHolderRepository columnHolderRepository;
     private final ColumnMapper columnMapper;
     private final SecurityUtils securityUtils;
+    private final FileStorageService fileStorageService;
+    private final ParentRepositoryUtil parentRepositoryUtil;
 
     @Override
     public Long create(ColumnCreateReq request) {
-        //TODO: Implement the create method
-        throw new UnsupportedOperationException("Not implemented yet");
+        // Check if the current user has access to the columnHolder
+        securityUtils.hasAccessColumnHolder(request.getColumnHolderId());
+
+        // Create the entity
+        LayoutColumn column = columnMapper.toEntity(request);
+
+        // Add the column to the columnHolder
+        columnHolderRepository.findById(request.getColumnHolderId())
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("ColumnHolder", request.getColumnHolderId()))
+                .addColumn(column);
+
+        // Save the entity
+        return columnRepository.save(column).getId();
+    }
+
+    public Long CreateWithPicture(MultipartFile file, ColumnCreateReq request) {
+        // Check if the current user has access to the columnHolder
+        securityUtils.hasAccessColumnHolder(request.getColumnHolderId());
+
+        // Save the file to the file storage and add the path to the request
+        String path = fileStorageService.saveFile(file, securityUtils.getUserName());
+        BackgroungImage backgroungImage = Optional.ofNullable(request.getBackgroundImage())
+                .orElse(new BackgroungImage());
+        backgroungImage.setImagePath(path);
+        request.setBackgroundImage(backgroungImage);
+
+        // Save the entity
+        return create(request);
     }
 
     @Override
@@ -56,7 +84,7 @@ public class ColumnService
         securityUtils.hasAccessColumn(request.getId());
 
         // Update the entity
-        Column column = columnRepository.findById(request.getId())
+        LayoutColumn column = columnRepository.findById(request.getId())
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", request.getId()));
         columnMapper.updateEntity(column, request);
 
@@ -70,30 +98,41 @@ public class ColumnService
         // Check if the current user has access to the column
         securityUtils.hasAccessColumn(id);
 
-        //TODO: Remove the column from the layout
+        // Get the Column Holder
+        LayoutColumn column = columnRepository.findById(id)
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", id));
+
+        // Remove the column from the column holder
+        ColumnHolder columnHolder = column.getColumnHolder();
+        columnHolder.removeColumn(column);
 
         // Delete the column from the database
         columnRepository.deleteById(id);
     }
 
     @Override
-    public List<ColumnResp> getAllByParentId(Long layoutId) {
+    public List<ColumnResp> getAllByParentId(Long columnHolderId) {
         // Check if the current user has access to the layout
-        securityUtils.hasAccessLayout(layoutId);
+        securityUtils.hasAccessLayout(columnHolderId);
 
-        // Get all columns from the layout
-        return null;
+        // Get all columns from the database
+        return parentRepositoryUtil
+                .findAllByParentId(LayoutColumn.class, ColumnHolder.class, columnHolderId, "columnNumber")
+                .stream().map(columnMapper::toDto).toList();
     }
 
     @Override
-    public void removeAllByParentId(Long layoutId) {
+    public void removeAllByParentId(Long columnHolderId) {
         // Check if the current user has access to the layout
-        securityUtils.hasAccessLayout(layoutId);
+        securityUtils.hasAccessLayout(columnHolderId);
 
-        //TODO: Remove all columns from the layout
-        
+        ColumnHolder columnHolder = columnHolderRepository.findById(columnHolderId)
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("ColumnHolder", columnHolderId));
+        columnHolder.clearColumns();
+
         // Delete all columns from the database
-        
+        columnHolderRepository.save(columnHolder);
+
     }
 
 }

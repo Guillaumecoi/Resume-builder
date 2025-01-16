@@ -2,6 +2,7 @@ package com.coigniez.resumebuilder.domain.column.dtos;
 
 import java.util.List;
 
+import com.coigniez.resumebuilder.domain.column.enums.BackgroungImage;
 import com.coigniez.resumebuilder.domain.columnsection.dtos.ColumnSectionResp;
 import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
 import com.coigniez.resumebuilder.interfaces.Response;
@@ -19,7 +20,7 @@ public class ColumnResp implements Response {
     @NotNull
     private int columnNumber;
     @NotNull
-    private List<ColumnSectionResp> sectionMappings;
+    private float columnSize;
 
     @NotNull
     private ColorLocation backgroundColor;
@@ -29,20 +30,26 @@ public class ColumnResp implements Response {
     private ColorLocation borderColor;
 
     @NotNull
-    private double paddingLeft;
+    private float paddingLeft;
     @NotNull
-    private double paddingRight;
+    private float paddingRight;
     @NotNull
-    private double paddingTop;
+    private float paddingTop;
     @NotNull
-    private double paddingBottom;
+    private float paddingBottom;
 
     @NotNull
-    private double borderLeft;
+    private float borderLeft;
     @NotNull
-    private double borderRight;
+    private float borderRight;
     @NotNull
-    private double borderTop;
+    private float borderTop;
     @NotNull
-    private double borderBottom;
+    private float borderBottom;
+
+    @NotNull
+    private BackgroungImage backgroundImage;
+
+    @NotNull
+    private List<ColumnSectionResp> sectionMappings;
 }

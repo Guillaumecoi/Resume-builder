@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import com.coigniez.resumebuilder.domain.column.LayoutColumn;
 import com.coigniez.resumebuilder.domain.columnholder.ColumnHolder;
 import com.coigniez.resumebuilder.repository.ColumnHolderRepository;
 import com.coigniez.resumebuilder.repository.ColumnRepository;
@@ -209,11 +210,12 @@ public class SecurityUtils {
      * @throws EntityNotFoundException if the column does not exist
      */
     public void hasAccessColumn(Long columnId) {
-        // String owner = columnRepository.findCreatedBy(columnId)
-        //         .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", columnId));
-        // if (!hasAccess(List.of(owner))) {
-        //     throw ExceptionUtils.accessDenied(owner, "column", columnId);
-        // }
+        LayoutColumn column = columnRepository.findById(columnId)
+                .orElseThrow(() -> ExceptionUtils.entityNotFound("Column", columnId));
+        String owner = column.getColumnHolder().getLayout().getResume().getCreatedBy();
+        if (!hasAccess(List.of(owner))) {
+            throw ExceptionUtils.accessDenied(owner, "column", columnId);
+        }
     }
 
     /**

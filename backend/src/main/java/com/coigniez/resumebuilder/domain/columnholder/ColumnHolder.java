@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.domain.columnholder;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.column.Column;
+import com.coigniez.resumebuilder.domain.column.LayoutColumn;
 import com.coigniez.resumebuilder.domain.layout.Layout;
 import com.coigniez.resumebuilder.interfaces.BaseEntity;
 
@@ -36,17 +36,22 @@ public abstract class ColumnHolder implements BaseEntity {
     private Long id;
 
     @OneToMany(mappedBy = "columnHolder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Column> columns;
+    private List<LayoutColumn> columns;
 
-    public void addColumn(Column column) {
+    public void addColumn(LayoutColumn column) {
         columns.add(column);
+        column.setColumnHolder(this);
     }
 
-    public void removeColumn(Column column) {
+    public void removeColumn(LayoutColumn column) {
         columns.remove(column);
+        column.setColumnHolder(null);
     }
 
     public void clearColumns() {
+        for (LayoutColumn column : columns) {
+            column.setColumnHolder(null);
+        }
         columns.clear();
     }
 

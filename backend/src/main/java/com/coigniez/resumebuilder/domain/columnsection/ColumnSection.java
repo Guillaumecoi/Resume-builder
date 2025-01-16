@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.domain.columnsection;
 
 import java.util.List;
 
-import com.coigniez.resumebuilder.domain.column.Column;
+import com.coigniez.resumebuilder.domain.column.LayoutColumn;
 import com.coigniez.resumebuilder.domain.latex.LatexMethod;
 import com.coigniez.resumebuilder.domain.layout.enums.AlignmentType;
 import com.coigniez.resumebuilder.domain.layoutsection.LayoutSection;
@@ -35,7 +35,7 @@ public class ColumnSection implements BaseEntity, LatexMethodProvider {
 
     @ManyToOne
     @JoinColumn(name = "column_id", referencedColumnName = "id")
-    private Column column;
+    private LayoutColumn column;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "latex_method_id", referencedColumnName = "id")

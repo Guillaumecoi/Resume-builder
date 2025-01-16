@@ -1,12 +1,13 @@
 package com.coigniez.resumebuilder.domain.columnholder;
 
 import java.util.Optional;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.coigniez.resumebuilder.domain.column.Column;
+import com.coigniez.resumebuilder.domain.column.LayoutColumn;
 import com.coigniez.resumebuilder.domain.column.ColumnMapper;
 import com.coigniez.resumebuilder.domain.column.dtos.ColumnResp;
 import com.coigniez.resumebuilder.domain.columnholder.dtos.ColumnHolderSimpleCreateReq;
@@ -37,9 +38,9 @@ public class ColumnHolderMapper
             return null;
         }
 
-        List<Column> columns = Optional.ofNullable(request.getColumns())
+        List<LayoutColumn> columns = Optional.ofNullable(request.getColumns())
                 .map(cols -> cols.stream().map(columnMapper::toEntity).toList())
-                .orElse(List.of());
+                .orElse(new ArrayList<>());
 
         if (request instanceof HeaderSimpleCreateReq) {
             return Header.builder()

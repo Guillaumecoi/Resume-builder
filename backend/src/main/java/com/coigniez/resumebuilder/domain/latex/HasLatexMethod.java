@@ -1,6 +1,9 @@
 package com.coigniez.resumebuilder.domain.latex;
 
+import com.coigniez.resumebuilder.domain.column.LayoutColumn;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
+import com.coigniez.resumebuilder.domain.layoutsection.LayoutSection;
+import com.coigniez.resumebuilder.domain.layoutsubsection.LayoutSubSection;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Contact;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Education;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Picture;
@@ -12,8 +15,10 @@ import com.coigniez.resumebuilder.interfaces.LatexMethodProvider;
 import com.coigniez.resumebuilder.domain.sectionitem.itemtypes.Experience;
 
 public enum HasLatexMethod {
-    SECTION(null, 3),
-    SECTION_TITLE(ColumnSection.class, 2),
+    COLUMN(LayoutColumn.class, 1),
+    SECTION(ColumnSection.class, 3),
+    SECTION_TITLE(LayoutSection.class, 2),
+    SUBSECTION_TITLE(LayoutSubSection.class, 2),
     TITLE(Title.class, 2),
     EXPERIENCE(Experience.class, 5),
     TEXTBOX(Textbox.class, 1),

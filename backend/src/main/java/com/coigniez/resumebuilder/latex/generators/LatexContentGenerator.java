@@ -2,7 +2,7 @@ package com.coigniez.resumebuilder.latex.generators;
 
 import org.springframework.stereotype.Component;
 
-import com.coigniez.resumebuilder.domain.column.Column;
+import com.coigniez.resumebuilder.domain.column.LayoutColumn;
 import com.coigniez.resumebuilder.domain.columnholder.page.LayoutPage;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.layout.Layout;
@@ -34,7 +34,7 @@ public class LatexContentGenerator implements LatexGenerator<Layout> {
         StringBuilder content = new StringBuilder();
         content.append("\\begin{paracol}{%s}\n\n".formatted(layoutPage.getColumns().size()));
 
-        for (Column column : layoutPage.getColumns()) {
+        for (LayoutColumn column : layoutPage.getColumns()) {
             content.append(getColumn(column));
         }
 
@@ -42,7 +42,7 @@ public class LatexContentGenerator implements LatexGenerator<Layout> {
         return content.toString();
     }
 
-    private String getColumn(Column column) {
+    private String getColumn(LayoutColumn column) {
         StringBuilder result = new StringBuilder();
         result.append("\\switchcolumn[%d]\n".formatted(column.getColumnNumber() - 1));
         result.append("\\begin{tcolorbox%d}\n".formatted(column.getColumnNumber()));

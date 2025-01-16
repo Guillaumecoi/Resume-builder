@@ -1,182 +1,253 @@
-// package com.coigniez.resumebuilder.services;
+package com.coigniez.resumebuilder.services;
 
-// import static org.junit.jupiter.api.Assertions.assertEquals;
-// import static org.junit.jupiter.api.Assertions.assertNotNull;
-// import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
-// import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
-// import org.junit.jupiter.api.BeforeEach;
-// import org.junit.jupiter.api.Test;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.boot.test.context.SpringBootTest;
-// import org.springframework.security.access.AccessDeniedException;
-// import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-// import org.springframework.security.core.Authentication;
-// import org.springframework.security.core.authority.SimpleGrantedAuthority;
-// import org.springframework.security.core.context.SecurityContextHolder;
-// import org.springframework.test.context.ActiveProfiles;
-// import org.springframework.transaction.annotation.Transactional;
+import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
+import com.coigniez.resumebuilder.repository.ColumnRepository;
+import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
+import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
+import com.coigniez.resumebuilder.domain.columnholder.header.dtos.HeaderCreateReq;
+import com.coigniez.resumebuilder.domain.column.LayoutColumn;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnCreateReq;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnUpdateReq;
+import com.coigniez.resumebuilder.domain.column.dtos.ColumnResp;
 
-// import com.coigniez.resumebuilder.domain.column.dtos.ColumnResp;
-// import com.coigniez.resumebuilder.domain.column.dtos.ColumnCreateReq;
-// import com.coigniez.resumebuilder.domain.column.dtos.ColumnUpdateReq;
-// import com.coigniez.resumebuilder.domain.layout.dtos.LayoutCreateReq;
-// import com.coigniez.resumebuilder.domain.layout.enums.ColorLocation;
-// import com.coigniez.resumebuilder.domain.resume.dtos.ResumeCreateReq;
-// import com.coigniez.resumebuilder.domain.section.dtos.SectionCreateReq;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
-// import jakarta.persistence.EntityNotFoundException;
+@SpringBootTest
+@ActiveProfiles("test")
+@Transactional
+public class ColumnServiceIntegrationTest {
 
-// @SpringBootTest
-// @ActiveProfiles("test")
-// @Transactional
-// public class ColumnServiceIntegrationTest {
+    @Autowired
+    private ColumnService columnService;
 
-//     @Autowired
-//     private ColumnService columnService;
+    @Autowired
+    private ResumeService resumeService;
 
-//     @Autowired
-//     private LayoutService layoutService;
+    @Autowired
+    private LayoutService layoutService;
 
-//     @Autowired
-//     private ResumeService resumeService;
+    @Autowired
+    private ColumnHolderService columnHolderService;
 
-//     private Authentication testuser;
-//     private Authentication otheruser;
-//     private Long layoutId;
+    @Autowired
+    private ColumnRepository columnRepository;
 
-//     @BeforeEach
-//     void setUp() {
-//         // Create mock users
-//         testuser = new UsernamePasswordAuthenticationToken(
-//                 "testuser",
-//                 "password",
-//                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
+    private Authentication testuser;
+    private Authentication otheruser;
+    private Long columnHolderId;
 
-//         otheruser = new UsernamePasswordAuthenticationToken(
-//                 "otheruser",
-//                 "password",
-//                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
+    @BeforeEach
+    void setUp() {
+        // Create mock users
+        testuser = new UsernamePasswordAuthenticationToken(
+                "testuser",
+                "password",
+                List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
-//         // Set the Authentication object in the SecurityContextHolder
-//         SecurityContextHolder.getContext().setAuthentication(testuser);
+        otheruser = new UsernamePasswordAuthenticationToken(
+                "otheruser",
+                "password",
+                List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
-//         ResumeCreateReq resumeRequest = ResumeCreateReq.builder().title("Software Developer")
-//                 .sections(List.of(SectionCreateReq.builder().title("Education").build())).build();
+        // Set the Authentication object in the SecurityContextHolder
+        SecurityContextHolder.getContext().setAuthentication(testuser);
 
-//         Long resumeId = resumeService.create(resumeRequest);
+        // Create a resume
+        ResumeCreateReq resumeRequest = ResumeCreateReq.builder()
+                .title("Software Developer")
+                .build();
 
-//         LayoutCreateReq layoutRequest = LayoutCreateReq.builder().resumeId(resumeId).numberOfColumns(1)
-//                 .build();
-//         layoutId = layoutService.create(layoutRequest);
-//     }
+        Long resumeId = resumeService.create(resumeRequest);
 
-//     @Test
-//     void testCreateAndGetColumn() {
-//         // Arrange
-//         ColumnCreateReq columnRequest = ColumnCreateReq.builder()
-//                 .layoutId(layoutId)
-//                 .columnNumber(1)
-//                 .backgroundColor(ColorLocation.DARK_BG)
-//                 .textColor(ColorLocation.LIGHT_TEXT)
-//                 .borderColor(ColorLocation.ACCENT)
-//                 .build();
+        // Create a layout
+        LayoutCreateReq layoutRequest = LayoutCreateReq.builder()
+                .resumeId(resumeId)
+                .build();
 
-//         // Act
-//         Long columnId = columnService.create(columnRequest);
+        Long layoutId = layoutService.create(layoutRequest);
 
-//         // Assert
-//         assertNotNull(columnId, "Column ID should not be null");
-//         ColumnResp columnResponse = columnService.get(columnId);
-//         assertEquals(columnId, columnResponse.getId(), "Column ID should match");
-//         assertEquals(1, columnResponse.getColumnNumber(), "Column number should be 1");
-//     }
+        // Create a column holder (header)
+        HeaderCreateReq headerRequest = HeaderCreateReq.builder()
+                .layoutId(layoutId)
+                .height(0.100)
+                .repeatOnEveryPage(true)
+                .build();
 
-//     @Test
-//     void testUpdateColumn() {
-//         // Arrange
-//         ColumnCreateReq columnRequest = ColumnCreateReq.builder()
-//                 .layoutId(layoutId)
-//                 .columnNumber(1)
-//                 .backgroundColor(ColorLocation.DARK_BG)
-//                 .textColor(ColorLocation.LIGHT_TEXT)
-//                 .borderColor(ColorLocation.ACCENT)
-//                 .build();
+        columnHolderId = columnHolderService.create(headerRequest);
+    }
 
-//         Long columnId = columnService.create(columnRequest);
+    @Test
+    void testCreateAndGetColumn() {
+        // Arrange
+        ColumnCreateReq request = ColumnCreateReq.builder()
+                .columnHolderId(columnHolderId)
+                .columnNumber((short) 1)
+                .backgroundColor(ColorLocation.LIGHT_BG)
+                .textColor(ColorLocation.DARK_TEXT)
+                .borderColor(ColorLocation.ACCENT)
+                .build();
 
-//         ColumnUpdateReq updateRequest = ColumnUpdateReq.builder()
-//                 .id(columnId)
-//                 .columnNumber(2)
-//                 .backgroundColor(ColorLocation.DARK_BG)
-//                 .textColor(ColorLocation.LIGHT_TEXT)
-//                 .borderColor(ColorLocation.ACCENT)
-//                 .createSectionMappings(List.of())
-//                 .updateSectionMappings(List.of())
-//                 .borderTop(0.0)
-//                 .borderRight(0.0)
-//                 .borderBottom(0.0)
-//                 .borderLeft(0.0)
-//                 .paddingTop(0.0)
-//                 .paddingRight(0.0)
-//                 .paddingBottom(0.0)
-//                 .paddingLeft(0.0)
-//                 .build();
+        // Act
+        Long columnId = columnService.create(request);
+        ColumnResp response = columnService.get(columnId);
 
-//         // Act
-//         columnService.update(updateRequest);
+        // Assert
+        assertNotNull(response, "Response should not be null");
+        assertEquals(columnId, response.getId(), "Column ID should match");
+        assertEquals(1, response.getColumnNumber(), "Column number should match");
+        assertEquals(ColorLocation.LIGHT_BG, response.getBackgroundColor(), "Background color should match");
+        assertEquals(ColorLocation.DARK_TEXT, response.getTextColor(), "Text color should match");
+        assertEquals(ColorLocation.ACCENT, response.getBorderColor(), "Border color should match");
+    }
 
-//         // Assert
-//         ColumnResp updatedColumn = columnService.get(columnId);
-//         assertEquals(2, updatedColumn.getColumnNumber(), "Column number should be updated to 2");
-//     }
+    @Test
+    void testCreateWithPicture() throws IOException {
+        // Arrange
+        MockMultipartFile file = getPictureFile();
 
-//     @Test
-//     void testDeleteColumn() {
-//         // Arrange
-//         ColumnCreateReq columnRequest = ColumnCreateReq.builder()
-//                 .layoutId(layoutId)
-//                 .columnNumber(1)
-//                 .backgroundColor(ColorLocation.DARK_BG)
-//                 .textColor(ColorLocation.LIGHT_TEXT)
-//                 .borderColor(ColorLocation.ACCENT)
-//                 .build();
+        ColumnCreateReq request = ColumnCreateReq.builder()
+                .columnHolderId(columnHolderId)
+                .columnNumber((short) 1)
+                .build();
 
-//         Long columnId = columnService.create(columnRequest);
+        // Act
+        Long columnId = columnService.CreateWithPicture(file, request);
+        LayoutColumn column = columnRepository.findById(columnId).orElseThrow();
 
-//         // Act
-//         columnService.delete(columnId);
+        // Assert
+        assertNotNull(columnId, "The ID should not be null");
+        assertEquals(columnId, column.getId(), "The ID of the entity should match the returned ID");
+        assertNotNull(column.getBackgroundImage(), "The background image should not be null");
+        assertNotNull(column.getBackgroundImage().getImagePath(), "The image path should not be null");
 
-//         // Assert
-//         assertThrows(EntityNotFoundException.class, () -> columnService.get(columnId),
-//                 "Column should not be found after deletion");
-//     }
+        // Verify actual image content
+        byte[] originalBytes = file.getBytes();
+        assertNotNull(originalBytes, "The retrieved image should not be null");
+        assertTrue(originalBytes.length > 0, "The retrieved image should not be empty");
+    }
 
-//     @Test
-//     void testAccessControl() {
-//         // Arrange
-//         ColumnCreateReq columnRequest = ColumnCreateReq.builder()
-//                 .layoutId(layoutId)
-//                 .columnNumber(1)
-//                 .backgroundColor(ColorLocation.DARK_BG)
-//                 .textColor(ColorLocation.LIGHT_TEXT)
-//                 .borderColor(ColorLocation.ACCENT)
-//                 .build();
+    @Test
+    void testUpdate() {
+        // Arrange
+        ColumnCreateReq createRequest = ColumnCreateReq.builder()
+                .columnHolderId(columnHolderId)
+                .columnNumber((short) 1)
+                .columnSize(1.0f)
+                .backgroundColor(ColorLocation.LIGHT_BG)
+                .textColor(ColorLocation.DARK_TEXT)
+                .borderColor(ColorLocation.ACCENT)
+                .paddingLeft(10.0f)
+                .paddingRight(10.0f)
+                .paddingTop(20.0f)
+                .paddingBottom(20.0f)
+                .borderLeft(0.0f)
+                .borderRight(0.0f)
+                .borderTop(0.0f)
+                .borderBottom(0.0f)
+                .build();
 
-//         Long columnId = columnService.create(columnRequest);
+        Long columnId = columnService.create(createRequest);
 
-//         // Act & Assert
-//         SecurityContextHolder.getContext().setAuthentication(otheruser);
+        // Act
+        ColumnUpdateReq updateRequest = ColumnUpdateReq.builder()
+                .id(columnId)
+                .columnNumber((short) 2)
+                .columnSize(2.0f)
+                .backgroundColor(ColorLocation.DARK_BG)
+                .textColor(ColorLocation.LIGHT_TEXT)
+                .borderColor(ColorLocation.PRIMARY)
+                .paddingLeft(15.0f)
+                .paddingRight(15.0f)
+                .paddingTop(25.0f)
+                .paddingBottom(25.0f)
+                .borderLeft(1.0f)
+                .borderRight(1.0f)
+                .borderTop(1.0f)
+                .borderBottom(1.0f)
+                .build();
 
-//         assertThrows(AccessDeniedException.class, () -> columnService.create(columnRequest),
-//                 "Should not be able to create a column for another user's layout");
-//         assertThrows(AccessDeniedException.class, () -> columnService.get(columnId),
-//                 "Should not be able to get a column for another user");
-//         assertThrows(AccessDeniedException.class,
-//                 () -> columnService.update(ColumnUpdateReq.builder().id(columnId).build()),
-//                 "Should not be able to update a column for another user");
-//         assertThrows(AccessDeniedException.class, () -> columnService.delete(columnId),
-//                 "Should not be able to delete a column for another user");
-//     }
-// }
+        columnService.update(updateRequest);
+
+        // Assert
+        ColumnResp response = columnService.get(columnId);
+        assertEquals(columnId, response.getId());
+        assertEquals(2, response.getColumnNumber());
+        assertEquals(2.0f, response.getColumnSize());
+        assertEquals(ColorLocation.DARK_BG, response.getBackgroundColor());
+        assertEquals(ColorLocation.LIGHT_TEXT, response.getTextColor());
+        assertEquals(ColorLocation.PRIMARY, response.getBorderColor());
+        assertEquals(15.0f, response.getPaddingLeft());
+        assertEquals(15.0f, response.getPaddingRight());
+        assertEquals(25.0f, response.getPaddingTop());
+        assertEquals(25.0f, response.getPaddingBottom());
+        assertEquals(1.0f, response.getBorderLeft());
+        assertEquals(1.0f, response.getBorderRight());
+        assertEquals(1.0f, response.getBorderTop());
+        assertEquals(1.0f, response.getBorderBottom());
+    }
+
+    @Test
+    void testAccessControl() {
+        // Arrange
+        ColumnCreateReq request = ColumnCreateReq.builder()
+                .columnHolderId(columnHolderId)
+                .columnNumber((short) 1)
+                .build();
+
+        Long columnId = columnService.create(request);
+
+        // Set it to otheruser
+        SecurityContextHolder.getContext().setAuthentication(otheruser);
+
+        // Act & Assert
+        assertThrows(AccessDeniedException.class, () -> {
+            columnService.create(request);
+        }, "Other user should not be able to create a column in another user's column holder");
+
+        assertThrows(AccessDeniedException.class, () -> {
+            columnService.get(columnId);
+        }, "Other user should not be able to get another user's column");
+
+        assertThrows(AccessDeniedException.class, () -> {
+            columnService.update(ColumnUpdateReq.builder().id(columnId).build());
+        }, "Other user should not be able to update another user's column");
+
+        assertThrows(AccessDeniedException.class, () -> {
+            columnService.delete(columnId);
+        }, "Other user should not be able to delete another user's column");
+    }
+
+    // Helper method to get test image
+    private MockMultipartFile getPictureFile() throws IOException {
+        // Load test image from resources
+        Path resourcePath = Paths.get("src", "test", "resources", "blue.jpg");
+        byte[] content = Files.readAllBytes(resourcePath);
+
+        return new MockMultipartFile(
+                "file",
+                "blue.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                content);
+    }
+    
+}
