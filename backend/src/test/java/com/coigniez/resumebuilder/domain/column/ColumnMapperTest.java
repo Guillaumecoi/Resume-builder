@@ -29,6 +29,7 @@ public class ColumnMapperTest {
         LayoutColumn entity = LayoutColumn.builder()
                 .id(1L)
                 .columnNumber((short) 1)
+                .ColumnSize(1.0f)
                 .backgroundColor(ColorLocation.PRIMARY)
                 .textColor(ColorLocation.SECONDARY)
                 .borderColor(ColorLocation.ACCENT)
@@ -105,7 +106,7 @@ public class ColumnMapperTest {
     @Test
     void testToEntity_InvalidRequest() {
         // Arrange
-        ColumnCreateReq request = ColumnCreateReq.builder().build();
+        ColumnCreateReq request = ColumnCreateReq.builder().columnNumber((short) -1).build();
 
         // Act & Assert
         assertThrows(ConstraintViolationException.class, () -> mapper.toEntity(request));
@@ -117,6 +118,7 @@ public class ColumnMapperTest {
         ColumnUpdateReq request = ColumnUpdateReq.builder()
                 .id(1L)
                 .columnNumber((short) 2)
+                .columnSize(2.0f)
                 .backgroundColor(ColorLocation.PRIMARY)
                 .textColor(ColorLocation.SECONDARY)
                 .borderColor(ColorLocation.ACCENT)
@@ -133,6 +135,7 @@ public class ColumnMapperTest {
         LayoutColumn entity = LayoutColumn.builder()
                 .id(1L)
                 .columnNumber((short) 1)
+                .ColumnSize(1.0f)
                 .backgroundColor(ColorLocation.PRIMARY)
                 .textColor(ColorLocation.SECONDARY)
                 .borderColor(ColorLocation.ACCENT)
@@ -152,6 +155,7 @@ public class ColumnMapperTest {
         // Assert
         assertEquals(1L, entity.getId(), "ID should not be updated");
         assertEquals(2, entity.getColumnNumber(), "Column number should be updated");
+        assertEquals(2.0f, entity.getColumnSize(), "Column size should be updated");
         assertEquals(request.getBackgroundColor(), entity.getBackgroundColor());
         assertEquals(request.getTextColor(), entity.getTextColor());
         assertEquals(request.getBorderColor(), entity.getBorderColor());
