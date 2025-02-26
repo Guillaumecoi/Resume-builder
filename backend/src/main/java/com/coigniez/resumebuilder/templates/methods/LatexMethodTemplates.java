@@ -32,12 +32,15 @@ public class LatexMethodTemplates {
 
     public static Set<LatexMethodCreateReq> getStandardMethods() {
         HashSet<LatexMethodCreateReq> result = new HashSet<>();
+        result.add(LatexMethodTemplates.getColumbTemplate().toCreateLatexMethodRequest());
         result.add(LatexMethodTemplates.getSectionTemplate().toCreateLatexMethodRequest());
-        result.add(LatexMethodTemplates.getSectionTitlesTemplates().get("Standard Section Title").toCreateLatexMethodRequest());
+        result.add(LatexMethodTemplates.getSectionTitlesTemplates().get("Standard Section Title")
+                .toCreateLatexMethodRequest());
         result.add(LatexMethodTemplates.getContactTemplates().get("Standard Contact").toCreateLatexMethodRequest());
         result.add(LatexMethodTemplates.getTitleTemplates().get("Standard Title").toCreateLatexMethodRequest());
         result.add(LatexMethodTemplates.getEducationTemplates().get("Standard Education").toCreateLatexMethodRequest());
-        result.add(LatexMethodTemplates.getExperienceTemplates().get("Standard Experience").toCreateLatexMethodRequest());
+        result.add(
+                LatexMethodTemplates.getExperienceTemplates().get("Standard Experience").toCreateLatexMethodRequest());
         result.add(LatexMethodTemplates.getSkillTemplates().get("Standard Skill").toCreateLatexMethodRequest());
         result.add(LatexMethodTemplates.getSkillTemplates().get("Skill Text").toCreateLatexMethodRequest());
         result.add(LatexMethodTemplates.getSkillTemplates().get("Skill Bullets").toCreateLatexMethodRequest());
@@ -47,6 +50,46 @@ public class LatexMethodTemplates {
         result.add(LatexMethodTemplates.getPictureTemplates().get("Standard Picture").toCreateLatexMethodRequest());
 
         return result;
+    }
+
+    public static LatexMethodTemplate getColumbTemplate() {
+        return new LatexMethodTemplate(
+                HasLatexMethod.COLUMN,
+                "columnbox",
+                MethodType.ENVIRONMENT,
+                """
+                        \\begin{tcolorbox}[
+                            colback=#1,
+                            width=\\linewidth,
+                            height=#15\\textheight,
+                            left=#4pt,
+                            right=#5pt,
+                            top=#6pt,
+                            bottom=#7pt,
+                            arc=0mm,
+                            boxrule=0pt,
+                            rightrule=#8pt,
+                            leftrule=#9pt,
+                            toprule=#10pt,
+                            bottomrule=#11pt,
+                            colframe=#3
+                            \\ifthenelse{\\isempty{#12}}
+                            {}
+                            {,
+                                overlay={
+                                    \\begin{tcbclipframe}
+                                        \\node[anchor=center, opacity=#13] at (frame.center)
+                                        {\\includegraphics[#14]{#12}};
+                                    \\end{tcbclipframe}
+                                }
+                            }
+                        ]
+                        \\color{#2}
+                                }{
+                        \\end{tcolorbox}
+                            """,
+                "Column",
+                null);
     }
 
     public static LatexMethodTemplate getSectionTemplate() {

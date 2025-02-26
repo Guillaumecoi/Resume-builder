@@ -48,6 +48,7 @@ public class ColumnService
                 .orElseThrow(() -> ExceptionUtils.entityNotFound("ColumnHolder", request.getColumnHolderId()))
                 .addColumn(column);
 
+
         // Save the entity
         return columnRepository.save(column).getId();
     }

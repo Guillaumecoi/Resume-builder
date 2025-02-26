@@ -1,12 +1,15 @@
 package com.coigniez.resumebuilder.latex.generators;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.coigniez.resumebuilder.domain.column.LayoutColumn;
+import com.coigniez.resumebuilder.domain.columnholder.header.Header;
 import com.coigniez.resumebuilder.domain.columnholder.page.LayoutPage;
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
 import com.coigniez.resumebuilder.domain.layout.Layout;
-import com.coigniez.resumebuilder.interfaces.LatexGenerator;
 import com.coigniez.resumebuilder.util.StringUtils;
 
 import lombok.AllArgsConstructor;
@@ -16,42 +19,65 @@ import lombok.AllArgsConstructor;
  */
 @AllArgsConstructor
 @Component
-public class LatexContentGenerator implements LatexGenerator<Layout> {
+public class LatexContentGenerator {
 
     private final StringUtils stringUtils;
     private final LatexSectionGenerator latexSectionGenerator;
-    
-    public String generate(Layout layout) {
+
+    public String generate(Layout layout, LatexMethodResp columnMethod, LatexMethodResp sectionMethod) {
         StringBuilder result = new StringBuilder();
-        layout.getPages().forEach(page -> {
-            result.append(generatePage(page));
-        });
+        Header header = layout.getHeader();
+        int page = 1;
+        for (LayoutPage layoutPage : layout.getPages()) {
+            float height = 1.0f;
+            if (page > 1 && header.getRepeatOnEveryPage()) {
+                result.append(generatePage(header.getColumns(), columnMethod, sectionMethod, header.getHeight()));
+                height -= header.getHeight();
+            }
+            result.append(generatePage(layoutPage.getColumns(), columnMethod, sectionMethod, height));
+        }
 
         return result.toString();
     }
 
-    private String generatePage(LayoutPage layoutPage) {
+    private String generatePage(List<LayoutColumn> columns, LatexMethodResp columnMethod, LatexMethodResp sectionMethod, float height) {
         StringBuilder content = new StringBuilder();
-        content.append("\\begin{paracol}{%s}\n\n".formatted(layoutPage.getColumns().size()));
+        content.append(getColumnRatios(columns.stream().map(LayoutColumn::getColumnSize).toList()));
+        content.append("\\begin{paracol}{%s}\n\n".formatted(columns.size()));
 
-        for (LayoutColumn column : layoutPage.getColumns()) {
-            content.append(getColumn(column));
+        for (LayoutColumn column : columns) {
+            content.append(getColumn(column, columnMethod, sectionMethod));
         }
 
         content.append("\\end{paracol}\n");
         return content.toString();
     }
 
-    private String getColumn(LayoutColumn column) {
-        StringBuilder result = new StringBuilder();
-        result.append("\\switchcolumn[%d]\n".formatted(column.getColumnNumber() - 1));
-        result.append("\\begin{tcolorbox%d}\n".formatted(column.getColumnNumber()));
-        for (ColumnSection columnSection : column.getSectionMappings()) {
-            result.append(stringUtils.addTabToEachLine(latexSectionGenerator.generate(columnSection), 1) + "\n");
-        }
-        result.append("\\end{tcolorbox%d}\n\n".formatted(column.getColumnNumber()));
+    private String getColumn(LayoutColumn column,  LatexMethodResp columnMethod, LatexMethodResp sectionMethod) {
 
-        return result.toString();
+        // Get the column environment
+        String result = "\\switchcolumn[%d]\n".formatted(column.getColumnNumber() - 1) + "\n";
+        result += LatexMethodGenerator.generateUsage(columnMethod.getMethodType(), columnMethod.getType(), columnMethod.getName(),
+                column.getData());
+
+        // Get the content of the column
+        String content = "";
+        for (ColumnSection columnSection : column.getSectionMappings()) {
+            content += stringUtils.addTabToEachLine(latexSectionGenerator.generate(columnSection, sectionMethod), 1) + "\n";
+        }
+
+        return result.formatted(content);
     }
-    
+
+    private String getColumnRatios(List<Float> columnRatios) {
+        float total = columnRatios.stream().reduce(0.0f, Float::sum);
+        for (int i = 0; i < columnRatios.size(); i++) {
+            columnRatios.set(i, columnRatios.get(i) / total);
+        }
+
+        String ratio = String.join(",", columnRatios.stream().map(String::valueOf).toArray(String[]::new));
+
+        return "\\columnratio{%s}".formatted(ratio);
+    }
+
 }

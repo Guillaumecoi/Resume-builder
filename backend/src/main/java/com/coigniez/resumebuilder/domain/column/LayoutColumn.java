@@ -80,7 +80,7 @@ public class LayoutColumn implements BaseEntity, LatexMethodProvider {
 
     @Override
     public List<String> getData() {
-        return List.of(
+        List<String> result = List.of(
                 String.valueOf(backgroundColor),
                 String.valueOf(textColor),
                 String.valueOf(borderColor),
@@ -93,5 +93,12 @@ public class LayoutColumn implements BaseEntity, LatexMethodProvider {
                 String.valueOf(borderTop),
                 String.valueOf(borderBottom)
         );
+
+        if (backgroundImage != null) {
+            result.addAll(backgroundImage.getData());
+        } else {
+            result.addAll(List.of("","",""));
+        }
+        return result;
     }
 }

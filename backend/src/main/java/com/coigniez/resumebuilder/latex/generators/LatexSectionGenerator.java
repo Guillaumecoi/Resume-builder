@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
+import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
 import com.coigniez.resumebuilder.domain.layoutsectionItem.LayoutSectionItem;
 import com.coigniez.resumebuilder.interfaces.LatexGenerator;
 import com.coigniez.resumebuilder.templates.methods.LatexMethodTemplate;
@@ -18,17 +19,15 @@ import lombok.AllArgsConstructor;
  */
 @AllArgsConstructor
 @Component
-public class LatexSectionGenerator implements LatexGenerator<ColumnSection> {
+public class LatexSectionGenerator {
 
     private final StringUtils stringUtils;
     private final LatexItemGenerator latexItemGenerator;
 
-    public String generate(ColumnSection columnSection) {
-        LatexMethodTemplate sectionMethod = LatexMethodTemplates.getSectionTemplate();
-
+    public String generate(ColumnSection columnSection, LatexMethodResp sectionMethod) {
         // Get the section environment
         String sectionString = LatexMethodGenerator.generateUsage(sectionMethod.getMethodType(),
-                sectionMethod.getType(), sectionMethod.getMethodName(), columnSection.getData());
+                sectionMethod.getType(), sectionMethod.getName(), columnSection.getData());
 
 
         //TODO: implement subsections
@@ -54,7 +53,7 @@ public class LatexSectionGenerator implements LatexGenerator<ColumnSection> {
         // } else {
         //     return sectionString.formatted(itemsString);
         // }
-        return "";
+        return sectionString;
     }
 
 }

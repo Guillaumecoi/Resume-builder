@@ -15,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 public class Header extends ColumnHolder {
 
     @Column(precision = 4)
-    private Double height;
+    private Float height;
     private Boolean repeatOnEveryPage;
 
     @OneToOne

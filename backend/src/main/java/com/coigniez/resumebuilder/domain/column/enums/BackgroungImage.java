@@ -1,6 +1,8 @@
 package com.coigniez.resumebuilder.domain.column.enums;
 
-import org.hibernate.annotations.ColumnDefault;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -23,12 +25,25 @@ public class BackgroungImage {
 
     @NotBlank
     private String imagePath;
+    @Builder.Default
     @Min(0)
     @Max(1)
     @Column(columnDefinition = "DECIMAL(3,2)")
-    @ColumnDefault("1.0")
-    private Float opacity;
-    @ColumnDefault("true")
-    private Boolean keepAspectRatioByHeight;
+    private Float opacity = 1.0f;
+    @Builder.Default
+    private Boolean keepAspectRatioByHeight = true;
+
+    @JsonIgnore
+    public List<String> getData() {
+        String scaling;
+        if (keepAspectRatioByHeight) {
+            scaling = "keepaspectratio, height=\\textheight";
+        } else if (!keepAspectRatioByHeight) {
+            scaling = "keepaspectratio, width=\\textwidth";
+        } else {
+            scaling = "";
+        }
+        return List.of(imagePath, String.valueOf(opacity), scaling);
+    }
     
 }

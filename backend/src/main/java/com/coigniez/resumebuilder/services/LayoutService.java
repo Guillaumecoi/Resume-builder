@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.coigniez.resumebuilder.domain.column.LayoutColumn;
+import com.coigniez.resumebuilder.domain.columnsection.ColumnSection;
 import com.coigniez.resumebuilder.domain.latex.dtos.LatexMethodResp;
 import com.coigniez.resumebuilder.domain.layout.Layout;
 import com.coigniez.resumebuilder.domain.layout.LayoutMapper;
@@ -127,7 +129,10 @@ public class LayoutService implements ParentEntityService<LayoutCreateReq, Layou
         securityUtils.hasAccessLayout(id);
 
         Layout layout = layoutRepository.findById(id).orElseThrow(() -> ExceptionUtils.entityNotFound("Layout", id));
-        return latexDocumentGenerator.generateFile(layout, layout.getResume().getTitle());
+        Map<Class<?>, List<LatexMethodResp>> methods = getLatexMethodsMap(id);
+        LatexMethodResp columnMethod = methods.get(LayoutColumn.class).getFirst();
+        LatexMethodResp sectionMethod = methods.get(ColumnSection.class).getFirst();
+        return latexDocumentGenerator.generateFile(layout, columnMethod, sectionMethod, layout.getResume().getTitle());
     }
 
     /**
